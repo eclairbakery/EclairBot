@@ -1,4 +1,7 @@
 enabled = true
 
 [general]
-prefix = "."
+prefix = "!"
+
+[mod.commands]
+warn = { allowedRoles = ['1403684128485806182'] }

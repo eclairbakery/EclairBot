@@ -12,7 +12,7 @@ export interface Config {
         /* General configuration for the bot */
         prefix: string;
     };
-    moderation: {
+    mod: {
         /* Configuration for moderation commands */
         commands: {
             ban: {
@@ -21,9 +21,9 @@ export interface Config {
                 /* Array of command aliases */
                 aliases: string[];
 
-                /* Array of role IDs that can execute the command. Everyone if null */
-                allowedRoles: Snowflake[] | null;
-                /* Array of user IDs that can execute the command. Everyone if null */
+                /* Array of role IDs that can execute the command */
+                allowedRoles: Snowflake[];
+                /* Array of user IDs that can execute the command; everyone if null */
                 allowedUsers: Snowflake[] | null;
                 /* Whether a reason is required for the ban */
                 reasonRequired: boolean;
@@ -34,9 +34,9 @@ export interface Config {
                 /* Array of command aliases */
                 aliases: string[];
 
-                /* Array of role IDs that can execute the command. Everyone if null */
-                allowedRoles: Snowflake[] | null;
-                /* Array of user IDs that can execute the command. Everyone if null */
+                /* Array of role IDs that can execute the command */
+                allowedRoles: Snowflake[];
+                /* Array of user IDs that can execute the command; everyone if null */
                 allowedUsers: Snowflake[] | null;
                 /* Whether a reason is required for the kick */
                 reasonRequired: boolean;
@@ -47,9 +47,9 @@ export interface Config {
                 /* Array of command aliases */
                 aliases: string[];
 
-                /* Array of role IDs that can execute the command. Everyone if null */
-                allowedRoles: Snowflake[] | null;
-                /* Array of user IDs that can execute the command. Everyone if null */
+                /* Array of role IDs that can execute the command */
+                allowedRoles: Snowflake[];
+                /* Array of user IDs that can execute the command; everyone if null */
                 allowedUsers: Snowflake[] | null;
                 /* Whether a reason is required for the mute */
                 reasonRequired: boolean;
@@ -60,9 +60,9 @@ export interface Config {
                 /* Array of command aliases */
                 aliases: string[];
 
-                /* Array of role IDs that can execute the command. Everyone if null */
-                allowedRoles: Snowflake[] | null;
-                /* Array of user IDs that can execute the command. Everyone if null */
+                /* Array of role IDs that can execute the command */
+                allowedRoles: Snowflake[];
+                /* Array of user IDs that can execute the command; everyone if null */
                 allowedUsers: Snowflake[] | null;
                 /* Whether a reason is required for the warn */
                 reasonRequired: boolean;
@@ -93,9 +93,9 @@ export interface Config {
                 /* Array of command aliases */
                 aliases: string[];
 
-                /* Array of role IDs that can execute the command. Everyone if null. Everyone if null */
-                allowedRoles: Snowflake[] | null;
-                /* Array of user IDs that can execute the command. Everyone if null. Everyone if null */
+                /* Array of role IDs that can execute the command; everyone if null */
+                allowedRoles: Snowflake[];
+                /* Array of user IDs that can execute the command; everyone if null */
                 allowedUsers: Snowflake[] | null;
             };
             /* TODO */
@@ -116,7 +116,7 @@ const defaultConfig: Config = {
         prefix: '!',
     },
 
-    moderation: {
+    mod: {
         commands: {
             ban: {
                 enabled: true,

@@ -1,17 +1,94 @@
+import { SendableChannel } from 'defs';
+import { PredefinedColors, Color } from 'util/color';
+
 import * as dsc from 'discord.js';
 
-export function getErrorEmbed(error: string, desc: string) {
+enum LogType {
+    Success,
+    Info,
+    Tip,
+    Warn,
+    Error,
+}
+
+function getEmbed(type: LogType, title: string, desc: string) {
+    const settings = {
+        [LogType.Success]: { emoji: '✅', color: PredefinedColors.Green  },
+        [LogType.Info]:    { emoji: 'ℹ️', color: PredefinedColors.Cyan   },
+        [LogType.Tip]:     { emoji: '💡', color: PredefinedColors.Purple },
+        [LogType.Warn]:    { emoji: '⚠️', color: PredefinedColors.Orange },
+        [LogType.Error]:   { emoji: '💔', color: PredefinedColors.Red    }
+    };
+
     return {
         embeds: [
             new dsc.EmbedBuilder()
-                    .setTitle('⚠️ ' + error)
-                    .setColor(0xff0000)
-                    .setAuthor({ name: 'EclairBOT' })
-                    .setDescription(desc)
+                .setTitle(`${settings[type].emoji} ${title}`)
+                .setColor(settings[type].color)
+                .setAuthor({ name: 'EclairBOT' })
+                .setDescription(desc)
         ]
     };
 }
 
-export function replyError(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, error: string, desc: string) {
-    msg.reply(getErrorEmbed(error, desc));
+export function getErrorEmbed(title: string, desc: string) {
+    return getEmbed(LogType.Error, title, desc);
+}
+
+export function getWarnEmbed(title: string, desc: string) {
+    return getEmbed(LogType.Warn, title, desc);
+}
+
+export function getInfoEmbed(title: string, desc: string) {
+    return getEmbed(LogType.Info, title, desc);
+}
+
+export function getSuccessEmbed(title: string, desc: string) {
+    return getEmbed(LogType.Success, title, desc);
+}
+
+export function getTipEmbed(title: string, desc: string) {
+    return getEmbed(LogType.Tip, title, desc);
+}
+
+
+export function replyWarn(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, title: string, desc: string) {
+    msg.reply(getWarnEmbed(title, desc));
+}
+
+export function replyInfo(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, title: string, desc: string) {
+    msg.reply(getInfoEmbed(title, desc));
+}
+
+export function replySuccess(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, title: string, desc: string) {
+    msg.reply(getSuccessEmbed(title, desc));
+}
+
+export function replyTip(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, title: string, desc: string) {
+    msg.reply(getTipEmbed(title, desc));
+}
+
+export function replyError(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, title: string, desc: string) {
+    msg.reply(getErrorEmbed(title, desc));
+}
+
+
+export function sendError(channel: SendableChannel, title: string, desc: string) {
+    channel.send(getErrorEmbed(title, desc));
+}
+
+export function sendWarn(channel: SendableChannel, title: string, desc: string) {
+    channel.send(getWarnEmbed(title, desc));
+}
+
+export function sendInfo(channel: SendableChannel, title: string, desc: string) {
+    channel.send(getInfoEmbed(title, desc));
+}
+
+export function sendSuccess(channel: SendableChannel, title: string, desc: string) {
+    channel.send(getSuccessEmbed(title, desc));
+}
+
+export function sendTip(channel: SendableChannel, title: string, desc: string) {
+    channel.send(getTipEmbed(title, desc));
 }

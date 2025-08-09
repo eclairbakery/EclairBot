@@ -1,41 +1,42 @@
 {
-  "name": "eclairbot",
-  "version": "1.0.0",
-  "description": "The Eclair bot",
-  "keywords": [
-    "eclairbakery"
-  ],
-  "homepage": "https://github.com/eclairbakery/Ecliarbot#readme",
-  "bugs": {
-    "url": "https://github.com/eclairbakery/Ecliarbot/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eclairbakery/Ecliarbot.git"
-  },
-  "license": "GPL-3.0-or-later",
-  "author": "EclairBakery contributors",
-  "type": "commonjs",
-  "main": "dist/main",
-  "scripts": {
-    "dev": "nodemon --exec ts-node src/main.ts",
-    "build": "tsc",
-    "start": "npm run build && node dist/main.js"
-  },
-  "devDependencies": {
-    "@types/node": "^24.2.1",
-    "@types/ws": "^8.18.1",
-    "discord.js": "^14.21.0",
-    "nodemon": "^3.1.10",
-    "prettier": "^3.6.2",
-    "ts-node": "^10.9.2",
-    "ttypescript": "^1.5.15",
-    "typescript": "^5.9.2"
-  },
-  "dependencies": {
-    "dotenv": "^17.2.1",
-    "sqlite3": "^5.1.7",
-    "toml": "^3.0.0",
-    "typia": "^9.7.0"
-  }
+    "name": "eclairbot",
+    "version": "1.0.0",
+    "description": "The Eclair bot",
+    "keywords": [
+        "eclairbakery"
+    ],
+    "homepage": "https://github.com/eclairbakery/Ecliarbot#readme",
+    "bugs": {
+        "url": "https://github.com/eclairbakery/Ecliarbot/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/eclairbakery/Ecliarbot.git"
+    },
+    "license": "GPL-3.0-or-later",
+    "author": "EclairBakery contributors",
+    "type": "commonjs",
+    "main": "dist/main",
+    "scripts": {
+        "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/main.ts",
+        "build": "tsc",
+        "start": "npm run build && node dist/main.js"
+    },
+    "devDependencies": {
+        "@types/node": "^24.2.1",
+        "@types/ws": "^8.18.1",
+        "discord.js": "^14.21.0",
+        "nodemon": "^3.1.10",
+        "prettier": "^3.6.2",
+        "ts-node": "^10.9.2",
+        "tsconfig-paths": "^4.2.0",
+        "ttypescript": "^1.5.15",
+        "typescript": "^5.9.2"
+    },
+    "dependencies": {
+        "dotenv": "^17.2.1",
+        "sqlite3": "^5.1.7",
+        "toml": "^3.0.0",
+        "typia": "^9.7.0"
+    }
 }

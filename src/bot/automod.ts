@@ -1,5 +1,5 @@
 import * as dsc from 'discord.js';
-import { getErrorEmbed } from '../util/log';
+import * as log from '../util/log';
 
 interface AutomodRules {
     activationType: 'contains' | 'is_equal_to' | 'starts_with' | 'ends_with';
@@ -77,7 +77,7 @@ export async function automod(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boo
                 if (msg.deletable) {
                     await msg.delete();
                 } else {
-                    channel.send(getErrorEmbed('Eklerka dawaj permisje!', 'Albo zrobimy kolejny buncik! Bunt maszynek! Konpopoz dobrze zrobił.'));
+                    log.replyError(msg, 'Eklerka dawaj permisje!', 'Albo zrobimy kolejny buncik! Bunt maszynek! Konpopoz dobrze zrobił.');
                 }
             }
             break;
