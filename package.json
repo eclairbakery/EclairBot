@@ -18,14 +18,22 @@
   "type": "commonjs",
   "main": "dist/main",
   "scripts": {
-    "test": "tsc && node ."
+    "dev": "nodemon --exec ts-node src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js"
   },
   "devDependencies": {
     "@types/node": "^24.2.1",
+    "@types/ws": "^8.18.1",
     "discord.js": "^14.21.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "ttypescript": "^1.5.15",
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "dotenv": "^17.2.1"
+    "dotenv": "^17.2.1",
+    "toml": "^3.0.0",
+    "typia": "^9.7.0"
   }
 }
