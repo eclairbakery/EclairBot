@@ -176,7 +176,7 @@ function mergeConfigs(userCfg: Partial<Config>, defaultCfg: Config = defaultConf
 }
 
 
-export function loadConfig(path: string = "./bot/config.toml"): Config {
+export function load_config(path: string = "./bot/config.toml"): Config {
     if (fs.existsSync(path)) {
         const content = fs.readFileSync(path, "utf-8");
         const parsed = toml.parse(content);

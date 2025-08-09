@@ -29,6 +29,6 @@ export function deepEqual<T>(a: T, b: T): boolean {
     return true;
 }
 
-export function prettyPrint(obj: any): string {
+export function pretty_print(obj: any): string {
     return JSON.stringify(obj, null, 2);
 }

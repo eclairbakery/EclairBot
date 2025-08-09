@@ -20,7 +20,7 @@
   "scripts": {
     "dev": "nodemon --exec ts-node src/main.ts",
     "build": "tsc",
-    "start": "node dist/main.js"
+    "start": "npm run build && node dist/main.js"
   },
   "devDependencies": {
     "@types/node": "^24.2.1",
@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "dotenv": "^17.2.1",
+    "sqlite3": "^5.1.7",
     "toml": "^3.0.0",
     "typia": "^9.7.0"
   }
