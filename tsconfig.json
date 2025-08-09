@@ -8,10 +8,18 @@
             "es2024"
         ],
         "plugins": [
-            { "transform": "typia/lib/transform" }
-        ]
+            {
+                "transform": "typia/lib/transform"
+            }
+        ],
+        "baseUrl": "src",
+        "paths": {
+            "*": [
+                "*"
+            ]
+        }
     },
     "include": [
         "src/**/*.ts"
-    ]
+    ],
 }

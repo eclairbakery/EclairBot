@@ -11,7 +11,7 @@ export interface Config {
     general: {
         /* General configuration for the bot */
         prefix: string;
-    },
+    };
     moderation: {
         /* Configuration for moderation commands */
         commands: {
@@ -22,12 +22,12 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command. Everyone if null */
-                allowedRoles: Snowflake[];
+                allowedRoles: Snowflake[] | null;
                 /* Array of user IDs that can execute the command. Everyone if null */
-                allowedUsers: Snowflake[];
+                allowedUsers: Snowflake[] | null;
                 /* Whether a reason is required for the ban */
                 reasonRequired: boolean;
-            },
+            };
             kick: {
                 /* Whether the kick command is enabled */
                 enabled: boolean;
@@ -35,12 +35,12 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command. Everyone if null */
-                allowedRoles: Snowflake[];
+                allowedRoles: Snowflake[] | null;
                 /* Array of user IDs that can execute the command. Everyone if null */
-                allowedUsers: Snowflake[];
+                allowedUsers: Snowflake[] | null;
                 /* Whether a reason is required for the kick */
                 reasonRequired: boolean;
-            },
+            };
             mute: {
                 /* Whether the mute command is enabled */
                 enabled: boolean;
@@ -48,12 +48,12 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command. Everyone if null */
-                allowedRoles: Snowflake[];
+                allowedRoles: Snowflake[] | null;
                 /* Array of user IDs that can execute the command. Everyone if null */
-                allowedUsers: Snowflake[];
+                allowedUsers: Snowflake[] | null;
                 /* Whether a reason is required for the mute */
                 reasonRequired: boolean;
-            },
+            };
             warn: {
                 /* Whether the warn command is enabled */
                 enabled: boolean;
@@ -61,14 +61,14 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command. Everyone if null */
-                allowedRoles: Snowflake[];
+                allowedRoles: Snowflake[] | null;
                 /* Array of user IDs that can execute the command. Everyone if null */
-                allowedUsers: Snowflake[];
+                allowedUsers: Snowflake[] | null;
                 /* Whether a reason is required for the warn */
                 reasonRequired: boolean;
-            },
-        },
-    },
+            };
+        };
+    };
     logs: {
         /* Configuration for logging */
         enabled: boolean;
@@ -81,7 +81,7 @@ export interface Config {
         ignoredRoles: Snowflake[];
         /* Array of user IDs to ignore for logging */
         ignoredUsers: Snowflake[];
-    },
+    };
 
     /* Economy configuration */
     economy: {
@@ -94,54 +94,54 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command. Everyone if null. Everyone if null */
-                allowedRoles: Snowflake[];
+                allowedRoles: Snowflake[] | null;
                 /* Array of user IDs that can execute the command. Everyone if null. Everyone if null */
-                allowedUsers: Snowflake[];
-            },
+                allowedUsers: Snowflake[] | null;
+            };
             /* TODO */
-        },
+        };
 
         /* Whether the economy system is enabled */
         enabled: boolean;
 
-        /* On witch channels economy commands are allowed */
-        allowedChannels: Snowflake[];
-    },
+        /* On witch channels economy commands are allowed. All channels if null */
+        allowedChannels: Snowflake[] | null;
+    };
 }
 
 const defaultConfig: Config = {
     enabled: true,
 
     general: {
-        prefix: "!",
+        prefix: '!',
     },
 
     moderation: {
         commands: {
             ban: {
                 enabled: true,
-                aliases: ["ban"],
+                aliases: ['ban'],
                 allowedRoles: [],
                 allowedUsers: [],
                 reasonRequired: true,
             },
             kick: {
                 enabled: true,
-                aliases: ["kick"],
+                aliases: ['kick'],
                 allowedRoles: [],
                 allowedUsers: [],
                 reasonRequired: true,
             },
             mute: {
                 enabled: true,
-                aliases: ["mute"],
+                aliases: ['mute'],
                 allowedRoles: [],
                 allowedUsers: [],
                 reasonRequired: true,
             },
             warn: {
                 enabled: true,
-                aliases: ["warn"],
+                aliases: ['warn'],
                 allowedRoles: [],
                 allowedUsers: [],
                 reasonRequired: true,
@@ -151,7 +151,7 @@ const defaultConfig: Config = {
 
     logs: {
         enabled: false,
-        channelId: "",
+        channelId: '',
         ignoredChannels: [],
         ignoredRoles: [],
         ignoredUsers: [],
@@ -161,7 +161,7 @@ const defaultConfig: Config = {
         commands: {
             ballance: {
                 enabled: true,
-                aliases: ["balance", "bal"],
+                aliases: ['balance', 'bal'],
                 allowedRoles: [],
                 allowedUsers: [],
             },
@@ -169,16 +169,15 @@ const defaultConfig: Config = {
         enabled: false,
         allowedChannels: [],
     },
-}
+};
 
 function mergeConfigs(userCfg: Partial<Config>, defaultCfg: Config = defaultConfig): Config {
     return deepMerge(defaultCfg, userCfg);
 }
 
-
-export function load_config(path: string = "./bot/config.toml"): Config {
+export function loadConfig(path: string = './bot/config.toml'): Config {
     if (fs.existsSync(path)) {
-        const content = fs.readFileSync(path, "utf-8");
+        const content = fs.readFileSync(path, 'utf-8');
         const parsed = toml.parse(content);
 
         let userConfig: Partial<Config> = { ...parsed };
