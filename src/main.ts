@@ -78,6 +78,36 @@ const commands: Command[] = [
                 ]
             });
         }
+    },
+    {
+        name: 'kick',
+        description: 'Ta komenda istnieje po to by pozbyć się z serwera lekko wkurzających ludzi, tak żeby im nie dawać bana, a oni żeby myśleli że mają bana. A pospólstwo to ręce z daleka od moderacji!',
+        canExecute: ['1403684128485806182'],
+        async code(msg, args) {
+            const who = msg.mentions.members.first();
+            let reason = '';
+            args.forEach((arg) => {
+                if (arg.startsWith('<@')) return;
+                reason += arg + ' ';
+            });
+            reason = reason.trim();
+            if (reason == '') {
+                reason = 'Mod nie poszczycił sie zbytnią znajomością komendy i nie podał powodu. Ale może to i lepiej...';
+            }
+            try {
+                await who.kick(reason);
+            } catch {
+                return print_error(msg, 'Taki mały problemik był...', 'Chyba jestem niżej w permisjach od osoby do wywalenia. Więc... y... nie wiem, moze spróbuj mnie dać wyżej Eklerko? (przy okazji zrób ten odcinek)');
+            }
+            msg.reply({
+                embeds: [
+                    new EmbedBuilder()
+                        .setTitle('📢 Do widzenia panieeee!')
+                        .setDescription('Właśnie wywaliłem tego gościa z serwera. Mam cichą nadzieję, że nie sprawił zbytniego kłopotu...')
+                        .setColor(0x00ff00)
+                ]
+            });
+        }
     }
 ];
 
