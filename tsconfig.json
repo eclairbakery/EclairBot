@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "outdir": "dist",
+        "module": "commonjs",
+        "target": "es2020",
+        "lib": [
+            "es2024"
+        ]
+    },
+    "include": [
+        "src/**/*.ts"
+    ]
+}
