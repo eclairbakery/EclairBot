@@ -1,0 +1,31 @@
+{
+  "name": "eclairbot",
+  "version": "1.0.0",
+  "description": "The Eclair bot",
+  "keywords": [
+    "eclairbakery"
+  ],
+  "homepage": "https://github.com/eclairbakery/Ecliarbot#readme",
+  "bugs": {
+    "url": "https://github.com/eclairbakery/Ecliarbot/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eclairbakery/Ecliarbot.git"
+  },
+  "license": "GPL-3.0-or-later",
+  "author": "EclairBakery contributors",
+  "type": "commonjs",
+  "main": "dist/main",
+  "scripts": {
+    "test": "tsc && node ."
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "discord.js": "^14.21.0",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1"
+  }
+}
