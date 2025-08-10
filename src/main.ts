@@ -92,7 +92,7 @@ client.on('messageCreate', async (msg) => {
     if (await automod.automod(msg, client)) return;
 
     // now goes leveling
-    addExperiencePoints(msg);
+    if (!msg.author.bot) addExperiencePoints(msg);
 
     // let's do something awesome
     if (!msg.author.bot && (msg.content.includes('cat') || msg.content.includes('kot'))) {

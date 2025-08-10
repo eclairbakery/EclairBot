@@ -20,7 +20,7 @@ export const toplvlCmd: Command = {
     allowedUsers: [],
 
     execute(msg, args) {
-        db.all('SELECT * FROM leveling', [], async (err, rows: any[]) => {
+        db.all('SELECT * FROM leveling ORDER BY xp DESC', [], async (err, rows: any[]) => {
             if (err) {
                 console.error(err);
                 return log.replyError(msg, 'Błąd pobierania poziomów', 'Pytaj twórców biblioteki sqlite3...');
@@ -38,7 +38,8 @@ export const toplvlCmd: Command = {
                 if (i == 25) return;
                 fields.push({
                     name: `${i}. ${(await msg.client.users.fetch(row.user_id)).username}`,
-                    value: `Poziom: ${Math.floor(row.xp / cfg.general.leveling.level_divider)}; XP: ${row.xp}`
+                    value: `Poziom: ${Math.floor(row.xp / cfg.general.leveling.level_divider)}; XP: ${row.xp}`,
+                    inline: i % 2 == 1
                 });
             }
 
