@@ -18,13 +18,16 @@ import { helpCmd } from './cmd/random/help';
 import { manCmd } from './cmd/random/man';
 import { warnlistCmd } from './cmd/mod/warnlist';
 import { siemaCmd } from './cmd/random/siema';
+import { workCmd } from './cmd/economy/work';
 
 const commands: Command[] = [
     // general
     helpCmd, manCmd, siemaCmd,
     // moderation
     warnCmd, kickCmd, banCmd,
-    warnlistCmd
+    warnlistCmd,
+    // economy
+    workCmd
 ]
 
 const client = new dsc.Client({
