@@ -44,6 +44,13 @@ export async function automod(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boo
             deleteTargetMessage: true,
             response: 'Wypier*alaj ze swoją reklamą na serwery reklamowe ;)',
         },
+        // nword
+        {
+            activationType: 'contains',
+            activationKeyword: 'nigger',
+            deleteTargetMessage: false,
+            response: "osoba nade mną jest gejem 🥀"
+        },
         // then go the least important
         {
             activationType: 'is_equal_to',

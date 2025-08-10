@@ -115,8 +115,25 @@ client.on('guildMemberAdd', async (member) => {
         embeds: [
             new dsc.EmbedBuilder()
                 .setTitle(`Właśnie Eklerka upiekł ${member.user.username}!`)
-                .setColor(PredefinedColors.DarkButNotBlack)
+                .setColor(PredefinedColors.YellowGreen)
                 .setDescription(`Witaj na naszym serwerze, drogi <@${member.id}>. Jak już zdołałeś się domyślić, no to Eklerka... piecze pieczywo. Robi też odcinki na swojej żonie (komputerze). Właśnie Cię upiekł, i zostałeś jednym z pieczyw... tych na sprzedaż. Sprzedaż nastąpi wtedy kiedy wyjdziesz z serwera. No to tyle z lore\'u na razie, resztę zobaczysz jak chwilę popiszesz...`)
+                .setThumbnail(member.displayAvatarURL({ size: 128 }))
+        ]
+    });
+    msg.edit('‎');
+});
+
+client.on('guildMemberRemove', async (member) => {
+    if (!cfg.general.welcomer.enabled) return;
+    const channel = await client.channels.fetch(cfg.general.welcomer.channelId);
+    if (!channel.isSendable()) return;
+    const msg = await channel.send({
+        content: `<@${member.id}>`,
+        embeds: [
+            new dsc.EmbedBuilder()
+                .setTitle(`Eklerka sprzedał bagietkę "${member.user.username}"!`)
+                .setColor(PredefinedColors.DarkButNotBlack)
+                .setDescription(`Naszemu naczelnemu piekarzowi się powodzi. Właśnie sprzedał kolejną bagietkę. Ludzie bardzo chętnie kupują od niego również chleb. Ale to nie ważne. Dla innych pieczyw jest to wielka i bolesna strata użytkownika...`)
                 .setThumbnail(member.displayAvatarURL({ size: 128 }))
         ]
     });
