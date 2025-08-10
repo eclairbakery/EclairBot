@@ -10,7 +10,7 @@ const WORK_AMOUNT_MAX = 8000;
 const PERCENTAGE = 0.4;
 
 async function canSlut(userId: string): Promise<{ can: boolean; wait?: number }> {
-    const row = await dbGet('SELECT last_slutted FROM economy WHERE user_id = ?', [userId]);
+    const row = await dbGet('SELECT last_crimed FROM economy WHERE user_id = ?', [userId]);
     const now = Date.now();
 
     if (!row) return { can: true };
@@ -35,7 +35,7 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
     await dbRun(
         `INSERT INTO economy (user_id, money, last_worked, last_robbed, last_slutted, last_crimed)
          VALUES (?, ?, ?, 0, 0, 0)
-         ON CONFLICT(user_id) DO UPDATE SET money = money ${success ? '+' : '-'} ?, last_slutted = ?`,
+         ON CONFLICT(user_id) DO UPDATE SET money = money ${success ? '+' : '-'} ?, last_crimed = ?`,
         [userId, amount, now, amount, now]
     );
 

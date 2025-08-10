@@ -9,7 +9,7 @@ const WORK_AMOUNT_MIN = 50;
 const WORK_AMOUNT_MAX = 300;
 
 async function canWork(userId: string): Promise<{ can: boolean; wait?: number }> {
-    const row = await dbGet('SELECT last_crimed FROM economy WHERE user_id = ?', [userId]);
+    const row = await dbGet('SELECT last_worked FROM economy WHERE user_id = ?', [userId]);
     const now = Date.now();
 
     if (!row) return { can: true };
@@ -34,7 +34,7 @@ async function tryWork(userId: string, amount: number): Promise<{ ok: boolean; w
     await dbRun(
         `INSERT INTO economy (user_id, money, last_worked, last_robbed, last_slutted, last_crimed)
          VALUES (?, ?, ?, 0, 0, 0)
-         ON CONFLICT(user_id) DO UPDATE SET money = money + ?, last_crimed = ?`,
+         ON CONFLICT(user_id) DO UPDATE SET money = money + ?, last_worked = ?`,
         [userId, amount, now, amount, now]
     );
 
