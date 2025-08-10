@@ -20,6 +20,8 @@ import { warnlistCmd } from './cmd/mod/warnlist';
 import { siemaCmd } from './cmd/random/siema';
 import { workCmd } from './cmd/economy/work';
 import { slutCmd } from './cmd/economy/slut';
+import { crimeCmd } from './cmd/economy/crime';
+import { addExperiencePoints } from './bot/level';
 
 const commands: Command[] = [
     // general
@@ -28,7 +30,7 @@ const commands: Command[] = [
     warnCmd, kickCmd, banCmd,
     warnlistCmd,
     // economy
-    workCmd, slutCmd
+    workCmd, slutCmd, crimeCmd
 ]
 
 const client = new dsc.Client({
@@ -72,6 +74,9 @@ client.on('messageCreate', async (msg) => {
     // a little reverse automod
     if (await automod.automod(msg, client)) return;
 
+    // now goes leveling
+    addExperiencePoints(msg);
+
     // let's do something awesome
     if (!msg.author.bot && (msg.content.includes('cat') || msg.content.includes('kot'))) {
         msg.reply(await getGIF('cat'));
@@ -80,7 +85,7 @@ client.on('messageCreate', async (msg) => {
         msg.reply(await getGIF('dog'));
     }
 
-    // let's do commands
+    // commands logic [ugly code warn]
     if (!msg.content.startsWith(cfg.general.prefix)) return;
     const args = msg.content.slice(cfg.general.prefix.length).trim().split(/\s+/);
     const command = args.shift();

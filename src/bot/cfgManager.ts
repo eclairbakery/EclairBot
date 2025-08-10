@@ -11,6 +11,12 @@ export interface Config {
     general: {
         /* General configuration for the bot */
         prefix: string;
+        /* Experience configuration */
+        leveling: {
+            xp_per_message: number;
+            level_divider: number;
+            excludedChannels: string[]
+        }
     };
     mod: {
         /* Configuration for moderation commands */
@@ -73,44 +79,6 @@ export interface Config {
             };
         };
     };
-    logs: {
-        /* Configuration for logging */
-        enabled: boolean;
-        /* Channel ID where logs will be sent */
-        channelId: string;
-
-        /* Array of channel IDs to ignore for logging */
-        ignoredChannels: Snowflake[];
-        /* Array of role IDs to ignore for logging */
-        ignoredRoles: Snowflake[];
-        /* Array of user IDs to ignore for logging */
-        ignoredUsers: Snowflake[];
-    };
-
-    /* Economy configuration */
-    economy: {
-        /* Configuration for economy commands */
-        commands: {
-            ballance: {
-                /* Whether the balance command is enabled */
-                enabled: boolean;
-                /* Array of command aliases */
-                aliases: string[];
-
-                /* Array of role IDs that can execute the command; everyone if null */
-                allowedRoles: Snowflake[] | null;
-                /* Array of user IDs that can execute the command; everyone if null */
-                allowedUsers: Snowflake[] | null;
-            };
-            /* TODO */
-        };
-
-        /* Whether the economy system is enabled */
-        enabled: boolean;
-
-        /* On witch channels economy commands are allowed. All channels if null */
-        allowedChannels: Snowflake[] | null;
-    };
 }
 
 const defaultConfig: Config = {
@@ -118,6 +86,12 @@ const defaultConfig: Config = {
 
     general: {
         prefix: '!',
+        leveling: {
+            // leave it like it was in startIT
+            xp_per_message: 8,
+            level_divider: 100,
+            excludedChannels: []
+        }
     },
 
     mod: {
@@ -153,28 +127,7 @@ const defaultConfig: Config = {
                 minPoints: 1
             },
         },
-    },
-
-    logs: {
-        enabled: false,
-        channelId: '',
-        ignoredChannels: [],
-        ignoredRoles: [],
-        ignoredUsers: [],
-    },
-
-    economy: {
-        commands: {
-            ballance: {
-                enabled: true,
-                aliases: ['balance', 'bal'],
-                allowedRoles: [],
-                allowedUsers: [],
-            },
-        },
-        enabled: false,
-        allowedChannels: [],
-    },
+    }
 };
 
 function mergeConfigs(userCfg: Partial<Config>, defaultCfg: Config = defaultConfig): Config {
