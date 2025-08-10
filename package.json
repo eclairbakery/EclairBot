@@ -30,13 +30,11 @@
         "prettier": "^3.6.2",
         "ts-node": "^10.9.2",
         "tsconfig-paths": "^4.2.0",
-        "ttypescript": "^1.5.15",
         "typescript": "^5.9.2"
     },
     "dependencies": {
         "dotenv": "^17.2.1",
         "sqlite3": "^5.1.7",
-        "toml": "^3.0.0",
-        "typia": "^9.7.0"
+        "toml": "^3.0.0"
     }
 }

@@ -1,5 +1,5 @@
-import { SendableChannel } from 'defs';
-import { PredefinedColors, Color } from 'util/color';
+import { PredefinedColors, Color } from '../util/color';
+import { SendableChannel } from '../defs';
 
 import * as dsc from 'discord.js';
 

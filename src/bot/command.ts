@@ -20,6 +20,8 @@ export interface Command {
     /* Array of user IDs that can execute the command. Everyone if null */
     allowedUsers: null | string[];
 
+    category: string
+
     /* Function that executes the command */
-    execute: (msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, args: string[]) => void;
+    execute: (msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, args: string[], commands: Command[]) => void;
 }

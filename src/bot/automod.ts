@@ -58,6 +58,8 @@ export async function automod(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boo
             deleteTargetMessage: false,
         },
     ];
+    let actionedBefore = false;
+    let deletedMsg = false;
     for (const automodRule of automodRules) {
         // there is a foreach method, but it's objectivelly worse in this case
         let isActivated = false;
@@ -72,15 +74,19 @@ export async function automod(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boo
                 if (msg.content.trim() === automodRule.activationKeyword) isActivated = true;
         }
         if (isActivated) {
-            channel.send(automodRule.response);
+            if (actionedBefore == false) channel.send(automodRule.response);
             if (automodRule.deleteTargetMessage) {
                 if (msg.deletable) {
-                    await msg.delete();
+                    if (actionedBefore == false) {
+                        await msg.delete();
+                        deletedMsg = true;
+                    }
                 } else {
                     log.replyError(msg, 'Eklerka dawaj permisje!', 'Albo zrobimy kolejny buncik! Bunt maszynek! Konpopoz dobrze zrobił.');
                 }
             }
-            break;
+            actionedBefore = true;
         }
     }
+    return deletedMsg;
 }

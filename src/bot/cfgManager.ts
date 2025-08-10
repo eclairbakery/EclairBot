@@ -22,7 +22,7 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command */
-                allowedRoles: Snowflake[];
+                allowedRoles: Snowflake[] | null;
                 /* Array of user IDs that can execute the command; everyone if null */
                 allowedUsers: Snowflake[] | null;
                 /* Whether a reason is required for the ban */
@@ -35,7 +35,7 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command */
-                allowedRoles: Snowflake[];
+                allowedRoles: Snowflake[] | null;
                 /* Array of user IDs that can execute the command; everyone if null */
                 allowedUsers: Snowflake[] | null;
                 /* Whether a reason is required for the kick */
@@ -48,7 +48,7 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command */
-                allowedRoles: Snowflake[];
+                allowedRoles: Snowflake[] | null;
                 /* Array of user IDs that can execute the command; everyone if null */
                 allowedUsers: Snowflake[] | null;
                 /* Whether a reason is required for the mute */
@@ -66,6 +66,10 @@ export interface Config {
                 allowedUsers: Snowflake[] | null;
                 /* Whether a reason is required for the warn */
                 reasonRequired: boolean;
+                /* Maximum points that can be given for a warn */
+                maxPoints: number;
+                /* Minimum points that can be given for a warn */
+                minPoints: number;
             };
         };
     };
@@ -94,7 +98,7 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command; everyone if null */
-                allowedRoles: Snowflake[];
+                allowedRoles: Snowflake[] | null;
                 /* Array of user IDs that can execute the command; everyone if null */
                 allowedUsers: Snowflake[] | null;
             };
@@ -121,30 +125,32 @@ const defaultConfig: Config = {
             ban: {
                 enabled: true,
                 aliases: ['ban'],
-                allowedRoles: [],
+                allowedRoles: ['1403684128485806182'],
                 allowedUsers: [],
-                reasonRequired: true,
+                reasonRequired: false,
             },
             kick: {
                 enabled: true,
                 aliases: ['kick'],
-                allowedRoles: [],
+                allowedRoles: ['1403684128485806182'],
                 allowedUsers: [],
-                reasonRequired: true,
+                reasonRequired: false,
             },
             mute: {
                 enabled: true,
                 aliases: ['mute'],
-                allowedRoles: [],
+                allowedRoles: ['1403684128485806182'],
                 allowedUsers: [],
-                reasonRequired: true,
+                reasonRequired: false,
             },
             warn: {
                 enabled: true,
                 aliases: ['warn'],
-                allowedRoles: [],
+                allowedRoles: ['1403684128485806182'],
                 allowedUsers: [],
-                reasonRequired: true,
+                reasonRequired: false,
+                maxPoints: 30,
+                minPoints: 1
             },
         },
     },

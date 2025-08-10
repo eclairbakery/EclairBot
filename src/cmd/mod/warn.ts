@@ -1,10 +1,13 @@
-import { Command } from 'bot/command';
-import { cfg } from 'bot/cfg'
-import { db, sqlite } from 'bot/db';
+import clamp from '../../util/clamp';
 
-import * as log from 'util/log';
-import * as cfgManager from 'bot/cfgManager';
-import * as automod from 'bot/automod';
+import { Command } from '../../bot/command';
+import { PredefinedColors } from '../../util/color';
+import { cfg } from '../../bot/cfg'
+import { db, sqlite } from '../../bot/db';
+
+import * as log from '../../util/log';
+import * as cfgManager from '../../bot/cfgManager';
+import * as automod from '../../bot/automod';
 
 import * as dsc from 'discord.js';
 
@@ -13,8 +16,12 @@ const cmdCfg = cfg.mod.commands.warn;
 export const warnCmd: Command = {
     name: 'warn',
     desc: 'Daj komuś warna, by go onieśmielić, uciszyć, zamknąć mu morde i nadużyć władzy. Żart, ale nie nadużywaj bo to się źle skończy... Nie wiesz z czym zadzierasz przybyszu!',
+    category: 'moderacyjne rzeczy',
     expectedArgs: [
         { name: 'user',   desc: 'No ten, tu podaj użytkownika którego chcesz zwarnować' },
+        { name: 'points', desc:
+            `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cmdCfg.maxPoints}`
+        },
         { name: 'reason', desc:
             cmdCfg.reasonRequired ? 'Poprostu powód warna' : 'Poprostu powód warna. Możesz go pominąć ale nie polecam',
         }
@@ -28,52 +35,44 @@ export const warnCmd: Command = {
         let targetUser: dsc.User | null = null;
         let points = 1;
         let reason = '';
+        let reasonArgs = [...args];
 
-        if (msg.reference?.messageId) {
-            const repliedMsg = await msg.channel.messages.fetch(msg.reference.messageId).catch(() => null);
-            if (repliedMsg) {
-                targetUser = repliedMsg.author;
-            }
-            // in reply mode, args are (points) <reason>
-            if (args.length > 0 && /^\d+$/.test(args[0])) {
-                points = parseInt(args[0], 10);
-                reason = args.slice(1).join(' ').trim();
-            } else {
-                reason = args.join(' ').trim();
-            }
-        } else if (args.length > 0) {
+        if (args.length > 0) {
             const userMention = args[0].match(/^<@!?(\d+)>$/);
+            const userIdMatch = /^\d+$/.test(args[0]);
             let userId: string | null = null;
-            let reasonArgs: string[];
 
             if (userMention) {
                 userId = userMention[1];
-                reasonArgs = args.slice(1);
-            } else if (/^\d+$/.test(args[0])) {
+            } else if (userIdMatch) {
                 userId = args[0];
-                reasonArgs = args.slice(1);
-            } else {
-                // if the first argument is neither a mention nor an ID, we can't identify a user.
-                // the `who == null` check below will catch this.
-                reasonArgs = [...args];
             }
 
             if (userId) {
                 targetUser = await msg.client.users.fetch(userId).catch(() => null);
+                if (targetUser) {
+                    reasonArgs = args.slice(1);
+                }
             }
+        }
 
-            // After getting user, the rest is (points) [reason...]
-            if (reasonArgs.length > 0 && /^\d+$/.test(reasonArgs[0])) {
-                points = parseInt(reasonArgs[0], 10);
-                reason = reasonArgs.slice(1).join(' ').trim();
-            } else {
-                reason = reasonArgs.join(' ').trim();
+        if (targetUser == null && msg.reference?.messageId) {
+            const repliedMsg = await msg.channel.messages.fetch(msg.reference.messageId).catch(() => null);
+            if (repliedMsg) {
+                targetUser = repliedMsg.author;
             }
         }
 
         if (targetUser == null) {
             log.replyError(msg, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyśle komu ty chcesz dać warna? Uzycie: odpowiedzi na wiadomość lub !warn <@user> (punkty:1) <powód>');
             return;
+        }
+
+        if (reasonArgs.length > 0 && /^\d+$/.test(reasonArgs[0])) {
+            points = parseInt(reasonArgs[0], 10);
+            reason = reasonArgs.slice(1).join(' ').trim();
+        } else {
+            reason = reasonArgs.join(' ').trim();
         }
 
         if (reason == "" || reason == undefined) {
@@ -85,11 +84,14 @@ export const warnCmd: Command = {
             }
         }
 
-        if (points < 1) points = 1;
-        if (points > 100) points = 100;
+        if (targetUser.id == msg.author.id) {
+            log.replyError(msg, 'Bro co ty odpierdalasz', 'Co ty chcesz sobie dać warna :sob:? Co jest z tobą nie tak? Potrzebujesz pomocy?');
+            return;
+        }
+
+        points = clamp(cmdCfg.minPoints, points, cmdCfg.maxPoints);
 
         db.run('INSERT INTO warns VALUES (NULL, ?, ?, ?)', [targetUser.id, reason, points]);
-        let x: dsc.APIEmbedField;
         msg.reply({
             embeds: [
                 new dsc.EmbedBuilder()
@@ -109,12 +111,22 @@ export const warnCmd: Command = {
                             inline: true,
                         },
                         {
-                            name: 'Powód',
-                            value: reason,
+                            name: '',
+                            value: '',
                             inline: false,
                         },
+                        {
+                            name: 'Powód',
+                            value: reason,
+                            inline: true,
+                        },
+                        {
+                            name: 'Punkty',
+                            value: points.toString(),
+                            inline: true,
+                        }
                     )
-                    .setColor(0x00ff00),
+                    .setColor(PredefinedColors.Orange),
             ],
         });
     }
