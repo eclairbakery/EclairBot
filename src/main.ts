@@ -29,7 +29,7 @@ const commands: Command[] = [
     helpCmd, manCmd, siemaCmd,
     // moderation
     warnCmd, kickCmd, banCmd,
-    warnlistCmd, xpCmd
+    warnlistCmd, xpCmd,
     // economy
     workCmd, slutCmd, crimeCmd
 ]
