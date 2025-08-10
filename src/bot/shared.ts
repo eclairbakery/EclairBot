@@ -1,4 +1,4 @@
-import { db } from '../../bot/db';
+import { db } from './db';
 
 const dbGet = (sql: string, params: any[] = []): Promise<any> =>
     new Promise((resolve, reject) => {
