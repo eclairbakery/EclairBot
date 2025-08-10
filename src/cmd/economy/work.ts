@@ -1,28 +1,12 @@
 import { Command } from '../../bot/command';
-import { db } from '../../bot/db';
 
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color';
+import { dbGet, dbRun, getRandomInt } from './shared';
 
 const COOLDOWN_MS = 30 * 1000;
 const WORK_AMOUNT_MIN = 50;
 const WORK_AMOUNT_MAX = 300;
-
-const dbGet = (sql: string, params: any[] = []): Promise<any> =>
-    new Promise((resolve, reject) => {
-        db.get(sql, params, (err, row) => {
-            if (err) reject(err);
-            else resolve(row);
-        });
-    });
-
-const dbRun = (sql: string, params: any[] = []): Promise<{ lastID: number, changes: number }> =>
-    new Promise((resolve, reject) => {
-        db.run(sql, params, function (this: any, err: Error | null) {
-            if (err) reject(err);
-            else resolve({ lastID: this.lastID, changes: this.changes });
-        });
-    });
 
 async function canWork(userId: string): Promise<{ can: boolean; wait?: number }> {
     const row = await dbGet('SELECT last_worked FROM economy WHERE user_id = ?', [userId]);
@@ -36,12 +20,6 @@ async function canWork(userId: string): Promise<{ can: boolean; wait?: number }>
     }
 
     return { can: true };
-}
-
-function getRandomInt(min: number, max: number) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 async function tryWork(userId: string, amount: number): Promise<{ ok: boolean; wait?: number }> {
