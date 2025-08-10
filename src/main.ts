@@ -1,6 +1,7 @@
 import { Command } from './bot/command';
 import { cfg } from './bot/cfg';
 import { db, sqlite } from './bot/db';
+import { PredefinedColors } from './util/color';
 
 import * as log from './util/log';
 import * as cfgManager from './bot/cfgManager';
@@ -103,6 +104,23 @@ client.on('messageCreate', async (msg) => {
     } else {
         return cmdObject.execute(msg, args, commands);
     }
+});
+
+client.on('guildMemberAdd', async (member) => {
+    if (!cfg.general.welcomer.enabled) return;
+    const channel = await client.channels.fetch(cfg.general.welcomer.channelId);
+    if (!channel.isSendable()) return;
+    const msg = await channel.send({
+        content: `<@${member.id}>`,
+        embeds: [
+            new dsc.EmbedBuilder()
+                .setTitle(`Właśnie Eklerka upiekł ${member.user.username}!`)
+                .setColor(PredefinedColors.DarkButNotBlack)
+                .setDescription(`Witaj na naszym serwerze, drogi <@${member.id}>. Jak już zdołałeś się domyślić, no to Eklerka... piecze pieczywo. Robi też odcinki na swojej żonie (komputerze). Właśnie Cię upiekł, i zostałeś jednym z pieczyw... tych na sprzedaż. Sprzedaż nastąpi wtedy kiedy wyjdziesz z serwera. No to tyle z lore\'u na razie, resztę zobaczysz jak chwilę popiszesz...`)
+                .setThumbnail(member.displayAvatarURL({ size: 128 }))
+        ]
+    });
+    msg.edit('‎');
 });
 
 client.login(process.env.TOKEN);

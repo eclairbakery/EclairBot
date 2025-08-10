@@ -16,6 +16,11 @@ export interface Config {
             xp_per_message: number;
             level_divider: number;
             excludedChannels: string[]
+        },
+        /* The welcomer configuration */
+        welcomer: {
+            enabled: boolean;
+            channelId: string;
         }
     };
     mod: {
@@ -91,6 +96,10 @@ const defaultConfig: Config = {
             xp_per_message: 8,
             level_divider: 100,
             excludedChannels: []
+        },
+        welcomer: {
+            channelId: "1403639419025752188",
+            enabled: true
         }
     },
 
