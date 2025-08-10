@@ -5,8 +5,8 @@ import { PredefinedColors } from '../../util/color';
 import { dbGet, dbRun, getRandomInt } from './shared';
 
 const COOLDOWN_MS = 15 * 60 * 1000;
-const WORK_AMOUNT_MIN = 500;
-const WORK_AMOUNT_MAX = 1600;
+const WORK_AMOUNT_MIN = 2500;
+const WORK_AMOUNT_MAX = 8000;
 const PERCENTAGE = 0.4;
 
 async function canSlut(userId: string): Promise<{ can: boolean; wait?: number }> {
@@ -42,9 +42,9 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
     return { ok: true };
 }
 
-export const slutCmd: Command = {
-    name: 'slut',
-    desc: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
+export const crimeCmd: Command = {
+    name: 'crime',
+    desc: 'Ohohohoho! Mamy na serwerze przestępców. Złapać ich! Schwytać i wziąć do niewoli. A tak na poważnie to metoda zarobku, gdzie możesz wszystko przejabć jak w kasynie, albo wygrać strasznie dużo kasiuryyyy!',
     category: 'ekonomia',
     expectedArgs: [],
 
@@ -64,7 +64,7 @@ export const slutCmd: Command = {
                 const embed = new dsc.EmbedBuilder()
                     .setColor(PredefinedColors.Yellow)
                     .setTitle('Chwila przerwy!')
-                    .setDescription(`Ktoś tam Ci każe czekać **${waitSeconds}** sekund zanim znowu popr*cujesz, żebyś nie naspamił komendami w chuja hajsu...`)
+                    .setDescription(`Ktoś tam Ci każe czekać **${waitSeconds}** sekund zanim znowu będziesz kryminalistą, żebyś nie naspamił komendami w chuja hajsu...`)
 
                 return msg.reply({ embeds: [embed] });
             }
