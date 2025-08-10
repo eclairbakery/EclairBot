@@ -1,3 +1,14 @@
+// BEGIN DISABLE  THE ENTIRE THING BY ONE ERROR
+process.on('uncaughtException', (e) => {
+    console.error(e);
+});
+process.on('SIGSEGV', () => {
+    // there is no other fucking way to make
+    // this happen rather than my broken cpu/motherboard
+    console.log('komputer gorcia detected');
+})
+// END DISABLE  THE ENTIRE THING BY ONE ERROR
+
 import { Command } from './bot/command';
 import { cfg } from './bot/cfg';
 import { db, sqlite } from './bot/db';
@@ -25,6 +36,7 @@ import { crimeCmd } from './cmd/economy/crime';
 import { addExperiencePoints } from './bot/level';
 import { xpCmd } from './cmd/leveling/xp';
 import { lvlCmd } from './cmd/leveling/lvl';
+import { toplvlCmd } from './cmd/leveling/toplvl';
 
 const commands: Command[] = [
     // general
@@ -35,7 +47,7 @@ const commands: Command[] = [
     // economy
     workCmd, slutCmd, crimeCmd,
     // leveling
-    lvlCmd, xpCmd,
+    lvlCmd, xpCmd, toplvlCmd
 ]
 
 const client = new dsc.Client({
