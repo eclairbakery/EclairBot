@@ -15,7 +15,7 @@ async function canSlut(userId: string): Promise<{ can: boolean; wait?: number }>
 
     if (!row) return { can: true };
 
-    const timeSinceLastWork = now - row.last_worked;
+    const timeSinceLastWork = now - row.last_slutted;
     if (timeSinceLastWork < COOLDOWN_MS) {
         return { can: false, wait: COOLDOWN_MS - timeSinceLastWork };
     }
