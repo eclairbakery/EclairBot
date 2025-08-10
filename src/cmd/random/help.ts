@@ -60,7 +60,8 @@ export const helpCmd: Command = {
 
         const categoryColors: {[key: string]: PredefinedColors} = {
             'ogólne': PredefinedColors.Brown,
-            'moderacyjne rzeczy': PredefinedColors.Orange
+            'moderacyjne rzeczy': PredefinedColors.Orange,
+            'ekonomia': PredefinedColors.Yellow
         };
 
         for (const [category, fields] of Object.entries(commandsByCategory)) {

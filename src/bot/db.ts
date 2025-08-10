@@ -8,3 +8,6 @@ db.exec(
 db.exec(
     'CREATE TABLE IF NOT EXISTS economy (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT NOT NULL UNIQUE, money INTEGER NOT NULL, last_worked INTEGER NOT NULL, last_robbed INTEGER NOT NULL, last_slutted INTEGER NOT NULL, last_crimed INTEGER NOT NULL);'
 );
+db.exec(
+    'CREATE TABLE IF NOT EXISTS my_table (user_id TEXT, id INTEGER, xp INTEGER);'
+);
