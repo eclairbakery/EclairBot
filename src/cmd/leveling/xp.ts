@@ -12,7 +12,7 @@ import { PredefinedColors } from '../../util/color';
 export const xpCmd: Command = {
     name: 'xp',
     desc: 'Dodaj komuś levela... Jak nadużyjesz, no to, chyba nie wiesz z jaką siłą igrasz! Pospólstwo jak pomyśli, że sobie za darmoszkę doda poziomów, no to nie! Do widzenia.',
-    category: 'moderacyjne rzeczy',
+    category: 'poziomy',
     expectedArgs: [
         {
             name: 'user',
@@ -32,17 +32,17 @@ export const xpCmd: Command = {
         }
     ],
 
-    aliases: ['warnlista'],
-    allowedRoles: null,
+    aliases: [],
+    allowedRoles: ['1403684128485806182'],
     allowedUsers: [],
 
     execute(msg, args) {
         let to_who = msg.mentions.users.first();
         let action = args[1];
         let amount: number = (args[2] as any as number);
-        let should_multiply_by_100: boolean = args[3] ? args[3] === 'levels' : true;
+        let should_leveler: boolean = args[3] ? args[3] === 'levels' : true;
 
-        if (!args[0].startsWith('<@') || args[0].startsWith('<@&')) {
+        if (!args[0] || !args[0].startsWith('<@') || args[0].startsWith('<@&')) {
             return log.replyError(msg, 'Argument numer jeden niepoprawny!', 'Jakby to ująć, podaj jako pierwszy argument usera...');
         }
         if (action !== 'delete' && action !== 'set' && action !== 'add') {
@@ -53,29 +53,31 @@ export const xpCmd: Command = {
         } else {
             amount = parseInt((amount as any as string));
         }
-        if (should_multiply_by_100) amount = amount * 100;
+        if (should_leveler) amount = amount * cfg.general.leveling.level_divider;
 
         if (action === 'add') {
             db.run(
-                `INSERT INTO users (user_id, xp)
+                `INSERT INTO leveling (user_id, xp)
                 VALUES (?, ?)
                 ON CONFLICT(user_id) DO UPDATE SET xp = xp + excluded.xp`,
                 [to_who.id, amount]
             );
         } else if (action === 'set') {
             db.run(
-                `INSERT INTO users (user_id, xp)
+                `INSERT INTO leveling (user_id, xp)
                 VALUES (?, ?)
                 ON CONFLICT(user_id) DO UPDATE SET xp = excluded.xp`,
                 [to_who.id, amount]
             );
         } else if (action === 'delete') {
             db.run(
-                `UPDATE users
+                `UPDATE leveling
                 SET xp = CASE WHEN xp >= ? THEN xp - ? ELSE 0 END
                 WHERE user_id = ?`,
                 [amount, amount, to_who.id]
             );
         }
+
+        log.replySuccess(msg, 'Udało się!', "Wykonałem akcję, krótko mówiąc...")
     }
 }

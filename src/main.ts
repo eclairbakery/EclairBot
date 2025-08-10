@@ -22,16 +22,19 @@ import { workCmd } from './cmd/economy/work';
 import { slutCmd } from './cmd/economy/slut';
 import { crimeCmd } from './cmd/economy/crime';
 import { addExperiencePoints } from './bot/level';
-import { xpCmd } from './cmd/mod/xp';
+import { xpCmd } from './cmd/leveling/xp';
+import { lvlCmd } from './cmd/leveling/lvl';
 
 const commands: Command[] = [
     // general
     helpCmd, manCmd, siemaCmd,
     // moderation
     warnCmd, kickCmd, banCmd,
-    warnlistCmd, xpCmd,
+    warnlistCmd,
     // economy
-    workCmd, slutCmd, crimeCmd
+    workCmd, slutCmd, crimeCmd,
+    // leveling
+    lvlCmd, xpCmd,
 ]
 
 const client = new dsc.Client({

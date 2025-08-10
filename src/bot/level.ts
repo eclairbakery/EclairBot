@@ -14,7 +14,7 @@ export function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Messa
 
     // let's insert this data
     db.run(
-        `INSERT INTO users (user_id, xp) VALUES (?, ?)
+        `INSERT INTO leveling (user_id, xp) VALUES (?, ?)
          ON CONFLICT(user_id) DO UPDATE SET xp = xp + excluded.xp`,
         [msg.author.id, amount]
     );
