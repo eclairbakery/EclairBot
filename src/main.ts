@@ -22,13 +22,14 @@ import { workCmd } from './cmd/economy/work';
 import { slutCmd } from './cmd/economy/slut';
 import { crimeCmd } from './cmd/economy/crime';
 import { addExperiencePoints } from './bot/level';
+import { xpCmd } from './cmd/mod/xp';
 
 const commands: Command[] = [
     // general
     helpCmd, manCmd, siemaCmd,
     // moderation
     warnCmd, kickCmd, banCmd,
-    warnlistCmd,
+    warnlistCmd, xpCmd
     // economy
     workCmd, slutCmd, crimeCmd
 ]

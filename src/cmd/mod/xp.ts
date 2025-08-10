@@ -9,7 +9,7 @@ import * as automod from '../../bot/automod';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color';
 
-export const warnlistCmd: Command = {
+export const xpCmd: Command = {
     name: 'xp',
     desc: 'Dodaj komuś levela... Jak nadużyjesz, no to, chyba nie wiesz z jaką siłą igrasz! Pospólstwo jak pomyśli, że sobie za darmoszkę doda poziomów, no to nie! Do widzenia.',
     category: 'moderacyjne rzeczy',
@@ -55,10 +55,27 @@ export const warnlistCmd: Command = {
         }
         if (should_multiply_by_100) amount = amount * 100;
 
-        db.run(
-            `INSERT INTO users (user_id, xp) VALUES (?, ?)
-            ON CONFLICT(user_id) DO UPDATE SET xp = xp + excluded.xp`,
-            [to_who.id, amount]
-        );
+        if (action === 'add') {
+            db.run(
+                `INSERT INTO users (user_id, xp)
+                VALUES (?, ?)
+                ON CONFLICT(user_id) DO UPDATE SET xp = xp + excluded.xp`,
+                [to_who.id, amount]
+            );
+        } else if (action === 'set') {
+            db.run(
+                `INSERT INTO users (user_id, xp)
+                VALUES (?, ?)
+                ON CONFLICT(user_id) DO UPDATE SET xp = excluded.xp`,
+                [to_who.id, amount]
+            );
+        } else if (action === 'delete') {
+            db.run(
+                `UPDATE users
+                SET xp = CASE WHEN xp >= ? THEN xp - ? ELSE 0 END
+                WHERE user_id = ?`,
+                [amount, amount, to_who.id]
+            );
+        }
     }
 }
