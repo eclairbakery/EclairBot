@@ -27,7 +27,7 @@ export const banCmd: Command = {
     allowedUsers: cmdCfg.allowedUsers,
 
     async execute(msg, args) {
-        let targetUser: dsc.User | null = null;
+        let targetUser: dsc.GuildMember | null = null;
         let reason = '';
 
         if (msg.reference?.messageId) {
@@ -52,7 +52,7 @@ export const banCmd: Command = {
             }
 
             if (userId) {
-                targetUser = await msg.client.users.fetch(userId).catch(() => null);
+                targetUser = await msg.guild.members.fetch(userId).catch(() => null);
             }
 
             reason = reasonArgs.join(' ').trim();
@@ -73,7 +73,7 @@ export const banCmd: Command = {
         }
 
         try {
-            await msg.member.ban();
+            await targetUser.ban();
         } catch {
             return log.replyError(msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że banujesz admina...');
         }
@@ -81,7 +81,7 @@ export const banCmd: Command = {
         msg.reply({
             embeds: [
                 new dsc.EmbedBuilder()
-                    .setTitle(`📢 ${targetUser.username} został zbanowany!`)
+                    .setTitle(`📢 ${targetUser.user.username} został zbanowany!`)
                     .setDescription(
                         `Multikonto? Już po nim... Wkurzający chłop? Uciszony na zawsze... Ktokolwiek? Nie może wbić, chyba że zrobi alta...`,
                     )

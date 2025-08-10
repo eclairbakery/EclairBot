@@ -27,7 +27,7 @@ export const kickCmd: Command = {
     allowedUsers: cmdCfg.allowedUsers,
 
     async execute(msg, args) {
-        let targetUser: dsc.User | null = null;
+        let targetUser: dsc.GuildMember | null = null;
         let reason = '';
 
         if (msg.reference?.messageId) {
@@ -52,7 +52,7 @@ export const kickCmd: Command = {
             }
 
             if (userId) {
-                targetUser = await msg.client.users.fetch(userId).catch(() => null);
+                targetUser = await msg.guild.members.fetch(userId).catch(() => null);
             }
 
             reason = reasonArgs.join(' ').trim();
@@ -73,15 +73,16 @@ export const kickCmd: Command = {
         }
 
         try {
-            await msg.member.kick();
-        } catch {
+            await targetUser.kick();
+        } catch (e) {
+            console.log(e);
             return log.replyError(msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że kickujesz admina...');
         }
 
         msg.reply({
             embeds: [
                 new dsc.EmbedBuilder()
-                    .setTitle(`📢 ${targetUser.username} został wywalony!`)
+                    .setTitle(`📢 ${targetUser.user.username} został wywalony!`)
                     .setDescription(
                         `Ukróciłem jego zagrania! Miejmy nadzieję, że nie wbije znowu...`,
                     )
