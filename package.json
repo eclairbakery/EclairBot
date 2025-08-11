@@ -19,7 +19,7 @@
     "main": "dist/main",
     "scripts": {
         "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/main.ts",
-        "build": "node build-pella.js",
+        "build": "node build-pella.cjs",
         "start": "tsc && node dist/main.js"
     },
     "devDependencies": {
