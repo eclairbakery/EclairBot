@@ -59,8 +59,8 @@ export const toplvlCmd: Command = {
                 const userLvlRole = lvlRoles.filter(id => member.roles.cache.has(id)).at(-1);
 
                 fields.push({
-                    name: '‎',
-                    value: `**${i} » <@${member.id}>**\n${userLvlRole ? `<@&${userLvlRole}>` : 'idk'}\nLvl: ${calculateLevel(row.xp, cfg.general.leveling.level_divider)}\nXP: ${row.xp}${i % 2 == 1 ? '‎' : ''}`,
+                    name: `${i} » ${member.user.username}`,
+                    value: `${userLvlRole ? `<@&${userLvlRole}>` : 'idk'}\nLvl: ${calculateLevel(row.xp, cfg.general.leveling.level_divider)}\nXP: ${row.xp}${i % 2 == 1 ? '‎' : ''}`,
                     inline: true
                 });
             }
