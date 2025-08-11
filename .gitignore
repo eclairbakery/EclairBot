@@ -1,7 +1,8 @@
 .vscode
-dist
+*dist
 node_modules
 package-lock.json
 .env
 *.db
 **/.nvim
+bundle.js*

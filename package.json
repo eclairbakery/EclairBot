@@ -15,18 +15,18 @@
     },
     "license": "GPL-3.0-or-later",
     "author": "EclairBakery contributors",
-    "type": "commonjs",
+    "type": "module",
     "main": "dist/main",
     "scripts": {
         "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/main.ts",
-        "build": "tsc",
-        "start": "npm run build && node dist/main.js"
+        "build": "node build-pella.js",
+        "start": "tsc && node dist/main.js"
     },
     "devDependencies": {
         "@types/node": "^24.2.1",
         "@types/ws": "^8.18.1",
         "discord.js": "^14.21.0",
-        "nodemon": "^3.1.10",
+        "esbuild": "^0.25.8",
         "prettier": "^3.6.2",
         "ts-node": "^10.9.2",
         "tsconfig-paths": "^4.2.0",
