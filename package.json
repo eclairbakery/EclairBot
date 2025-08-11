@@ -15,7 +15,7 @@
     },
     "license": "GPL-3.0-or-later",
     "author": "EclairBakery contributors",
-    "type": "module",
+    "type": "commonjs",
     "main": "dist/main",
     "scripts": {
         "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/main.ts",
