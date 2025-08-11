@@ -1,4 +1,4 @@
-import { db } from './db';
+import { db } from './db.js';
 
 const dbGet = (sql: string, params: any[] = []): Promise<any> =>
     new Promise((resolve, reject) => {

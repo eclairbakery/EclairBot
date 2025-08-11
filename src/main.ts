@@ -9,34 +9,34 @@ process.on('SIGSEGV', () => {
 })
 // END DISABLE  THE ENTIRE THING BY ONE ERROR
 
-import { Command } from './bot/command';
-import { cfg } from './bot/cfg';
-import { db, sqlite } from './bot/db';
-import { PredefinedColors } from './util/color';
+import { Command } from './bot/command.js';
+import { cfg } from './bot/cfg.js';
+import { db, sqlite } from './bot/db.js';
+import { PredefinedColors } from './util/color.js';
 
-import * as log from './util/log';
-import * as cfgManager from './bot/cfgManager';
-import * as automod from './bot/automod';
+import * as log from './util/log.js';
+import * as cfgManager from './bot/cfgManager.js';
+import * as automod from './bot/automod.js';
 
 import * as dotenv from 'dotenv';
 import * as dsc from 'discord.js';
 
 dotenv.config({ quiet: true });
 
-import { warnCmd } from './cmd/mod/warn';
-import { kickCmd } from './cmd/mod/kick';
-import { banCmd } from './cmd/mod/ban';
-import { helpCmd } from './cmd/random/help';
-import { manCmd } from './cmd/random/man';
-import { warnlistCmd } from './cmd/mod/warnlist';
-import { siemaCmd } from './cmd/random/siema';
-import { workCmd } from './cmd/economy/work';
-import { slutCmd } from './cmd/economy/slut';
-import { crimeCmd } from './cmd/economy/crime';
-import { addExperiencePoints } from './bot/level';
-import { xpCmd } from './cmd/leveling/xp';
-import { lvlCmd } from './cmd/leveling/lvl';
-import { toplvlCmd } from './cmd/leveling/toplvl';
+import { warnCmd } from './cmd/mod/warn.js';
+import { kickCmd } from './cmd/mod/kick.js';
+import { banCmd } from './cmd/mod/ban.js';
+import { helpCmd } from './cmd/random/help.js';
+import { manCmd } from './cmd/random/man.js';
+import { warnlistCmd } from './cmd/mod/warnlist.js';
+import { siemaCmd } from './cmd/random/siema.js';
+import { workCmd } from './cmd/economy/work.js';
+import { slutCmd } from './cmd/economy/slut.js';
+import { crimeCmd } from './cmd/economy/crime.js';
+import { addExperiencePoints } from './bot/level.js';
+import { xpCmd } from './cmd/leveling/xp.js';
+import { lvlCmd } from './cmd/leveling/lvl.js';
+import { toplvlCmd } from './cmd/leveling/toplvl.js';
 
 const commands: Command[] = [
     // general

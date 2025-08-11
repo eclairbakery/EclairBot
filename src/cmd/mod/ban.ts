@@ -1,13 +1,13 @@
-import { Command } from '../../bot/command';
+import { Command } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg'
-import { db, sqlite } from '../../bot/db';
+import { db, sqlite } from '../../bot/db.js';
 
-import * as log from '../../util/log';
-import * as cfgManager from '../../bot/cfgManager';
-import * as automod from '../../bot/automod';
+import * as log from '../../util/log.js';
+import * as cfgManager from '../../bot/cfgManager.js';
+import * as automod from '../../bot/automod.js';
 
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color';
+import { PredefinedColors } from '../../util/color.js';
 
 const cmdCfg = cfg.mod.commands.ban;
 

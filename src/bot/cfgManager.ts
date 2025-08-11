@@ -1,5 +1,5 @@
-import { Snowflake } from '../defs';
-import { deepMerge } from '../util/objects';
+import { Snowflake } from '../defs.js';
+import { deepMerge } from '../util/objects.js';
 
 import * as toml from 'toml';
 import * as fs from 'fs';

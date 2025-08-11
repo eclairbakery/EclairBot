@@ -1,14 +1,14 @@
-import { Command } from '../../bot/command';
-import { cfg } from '../../bot/cfg';
-import { db, sqlite } from '../../bot/db';
+import { Command } from '../../bot/command.js';
+import { cfg } from '../../bot/cfg.js';
+import { db, sqlite } from '../../bot/db.js';
 
-import * as log from '../../util/log';
-import * as cfgManager from '../../bot/cfgManager';
-import * as automod from '../../bot/automod';
+import * as log from '../../util/log.js';
+import * as cfgManager from '../../bot/cfgManager.js';
+import * as automod from '../../bot/automod.js';
 
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color';
-import { likeInASentence } from '../../util/lias';
+import { PredefinedColors } from '../../util/color.js';
+import { likeInASentence } from '../../util/lias.js';
 
 export const manCmd: Command = {
     name: 'man',

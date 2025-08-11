@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
-import * as log from '../util/log';
-import { cfg } from '../bot/cfg';
-import { db } from '../bot/db';
+import * as log from '../util/log.js';
+import { cfg } from '../bot/cfg.js';
+import { db } from '../bot/db.js';
 
 export function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     // check if eligible

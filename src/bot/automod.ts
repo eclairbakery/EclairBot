@@ -1,5 +1,5 @@
 import * as dsc from 'discord.js';
-import * as log from '../util/log';
+import * as log from '../util/log.js';
 
 interface AutomodRules {
     activationType: 'contains' | 'is_equal_to' | 'starts_with' | 'ends_with';
