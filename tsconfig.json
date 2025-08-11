@@ -2,7 +2,7 @@
     "strict": true,
     "compilerOptions": {
         "outDir": "dist",
-        "module": "commonjs",
+        "module": "esnext",
         "target": "es2020",
         "lib": [
             "es2024"
