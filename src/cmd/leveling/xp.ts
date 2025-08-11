@@ -1,5 +1,5 @@
 import { Command } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg'
+import { cfg } from '../../bot/cfg.js'
 import { db, sqlite } from '../../bot/db.js';
 
 import * as log from '../../util/log.js';
