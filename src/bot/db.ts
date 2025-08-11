@@ -1,5 +1,4 @@
-import * as sqlite from 'sqlite3';
-export * as sqlite from 'sqlite3';
+import sqlite from 'sqlite3';
 
 export const db = new sqlite.Database('bot.db');
 db.exec(
@@ -11,3 +10,5 @@ db.exec(
 db.exec(
     'CREATE TABLE IF NOT EXISTS leveling (user_id TEXT UNIQUE, id INTEGER, xp INTEGER);'
 );
+
+export {sqlite};

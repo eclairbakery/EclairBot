@@ -60,7 +60,7 @@ export const toplvlCmd: Command = {
 
                 fields.push({
                     name: `${i} » ${member.user.username}`,
-                    value: `${userLvlRole ? `<@&${userLvlRole}>` : 'idk'}\nLvl: ${calculateLevel(row.xp, cfg.general.leveling.level_divider)}\nXP: ${row.xp}${i % 2 == 1 ? '‎' : ''}`,
+                    value: `${userLvlRole ? `<@&${userLvlRole}>` : 'Nowicjusz...'}\n**Lvl**: ${calculateLevel(row.xp, cfg.general.leveling.level_divider)}\n**XP**: ${row.xp}${i % 2 == 1 ? '‎' : ''}`,
                     inline: true
                 });
             }

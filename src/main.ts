@@ -37,6 +37,8 @@ import { addExperiencePoints } from './bot/level.js';
 import { xpCmd } from './cmd/leveling/xp.js';
 import { lvlCmd } from './cmd/leveling/lvl.js';
 import { toplvlCmd } from './cmd/leveling/toplvl.js';
+import { topecoCmd } from './cmd/economy/topeco.js';
+import { balCmd } from './cmd/economy/bal.js';
 
 const commands: Command[] = [
     // general
@@ -46,6 +48,7 @@ const commands: Command[] = [
     warnlistCmd,
     // economy
     workCmd, slutCmd, crimeCmd,
+    topecoCmd, balCmd,
     // leveling
     lvlCmd, xpCmd, toplvlCmd
 ]
