@@ -9,6 +9,25 @@ import * as automod from '../../bot/automod';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color';
 
+function calculateLevel(xp: number, level_divider: number): number {
+    return Math.floor(
+        (1 + Math.sqrt(1 + 8 * xp / cfg.general.leveling.level_divider)) / 2
+    );
+}
+
+let lvlRoles = [
+    "1297559525989158912",
+    "1235550102563852348",
+    "1235550105751392276",
+    "1235550109891035218",
+    "1235570092218122251",
+    "1235594078305914880",
+    "1235594081556627577",
+    "1235594083544858667",
+    "1235594085188767835",
+    "1390802440739356762"
+];
+
 export const toplvlCmd: Command = {
     name: 'toplvl',
     desc: 'Czas popatrzeć na najlepszych użytkowników serwera...',
@@ -20,7 +39,7 @@ export const toplvlCmd: Command = {
     allowedUsers: [],
 
     execute(msg, args) {
-        db.all('SELECT * FROM leveling ORDER BY xp DESC LIMIT 10', [], async (err, rows: any[]) => {
+        db.all('SELECT * FROM leveling ORDER BY xp DESC LIMIT 12', [], async (err, rows: any[]) => {
             if (err) {
                 console.error(err);
                 return log.replyError(msg, 'Błąd pobierania poziomów', 'Pytaj twórców biblioteki sqlite3...');
@@ -34,21 +53,26 @@ export const toplvlCmd: Command = {
             let i = 0;
 
             for (const row of rows) {
-                i++;
-                if (i == 25) return;
+                if (++i === 25) return;
+
+                const member = await msg.guild.members.fetch(row.user_id);
+                const userLvlRole = lvlRoles.filter(id => member.roles.cache.has(id)).at(-1);
+
                 fields.push({
-                    name: `${i}. ${(await msg.client.users.fetch(row.user_id)).username}`,
-                    value: `Poziom: ${Math.floor(row.xp / cfg.general.leveling.level_divider)}; XP: ${row.xp}${i % 2 == 1 ? '‎' : ''}`,
-                    inline: i % 2 == 1
+                    name: `${i}. ${member.user.displayName.replaceAll('*', '\\*').replaceAll('<', '\\<').replaceAll('_', '\\_')}`,
+                    value: `${userLvlRole ? `<@&${userLvlRole}>` : 'Chyba nowicjusz...'}\nLVL: ${calculateLevel(row.xp, cfg.general.leveling.level_divider)}; XP: ${row.xp}${i % 2 == 1 ? '‎' : ''}`,
+                    inline: true
                 });
             }
 
             return msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
-                        .setTitle(':loudspeaker: Topka poziomów')
+                        .setColor("#1ebfd5")
+                        .setImage("https://cdn.discordapp.com/attachments/1404396223934369844/1404397238578577491/toplvl_image.png?ex=689b0a5a&is=6899b8da&hm=eac2a0db46bfad2dd34fa1ef8dbf9b918e46913229f7b1a9c470d952982787e8&"),
+                    new dsc.EmbedBuilder()
                         .setFields(fields)
-                        .setColor(PredefinedColors.Blurple)
+                        .setColor("#1ebfd5")
                 ]
             });
         });

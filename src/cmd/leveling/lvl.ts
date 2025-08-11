@@ -10,6 +10,12 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color';
 import { dbGet } from '../../bot/shared';
 
+function calculateLevel(xp: number, level_divider: number): number {
+    return Math.floor(
+        (1 + Math.sqrt(1 + 8 * xp / cfg.general.leveling.level_divider)) / 2
+    );
+}
+
 export const lvlCmd: Command = {
     name: 'lvl',
     desc: 'Wyświetl swój level lub level wskazanego użytkownika.',
@@ -39,7 +45,7 @@ export const lvlCmd: Command = {
             const embed = new dsc.EmbedBuilder()
                 .setColor(PredefinedColors.Blue)
                 .setTitle(`📊 Poziom użytkownika`)
-                .setDescription(`**${who.tag}** ma poziom **${Math.floor(row.xp / cfg.general.leveling.level_divider)}** (XP: ${row.xp}).`)
+                .setDescription(`**${who.tag}** ma poziom **${calculateLevel(row.xp, cfg.general.leveling.level_divider)}** (XP: ${row.xp}).`)
                 .setThumbnail(who.displayAvatarURL({ size: 128 }))
 
             await msg.reply({ embeds: [embed] });

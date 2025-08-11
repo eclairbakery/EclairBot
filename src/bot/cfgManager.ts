@@ -15,7 +15,8 @@ export interface Config {
         leveling: {
             xp_per_message: number;
             level_divider: number;
-            excludedChannels: string[]
+            excludedChannels: string[];
+            canChangeXP: Snowflake[];
         },
         /* The welcomer configuration */
         welcomer: {
@@ -93,12 +94,13 @@ const defaultConfig: Config = {
         prefix: '!',
         leveling: {
             // leave it like it was in startIT
-            xp_per_message: 8,
+            xp_per_message: 4,
             level_divider: 100,
-            excludedChannels: []
+            excludedChannels: [],
+            canChangeXP: ['1280884378586845216', '1280081773019140096', '1404392144441180221']
         },
         welcomer: {
-            channelId: "1403639419025752188",
+            channelId: "1235560269871190056",
             enabled: true
         }
     },
@@ -108,28 +110,28 @@ const defaultConfig: Config = {
             ban: {
                 enabled: true,
                 aliases: ['ban'],
-                allowedRoles: ['1403684128485806182'],
+                allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096'],
                 allowedUsers: [],
                 reasonRequired: false,
             },
             kick: {
                 enabled: true,
                 aliases: ['kick'],
-                allowedRoles: ['1403684128485806182'],
+                allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096'],
                 allowedUsers: [],
                 reasonRequired: false,
             },
             mute: {
                 enabled: true,
                 aliases: ['mute'],
-                allowedRoles: ['1403684128485806182'],
+                allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096'],
                 allowedUsers: [],
                 reasonRequired: false,
             },
             warn: {
                 enabled: true,
                 aliases: ['warn'],
-                allowedRoles: ['1403684128485806182'],
+                allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096'],
                 allowedUsers: [],
                 reasonRequired: false,
                 maxPoints: 30,

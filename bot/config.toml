@@ -2,6 +2,3 @@ enabled = true
 
 [general]
 prefix = "sudo "
-
-[mod.commands]
-warn = { allowedRoles = ['1403684128485806182'] }

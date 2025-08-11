@@ -33,7 +33,7 @@ export const xpCmd: Command = {
     ],
 
     aliases: [],
-    allowedRoles: ['1403684128485806182'],
+    allowedRoles: cfg.general.leveling.canChangeXP,
     allowedUsers: [],
 
     execute(msg, args) {
@@ -53,7 +53,7 @@ export const xpCmd: Command = {
         } else {
             amount = parseInt((amount as any as string));
         }
-        if (should_leveler) amount = amount * cfg.general.leveling.level_divider;
+        if (should_leveler) amount = cfg.general.leveling.level_divider * (amount * (amount - 1) / 2);
 
         if (action === 'add') {
             db.run(
