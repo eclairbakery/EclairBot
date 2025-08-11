@@ -1,3 +1,7 @@
-// required by hosting
+// start.js
+const { spawn } = require('child_process');
 
-require('child_process').execSync('npm start');
+spawn('npm', ['start'], {
+    stdio: 'inherit', 
+    shell: true 
+});
