@@ -16,6 +16,7 @@ export interface Config {
             xp_per_message: number;
             level_divider: number;
             excludedChannels: string[];
+            milestone_roles: {[key: number]: Snowflake};
             canChangeXP: Snowflake[];
         },
         /* The welcomer configuration */
@@ -97,7 +98,19 @@ const defaultConfig: Config = {
             xp_per_message: 4,
             level_divider: 100,
             excludedChannels: [],
-            canChangeXP: ['1280884378586845216', '1280081773019140096', '1404392144441180221']
+            canChangeXP: ['1280884378586845216', '1280081773019140096', '1404392144441180221'],
+            milestone_roles: {
+                3: '1297559525989158912',
+                5: '1235550102563852348',
+                10: '1235550105751392276',
+                15: '1235550109891035218',
+                20: '1235570092218122251',
+                25: '1235594078305914880',
+                30: '1235594081556627577',
+                50: '1235594083544858667',
+                75: '1235594085188767835',
+                100: '1390802440739356762'
+            }
         },
         welcomer: {
             channelId: "1235560269871190056",
