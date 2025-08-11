@@ -2,7 +2,9 @@
     "strict": true,
     "compilerOptions": {
         "outDir": "dist",
-        "module": "commonjs",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "esModuleInterop": true,
         "target": "es2020",
         "lib": [
             "es2024"
@@ -14,7 +16,7 @@
         ],
     },
     "ts-node": {
-        "esm": true
+        "transpileOnly": true
     },
     "include": [
         "src/**/*.ts"
