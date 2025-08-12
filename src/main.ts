@@ -42,10 +42,6 @@ import { toplvlCmd } from './cmd/leveling/toplvl.js';
 import { topecoCmd } from './cmd/economy/topeco.js';
 import { balCmd } from './cmd/economy/bal.js';
 import { warnClearCmd } from './cmd/mod/warnClear.js';
-import { joinCmd } from './cmd/music/join.js';
-import { playCmd } from './cmd/music/play.js';
-import { queueCmd } from './cmd/music/queue.js';
-import { skipCmd } from './cmd/music/skip.js';
 
 const commands: Command[] = [
     // general
@@ -57,10 +53,7 @@ const commands: Command[] = [
     workCmd, slutCmd, crimeCmd,
     topecoCmd, balCmd,
     // leveling
-    lvlCmd, xpCmd, toplvlCmd,
-    // music
-    joinCmd, playCmd, queueCmd, 
-    skipCmd
+    lvlCmd, xpCmd, toplvlCmd
 ];
 
 client.once('ready', () => {
@@ -91,7 +84,7 @@ client.on('messageCreate', async (msg) => {
     if (!msg.inGuild()) return;
 
     // a little reverse automod
-    if (await automod.automod(msg, client)) return;
+    if (!msg.author.bot) if (await automod.automod(msg, client)) return;
 
     // now goes leveling
     if (!msg.author.bot) addExperiencePoints(msg);

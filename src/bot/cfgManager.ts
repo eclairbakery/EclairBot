@@ -102,7 +102,7 @@ const defaultConfig: Config = {
     enabled: true,
 
     radio: {
-        enabled: true,
+        enabled: false,
         default_playlist: [
             'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
             'https://www.youtube.com/watch?v=iqoNoU-rm14',
@@ -123,7 +123,7 @@ const defaultConfig: Config = {
             'https://www.youtube.com/watch?v=2up_Eq6r6Ko',
             'https://www.youtube.com/watch?v=60ItHLz5WEA'
         ],
-        radio_channel: '',
+        radio_channel: '1404793848542007308',
         piekarnia_ad: '💎 Szukasz radia na swój serwer Discord? Skontaktuj się z administratorami Piekarnii Eklerki: <https://discord.gg/aEyZS3nMDE>'
     },
 
