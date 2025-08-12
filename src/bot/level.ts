@@ -3,7 +3,7 @@ import * as log from '../util/log.js';
 import { cfg } from '../bot/cfg.js';
 import { db } from '../bot/db.js';
 
-let lvlRoles = [
+export const lvlRoles = [
     "1297559525989158912",
     "1235550102563852348",
     "1235550105751392276",
