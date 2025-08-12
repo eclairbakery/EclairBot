@@ -8,6 +8,13 @@ export interface Config {
     /* Whether the bot is enabled (The most useless configuration field I've ever seen...) */
     enabled: boolean;
 
+    radio: {
+        enabled: boolean;
+        default_playlist: string[],
+        piekarnia_ad: string,
+        radio_channel: Snowflake
+    },
+
     general: {
         /* General configuration for the bot */
         prefix: string;
@@ -23,7 +30,10 @@ export interface Config {
         welcomer: {
             enabled: boolean;
             channelId: string;
-        }
+        },
+        blockedChannels: Snowflake[],
+        commandsExcludedFromBlockedChannels: string[],
+        moderationProtectedRoles: Snowflake[]
     };
     mod: {
         /* Configuration for moderation commands */
@@ -91,6 +101,32 @@ export interface Config {
 const defaultConfig: Config = {
     enabled: true,
 
+    radio: {
+        enabled: true,
+        default_playlist: [
+            'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'https://www.youtube.com/watch?v=iqoNoU-rm14',
+            'https://www.youtube.com/watch?v=D-TQB-T-UJ4',
+            'https://www.youtube.com/watch?v=3BR7-AzE2dQ',
+            'https://www.youtube.com/watch?v=BqCUsPkouUU',
+            'https://www.youtube.com/watch?v=0E6KXgWuaHo',
+            'https://www.youtube.com/watch?v=EZUPEoj3Qjs',
+            'https://www.youtube.com/watch?v=mj9KRKSvdbk',
+            'https://www.youtube.com/watch?v=B7xai5u_tnk',
+            'https://www.youtube.com/watch?v=VFwmKL5OL-Q',
+            'https://www.youtube.com/watch?v=ALkNSrtIPXc',
+            'https://www.youtube.com/watch?v=DHsNaulyQw8',
+            'https://www.youtube.com/watch?v=GNwd1qXt3RI',
+            'https://www.youtube.com/watch?v=BByMzI1YjKA',
+            'https://www.youtube.com/watch?v=zscd5xcu6cm',
+            'https://www.youtube.com/watch?v=pKqVj-ermPY',
+            'https://www.youtube.com/watch?v=2up_Eq6r6Ko',
+            'https://www.youtube.com/watch?v=60ItHLz5WEA'
+        ],
+        radio_channel: '',
+        piekarnia_ad: '💎 Szukasz radia na swój serwer Discord? Skontaktuj się z administratorami Piekarnii Eklerki: <https://discord.gg/aEyZS3nMDE>'
+    },
+
     general: {
         prefix: '!',
         leveling: {
@@ -110,12 +146,15 @@ const defaultConfig: Config = {
                 50: '1235594083544858667',
                 75: '1235594085188767835',
                 100: '1390802440739356762'
-            }
+            },
         },
+        blockedChannels: ['1264971505662689311', '1392567715407073402'],
+        commandsExcludedFromBlockedChannels: ['ban', 'mute', 'warn', 'kick', 'warnlist', 'warn-clear'],
         welcomer: {
             channelId: "1235560269871190056",
             enabled: true
-        }
+        },
+        moderationProtectedRoles: ['1280884378586845216', '1280081773019140096']
     },
 
     mod: {

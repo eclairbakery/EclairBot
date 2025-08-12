@@ -51,6 +51,13 @@ export async function automod(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boo
             deleteTargetMessage: false,
             response: "osoba nade mną jest gejem 🥀"
         },
+        // censorship i guess
+        {
+            activationType: 'contains',
+            activationKeyword: 'anime',
+            deleteTargetMessage: false,
+            response: "osoba nade mną jest gejem 🥀"
+        },
         // then go the least important
         {
             activationType: 'is_equal_to',

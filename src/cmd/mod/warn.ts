@@ -32,7 +32,7 @@ export const warnCmd: Command = {
     allowedUsers: cmdCfg.allowedUsers,
 
     async execute(msg, args) {
-        let targetUser: dsc.User | null = null;
+        let targetUser: dsc.GuildMember | null = null;
         let points = 1;
         let reason = '';
         let reasonArgs = [...args];
@@ -49,7 +49,7 @@ export const warnCmd: Command = {
             }
 
             if (userId) {
-                targetUser = await msg.client.users.fetch(userId).catch(() => null);
+                targetUser = await msg.guild.members.fetch(userId).catch(() => null);
                 if (targetUser) {
                     reasonArgs = args.slice(1);
                 }
@@ -65,6 +65,11 @@ export const warnCmd: Command = {
 
         if (targetUser == null) {
             log.replyError(msg, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyśle komu ty chcesz dać warna? Uzycie: odpowiedzi na wiadomość lub !warn <@user> (punkty:1) <powód>');
+            return;
+        }
+
+        if (targetUser.roles.cache.hasAny(...cfg.general.moderationProtectedRoles)) {
+            log.replyError(msg, 'Chronimy go!', 'Użytkownik poprosił o ochronę i ją dostał!');
             return;
         }
 
@@ -95,7 +100,7 @@ export const warnCmd: Command = {
         msg.reply({
             embeds: [
                 new dsc.EmbedBuilder()
-                    .setTitle(`📢 Masz warna, ${targetUser.username}!`)
+                    .setTitle(`📢 Masz warna, ${targetUser.user.username}!`)
                     .setDescription(
                         `Właśnie dostałeś darmoweeego warna (punktów: ${points})!`,
                     )

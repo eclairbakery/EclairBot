@@ -20,6 +20,6 @@ export const siemaCmd: Command = {
     allowedUsers: [],
 
     execute(msg, args, commands) {
-        msg.reply({files: ['https://cdn.discordapp.com/attachments/1264971505662689311/1400225695455510739/togif-6.gif?ex=6899b50c&is=6898638c&hm=dbb63f75aea5879bbb38ae62c33f0feba80043cd79e23a4c25596e6f2275d1a0&']});
+        msg.reply({files: ['https://raw.githubusercontent.com/gorciu-official/studio-online-content/refs/heads/main/togif.gif']});
     },
 };

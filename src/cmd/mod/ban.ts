@@ -63,6 +63,11 @@ export const banCmd: Command = {
             return;
         }
 
+        if (targetUser.roles.cache.hasAny(...cfg.general.moderationProtectedRoles)) {
+            log.replyError(msg, 'Chronimy go!', 'Użytkownik poprosił o ochronę i ją dostał!');
+            return;
+        }
+
         if (reason == "" || reason == undefined) {
             if (cmdCfg.reasonRequired) {
                 log.replyError(msg, 'Nie podano powodu', 'Ale za co ten ban? Poproszę o doprecyzowanie!');

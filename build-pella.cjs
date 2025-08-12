@@ -32,7 +32,7 @@ async function main() {
             entryPoints: [ENTRY],
             bundle: true,
             platform: 'node',
-            external: ['discord.js'],
+            external: ['discord.js', '@discordjs/voice', '@distube/ytdl-core'],
             outfile: path.join(OUTDIR, 'app.js'),
         })
         console.log('Build succeeded.')

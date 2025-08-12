@@ -20,7 +20,7 @@ export const warnlistCmd: Command = {
     allowedUsers: [],
 
     execute(msg, args) {
-        db.all('SELECT * FROM warns', [], async (err, rows: any[]) => {
+        db.all('SELECT * FROM warns ORDER BY id DESC', [], async (err, rows: any[]) => {
             if (err) {
                 console.error(err);
                 return log.replyError(msg, 'Błąd pobierania warnów', 'Pytaj twórców biblioteki sqlite3...');
@@ -38,7 +38,7 @@ export const warnlistCmd: Command = {
                 if (i == 25) return;
                 fields.push({
                     name: `${i}. Upomnienie dla ${(await msg.client.users.fetch(row.user_id)).username}`,
-                    value: `\`${row.reason_string}\` (punktów: ${row.points})`
+                    value: `\`${row.reason_string}\` (punktów: ${row.points}, id: ${row.id})`
                 });
             }
 

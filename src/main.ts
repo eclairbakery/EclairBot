@@ -23,6 +23,8 @@ import * as dsc from 'discord.js';
 
 dotenv.config({ quiet: true });
 
+import { client } from './client.js';
+
 import { warnCmd } from './cmd/mod/warn.js';
 import { kickCmd } from './cmd/mod/kick.js';
 import { banCmd } from './cmd/mod/ban.js';
@@ -39,30 +41,27 @@ import { lvlCmd } from './cmd/leveling/lvl.js';
 import { toplvlCmd } from './cmd/leveling/toplvl.js';
 import { topecoCmd } from './cmd/economy/topeco.js';
 import { balCmd } from './cmd/economy/bal.js';
+import { warnClearCmd } from './cmd/mod/warnClear.js';
+import { joinCmd } from './cmd/music/join.js';
+import { playCmd } from './cmd/music/play.js';
+import { queueCmd } from './cmd/music/queue.js';
+import { skipCmd } from './cmd/music/skip.js';
 
 const commands: Command[] = [
     // general
     helpCmd, manCmd, siemaCmd,
     // moderation
     warnCmd, kickCmd, banCmd,
-    warnlistCmd,
+    warnlistCmd, warnClearCmd,
     // economy
     workCmd, slutCmd, crimeCmd,
     topecoCmd, balCmd,
     // leveling
-    lvlCmd, xpCmd, toplvlCmd
-]
-
-const client = new dsc.Client({
-    intents: [
-        dsc.GatewayIntentBits.DirectMessages,
-        dsc.GatewayIntentBits.GuildMessages,
-        dsc.GatewayIntentBits.MessageContent,
-        dsc.GatewayIntentBits.GuildModeration,
-        dsc.GatewayIntentBits.Guilds,
-        dsc.GatewayIntentBits.GuildMembers,
-    ],
-});
+    lvlCmd, xpCmd, toplvlCmd,
+    // music
+    joinCmd, playCmd, queueCmd, 
+    skipCmd
+];
 
 client.once('ready', () => {
     console.log(`Logged in.`);
@@ -98,23 +97,29 @@ client.on('messageCreate', async (msg) => {
     if (!msg.author.bot) addExperiencePoints(msg);
 
     // let's do something awesome
-    if (!msg.author.bot && (msg.content.includes('cat') || msg.content.includes('kot'))) {
-        msg.reply(await getGIF('cat'));
+    // UPDATE: only a command does trigger this behaviour
+    if (!msg.author.bot && (msg.content.startsWith(cfg.general.prefix + 'cat') || msg.content.startsWith(cfg.general.prefix + 'kot'))) {
+        return msg.reply(await getGIF('cat'));
     }
-    if (!msg.author.bot && (msg.content.includes('dog') || msg.content.includes('pies'))) {
-        msg.reply(await getGIF('dog'));
+    if (!msg.author.bot && (msg.content.startsWith(cfg.general.prefix + 'pies') || msg.content.startsWith(cfg.general.prefix + 'dog'))) {
+        return msg.reply(await getGIF('dog'));
     }
 
     // commands logic [ugly code warn]
     if (!msg.content.startsWith(cfg.general.prefix)) return;
     const args = msg.content.slice(cfg.general.prefix.length).trim().split(/\s+/);
-    const command = args.shift();
+    const command = args.shift().toLowerCase();
     const cmdObject = commands.find((val) => val.name == command || val.aliases.includes(command));
-    if (!cmdObject) {
+    if (cfg.general.blockedChannels.includes(msg.channelId) && !cfg.general.commandsExcludedFromBlockedChannels.includes(command)) {
+        return msg.react('❌');
+    } else if (!cmdObject) {
         log.replyError(msg, 'Panie, ja nie panimaju!', `Wpisz se \`${cfg.general.prefix}help\` i dostarczę Ci listę komend!`);
         return;
     } else if (cmdObject.allowedRoles != null && !msg.member.roles.cache.some((role) => cmdObject.allowedRoles.includes(role.id))) {
         log.replyError(msg, 'Hej, a co ty odpie*dalasz?', `Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...`);
+        return;
+    } else if (!cfg.radio.enabled && cmdObject.category == 'muzyka') {
+        log.replyError(msg, 'Radio piekarnii zostało wyłączone.', `Prawdopodobnie gorciu pierdoli się teraz z hostingiem, by je uruchomić.`);
         return;
     } else {
         return cmdObject.execute(msg, args, commands);

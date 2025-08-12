@@ -33,6 +33,8 @@
         "typescript": "^5.9.2"
     },
     "dependencies": {
+        "@discordjs/voice": "^0.18.0",
+        "@distube/ytdl-core": "^4.16.12",
         "dotenv": "^17.2.1",
         "sqlite3": "^5.1.7",
         "toml": "^3.0.0"
