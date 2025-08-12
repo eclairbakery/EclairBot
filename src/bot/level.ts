@@ -3,6 +3,19 @@ import * as log from '../util/log.js';
 import { cfg } from '../bot/cfg.js';
 import { db } from '../bot/db.js';
 
+let lvlRoles = [
+    "1297559525989158912",
+    "1235550102563852348",
+    "1235550105751392276",
+    "1235550109891035218",
+    "1235570092218122251",
+    "1235594078305914880",
+    "1235594081556627577",
+    "1235594083544858667",
+    "1235594085188767835",
+    "1390802440739356762"
+];
+
 function calculateLevel(xp: number, level_divider: number): number {
     return Math.floor(
         (1 + Math.sqrt(1 + 8 * xp / cfg.general.leveling.level_divider)) / 2
