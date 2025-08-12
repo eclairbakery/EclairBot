@@ -57,9 +57,12 @@ export const warnCmd: Command = {
         }
 
         if (targetUser == null && msg.reference?.messageId) {
-            const repliedMsg = await msg.channel.messages.fetch(msg.reference.messageId).catch(() => null);
+            let repliedMsg: dsc.Message = null;
+            try {
+                repliedMsg = await msg.channel.messages.fetch(msg.reference.messageId);
+            } catch {}
             if (repliedMsg) {
-                targetUser = repliedMsg.author;
+                targetUser = repliedMsg.member;
             }
         }
 
