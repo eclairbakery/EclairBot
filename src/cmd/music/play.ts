@@ -15,7 +15,7 @@ import { client } from '../../client.js';
 import ytdl from '@distube/ytdl-core';
 
 export const playCmd: Command = {
-    name: 'join',
+    name: 'play',
     desc: 'Puszcza utwór',
     category: 'muzyka',
     expectedArgs: [],
