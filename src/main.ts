@@ -123,23 +123,25 @@ client.on('guildMemberAdd', async (member) => {
     if (!cfg.general.welcomer.enabled) return;
     const channel = await client.channels.fetch(cfg.general.welcomer.channelId);
     if (!channel.isSendable()) return;
-    const msg = await channel.send({
-        content: `<@${member.id}>`,
+    const secchannel = await client.channels.fetch(cfg.general.welcomer.general);
+    if (!secchannel.isSendable()) return;
+    await channel.send({
         embeds: [
             new dsc.EmbedBuilder()
                 .setTitle(`Właśnie Eklerka upiekł ${member.user.username}!`)
-                .setColor(PredefinedColors.YellowGreen)
-                .setDescription(`Witaj na naszym serwerze, drogi <@${member.id}>. Jak już zdołałeś się domyślić, no to Eklerka... piecze pieczywo. Robi też odcinki na swojej żonie (komputerze). Właśnie Cię upiekł, i zostałeś jednym z pieczyw... tych na sprzedaż. Sprzedaż nastąpi wtedy kiedy wyjdziesz z serwera. No to tyle z lore\'u na razie, resztę zobaczysz jak chwilę popiszesz...`)
+                .setColor(PredefinedColors.Purple)
+                .setDescription(`Siema <@${member.id}>. Jak ci mija życie, bo mi git (chyba)? Jak to czytasz to popisz na generalu, nie będę cię za rączkę prowadził...`)
                 .setThumbnail(member.displayAvatarURL({ size: 128 }))
         ]
     });
+    await secchannel.send(`witaj <@${member.user.id}>, będzie nam miło jak się przywitasz czy coś <:emoji_a_radosci_nie_bylo_konca:1376664467416420362>\n-# jak już zdołałeś się domyślić, no to eklerka... piecze pieczywo; robi też odcinki na swojej żonie (komputerze). właśnie Cię upiekł, i zostałeś jednym z pieczyw... tych na sprzedaż. sprzedaż nastąpi wtedy kiedy wyjdziesz z serwera. no to tyle z lore'u na razie, resztę zobaczysz jak chwilę popiszesz...`);
 });
 
 client.on('guildMemberRemove', async (member) => {
     if (!cfg.general.welcomer.enabled) return;
     const channel = await client.channels.fetch(cfg.general.welcomer.channelId);
     if (!channel.isSendable()) return;
-    const msg = await channel.send({
+    await channel.send({
         embeds: [
             new dsc.EmbedBuilder()
                 .setTitle(`Eklerka sprzedał bagietkę "${member.user.username}"!`)

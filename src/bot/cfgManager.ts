@@ -30,6 +30,7 @@ export interface Config {
         welcomer: {
             enabled: boolean;
             channelId: string;
+            general: Snowflake;
         },
         blockedChannels: Snowflake[],
         commandsExcludedFromBlockedChannels: string[],
@@ -152,7 +153,8 @@ const defaultConfig: Config = {
         commandsExcludedFromBlockedChannels: ['ban', 'mute', 'warn', 'kick', 'warnlist', 'warn-clear'],
         welcomer: {
             channelId: "1235560269871190056",
-            enabled: true
+            enabled: true,
+            general: '1264971505662689311'
         },
         moderationProtectedRoles: ['1280884378586845216', '1280081773019140096']
     },
