@@ -133,7 +133,6 @@ client.on('guildMemberAdd', async (member) => {
                 .setThumbnail(member.displayAvatarURL({ size: 128 }))
         ]
     });
-    msg.edit('‎');
 });
 
 client.on('guildMemberRemove', async (member) => {
@@ -141,7 +140,6 @@ client.on('guildMemberRemove', async (member) => {
     const channel = await client.channels.fetch(cfg.general.welcomer.channelId);
     if (!channel.isSendable()) return;
     const msg = await channel.send({
-        content: `<@${member.id}>`,
         embeds: [
             new dsc.EmbedBuilder()
                 .setTitle(`Eklerka sprzedał bagietkę "${member.user.username}"!`)
@@ -150,7 +148,6 @@ client.on('guildMemberRemove', async (member) => {
                 .setThumbnail(member.displayAvatarURL({ size: 128 }))
         ]
     });
-    msg.edit('‎');
 });
 
 client.login(process.env.TOKEN);
