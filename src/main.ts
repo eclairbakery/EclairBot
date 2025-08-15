@@ -167,7 +167,7 @@ const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
     commands.forEach((cmd) => {
         const scb = new dsc.SlashCommandBuilder()
             .setName(cmd.name)
-            .setDescription(`[${cmd.category}] ${cmd.desc}`);
+            .setDescription(`[${cmd.category}] ${cmd.desc.substring(0, 80) === cmd.desc ? cmd.desc : (cmd.desc.substring(0, 80) + '...')}`);
         cmd.expectedArgs.forEach(arg => {
             scb.addStringOption((option) => option
                 .setName(arg.name)
