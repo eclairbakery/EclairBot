@@ -20,7 +20,7 @@ export const balCmd: Command = {
     allowedUsers: [],
 
     execute(msg, args) {
-        db.get('SELECT * FROM economy WHERE user_id = ?', [msg.mentions.users.first() || msg.member.id], async (err, row: {money: number}) => {
+        db.get('SELECT * FROM economy WHERE user_id = ?', [msg.mentions.users.first().id || msg.member.id], async (err, row: {money: number}) => {
             if (err) {
                 console.error(err);
                 return log.replyError(msg, 'Błąd pobierania topki', 'Pytaj twórców biblioteki sqlite3...');

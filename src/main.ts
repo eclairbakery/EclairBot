@@ -44,10 +44,13 @@ import { balCmd } from './cmd/economy/bal.js';
 import { warnClearCmd } from './cmd/mod/warnClear.js';
 import { blackjackCmd } from './cmd/economy/blackjack.js';
 import { catCmd, dogCmd } from './cmd/gif/gifs.js';
+import { pfpCmd } from './cmd/random/pfp.js';
+import { bannerCmd } from './cmd/random/banner.js';
 
 const commands: Command[] = [
     // general
     helpCmd, manCmd, siemaCmd,
+    pfpCmd, bannerCmd,
     // moderation
     warnCmd, kickCmd, banCmd,
     warnlistCmd, warnClearCmd,
@@ -79,7 +82,7 @@ client.on('messageCreate', async (msg) => {
     const args = msg.content.slice(cfg.general.prefix.length).trim().split(/\s+/);
     const command = args.shift().toLowerCase();
     const cmdObject = commands.find((val) => val.name == command || val.aliases.includes(command));
-    if (cfg.general.blockedChannels.includes(msg.channelId) && !cfg.general.commandsExcludedFromBlockedChannels.includes(command)) {
+    if (cfg.general.blockedChannels.includes(msg.channelId) && !cfg.general.commandsExcludedFromBlockedChannels.includes(cmdObject !== undefined ? cmdObject.name : command)) {
         return msg.react('❌');
     } else if (!cmdObject) {
         log.replyError(msg, 'Panie, ja nie panimaju!', `Wpisz se \`${cfg.general.prefix}help\` i dostarczę Ci listę komend!`);
