@@ -171,7 +171,7 @@ const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
         cmd.expectedArgs.forEach(arg => {
             scb.addStringOption((option) => option
                 .setName(arg.name)
-                .setDescription(arg.desc)
+                .setDescription('Domyśl się, bo discord.js nie pozwala dużo znaków.')
                 .setRequired(false)
             );
         });
