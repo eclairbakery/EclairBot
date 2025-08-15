@@ -38,8 +38,7 @@ export const helpCmd: Command = {
 
             commandsByCategory[command.category].push({
                 name: `:star: ${cfg.general.prefix}${command.name}`,
-                value: `**Opis**: ${command.desc}`,
-                inline: true
+                value: `**Opis**: ${command.desc}`
             });
         });
 

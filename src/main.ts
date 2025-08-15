@@ -42,6 +42,7 @@ import { toplvlCmd } from './cmd/leveling/toplvl.js';
 import { topecoCmd } from './cmd/economy/topeco.js';
 import { balCmd } from './cmd/economy/bal.js';
 import { warnClearCmd } from './cmd/mod/warnClear.js';
+import { blackjackCmd } from './cmd/economy/blackjack.js';
 
 const commands: Command[] = [
     // general
@@ -51,7 +52,7 @@ const commands: Command[] = [
     warnlistCmd, warnClearCmd,
     // economy
     workCmd, slutCmd, crimeCmd,
-    topecoCmd, balCmd,
+    topecoCmd, balCmd, blackjackCmd,
     // leveling
     lvlCmd, xpCmd, toplvlCmd
 ];
