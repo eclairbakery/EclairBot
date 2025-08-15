@@ -153,4 +153,36 @@ client.on('guildMemberRemove', async (member) => {
     });
 });
 
+client.on('interactionCreate', async (int) => {
+    if (!int.isChatInputCommand()) return;
+    int.reply({flags: ["Ephemeral"], content: "przygotowywuje codebase pod slash commands\njakby to powiedział amerykanin stay tuned\n~ gorciu"});
+});
+
 client.login(process.env.TOKEN);
+
+const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
+
+(async () => {
+    let commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
+    commands.forEach((cmd) => {
+        const scb = new dsc.SlashCommandBuilder()
+            .setName(cmd.name)
+            .setDescription(`[${cmd.category}] ${cmd.desc}`);
+        cmd.expectedArgs.forEach(arg => {
+            scb.addStringOption((option) => option
+                .setName(arg.name)
+                .setDescription(arg.desc)
+                .setRequired(false)
+            );
+        });
+        commandsArray.push(scb.toJSON());
+    });
+    try {
+        await rest.put(
+            dsc.Routes.applicationCommands(client.application.id),
+            { body: commandsArray }
+        );
+    } catch (error) {
+        console.error(error);
+    }
+})();
