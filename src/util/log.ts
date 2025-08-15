@@ -2,6 +2,7 @@ import { PredefinedColors, Color } from '../util/color.js';
 import { SendableChannel } from '../defs.js';
 
 import * as dsc from 'discord.js';
+import { CommandInput } from '../bot/command.js';
 
 enum LogType {
     Success,
@@ -52,23 +53,23 @@ export function getTipEmbed(title: string, desc: string) {
 }
 
 
-export function replyWarn(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, title: string, desc: string) {
+export function replyWarn(msg: CommandInput, title: string, desc: string) {
     msg.reply(getWarnEmbed(title, desc));
 }
 
-export function replyInfo(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, title: string, desc: string) {
+export function replyInfo(msg: CommandInput, title: string, desc: string) {
     msg.reply(getInfoEmbed(title, desc));
 }
 
-export function replySuccess(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, title: string, desc: string) {
+export function replySuccess(msg: CommandInput, title: string, desc: string) {
     msg.reply(getSuccessEmbed(title, desc));
 }
 
-export function replyTip(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, title: string, desc: string) {
+export function replyTip(msg: CommandInput, title: string, desc: string) {
     msg.reply(getTipEmbed(title, desc));
 }
 
-export function replyError(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, title: string, desc: string) {
+export function replyError(msg: CommandInput, title: string, desc: string) {
     msg.reply(getErrorEmbed(title, desc));
 }
 

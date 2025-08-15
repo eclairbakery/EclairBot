@@ -150,7 +150,7 @@ const defaultConfig: Config = {
             },
         },
         blockedChannels: ['1264971505662689311', '1392567715407073402'],
-        commandsExcludedFromBlockedChannels: ['ban', 'mute', 'warn', 'kick', 'warnlist', 'warn-clear'],
+        commandsExcludedFromBlockedChannels: ['ban', 'mute', 'warn', 'kick', 'warnlist', 'warn-clear', 'cat', 'dog'],
         welcomer: {
             channelId: "1235560269871190056",
             enabled: true,

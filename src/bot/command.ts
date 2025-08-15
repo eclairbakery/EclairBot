@@ -5,6 +5,22 @@ export interface CommandArgDef {
     desc: string;
 }
 
+/**
+ * fully compatibile with dsc.Message
+ */
+export interface CommandInput {
+    member: dsc.GuildMember,
+    author: dsc.User,
+    guild: dsc.Guild,
+    channelId: string,
+    /** legacy commands only */
+    reference?: dsc.MessageReference,
+    channel: dsc.TextBasedChannel,
+    reply: (options: string | dsc.MessagePayload | dsc.MessageReplyOptions) => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>>,
+    client: dsc.Client,
+    mentions: dsc.MessageMentions
+}
+
 export interface Command {
     /* Command name */
     name: string;
@@ -23,5 +39,6 @@ export interface Command {
     category: string
 
     /* Function that executes the command */
-    execute: (msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, args: string[], commands: Command[]) => void;
+    //execute: (msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, args: string[], commands: Command[]) => void;
+    execute: (inp: CommandInput, args: string[], commands: Command[]) => void | any;
 }

@@ -9,7 +9,7 @@ process.on('SIGSEGV', () => {
 })
 // END DISABLE  THE ENTIRE THING BY ONE ERROR
 
-import { Command } from './bot/command.js';
+import { Command, CommandInput } from './bot/command.js';
 import { cfg } from './bot/cfg.js';
 import { db, sqlite } from './bot/db.js';
 import { PredefinedColors } from './util/color.js';
@@ -43,6 +43,7 @@ import { topecoCmd } from './cmd/economy/topeco.js';
 import { balCmd } from './cmd/economy/bal.js';
 import { warnClearCmd } from './cmd/mod/warnClear.js';
 import { blackjackCmd } from './cmd/economy/blackjack.js';
+import { catCmd, dogCmd } from './cmd/gif/gifs.js';
 
 const commands: Command[] = [
     // general
@@ -54,31 +55,14 @@ const commands: Command[] = [
     workCmd, slutCmd, crimeCmd,
     topecoCmd, balCmd, blackjackCmd,
     // leveling
-    lvlCmd, xpCmd, toplvlCmd
+    lvlCmd, xpCmd, toplvlCmd,
+    // gifs
+    dogCmd, catCmd
 ];
 
 client.once('ready', () => {
     console.log(`Logged in.`);
 });
-
-async function getGIF(searchTerm: string): Promise<string> {
-    const apiKey = process.env.TENOR_API;
-    const url = `https://tenor.googleapis.com/v2/search?q=${searchTerm}&key=${apiKey}&limit=1&random=true&media_filter=minimal`;
-
-    try {
-        const response = await fetch(url);
-        const json = (await response.json()) as any;
-
-        if (json.results && json.results.length > 0) {
-            return json.results[0].media_formats.gif.url;
-        } else {
-            return 'Nie znaleziono!';
-        }
-    } catch (error) {
-        console.error('Błąd podczas pobierania GIFa:', error);
-        return 'Wystąpił błąd!';
-    }
-}
 
 client.on('messageCreate', async (msg) => {
     // block dm's, if you want to dm me, fuck out
@@ -89,15 +73,6 @@ client.on('messageCreate', async (msg) => {
 
     // now goes leveling
     if (!msg.author.bot) addExperiencePoints(msg);
-
-    // let's do something awesome
-    // UPDATE: only a command does trigger this behaviour
-    if (!msg.author.bot && (msg.content.startsWith(cfg.general.prefix + 'cat') || msg.content.startsWith(cfg.general.prefix + 'kot'))) {
-        return msg.reply(await getGIF('cat'));
-    }
-    if (!msg.author.bot && (msg.content.startsWith(cfg.general.prefix + 'pies') || msg.content.startsWith(cfg.general.prefix + 'dog'))) {
-        return msg.reply(await getGIF('dog'));
-    }
 
     // commands logic [ugly code warn]
     if (!msg.content.startsWith(cfg.general.prefix)) return;
@@ -154,20 +129,76 @@ client.on('guildMemberRemove', async (member) => {
 });
 
 client.on('interactionCreate', async (int) => {
+    function parseMentionsFromStrings(args: string[]) {
+        const users = new dsc.Collection<string, string>();
+        const roles = new dsc.Collection<string, string>();
+
+        const userRegex = /^<@!?(\d+)>$/;
+        const roleRegex = /^<@&(\d+)>$/;
+
+        for (const arg of args) {
+            let match;
+            if ((match = userRegex.exec(arg))) {
+                users.set(match[1], arg);
+            } else if ((match = roleRegex.exec(arg))) {
+                roles.set(match[1], arg);
+            }
+        }
+
+        return { users, roles };
+    }
+
     if (!int.isChatInputCommand()) return;
-    int.reply({flags: ["Ephemeral"], content: "przygotowywuje codebase pod slash commands\njakby to powiedział amerykanin stay tuned\n~ gorciu"});
+
+    const { commandName, options, member, channelId } = int;
+
+    const cmdObject = commands.find((val) => val.name === commandName || val.aliases?.includes(commandName));
+    if (!cmdObject) {
+        await int.reply({ content: 'Nie znam takiej komendy!', flags: ["Ephemeral"] });
+        return;
+    }
+
+    if (cfg.general.blockedChannels.includes(channelId) &&
+        !cfg.general.commandsExcludedFromBlockedChannels.includes(commandName)) {
+        await int.reply({ content: 'Ten kanał nie pozwala na używanie tej komendy!', flags: ["Ephemeral"] });
+        return;
+    }
+
+    if (cmdObject.allowedRoles &&
+        !((member.roles as dsc.GuildMemberRoleManager).cache.some((role: any) => cmdObject.allowedRoles.includes(role.id)))) {
+        await int.reply({ content: 'Nie masz uprawnień do tej komendy!', flags: ["Ephemeral"] });
+        return;
+    }
+
+    try {
+        const args: any[] = [];
+        cmdObject.expectedArgs?.forEach(opt => {
+            const val = options.getString(opt.name);
+            args.push(val);
+        });
+
+        // ugly but works
+        const interact: CommandInput = (int as any as CommandInput);
+        interact.author = int.user;
+        interact.mentions = (parseMentionsFromStrings(cmdObject.expectedArgs?.map(opt => options.getString(opt.name)) || []) as any as dsc.MessageMentions);
+
+        await cmdObject.execute(interact, args, commands);
+    } catch (err) {
+        console.error(err);
+        await int.reply({ content: 'Coś poszło nie tak podczas wykonywania komendy.', ephemeral: true });
+    }
 });
 
-client.login(process.env.TOKEN);
-
-const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
-
 (async () => {
+    await client.login(process.env.TOKEN);
+
+    const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
+
     let commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
     commands.forEach((cmd) => {
         const scb = new dsc.SlashCommandBuilder()
             .setName(cmd.name)
-            .setDescription(`[${cmd.category}] Well... komenda. Opis jest za długi...`);
+            .setDescription(cmd.desc.length > 97 - cmd.category.length ? `[${cmd.category}] Użyj 'man' po opis, opis zbyt długi dla discord.js.` : `[${cmd.category}] ${cmd.desc}`);
         cmd.expectedArgs.forEach(arg => {
             scb.addStringOption((option) => option
                 .setName(arg.name)
