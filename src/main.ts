@@ -46,6 +46,8 @@ import { blackjackCmd } from './cmd/economy/blackjack.js';
 import { catCmd, dogCmd } from './cmd/gif/gifs.js';
 import { pfpCmd } from './cmd/random/pfp.js';
 import { bannerCmd } from './cmd/random/banner.js';
+import { muteCmd } from './cmd/mod/mute.js';
+import { unmuteCmd } from './cmd/mod/unmute.js';
 
 const commands: Command[] = [
     // general
@@ -54,6 +56,7 @@ const commands: Command[] = [
     // moderation
     warnCmd, kickCmd, banCmd,
     warnlistCmd, warnClearCmd,
+    muteCmd, unmuteCmd,
     // economy
     workCmd, slutCmd, crimeCmd,
     topecoCmd, balCmd, blackjackCmd,
@@ -76,6 +79,14 @@ client.on('messageCreate', async (msg) => {
 
     // now goes leveling
     if (!msg.author.bot) addExperiencePoints(msg);
+
+    // eclairAI
+    if (msg.channelId == cfg.ai.channel && !msg.author.bot) {
+        if (msg.content.startsWith(cfg.general.prefix)) {
+            return msg.reply('-# Komendy nie są obsługiwane na kanale EclairAI fan edition.');
+        }
+        return msg.reply('Nie robię tego jeszcze, może potem...\n-# To nie jest oryginalne EclairAI, tylko wersja zastępcza/fanowska stworzona przez administratorów serwera.');
+    }
 
     // commands logic [ugly code warn]
     if (!msg.content.startsWith(cfg.general.prefix)) return;
@@ -132,23 +143,42 @@ client.on('guildMemberRemove', async (member) => {
 });
 
 client.on('interactionCreate', async (int) => {
-    function parseMentionsFromStrings(args: string[]) {
-        const users = new dsc.Collection<string, string>();
-        const roles = new dsc.Collection<string, string>();
+    function parseMentionsFromStrings(args: string[], guild: dsc.Guild = int.guild) {
+        const users = new dsc.Collection<string, dsc.User>();
+        const roles = new dsc.Collection<string, dsc.Role>();
+        const members = new dsc.Collection<string, dsc.GuildMember>();
+        const channels = new dsc.Collection<string, dsc.GuildChannel>();
 
         const userRegex = /^<@!?(\d+)>$/;
         const roleRegex = /^<@&(\d+)>$/;
+        const channelRegex = /^<#(\d+)>$/;
 
         for (const arg of args) {
             let match;
+
             if ((match = userRegex.exec(arg))) {
-                users.set(match[1], arg);
+                const id = match[1];
+                const user = guild.client.users.cache.get(id);
+                if (user) users.set(id, user);
+
+                const member = guild.members.cache.get(id);
+                if (member) members.set(id, member);
+
             } else if ((match = roleRegex.exec(arg))) {
-                roles.set(match[1], arg);
+                const id = match[1];
+                const role = guild.roles.cache.get(id);
+                if (role) roles.set(id, role);
+
+            } else if ((match = channelRegex.exec(arg))) {
+                const id = match[1];
+                const channel = guild.channels.cache.get(id);
+                if (channel && channel.type !== dsc.ChannelType.PublicThread && channel.type !== dsc.ChannelType.PrivateThread) {
+                    channels.set(id, channel as dsc.GuildChannel);
+                }
             }
         }
 
-        return { users, roles };
+        return { users, roles, members, channels };
     }
 
     if (!int.isChatInputCommand()) return;
@@ -189,6 +219,46 @@ client.on('interactionCreate', async (int) => {
     } catch (err) {
         console.error(err);
         await int.reply({ content: 'Coś poszło nie tak podczas wykonywania komendy.', ephemeral: true });
+    }
+});
+
+client.on('messageReactionAdd', async (reaction) => {
+    if (reaction.partial) {
+        try {
+            await reaction.fetch();
+        } catch (err) {
+            console.error(err);
+            return;
+        }
+    }
+
+    const msg = reaction.message;
+    const count = reaction.count;
+    const emoji = reaction.emoji.name;
+
+    if ((emoji === "⭐" || emoji === "💎") && count === 3 && cfg.general.hallOfFameEligibleChannels.includes(msg.channelId)) {
+        const channel = await msg.guild.channels.fetch(cfg.general.hallOfFame);
+        if (!channel) return;
+        if (!channel.isTextBased()) return;
+        channel.send({
+            embeds: [
+                new dsc.EmbedBuilder()
+                    .setAuthor({name: 'EclairBOT'})
+                    .setColor(`#${Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, "0")}`)
+                    .setTitle(`:gem: ${msg.author.username} dostał się na Hall of Fame!`)
+                    .setDescription(`Super ważna informacja, wiem. Link: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`)
+                    .setFields([
+                        {
+                            name: 'Wiadomość',
+                            value: `\`\`\`${msg.content}\`\`\``
+                        },
+                        {
+                            name: 'Informacja o Hall of Fame',
+                            value: 'Aby dostać się na Hall of Fame, musisz zdobyć co najmniej trzy emotki ⭐ lub 💎. Więcej informacji [tutaj](<https://canary.discord.com/channels/1235534146722463844/1392128976574484592/1392129983714955425>).'
+                        }
+                    ])
+            ]
+        });
     }
 });
 

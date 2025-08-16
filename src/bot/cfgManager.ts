@@ -13,7 +13,7 @@ export interface Config {
         default_playlist: string[],
         piekarnia_ad: string,
         radio_channel: Snowflake
-    },
+    };
 
     general: {
         /* General configuration for the bot */
@@ -34,8 +34,15 @@ export interface Config {
         },
         blockedChannels: Snowflake[],
         commandsExcludedFromBlockedChannels: string[],
-        moderationProtectedRoles: Snowflake[]
+        moderationProtectedRoles: Snowflake[],
+        hallOfFame: Snowflake,
+        hallOfFameEligibleChannels: Snowflake[]
     };
+
+    ai: {
+        channel: Snowflake;
+    }
+
     mod: {
         /* Configuration for moderation commands */
         commands: {
@@ -147,16 +154,22 @@ const defaultConfig: Config = {
                 50: '1235594083544858667',
                 75: '1235594085188767835',
                 100: '1390802440739356762'
-            },
+            }
         },
+        hallOfFame: '1392128976574484592',
+        hallOfFameEligibleChannels: ['1397628186795311246', '1264971505662689311', '1342793182265741394', '1392567715407073402'],
         blockedChannels: ['1264971505662689311', '1392567715407073402'],
-        commandsExcludedFromBlockedChannels: ['ban', 'mute', 'warn', 'kick', 'warnlist', 'warn-clear', 'cat', 'dog'],
+        commandsExcludedFromBlockedChannels: ['ban', 'mute', 'unmute', 'warn', 'kick', 'warnlist', 'warn-clear', 'cat', 'dog'],
         welcomer: {
             channelId: "1235560269871190056",
             enabled: true,
             general: '1264971505662689311'
         },
         moderationProtectedRoles: ['1280884378586845216', '1280081773019140096']
+    },
+
+    ai: {
+        channel: '1276271917665484801'
     },
 
     mod: {

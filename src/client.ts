@@ -8,6 +8,12 @@ export const client = new dsc.Client({
         dsc.GatewayIntentBits.GuildModeration,
         dsc.GatewayIntentBits.Guilds,
         dsc.GatewayIntentBits.GuildMembers,
-        dsc.GatewayIntentBits.GuildVoiceStates
+        dsc.GatewayIntentBits.GuildVoiceStates,
+        dsc.GatewayIntentBits.GuildMessageReactions
     ],
+    partials: [
+        dsc.Partials.Message,
+        dsc.Partials.Channel,
+        dsc.Partials.Reaction
+    ]
 });
