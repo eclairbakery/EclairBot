@@ -95,6 +95,7 @@ export class EclairAI {
     }
 
     private learn(text: string) {
+        text = this.replacePronouns(text);
         const tokens = this.tokenize(text);
         for (let i = 0; i < tokens.length - 1; i++) {
             const current = tokens[i];
@@ -125,9 +126,18 @@ export class EclairAI {
         let tokens = this.tokenize(seed);
         if (tokens.length === 0) return "";
 
+        for (const [pattern, suggestions] of Object.entries(this.config.pretrainedSuggestions)) {
+            if (seed.toLowerCase().includes(pattern.toLowerCase())) {
+                if (Math.random() > this.config.temperature) {
+                    return suggestions[Math.floor(Math.random() * suggestions.length)];
+                }
+            }
+        }
+
         let current = tokens[tokens.length - 1];
         if (!this.model.model[current]) {
             let keys = Object.keys(this.model.model);
+            if (keys.length === 0) return seed;
             current = keys[Math.floor(Math.random() * keys.length)];
         }
 
@@ -158,6 +168,33 @@ export class EclairAI {
             }
             this.model.tokenLimitsCounter[entry] = this.model.tokenLimitsCounter[entry] + this.tokenize(this.msg.content).length;
         }
+    }
+
+    private replacePronouns(text: string): string {
+        const replacements: Record<string, string> = {
+            "ja": "ty",
+            "mnie": "ciebie",
+            "mi": "tobie",
+            "mój": "twój",
+            "moja": "twoja",
+            "moje": "twoje",
+            "mną": "tobą",
+            "ze mną": "z tobą",
+            "dla mnie": "dla ciebie",
+            "i": "you",
+            "me": "you",
+            "my": "your",
+            "mine": "yours"
+        };
+
+        const sortedKeys = Object.keys(replacements).sort((a, b) => b.length - a.length);
+
+        let result = text.toLowerCase();
+        for (const key of sortedKeys) {
+            const regex = new RegExp(`\\b${key}\\b`, "gi");
+            result = result.replace(regex, replacements[key]);
+        }
+        return result;
     }
 
     public reply() {

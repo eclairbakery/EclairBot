@@ -45,7 +45,19 @@ export interface Config {
         modelPath: string;
         aiTokensLimit: number;
         bannedSequences: string[];
-        unlimitedAiRole: Snowflake
+        unlimitedAiRole: Snowflake;
+        /**
+         * This determines how the model is going to react
+         * to pretrained hints
+         * 
+         * 1 - it's going to reply the exact thing
+         * 0 - it's going to generate random thing
+         *     and ignore the hint
+         * 
+         * i suggest setting it to a float
+         */
+        temperature: number;
+        pretrainedSuggestions: Record<string, string>;
     };
 
     unfilteredRelated: {
@@ -191,7 +203,9 @@ const defaultConfig: Config = {
         modelPath: './bot/eclairai-db.json',
         aiTokensLimit: 1000,
         bannedSequences: ['@here', '@everyone', 'choler', 'chuj', 'debil', 'fiucie', 'fiut', 'fuck', 'gówn', 'hitler', 'ja pierdole', 'ja pierdolę', 'jeba', 'jebany', 'jebi', 'jprdl', 'kurwa', 'kutas', 'niger', 'nigger', 'penis', 'pierdol', 'porn', 'putin', 'rucha', 'skibidi', 'skibidi toilet', 'spierdalaj', 'toilet', 'wypierdalaj', 'zapierdalaj'],
-        unlimitedAiRole: '1235594078305914880'
+        unlimitedAiRole: '1235594078305914880',
+        temperature: 0.6,
+        pretrainedSuggestions: {"siema": "witam, w czym mogę zepsuć", "ile to": "co ty myslisz że ja matematyk", "witaj": "witam bardzo średnioserdecznie", "jaka pogoda": "wyjrzyj za okno"}
     },
 
     mod: {
