@@ -161,7 +161,7 @@ export class EclairAI {
         if (!this.model.tokenLimitsCounter[entry]) {
             this.model.tokenLimitsCounter[entry] = this.tokenize(this.msg.content).length;
         } else {
-            if (this.model.tokenLimitsCounter[entry] > this.config.aiTokensLimit && !this.msg.member.roles.cache.hasAny(this.config.unlimitedAiRole)) {
+            if (this.model.tokenLimitsCounter[entry] > this.config.aiTokensLimit && !this.msg.member.roles.cache.hasAny(...this.config.unlimitedAiRole)) {
                 log.replyError(this.msg, 'Wykorzystano limit zapytań dla EclairAI Fan Edition', 'Spróbuj ponownie jutro... Lub wbij 25 lvl, aby mieć unlimited access.\n-# Powodem tego jest to, iż nie chcę obciążać free hostingu z czasem coraz bardziej wymagającym modelem... Nie jest to super duży model, ale boję się, że niedługo hosting wywali jak dam bez limitu. Wbij ten 25 level i się nie martw. Prawie każdy go ma, to nie jest super trudne jakoś...');
                 this.shouldReply = false;
                 return;
