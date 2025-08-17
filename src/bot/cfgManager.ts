@@ -57,7 +57,7 @@ export interface Config {
          * i suggest setting it to a float
          */
         temperature: number;
-        pretrainedSuggestions: Record<string, string>;
+        pretrainedSuggestions: Record<string, string[]>;
     };
 
     unfilteredRelated: {
@@ -205,7 +205,7 @@ const defaultConfig: Config = {
         bannedSequences: ['@here', '@everyone', 'choler', 'chuj', 'debil', 'fiucie', 'fiut', 'fuck', 'gówn', 'hitler', 'ja pierdole', 'ja pierdolę', 'jeba', 'jebany', 'jebi', 'jprdl', 'kurwa', 'kutas', 'niger', 'nigger', 'penis', 'pierdol', 'porn', 'putin', 'rucha', 'skibidi', 'skibidi toilet', 'spierdalaj', 'toilet', 'wypierdalaj', 'zapierdalaj'],
         unlimitedAiRole: '1235594078305914880',
         temperature: 0.6,
-        pretrainedSuggestions: {"siema": "witam, w czym mogę zepsuć", "ile to": "co ty myslisz że ja matematyk", "witaj": "witam bardzo średnioserdecznie", "jaka pogoda": "wyjrzyj za okno"}
+        pretrainedSuggestions: {"siema": ["witam, w czym mogę zepsuć"], "ile to": ["co ty myslisz że ja matematyk"], "witaj": ["witam bardzo średnioserdecznie"], "jaka pogoda": ["wyjrzyj za okno"]}
     },
 
     mod: {
