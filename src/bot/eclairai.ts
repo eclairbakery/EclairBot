@@ -128,7 +128,7 @@ export class EclairAI {
 
         for (const [pattern, suggestions] of Object.entries(this.config.pretrainedSuggestions)) {
             if (seed.toLowerCase().includes(pattern.toLowerCase())) {
-                if (Math.random() > this.config.temperature) {
+                if (Math.random() > (1 - this.config.temperature)) {
                     return suggestions[Math.floor(Math.random() * suggestions.length)];
                 }
             }
