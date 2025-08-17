@@ -88,7 +88,10 @@ client.on('messageCreate', async (msg) => {
     }
 
     // eclairAI
-    if (msg.channelId == cfg.ai.channel && !msg.author.bot) {
+    if (msg.content.startsWith(`<@${msg.client.user.id}> czy`) || msg.content.startsWith(`<@!${msg.client.user.id}> czy`) || (msg.content.startsWith(`czy`) && msg.channelId == cfg.ai.channel && !msg.author.bot)) {
+        const responses = ['tak', 'nie', 'idk', 'kto wie', 'raczej nie', 'niezbyt', 'raczej tak', 'definitynie NIE', 'definitywnie TAK', 'TAK!', 'NIE!', 'zaprzeczam', 'potwierdzam', 'nie chce mi sie tego osądzać'];
+        return msg.reply(responses[Math.floor(Math.random() * responses.length)]);
+    } else if (msg.channelId == cfg.ai.channel && !msg.author.bot) {
         if (msg.content.startsWith(cfg.general.prefix)) {
             return msg.reply('-# Komendy nie są obsługiwane na kanale EclairAI fan edition.');
         }
