@@ -24,7 +24,7 @@ import * as fs from 'node:fs';
 export class EclairAI {
     private config: typeof cfg.ai;
     private model: {
-        tokenLimitsCounter: object,
+        tokenLimitsCounter: Record<string, number>,
         model: Record<string, Record<string, number>>
     };
     private shouldReply: boolean = true;
@@ -119,12 +119,18 @@ export class EclairAI {
 
     private generate(seed: string, maxWords: number = null): string {
         if (maxWords == null) {
-            maxWords = this.msg.content.split(' ').length + 5;
+            maxWords = this.tokenize(seed).length + 5;
         }
 
         let tokens = this.tokenize(seed);
         if (tokens.length === 0) return "";
+
         let current = tokens[tokens.length - 1];
+        if (!this.model.model[current]) {
+            let keys = Object.keys(this.model.model);
+            current = keys[Math.floor(Math.random() * keys.length)];
+        }
+
         let result = [current];
 
         for (let i = 0; i < maxWords; i++) {
@@ -136,6 +142,22 @@ export class EclairAI {
             current = nextWord;
         }
         return result.join(" ");
+    }
+
+    private tokensHandler() {
+        const userid = this.msg.author.id;
+        const datetime = new Date();
+        const entry = `${datetime.getUTCDate()}-${datetime.getUTCMonth()}-${datetime.getUTCFullYear()}-${userid}`;
+        if (!this.model.tokenLimitsCounter[entry]) {
+            this.model.tokenLimitsCounter[entry] = this.tokenize(this.msg.content).length;
+        } else {
+            if (this.model.tokenLimitsCounter[entry] > this.config.aiTokensLimit && !this.msg.member.roles.cache.hasAny(this.config.unlimitedAiRole)) {
+                log.replyError(this.msg, 'Wykorzystano limit zapytań dla EclairAI Fan Edition', 'Spróbuj ponownie jutro... Lub wbij 25 lvl, aby mieć unlimited access.\n-# Powodem tego jest to, iż nie chcę obciążać free hostingu z czasem coraz bardziej wymagającym modelem... Nie jest to super duży model, ale boję się, że niedługo hosting wywali jak dam bez limitu. Wbij ten 25 level i się nie martw. Prawie każdy go ma, to nie jest super trudne jakoś...');
+                this.shouldReply = false;
+                return;
+            }
+            this.model.tokenLimitsCounter[entry] = this.model.tokenLimitsCounter[entry] + this.tokenize(this.msg.content).length;
+        }
     }
 
     public reply() {
