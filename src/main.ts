@@ -24,6 +24,7 @@ import * as dsc from 'discord.js';
 dotenv.config({ quiet: true });
 
 import { client } from './client.js';
+import { EclairAI } from './bot/eclairai.js';
 
 import { warnCmd } from './cmd/mod/warn.js';
 import { kickCmd } from './cmd/mod/kick.js';
@@ -91,7 +92,8 @@ client.on('messageCreate', async (msg) => {
         if (msg.content.startsWith(cfg.general.prefix)) {
             return msg.reply('-# Komendy nie są obsługiwane na kanale EclairAI fan edition.');
         }
-        return msg.reply('Nie robię tego jeszcze, może potem...\n-# To nie jest oryginalne EclairAI, tylko wersja zastępcza/fanowska stworzona przez administratorów serwera.');
+        const ai = new EclairAI(msg);
+        return ai.reply();
     }
 
     // commands logic [ugly code warn]

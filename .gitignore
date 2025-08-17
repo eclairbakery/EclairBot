@@ -6,3 +6,4 @@ package-lock.json
 *.db
 **/.nvim
 bundle.js*
+bot/eclairai-db.json
