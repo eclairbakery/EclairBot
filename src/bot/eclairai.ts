@@ -198,14 +198,17 @@ export class EclairAI {
     }
 
     public reply() {
-        if (this.shouldReply) this.msg.reply({
+        if (!this.shouldReply) return;
+        const result = this.generate(this.msg.content);
+        this.learn(result); // be able to also do something creative with hints
+        this.msg.reply({
             allowedMentions: {
                 parse: [],
                 users: [],
                 roles: [],
                 repliedUser: false
             },
-            content: `${this.generate(this.msg.content).replaceAll('*', '\\*').replaceAll('_', '\\_').replaceAll('-#', '\\-#').replaceAll('#', '\\#')}\n-# ~ eclairAI fan edition`
+            content: `${result.replaceAll('*', '\\*').replaceAll('_', '\\_').replaceAll('-#', '\\-#').replaceAll('#', '\\#')}\n-# ~ eclairAI fan edition`
         });
         this.saveModel();
     }
