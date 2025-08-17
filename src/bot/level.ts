@@ -25,6 +25,7 @@ function calculateLevel(xp: number, level_divider: number): number {
 export function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     // check if eligible
     if (cfg.general.leveling.excludedChannels.includes(msg.channelId)) return;
+    if (msg.channelId == cfg.unfilteredRelated.unfilteredChannel) return;
 
     // amount
     let amount = cfg.general.leveling.xp_per_message;

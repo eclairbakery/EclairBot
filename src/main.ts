@@ -80,6 +80,12 @@ client.on('messageCreate', async (msg) => {
     // now goes leveling
     if (!msg.author.bot) addExperiencePoints(msg);
 
+    // gifs ban
+    if (msg.member.roles.cache.has(cfg.unfilteredRelated.gifBan) && msg.channelId !== cfg.unfilteredRelated.unfilteredChannel && (msg.attachments.some(att => att.name?.toLowerCase().endsWith('.gif')) || msg.content.includes('tenor.com') || msg.content.includes('.gif'))) {
+        await msg.reply('masz bana na gify');
+        return await msg.delete();
+    }
+
     // eclairAI
     if (msg.channelId == cfg.ai.channel && !msg.author.bot) {
         if (msg.content.startsWith(cfg.general.prefix)) {
@@ -140,6 +146,45 @@ client.on('guildMemberRemove', async (member) => {
                 .setThumbnail(member.displayAvatarURL({ size: 128 }))
         ]
     });
+});
+
+client.on("guildMemberUpdate", async (oldMember, newMember) => {
+    const roleIdToWatch = cfg.unfilteredRelated.gifBan; 
+    const allowedRoleIds = cfg.unfilteredRelated.eligibleToRemoveGifBan;
+
+    const hadRole = oldMember.roles.cache.has(roleIdToWatch);
+    const hasRole = newMember.roles.cache.has(roleIdToWatch);
+
+    if (hadRole && !hasRole) {
+        try {
+            const fetchedLogs = await newMember.guild.fetchAuditLogs({
+                limit: 1,
+                type: dsc.AuditLogEvent.MemberRoleUpdate
+            });
+
+            const logEntry = fetchedLogs.entries.first();
+
+            if (
+                logEntry &&
+                logEntry.target.id === newMember.id &&
+                logEntry.changes.some(change =>
+                    change.key === "$remove" &&
+                    change.new.some(r => r.id === roleIdToWatch)
+                )
+            ) {
+                const executor = logEntry.executor;
+                const memberExecutor = await newMember.guild.members.fetch(executor.id);
+
+                const hasAllowedRole = allowedRoleIds.some(id => memberExecutor.roles.cache.has(id));
+
+                if (!hasAllowedRole) {
+                    await newMember.roles.add(roleIdToWatch, "Nieautoryzowane odebranie roli");
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
 });
 
 client.on('interactionCreate', async (int) => {

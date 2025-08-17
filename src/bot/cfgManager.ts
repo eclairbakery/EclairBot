@@ -41,7 +41,13 @@ export interface Config {
 
     ai: {
         channel: Snowflake;
-    }
+    };
+
+    unfilteredRelated: {
+        eligibleToRemoveGifBan: Snowflake[],
+        gifBan: Snowflake,
+        unfilteredChannel: Snowflake
+    };
 
     mod: {
         /* Configuration for moderation commands */
@@ -166,6 +172,12 @@ const defaultConfig: Config = {
             general: '1264971505662689311'
         },
         moderationProtectedRoles: ['1280884378586845216', '1280081773019140096']
+    },
+
+    unfilteredRelated: {
+        eligibleToRemoveGifBan: ["1280081773019140096", "1280884378586845216"],
+        gifBan: "1406369089634435204",
+        unfilteredChannel: '1397628186795311246'
     },
 
     ai: {
