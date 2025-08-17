@@ -31,6 +31,7 @@ export class EclairAI {
     private msg: dsc.Message;
     
     constructor(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
+        this.msg = msg;
         this.loadConfig();
         this.loadModel();
         for (const seq of this.config.bannedSequences) {
@@ -53,9 +54,8 @@ export class EclairAI {
             this.shouldReply = false;
             return;
         }
-        
         this.learn(msg.content);
-        this.msg = msg;
+        this.tokensHandler();
     }
 
     private loadConfig() {
