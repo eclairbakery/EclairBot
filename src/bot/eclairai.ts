@@ -25,7 +25,8 @@ export class EclairAI {
     private config: typeof cfg.ai;
     private model: {
         tokenLimitsCounter: Record<string, number>,
-        model: Record<string, Record<string, number>>
+        model: Record<string, Record<string, number>>,
+        memory: object
     };
     private shouldReply: boolean = true;
     private msg: dsc.Message;
@@ -56,6 +57,7 @@ export class EclairAI {
         }
         this.learn(msg.content);
         this.tokensHandler();
+        this.remember(msg.author.id, msg.content);
     }
 
     private loadConfig() {
@@ -69,7 +71,8 @@ export class EclairAI {
             } else {
                 this.model = {
                     tokenLimitsCounter: {},
-                    model: {}
+                    model: {},
+                    memory: {}
                 };
             }
         } catch (e) {
@@ -80,6 +83,14 @@ export class EclairAI {
 
     private saveModel() {
         fs.writeFileSync(this.config.modelPath, JSON.stringify(this.model, null, 2));
+    }
+
+    private remember(userId: string, text: string) {
+        if (!this.model.memory[userId]) this.model.memory[userId] = [];
+        this.model.memory[userId].push(text);
+        if (this.model.memory[userId].length > this.config.memoryLimit) {
+            this.model.memory[userId].shift();
+        }
     }
 
     private validateCharacters(content: Snowflake): boolean {
@@ -118,7 +129,12 @@ export class EclairAI {
         return Object.keys(options)[0];
     }
 
-    private generate(seed: string, maxWords: number = null): string {
+    private generate(seed: string, maxWords: number = null, userId?: string): string {
+        if (userId && this.model.memory[userId]) {
+            const context = this.model.memory[userId].slice(-3).join(' ');
+            seed = `${context} ${seed}`;
+        }
+
         if (maxWords == null) {
             maxWords = this.tokenize(seed).length + 5;
         }
@@ -136,21 +152,24 @@ export class EclairAI {
 
         let current = tokens[tokens.length - 1];
         if (!this.model.model[current]) {
-            let keys = Object.keys(this.model.model);
+            const keys = Object.keys(this.model.model);
             if (keys.length === 0) return seed;
             current = keys[Math.floor(Math.random() * keys.length)];
         }
 
-        let result = [current];
+        const result = [current];
 
         for (let i = 0; i < maxWords; i++) {
-            let nextOptions = this.model.model[current];
+            const nextOptions = this.model.model[current];
             if (!nextOptions) break;
 
-            let nextWord = this.weightedChoice(nextOptions);
+            const nextWord = this.weightedChoice(nextOptions);
             result.push(nextWord);
             current = nextWord;
+
+            if (/[.!?]/.test(nextWord)) break;
         }
+
         return result.join(" ");
     }
 
@@ -210,6 +229,7 @@ export class EclairAI {
             },
             content: `${result.replaceAll('*', '\\*').replaceAll('_', '\\_').replaceAll('-#', '\\-#').replaceAll('#', '\\#')}\n-# ~ eclairAI fan edition`
         });
+        this.remember(this.msg.author.id, result);
         this.saveModel();
     }
 }
