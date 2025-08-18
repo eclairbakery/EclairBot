@@ -55,3 +55,5 @@ db.exec(`
 `);
 
 addColumnIfNotExists("warns", "expires_at", "INTEGER", 0);
+
+export {sqlite};

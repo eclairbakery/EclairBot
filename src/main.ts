@@ -381,6 +381,7 @@ async function main() {
         }
     }
     try {
+        console.log(commandsArray);
         await rest.put(
             dsc.Routes.applicationCommands(client.application.id),
             { body: commandsArray }

@@ -60,7 +60,7 @@ export const dogCmd: Command = {
 };
 
 export const parrotCmd: Command = {
-    name: 'dog',
+    name: 'parrot',
     longDesc: 'Gru... bierzesz coś? Bierze bierze Hepaslimin. Daj spokój papuga.',
     shortDesc: 'Pokazuje losową papugę',
     expectedArgs: [],
