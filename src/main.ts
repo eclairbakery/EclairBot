@@ -40,10 +40,11 @@ import { balCmd }         from './cmd/economy/bal.js';
 import { warnClearCmd }   from './cmd/mod/warnClear.js';
 import { blackjackCmd }   from './cmd/economy/blackjack.js';
 import { catCmd, dogCmd } from './cmd/gif/gifs.js';
-import { pfpCmd }         from './cmd/general/pfp.js';
-import { bannerCmd }      from './cmd/general/banner.js';
-import { muteCmd }        from './cmd/mod/mute.js';
-import { unmuteCmd }      from './cmd/mod/unmute.js';
+import { pfpCmd } from './cmd/general/pfp.js';
+import { bannerCmd } from './cmd/general/banner.js';
+import { muteCmd } from './cmd/mod/mute.js';
+import { unmuteCmd } from './cmd/mod/unmute.js';
+import { robCmd } from './cmd/economy/rob.js';
 
 const commands: Map<Category, Command[]> = new Map([
     [
@@ -67,6 +68,7 @@ const commands: Map<Category, Command[]> = new Map([
         [
             workCmd, slutCmd, crimeCmd,
             topecoCmd, balCmd, blackjackCmd,
+            robCmd
         ]
     ],
     [
