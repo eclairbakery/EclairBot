@@ -2,6 +2,7 @@ import sqlite from 'sqlite3';
 
 export const db = new sqlite.Database('bot.db');
 
+/** @madebyai @author ChatGPT */
 function addColumnIfNotExists(table: string, column: string, type: string, defaultValue: string | number = 0) {
     db.all(`PRAGMA table_info(${table});`, (err, rows) => {
         if (err) {
