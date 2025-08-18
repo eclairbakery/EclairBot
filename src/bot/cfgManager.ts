@@ -48,13 +48,21 @@ export interface Config {
         unlimitedAiRole: Snowflake[];
         /**
          * This determines how the model is going to react
-         * to pretrained hints
-         *
-         * 1 - it's going to reply the exact thing
-         * 0 - it's going to generate random thing
-         *     and ignore the hint
-         *
-         * i suggest setting it to a float
+         * to pretrained hints. Setting it to a lower value
+         * involves model's "imagination" and setting it to
+         * a bigger value means it's send the exact same thing
+         * that it was trained to.
+         * 
+         * Remember that model trains on pretrained hints, this
+         * makes some probability, that the pretrained suggestion
+         * will be printed, even in **0** state (100% "imagination").
+         * 
+         * **1** - it's going to reply the exact thing
+         * 
+         * **0** - it's going to generate random thing
+         *         and ignore the hint
+         * 
+         * I suggest setting it to a float like 0.5, even 0.4.
          */
         temperature: number;
         pretrainedSuggestions: Record<string, string[]>;
@@ -202,10 +210,10 @@ const defaultConfig: Config = {
         channel: '1276271917665484801',
         allowedCharacters: [/* lowercase*/ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'w', 'x', 'y', 'z', /* uppercase */ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'W', 'X', 'Y', 'Z' /* polish characters */, 'ą', 'ę', 'ć', 'ś', 'ó', 'ł', 'ż', 'ź', 'Ą', 'Ę', 'Ć', 'Ś', 'Ó', 'Ł', 'Ż', 'Ź', /* common characters */, ',', '.', ';', ' ', ':'],
         modelPath: './bot/eclairai-db.json',
-        aiTokensLimit: 1000,
+        aiTokensLimit: 250, // believe me it's a lot, you won't get more if you're not flooding
         bannedSequences: ['@here', '@everyone', 'choler', 'chuj', 'debil', 'fiucie', 'fiut', 'fuck', 'gówn', 'hitler', 'ja pierdole', 'ja pierdolę', 'jeba', 'jebany', 'jebi', 'jprdl', 'kurwa', 'kutas', 'niger', 'nigger', 'penis', 'pierdol', 'porn', 'putin', 'rucha', 'skibidi', 'skibidi toilet', 'spierdalaj', 'toilet', 'wypierdalaj', 'zapierdalaj'],
         unlimitedAiRole: ['1235594078305914880', '1235594081556627577', '1235594083544858667', '1235594085188767835', '1390802440739356762', '1255213321301524643'],
-        temperature: 0.5,
+        temperature: 0.5, // this is a lot... i need to decrease this
         pretrainedSuggestions: {"siema": ["witam, w czym mogę zepsuć"], "ile to": ["co ty myslisz że ja matematyk"], "witaj": ["witam bardzo średnioserdecznie"], "jaka pogoda": ["wyjrzyj za okno"]},
         memoryLimit: 15
     },
