@@ -9,7 +9,7 @@ interface AutomodRules {
 }
 
 export async function automod(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, client: dsc.Client) {
-    const channel = await client.channels.fetch(msg.channelId);
+    const channel = (await client.channels.fetch(msg.channelId)) as dsc.Channel;
     if (!channel.isSendable()) return;
     const automodRules: AutomodRules[] = [
         // the most important go first

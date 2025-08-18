@@ -33,7 +33,7 @@ export const muteCmd: Command = {
         if (msg.reference?.messageId) {
             const repliedMsg = await msg.channel.messages.fetch(msg.reference.messageId).catch(() => null);
             if (repliedMsg) {
-                targetUser = repliedMsg.author;
+                targetUser = repliedMsg.member;
             }
             reason = args.join(' ').trim();
         } else if (args.length > 0) {

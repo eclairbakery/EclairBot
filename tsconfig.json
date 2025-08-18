@@ -1,5 +1,4 @@
 {
-    "strict": true,
     "compilerOptions": {
         "outDir": "dist",
         "module": "nodenext",
@@ -13,7 +12,7 @@
             {
                 "transform": "typia/lib/transform"
             }
-        ],
+        ]
     },
     "ts-node": {
         "transpileOnly": true,

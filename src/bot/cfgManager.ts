@@ -20,8 +20,8 @@ export interface Config {
         prefix: string;
         /* Experience configuration */
         leveling: {
-            xp_per_message: number;
-            level_divider: number;
+            xpPerMessage: number;
+            levelDivider: number;
             excludedChannels: string[];
             milestone_roles: {[key: number]: Snowflake};
             canChangeXP: Snowflake[];
@@ -171,8 +171,8 @@ const defaultConfig: Config = {
         prefix: '!',
         leveling: {
             // leave it like it was in startIT
-            xp_per_message: 4,
-            level_divider: 100,
+            xpPerMessage: 4,
+            levelDivider: 100,
             excludedChannels: [],
             canChangeXP: ['1280884378586845216', '1280081773019140096', '1404392144441180221'],
             milestone_roles: {

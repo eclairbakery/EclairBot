@@ -16,7 +16,7 @@ export const warnlistCmd: Command = {
     expectedArgs: [],
 
     aliases: ['warnlista'],
-    allowedRoles: null,
+    allowedRoles: cfg.mod.commands.warn.allowedRoles,
     allowedUsers: [],
 
     execute(msg, args) {

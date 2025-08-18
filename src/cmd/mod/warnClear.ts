@@ -4,6 +4,9 @@ import { db } from '../../bot/db.js';
 import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
+import { cfg } from '../../bot/cfg.js';
+
+const cmdCfg = cfg.mod.commands.warn;
 
 export const warnClearCmd: Command = {
     name: 'warn-clear',
@@ -12,7 +15,7 @@ export const warnClearCmd: Command = {
     expectedArgs: [ { name: 'id', desc: 'No powiedz jaki warn...' } ],
 
     aliases: ['clearwarn', 'warnusun'],
-    allowedRoles: null,
+    allowedRoles: cmdCfg.allowedRoles,
     allowedUsers: [],
 
     async execute(msg, args) {

@@ -44,7 +44,7 @@ async function tryWork(userId: string, amount: number): Promise<{ ok: boolean; w
 export const workCmd: Command = {
     name: 'work',
     longDesc: 'Pr\\*ca dla pana, pr\\*ca za darmo! Niewolnikiem naszym bądź... dobra, nie mam talentu do wierszy. Po prostu ekonomia.',
-    category: 'ekonomia',
+    shortDesc: 'Pr\\*ca dla pana, pr\\*ca za darmo!',
     expectedArgs: [],
 
     aliases: [],

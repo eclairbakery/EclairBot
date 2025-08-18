@@ -53,23 +53,23 @@ export function getTipEmbed(title: string, desc: string) {
 }
 
 
-export function replyWarn(msg: CommandInput, title: string, desc: string) {
+export function replyWarn(msg: CommandInput | dsc.Message, title: string, desc: string) {
     msg.reply(getWarnEmbed(title, desc));
 }
 
-export function replyInfo(msg: CommandInput, title: string, desc: string) {
+export function replyInfo(msg: CommandInput | dsc.Message, title: string, desc: string) {
     msg.reply(getInfoEmbed(title, desc));
 }
 
-export function replySuccess(msg: CommandInput, title: string, desc: string) {
+export function replySuccess(msg: CommandInput | dsc.Message, title: string, desc: string) {
     msg.reply(getSuccessEmbed(title, desc));
 }
 
-export function replyTip(msg: CommandInput, title: string, desc: string) {
+export function replyTip(msg: CommandInput | dsc.Message, title: string, desc: string) {
     msg.reply(getTipEmbed(title, desc));
 }
 
-export function replyError(msg: CommandInput, title: string, desc: string) {
+export function replyError(msg: CommandInput | dsc.Message, title: string, desc: string) {
     msg.reply(getErrorEmbed(title, desc));
 }
 

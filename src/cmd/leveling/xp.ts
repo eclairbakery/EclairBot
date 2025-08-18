@@ -12,7 +12,7 @@ import { PredefinedColors } from '../../util/color.js';
 export const xpCmd: Command = {
     name: 'xp',
     longDesc: 'Dodaj komuś levela... Jak nadużyjesz, no to, chyba nie wiesz z jaką siłą igrasz! Pospólstwo jak pomyśli, że sobie za darmoszkę doda poziomów, no to nie! Do widzenia.',
-    category: 'poziomy',
+    shortDesc: 'Komenda dla adminów, by bawić się levelem...',
     expectedArgs: [
         {
             name: 'user',

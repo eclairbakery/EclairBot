@@ -31,9 +31,9 @@ export const unmuteCmd: Command = {
         let reason = '';
 
         if (msg.reference?.messageId) {
-            const repliedMsg = await msg.channel.messages.fetch(msg.reference.messageId).catch(() => null);
+            const repliedMsg = await msg.channel.messages.fetch(msg.reference.messageId);
             if (repliedMsg) {
-                targetUser = repliedMsg.author;
+                targetUser = repliedMsg.member;
             }
             reason = args.join(' ').trim();
         } else if (args.length > 0) {

@@ -45,7 +45,7 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
 export const crimeCmd: Command = {
     name: 'crime',
     longDesc: 'Ohohohoho! Mamy na serwerze przestępców. Złapać ich! Schwytać i wziąć do niewoli. A tak na poważnie to metoda zarobku, gdzie możesz wszystko przejabć jak w kasynie, albo wygrać strasznie dużo kasiuryyyy!',
-    category: 'ekonomia',
+    shortDesc: 'Ohohohoho! Mamy na serwerze przestępców. Chcesz dołączyć?',
     expectedArgs: [],
 
     aliases: [],

@@ -37,7 +37,7 @@ export interface Command {
     aliases: string[];
 
     /* Array of role IDs that can execute the command. */
-    allowedRoles: string[];
+    allowedRoles: string[] | null;
     /* Array of user IDs that can execute the command. Everyone if null */
     allowedUsers: null | string[];
 

@@ -16,7 +16,7 @@ let ecoRoles = [
 export const topecoCmd: Command = {
     name: 'topeco',
     longDesc: 'Janusze biznesu z Allegro.',
-    category: 'ekonomia',
+    shortDesc: 'Janusze biznesu z Allegro.',
     expectedArgs: [],
 
     aliases: ['topmoney'],

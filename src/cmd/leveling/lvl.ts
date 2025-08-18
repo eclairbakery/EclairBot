@@ -19,7 +19,7 @@ function calculateLevel(xp: number, level_divider: number): number {
 export const lvlCmd: Command = {
     name: 'lvl',
     longDesc: 'Wyświetl swój level lub level wskazanego użytkownika.',
-    category: 'poziomy',
+    shortDesc: 'Wyświetl swój/kogoś level.',
     expectedArgs: [
         {
             name: 'user',

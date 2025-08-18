@@ -12,7 +12,7 @@ import { PredefinedColors } from '../../util/color.js';
 export const balCmd: Command = {
     name: 'bal',
     longDesc: 'Wyświetl swój balans zadłużenia (raczej jesteś mało warty, w sensie konto, nie pozywaj za zniesławienie).',
-    category: 'ekonomia',
+    shortDesc: 'Wyświetl swój balans konta.',
     expectedArgs: [],
 
     aliases: ['balance'],

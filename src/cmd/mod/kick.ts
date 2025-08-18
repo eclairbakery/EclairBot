@@ -31,9 +31,9 @@ export const kickCmd: Command = {
         let reason = '';
 
         if (msg.reference?.messageId) {
-            const repliedMsg = await msg.channel.messages.fetch(msg.reference.messageId).catch(() => null);
+            const repliedMsg = await msg.channel.messages.fetch(msg.reference.messageId);
             if (repliedMsg) {
-                targetUser = repliedMsg.author;
+                targetUser = repliedMsg.member;
             }
             reason = args.join(' ').trim();
         } else if (args.length > 0) {
@@ -52,7 +52,7 @@ export const kickCmd: Command = {
             }
 
             if (userId) {
-                targetUser = await msg.guild.members.fetch(userId).catch(() => null);
+                targetUser = await msg.guild.members.fetch(userId);
             }
 
             reason = reasonArgs.join(' ').trim();

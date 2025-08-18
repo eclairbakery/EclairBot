@@ -45,7 +45,7 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
 export const slutCmd: Command = {
     name: 'slut',
     longDesc: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
-    category: 'ekonomia',
+    shortDesc: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
     expectedArgs: [],
 
     aliases: [],

@@ -105,7 +105,7 @@ export const detailHelpCmd: Command = {
         let blockedCmds: string[] = [];
 
         for (const category of categoriesToShow) {
-            const cmds = commands.get(category);
+            const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
                 if (!canExecuteCmd(cmd, msg.member)) blockedCmds.push(cmd.name);
             }
@@ -126,7 +126,7 @@ export const detailHelpCmd: Command = {
                 .setColor(category.color);
 
             for (const cmd of cmds) {
-                if (blockedCmds.includes(cmd.name)) return;
+                if (blockedCmds.includes(cmd.name)) continue;
 
                 let formattedName = cmd.name;
                 if (cmd.aliases.length == 1) {
@@ -148,7 +148,7 @@ export const detailHelpCmd: Command = {
 
         for (const category of categoriesToShow) {
             const cmds = commands.get(category);
-            const embed = buildHelpEmbed(category, cmds);
+            const embed = buildHelpEmbed(category, cmds || []);
             allEmbeds.push(embed);
         }
 

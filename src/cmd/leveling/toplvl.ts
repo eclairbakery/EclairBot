@@ -19,7 +19,7 @@ function calculateLevel(xp: number, level_divider: number): number {
 export const toplvlCmd: Command = {
     name: 'toplvl',
     longDesc: 'Czas popatrzeć na najlepszych użytkowników serwera...',
-    category: 'poziomy',
+    shortDesc: 'Czas popatrzeć na najlepszych użytkowników serwera...',
     expectedArgs: [],
 
     aliases: ['topka', 'toplevel'],
