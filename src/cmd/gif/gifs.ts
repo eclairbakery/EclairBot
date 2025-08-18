@@ -32,7 +32,7 @@ async function getGIF(searchTerm: string): Promise<string> {
 export const catCmd: Command = {
     name: 'cat',
     longDesc: 'Lubisz koty? Jakże pięknie się składa. Możemy Ci pokazać losowego kota.',
-    category: 'gify',
+    shortDesc: 'Pokazuje losowego kota',
     expectedArgs: [],
 
     aliases: ['kot'],
@@ -47,7 +47,7 @@ export const catCmd: Command = {
 export const dogCmd: Command = {
     name: 'dog',
     longDesc: 'Ohhh... dasz mi karmę? Chcesz zobaczyć moją słodką mordkę? To ja, piesek.',
-    category: 'gify',
+    shortDesc: 'Pokazuje losowego psa',
     expectedArgs: [],
 
     aliases: ['pies'],
