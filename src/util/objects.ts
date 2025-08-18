@@ -30,5 +30,5 @@ export function deepEqual<T>(a: T, b: T): boolean {
 }
 
 export function prettyPrint(obj: any): string {
-    return JSON.stringify(obj, null, 2);
+    return JSON.stringify(obj, null, 4);
 }
