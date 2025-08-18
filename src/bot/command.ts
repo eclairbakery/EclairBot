@@ -19,7 +19,7 @@ export interface CommandInput {
     /** legacy commands only */
     reference?: dsc.MessageReference,
     channel: dsc.TextBasedChannel,
-    reply: (options: string | dsc.MessagePayload | dsc.MessageReplyOptions) => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>>,
+    reply: (options: string | dsc.MessagePayload | dsc.MessageReplyOptions) => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>> | dsc.Message<boolean>,
     client: dsc.Client,
     mentions: dsc.MessageMentions,
     [additional_fields: string | number | symbol]: any

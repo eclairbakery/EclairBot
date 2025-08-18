@@ -260,12 +260,13 @@ client.on('interactionCreate', async (int) => {
     }
 
     if (!int.isChatInputCommand()) return;
+    await int.deferReply();
 
     const { commandName, options, member, channelId } = int;
 
     let cmdObject: Command;
     for (const [_, cmds] of commands) {
-        cmdObject = cmds.find((val) => val.name === commandName || val.aliases.includes(commandName));
+        cmdObject = cmds.find((val) => val.name === commandName);
         if (cmdObject) {
             break;
         }
@@ -298,6 +299,17 @@ client.on('interactionCreate', async (int) => {
         const interact: CommandInput = (int as any as CommandInput);
         interact.author = int.user;
         interact.mentions = (parseMentionsFromStrings(cmdObject.expectedArgs?.map(opt => options.getString(opt.name)) || []) as any as dsc.MessageMentions);
+        interact.reply = (async (options: any) => {
+            try {
+                if (int.deferred || int.replied) {
+                    await int.editReply(options);
+                } else {
+                    await int.reply(options);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }) as any;
 
         await cmdObject.execute(interact, args, commands);
     } catch (err) {
@@ -381,7 +393,6 @@ async function main() {
         }
     }
     try {
-        console.log(commandsArray);
         await rest.put(
             dsc.Routes.applicationCommands(client.application.id),
             { body: commandsArray }
