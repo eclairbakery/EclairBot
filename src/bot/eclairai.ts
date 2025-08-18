@@ -26,7 +26,8 @@ export class EclairAI {
     private model: {
         tokenLimitsCounter: Record<string, number>,
         model: Record<string, Record<string, number>>,
-        memory: object
+        memory: object,
+        embeddings: {}
     };
     private shouldReply: boolean = true;
     private msg: dsc.Message;
@@ -68,11 +69,14 @@ export class EclairAI {
         try {
             if (fs.existsSync(this.config.modelPath)) {
                 this.model = JSON.parse(fs.readFileSync(this.config.modelPath, "utf-8"));
+                if (!this.model.embeddings) this.model.embeddings = {};
+                if (!this.model.memory) this.model.memory = {};
             } else {
                 this.model = {
                     tokenLimitsCounter: {},
                     model: {},
-                    memory: {}
+                    memory: {},
+                    embeddings: {}
                 };
             }
         } catch (e) {
@@ -94,10 +98,10 @@ export class EclairAI {
     }
 
     private validateCharacters(content: Snowflake): boolean {
-        let hasInvalidCharacters: boolean = false;
-        content.split('').forEach((char) => {
+        let hasInvalidCharacters = false;
+        content.split("").forEach((char) => {
             if (!this.config.allowedCharacters.includes(char)) hasInvalidCharacters = true;
-        })
+        });
         return !hasInvalidCharacters;
     }
 
@@ -108,12 +112,21 @@ export class EclairAI {
     private learn(text: string) {
         text = this.replacePronouns(text);
         const tokens = this.tokenize(text);
+
         for (let i = 0; i < tokens.length - 1; i++) {
             const current = tokens[i];
             const next = tokens[i + 1];
+
             if (!this.model.model[current]) this.model.model[current] = {};
             if (!this.model.model[current][next]) this.model.model[current][next] = 0;
             this.model.model[current][next]++;
+
+            if (!this.model.embeddings[current]) {
+                this.model.embeddings[current] = this.createEmbedding(current);
+            }
+            if (!this.model.embeddings[next]) {
+                this.model.embeddings[next] = this.createEmbedding(next);
+            }
         }
         this.saveModel();
     }
@@ -129,9 +142,28 @@ export class EclairAI {
         return Object.keys(options)[0];
     }
 
+    private cosineSimilarity(a: number[], b: number[]): number {
+        let dot = 0, normA = 0, normB = 0;
+        for (let i = 0; i < a.length; i++) {
+            dot += a[i] * b[i];
+            normA += a[i] ** 2;
+            normB += b[i] ** 2;
+        }
+        return dot / (Math.sqrt(normA) * Math.sqrt(normB) || 1);
+    }
+
+    private createEmbedding(word: string): number[] {
+        const vec = new Array(26).fill(0);
+        for (const char of word) {
+            const idx = char.charCodeAt(0) % 26;
+            vec[idx]++;
+        }
+        return vec;
+    }
+
     private generate(seed: string, maxWords: number = null, userId?: string): string {
         if (userId && this.model.memory[userId]) {
-            const context = this.model.memory[userId].slice(-3).join(' ');
+            const context = this.model.memory[userId].slice(-3).join(" ");
             seed = `${context} ${seed}`;
         }
 
@@ -163,10 +195,27 @@ export class EclairAI {
             const nextOptions = this.model.model[current];
             if (!nextOptions) break;
 
-            const nextWord = this.weightedChoice(nextOptions);
+            let nextWord = this.weightedChoice(nextOptions);
+            if (this.model.embeddings[current]) {
+                let best = "";
+                let bestScore = -1;
+                for (const candidate of Object.keys(nextOptions)) {
+                    if (this.model.embeddings[candidate]) {
+                        const score = this.cosineSimilarity(
+                            this.model.embeddings[current],
+                            this.model.embeddings[candidate]
+                        );
+                        if (score > bestScore) {
+                            bestScore = score;
+                            best = candidate;
+                        }
+                    }
+                }
+                if (best) nextWord = best;
+            }
+
             result.push(nextWord);
             current = nextWord;
-
             if (/[.!?]/.test(nextWord)) break;
         }
 
@@ -180,12 +229,19 @@ export class EclairAI {
         if (!this.model.tokenLimitsCounter[entry]) {
             this.model.tokenLimitsCounter[entry] = this.tokenize(this.msg.content).length;
         } else {
-            if (this.model.tokenLimitsCounter[entry] > this.config.aiTokensLimit && !this.msg.member.roles.cache.hasAny(...this.config.unlimitedAiRole)) {
-                log.replyError(this.msg, 'Wykorzystano limit zapytań dla EclairAI Fan Edition', 'Spróbuj ponownie jutro... Lub zostań boosterem albo wbij 25 lvl, aby mieć unlimited access.\n-# Powodem tego jest to, iż nie chcę obciążać free hostingu z czasem coraz bardziej wymagającym modelem... Nie jest to super duży model, ale boję się, że niedługo hosting wywali jak dam bez limitu. Wbij ten 25 level i się nie martw. Prawie każdy go ma, to nie jest super trudne jakoś... Albo serio, zboostuj serwer.');
+            if (
+                this.model.tokenLimitsCounter[entry] > this.config.aiTokensLimit &&
+                !this.msg.member.roles.cache.hasAny(...this.config.unlimitedAiRole)
+            ) {
+                log.replyError(
+                    this.msg,
+                    "Wykorzystano limit zapytań",
+                    "Spróbuj ponownie jutro..."
+                );
                 this.shouldReply = false;
                 return;
             }
-            this.model.tokenLimitsCounter[entry] = this.model.tokenLimitsCounter[entry] + this.tokenize(this.msg.content).length;
+            this.model.tokenLimitsCounter[entry] += this.tokenize(this.msg.content).length;
         }
     }
 
@@ -207,8 +263,8 @@ export class EclairAI {
         };
 
         const sortedKeys = Object.keys(replacements).sort((a, b) => b.length - a.length);
-
         let result = text.toLowerCase();
+
         for (const key of sortedKeys) {
             const regex = new RegExp(`\\b${key}\\b`, "gi");
             result = result.replace(regex, replacements[key]);
@@ -218,16 +274,11 @@ export class EclairAI {
 
     public reply() {
         if (!this.shouldReply) return;
-        const result = this.generate(this.msg.content);
-        this.learn(result); // be able to also do something creative with hints
+        const result = this.generate(this.msg.content, null, this.msg.author.id);
+        this.learn(result);
         this.msg.reply({
-            allowedMentions: {
-                parse: [],
-                users: [],
-                roles: [],
-                repliedUser: false
-            },
-            content: `${result.replaceAll('*', '\\*').replaceAll('_', '\\_').replaceAll('-#', '\\-#').replaceAll('#', '\\#')}\n-# ~ eclairAI fan edition`
+            allowedMentions: { parse: [], users: [], roles: [], repliedUser: false },
+            content: `${result}\n-# ~ eclairAI fan edition`
         });
         this.remember(this.msg.author.id, result);
         this.saveModel();
