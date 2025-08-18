@@ -22,24 +22,25 @@ dotenv.config({ quiet: true });
 import { client } from './client.js';
 import { EclairAI } from './bot/eclairai.js';
 
-import { warnCmd }        from './cmd/mod/warn.js';
-import { kickCmd }        from './cmd/mod/kick.js';
-import { banCmd }         from './cmd/mod/ban.js';
-import { detailHelpCmd }  from './cmd/general/detail-help.js';
-import { manCmd }         from './cmd/general/man.js';
-import { warnlistCmd }    from './cmd/mod/warnlist.js';
-import { siemaCmd }       from './cmd/general/siema.js';
-import { workCmd }        from './cmd/economy/work.js';
-import { slutCmd }        from './cmd/economy/slut.js';
-import { crimeCmd }       from './cmd/economy/crime.js';
-import { xpCmd }          from './cmd/leveling/xp.js';
-import { lvlCmd }         from './cmd/leveling/lvl.js';
-import { toplvlCmd }      from './cmd/leveling/toplvl.js';
-import { topecoCmd }      from './cmd/economy/topeco.js';
-import { balCmd }         from './cmd/economy/bal.js';
-import { warnClearCmd }   from './cmd/mod/warnClear.js';
-import { blackjackCmd }   from './cmd/economy/blackjack.js';
-import { catCmd, dogCmd } from './cmd/gif/gifs.js';
+import { warnCmd } from './cmd/mod/warn.js';
+import { kickCmd } from './cmd/mod/kick.js';
+import { banCmd } from './cmd/mod/ban.js';
+import { detailHelpCmd } from './cmd/general/detail-help.js';
+import { manCmd } from './cmd/general/man.js';
+import { warnlistCmd } from './cmd/mod/warnlist.js';
+import { siemaCmd } from './cmd/general/siema.js';
+import { workCmd } from './cmd/economy/work.js';
+import { slutCmd } from './cmd/economy/slut.js';
+import { crimeCmd } from './cmd/economy/crime.js';
+import { addExperiencePoints } from './bot/level.js';
+import { xpCmd } from './cmd/leveling/xp.js';
+import { lvlCmd } from './cmd/leveling/lvl.js';
+import { toplvlCmd } from './cmd/leveling/toplvl.js';
+import { topecoCmd } from './cmd/economy/topeco.js';
+import { balCmd } from './cmd/economy/bal.js';
+import { warnClearCmd } from './cmd/mod/warnClear.js';
+import { blackjackCmd } from './cmd/economy/blackjack.js';
+import { animalCmd, catCmd, dogCmd, parrotCmd } from './cmd/gif/gifs.js';
 import { pfpCmd } from './cmd/general/pfp.js';
 import { bannerCmd } from './cmd/general/banner.js';
 import { muteCmd } from './cmd/mod/mute.js';
@@ -80,7 +81,8 @@ const commands: Map<Category, Command[]> = new Map([
     [
         Category.Gifs,
         [
-            catCmd, dogCmd,
+            catCmd, dogCmd, parrotCmd,
+            animalCmd
         ]
     ]
 ]);
