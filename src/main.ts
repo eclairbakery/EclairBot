@@ -264,8 +264,11 @@ client.on('interactionCreate', async (int) => {
     const { commandName, options, member, channelId } = int;
 
     let cmdObject: Command;
-    for (const [_category, cmds] of commands) {
-        cmdObject = cmds.find((val) => val.name === commandName || val.aliases?.includes(commandName));
+    for (const [_, cmds] of commands) {
+        cmdObject = cmds.find((val) => val.name === commandName || val.aliases.includes(commandName));
+        if (cmdObject) {
+            break;
+        }
     }
     if (!cmdObject) {
         await int.reply({ content: 'Nie znam takiej komendy!', flags: ["Ephemeral"] });
