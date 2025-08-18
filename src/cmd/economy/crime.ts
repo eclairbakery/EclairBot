@@ -44,7 +44,7 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
 
 export const crimeCmd: Command = {
     name: 'crime',
-    desc: 'Ohohohoho! Mamy na serwerze przestępców. Złapać ich! Schwytać i wziąć do niewoli. A tak na poważnie to metoda zarobku, gdzie możesz wszystko przejabć jak w kasynie, albo wygrać strasznie dużo kasiuryyyy!',
+    longDesc: 'Ohohohoho! Mamy na serwerze przestępców. Złapać ich! Schwytać i wziąć do niewoli. A tak na poważnie to metoda zarobku, gdzie możesz wszystko przejabć jak w kasynie, albo wygrać strasznie dużo kasiuryyyy!',
     category: 'ekonomia',
     expectedArgs: [],
 

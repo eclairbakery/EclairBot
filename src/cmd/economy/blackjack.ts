@@ -49,7 +49,7 @@ function handToString(hand: Card[]): string {
 
 export const blackjackCmd: Command = {
     name: 'blackjack',
-    desc: 'Gra w blackjacka za określoną kwotę',
+    longDesc: 'Gra w blackjacka za określoną kwotę',
     category: 'ekonomia',
     expectedArgs: [
         {

@@ -13,8 +13,8 @@ const cmdCfg = cfg.mod.commands.kick;
 
 export const kickCmd: Command = {
     name: 'kick',
-    desc: 'Ta komenda istnieje po to by pozbyć się z serwera lekko wkurzających ludzi, tak żeby im nie dawać bana, a oni żeby myśleli że mają bana. A pospólstwo to ręce z daleka od moderacji!',
-    category: 'moderacyjne rzeczy',
+    longDesc: 'Ta komenda istnieje po to by pozbyć się z serwera lekko wkurzających ludzi, tak żeby im nie dawać bana, a oni żeby myśleli że mają bana. A pospólstwo to ręce z daleka od moderacji!',
+    shortDesc: 'Wywala danego użytkownika z serwera',
     expectedArgs: [
         { name: 'user',   desc: 'W tej chwili dawaj użytkownika do skopniakowania!' },
         { name: 'reason', desc:

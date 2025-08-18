@@ -1,4 +1,4 @@
-import { Command } from '../../bot/command.js';
+import { Command, Category } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
 import { db, sqlite } from '../../bot/db.js';
 
@@ -12,8 +12,8 @@ import { likeInASentence } from '../../util/lias.js';
 
 export const bannerCmd: Command = {
     name: 'banner',
-    desc: 'Dobra... Wyświetle Ci jełopa baner jak chcesz.',
-    category: 'ogólne',
+    longDesc: 'Dobra... Wyświetle Ci jełopa baner jak chcesz.',
+    shortDesc: 'Wyświetla baner danego użytkownika',
     expectedArgs: [
         {
             name: 'user',

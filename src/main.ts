@@ -9,7 +9,7 @@ process.on('SIGSEGV', () => {
 })
 // END DISABLE  THE ENTIRE THING BY ONE ERROR
 
-import { Command, CommandInput } from './bot/command.js';
+import { Command, CommandInput, Category } from './bot/command.js';
 import { cfg } from './bot/cfg.js';
 import { db, sqlite } from './bot/db.js';
 import { PredefinedColors } from './util/color.js';
@@ -29,10 +29,10 @@ import { EclairAI } from './bot/eclairai.js';
 import { warnCmd } from './cmd/mod/warn.js';
 import { kickCmd } from './cmd/mod/kick.js';
 import { banCmd } from './cmd/mod/ban.js';
-import { helpCmd } from './cmd/random/help.js';
-import { manCmd } from './cmd/random/man.js';
+import { detailHelpCmd } from './cmd/general/detail-help.js';
+import { manCmd } from './cmd/general/man.js';
 import { warnlistCmd } from './cmd/mod/warnlist.js';
-import { siemaCmd } from './cmd/random/siema.js';
+import { siemaCmd } from './cmd/general/siema.js';
 import { workCmd } from './cmd/economy/work.js';
 import { slutCmd } from './cmd/economy/slut.js';
 import { crimeCmd } from './cmd/economy/crime.js';
@@ -45,27 +45,48 @@ import { balCmd } from './cmd/economy/bal.js';
 import { warnClearCmd } from './cmd/mod/warnClear.js';
 import { blackjackCmd } from './cmd/economy/blackjack.js';
 import { catCmd, dogCmd } from './cmd/gif/gifs.js';
-import { pfpCmd } from './cmd/random/pfp.js';
-import { bannerCmd } from './cmd/random/banner.js';
+import { pfpCmd } from './cmd/general/pfp.js';
+import { bannerCmd } from './cmd/general/banner.js';
 import { muteCmd } from './cmd/mod/mute.js';
 import { unmuteCmd } from './cmd/mod/unmute.js';
 
-const commands: Command[] = [
-    // general
-    helpCmd, manCmd, siemaCmd,
-    pfpCmd, bannerCmd,
-    // moderation
-    warnCmd, kickCmd, banCmd,
-    warnlistCmd, warnClearCmd,
-    muteCmd, unmuteCmd,
-    // economy
-    workCmd, slutCmd, crimeCmd,
-    topecoCmd, balCmd, blackjackCmd,
-    // leveling
-    lvlCmd, xpCmd, toplvlCmd,
-    // gifs
-    dogCmd, catCmd
-];
+const commands: Map<Category, Command[]> = new Map([
+    [
+        Category.General,
+        [
+            detailHelpCmd, manCmd,
+            siemaCmd, pfpCmd,
+            bannerCmd
+        ]
+    ],
+    [
+        Category.Mod,
+        [
+            warnCmd, kickCmd, banCmd,
+            warnlistCmd, warnClearCmd,
+            muteCmd, unmuteCmd
+        ]
+    ],
+    [
+        Category.Economy,
+        [
+            workCmd, slutCmd, crimeCmd,
+            topecoCmd, balCmd, blackjackCmd,
+        ]
+    ],
+    [
+        Category.Leveling,
+        [
+            lvlCmd, xpCmd, toplvlCmd,
+        ]
+    ],
+    [
+        Category.Gifs,
+        [
+            catCmd, dogCmd,
+        ]
+    ]
+]);
 
 client.once('ready', () => {
     console.log(`Logged in.`);
@@ -103,20 +124,20 @@ client.on('messageCreate', async (msg) => {
     if (!msg.content.startsWith(cfg.general.prefix)) return;
     const args = msg.content.slice(cfg.general.prefix.length).trim().split(/\s+/);
     const command = args.shift().toLowerCase();
-    const cmdObject = commands.find((val) => val.name == command || val.aliases.includes(command));
-    if (cfg.general.blockedChannels.includes(msg.channelId) && !cfg.general.commandsExcludedFromBlockedChannels.includes(cmdObject !== undefined ? cmdObject.name : command)) {
-        return msg.react('❌');
-    } else if (!cmdObject) {
-        log.replyError(msg, 'Panie, ja nie panimaju!', `Wpisz se \`${cfg.general.prefix}help\` i dostarczę Ci listę komend!`);
-        return;
-    } else if (cmdObject.allowedRoles != null && !msg.member.roles.cache.some((role) => cmdObject.allowedRoles.includes(role.id))) {
-        log.replyError(msg, 'Hej, a co ty odpie*dalasz?', `Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...`);
-        return;
-    } else if (!cfg.radio.enabled && cmdObject.category == 'muzyka') {
-        log.replyError(msg, 'Radio piekarnii zostało wyłączone.', `Prawdopodobnie gorciu pierdoli się teraz z hostingiem, by je uruchomić.`);
-        return;
-    } else {
-        return cmdObject.execute(msg, args, commands);
+
+    for (const [_, cmds] of commands) {
+        const cmdObject = cmds.find((val) => val.name == command || val.aliases.includes(command));
+        if (cfg.general.blockedChannels.includes(msg.channelId) && !cfg.general.commandsExcludedFromBlockedChannels.includes(cmdObject !== undefined ? cmdObject.name : command)) {
+            return msg.react('❌');
+        } else if (!cmdObject) {
+            log.replyError(msg, 'Panie, ja nie panimaju!', `Wpisz se \`${cfg.general.prefix}help\` i dostarczę Ci listę komend!`);
+            return;
+        } else if (cmdObject.allowedRoles != null && !msg.member.roles.cache.some((role) => cmdObject.allowedRoles.includes(role.id))) {
+            log.replyError(msg, 'Hej, a co ty odpie*dalasz?', `Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...`);
+            return;
+        } else {
+            return cmdObject.execute(msg, args, commands);
+        }
     }
 });
 
@@ -153,8 +174,8 @@ client.on('guildMemberRemove', async (member) => {
     });
 });
 
-client.on("guildMemberUpdate", async (oldMember, newMember) => {
-    const roleIdToWatch = cfg.unfilteredRelated.gifBan; 
+client.on('guildMemberUpdate', async (oldMember, newMember) => {
+    const roleIdToWatch = cfg.unfilteredRelated.gifBan;
     const allowedRoleIds = cfg.unfilteredRelated.eligibleToRemoveGifBan;
 
     const hadRole = oldMember.roles.cache.has(roleIdToWatch);
@@ -235,7 +256,10 @@ client.on('interactionCreate', async (int) => {
 
     const { commandName, options, member, channelId } = int;
 
-    const cmdObject = commands.find((val) => val.name === commandName || val.aliases?.includes(commandName));
+    let cmdObject: Command;
+    for (const [_category, cmds] of commands) {
+        cmdObject = cmds.find((val) => val.name === commandName || val.aliases?.includes(commandName));
+    }
     if (!cmdObject) {
         await int.reply({ content: 'Nie znam takiej komendy!', flags: ["Ephemeral"] });
         return;
@@ -312,25 +336,40 @@ client.on('messageReactionAdd', async (reaction) => {
     }
 });
 
-(async () => {
+async function main() {
     await client.login(process.env.TOKEN);
 
     const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
 
     let commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
-    commands.forEach((cmd) => {
-        const scb = new dsc.SlashCommandBuilder()
-            .setName(cmd.name)
-            .setDescription(cmd.desc.length > 97 - cmd.category.length ? `[${cmd.category}] Użyj 'man' po opis, opis zbyt długi dla discord.js.` : `[${cmd.category}] ${cmd.desc}`);
-        cmd.expectedArgs.forEach(arg => {
-            scb.addStringOption((option) => option
-                .setName(arg.name)
-                .setDescription('Domyśl się, bo discord.js nie pozwala dużo znaków.')
-                .setRequired(false)
-            );
-        });
-        commandsArray.push(scb.toJSON());
-    });
+    // commands.forEach((cmd) => {
+    //     const scb = new dsc.SlashCommandBuilder()
+    //         .setName(cmd.name)
+    //         .setDescription(cmd.longDesc.length > 97 - cmd.category.name.length ? `[${cmd.category}] Użyj 'man' po opis, opis zbyt długi dla discord.js.` : `[${cmd.category}] ${cmd.longDesc}`);
+    //     cmd.expectedArgs.forEach(arg => {
+    //         scb.addStringOption((option) => option
+    //             .setName(arg.name)
+    //             .setDescription('Domyśl się, bo discord.js nie pozwala dużo znaków.')
+    //             .setRequired(false)
+    //         );
+    //     });
+    //     commandsArray.push(scb.toJSON());
+    // });
+    for (const [category, cmds] of commands) {
+        for (const cmd of cmds) {
+            const scb = new dsc.SlashCommandBuilder()
+                .setName(cmd.name)
+                .setDescription('Domyśl się, bo discord.js nie pozwala dużo znaków.');
+            for (const arg of cmd.expectedArgs) {
+                scb.addStringOption((option) => option
+                    .setName(arg.name)
+                    .setDescription('Domyśl się, bo discord.js nie pozwala dużo znaków.')
+                    .setRequired(false)
+                );
+            }
+            commandsArray.push(scb.toJSON());
+        }
+    }
     try {
         await rest.put(
             dsc.Routes.applicationCommands(client.application.id),
@@ -339,4 +378,6 @@ client.on('messageReactionAdd', async (reaction) => {
     } catch (error) {
         console.error(error);
     }
-})();
+};
+
+main();

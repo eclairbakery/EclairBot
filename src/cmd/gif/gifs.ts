@@ -31,7 +31,7 @@ async function getGIF(searchTerm: string): Promise<string> {
 
 export const catCmd: Command = {
     name: 'cat',
-    desc: 'Lubisz koty? Jakże pięknie się składa. Możemy Ci pokazać losowego kota.',
+    longDesc: 'Lubisz koty? Jakże pięknie się składa. Możemy Ci pokazać losowego kota.',
     category: 'gify',
     expectedArgs: [],
 
@@ -46,13 +46,13 @@ export const catCmd: Command = {
 
 export const dogCmd: Command = {
     name: 'dog',
-    desc: 'Ohhh... dasz mi karmę? Chcesz zobaczyć moją słodką mordkę? To ja, piesek.',
+    longDesc: 'Ohhh... dasz mi karmę? Chcesz zobaczyć moją słodką mordkę? To ja, piesek.',
     category: 'gify',
     expectedArgs: [],
 
     aliases: ['pies'],
     allowedRoles: null,
-    allowedUsers: [], 
+    allowedUsers: [],
 
     async execute(msg, args) {
         msg.reply(await getGIF('dog'));

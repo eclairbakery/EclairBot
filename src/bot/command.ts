@@ -1,5 +1,8 @@
 import * as dsc from 'discord.js';
 
+import { Category } from './categories.js';
+export { Category };
+
 export interface CommandArgDef {
     name: string;
     desc: string;
@@ -24,8 +27,10 @@ export interface CommandInput {
 export interface Command {
     /* Command name */
     name: string;
-    /* Command description */
-    desc: string;
+    /* Long command description */
+    longDesc: string;
+    /* Short description */
+    shortDesc: string;
     /* Expected arguments for the command */
     expectedArgs: CommandArgDef[];
     /* List of command aliases */
@@ -36,9 +41,7 @@ export interface Command {
     /* Array of user IDs that can execute the command. Everyone if null */
     allowedUsers: null | string[];
 
-    category: string
-
     /* Function that executes the command */
     //execute: (msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>, args: string[], commands: Command[]) => void;
-    execute: (inp: CommandInput, args: string[], commands: Command[]) => void | any;
+    execute: (inp: CommandInput, args: string[], commands: Map<Category, Command[]>) => void | any;
 }

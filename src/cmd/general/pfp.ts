@@ -12,8 +12,8 @@ import { likeInASentence } from '../../util/lias.js';
 
 export const pfpCmd: Command = {
     name: 'pfp',
-    desc: 'Któżby się spodziewał że komenda \'pfp\' wyświetli czyjeś pfp?',
-    category: 'ogólne',
+    longDesc: 'Któżby się spodziewał że komenda \'pfp\' wyświetli czyjeś pfp?',
+    shortDesc: 'Wyświetla czyjeś pfp',
     expectedArgs: [
         {
             name: 'user',

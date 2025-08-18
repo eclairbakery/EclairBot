@@ -49,11 +49,11 @@ export interface Config {
         /**
          * This determines how the model is going to react
          * to pretrained hints
-         * 
+         *
          * 1 - it's going to reply the exact thing
          * 0 - it's going to generate random thing
          *     and ignore the hint
-         * 
+         *
          * i suggest setting it to a float
          */
         temperature: number;
@@ -214,28 +214,28 @@ const defaultConfig: Config = {
         commands: {
             ban: {
                 enabled: true,
-                aliases: ['ban'],
+                aliases: [],
                 allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096'],
                 allowedUsers: [],
                 reasonRequired: false,
             },
             kick: {
                 enabled: true,
-                aliases: ['kick'],
+                aliases: [],
                 allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096'],
                 allowedUsers: [],
                 reasonRequired: false,
             },
             mute: {
                 enabled: true,
-                aliases: ['mute'],
+                aliases: [],
                 allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096'],
                 allowedUsers: [],
                 reasonRequired: false,
             },
             warn: {
                 enabled: true,
-                aliases: ['warn'],
+                aliases: [],
                 allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096'],
                 allowedUsers: [],
                 reasonRequired: false,

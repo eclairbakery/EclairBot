@@ -13,8 +13,8 @@ const cmdCfg = cfg.mod.commands.mute;
 
 export const unmuteCmd: Command = {
     name: 'unmute',
-    desc: 'Oddaję Ci prawo głosu. Nie marnuj go na pisanie "xd" i emoji bakłażana.',
-    category: 'moderacyjne rzeczy',
+    longDesc: 'Oddaję Ci prawo głosu. Nie marnuj go na pisanie "xd" i emoji bakłażana.',
+    shortDesc: 'Poprostu unmute',
     expectedArgs: [
         { name: 'user',   desc: 'Komu unmute chcesz dać?' },
         { name: 'reason', desc:

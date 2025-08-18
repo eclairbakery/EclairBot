@@ -12,8 +12,8 @@ import { likeInASentence } from '../../util/lias.js';
 
 export const siemaCmd: Command = {
     name: 'siema',
-    desc: 'Jakby to ująć... niespodzianka... Generalnie to taki jeden pan, nazywa się chlebek i serio jest chlebek, błagał 300000000 miliardów godzin, by to dodać, więc dodałem.',
-    category: 'ogólne',
+    longDesc: 'Jakby to ująć... niespodzianka... Generalnie to taki jeden pan, nazywa się chlebek i serio jest chlebek, błagał 300000000 miliardów godzin, by to dodać, więc dodałem.',
+    shortDesc: 'Jakby to ująć... niespodzianka... ',
     expectedArgs: [],
     aliases: [],
     allowedRoles: null,

@@ -2,3 +2,24 @@ enabled = true
 
 [general]
 prefix = "sudo "
+
+# [mod.commands]
+#  [[ban]]
+#     enabled = true
+#     allowedRoles = ['1274478730697510997', '1280884378586845216', '1280081773019140096']
+#     reasonRequired = false
+
+#  [[kick]]
+#     enabled = true
+#     allowedRoles = ['1274478730697510997', '1280884378586845216', '1280081773019140096']
+#     reasonRequired = false
+
+#  [[mute]]
+#     enabled = true
+#     allowedRoles = ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096']
+#     reasonRequired = false
+
+#  [[warn]]
+#     enabled = true
+#     allowedRoles = ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096']
+#     reasonRequired = false

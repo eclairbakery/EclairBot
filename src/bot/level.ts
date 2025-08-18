@@ -16,9 +16,9 @@ export const lvlRoles = [
     "1390802440739356762"
 ];
 
-function calculateLevel(xp: number, level_divider: number): number {
+function calculateLevel(xp: number, levelDivider: number): number {
     return Math.floor(
-        (1 + Math.sqrt(1 + 8 * xp / cfg.general.leveling.level_divider)) / 2
+        (1 + Math.sqrt(1 + 8 * xp / cfg.general.leveling.levelDivider)) / 2
     );
 }
 
@@ -28,7 +28,7 @@ export function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Messa
     if (msg.channelId == cfg.unfilteredRelated.unfilteredChannel) return;
 
     // amount
-    let amount = cfg.general.leveling.xp_per_message;
+    let amount = cfg.general.leveling.xpPerMessage;
     if (msg.attachments.size > 0 && msg.content.length > 5) amount = Math.floor(amount * 1.5);
     if (msg.content.length > 100) amount = Math.floor(amount);
 
@@ -46,8 +46,8 @@ export function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Messa
             const prevXp = row ? row.xp : 0;
             const newXp = prevXp + amount;
 
-            const prevLevel = calculateLevel(prevXp, cfg.general.leveling.level_divider);
-            const newLevel = calculateLevel(newXp, cfg.general.leveling.level_divider);
+            const prevLevel = calculateLevel(prevXp, cfg.general.leveling.levelDivider);
+            const newLevel = calculateLevel(newXp, cfg.general.leveling.levelDivider);
 
             // let's insert this data
             db.run(

@@ -13,8 +13,8 @@ const cmdCfg = cfg.mod.commands.ban;
 
 export const banCmd: Command = {
     name: 'ban',
-    desc: 'Jak masz uprawnienia, no to banuj ludzi. Taka praca... A jak nie, to nawet nie próbuj tego tykać!',
-    category: 'moderacyjne rzeczy',
+    longDesc: 'Jak masz uprawnienia, no to banuj ludzi. Taka praca... A jak nie, to nawet nie próbuj tego tykać!',
+    shortDesc: 'Banuje danego użytkownika z serwera',
     expectedArgs: [
         { name: 'user',   desc: 'Osoba, która jest nieznośna idzie do tego pola...' },
         { name: 'reason', desc:

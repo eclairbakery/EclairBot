@@ -1,19 +1,17 @@
-import { Command } from '../../bot/command.js';
+import { Command, Category } from '../../bot/command.js';
+import { PredefinedColors } from '../../util/color.js';
 import { cfg } from '../../bot/cfg.js';
 import { db, sqlite } from '../../bot/db.js';
 
 import * as log from '../../util/log.js';
-import * as cfgManager from '../../bot/cfgManager.js';
-import * as automod from '../../bot/automod.js';
-
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import { likeInASentence } from '../../util/lias.js';
+
+import findCommand from '../../util/findCommand.js';
 
 export const manCmd: Command = {
     name: 'man',
-    desc: 'Dokładniejsza dokumentacja, pokazująca użycie komend, czy możesz ich użyć oraz dokładny opis.',
-    category: 'ogólne',
+    longDesc: 'Dokładniejsza dokumentacja, pokazująca użycie komend, czy możesz ich użyć oraz dokładny opis.',
+    shortDesc: 'Dokładniejsza dokumentacja danej komendy',
     expectedArgs: [
         {
             name: 'command',
@@ -23,54 +21,76 @@ export const manCmd: Command = {
     aliases: [],
     allowedRoles: null,
     allowedUsers: [],
-
     async execute(msg, args, commands) {
-        const manuals: Command[] = [
-            {
-                name: "woman",
-                desc: "Kobieta. Po prostu kobieta. Ta komenda nie istnieje naprawdę, ale jest śmieszne, więc dodałem. Lubi się wkurzać o byle co. Mówi szyfrem (zrób mi herbatę = nie dbasz o mnie) i jest wymagana do urodzenia dziecka.",
-                execute(msg, args, commands) {},
-                aliases: ["kobieta", "żona", "dziewczyna"],
-                expectedArgs: [
-                    {
-                        name: "odciąż mnie",
-                        desc: "Wszystko muszę robić sama. Nie mam z wami żadnego pożytku",
-                    },
+        const manuals: Map<Category, Command[]> = new Map(
+            [
+                [
+                    new Category('💔', 'inne', '', '', 0x0),
+                    [
+                        {
+                            name: 'woman',
+                            longDesc: 'Kobieta. Po prostu kobieta. Ta komenda nie istnieje naprawdę, ale jest śmieszne, więc dodałem. Lubi się wkurzać o byle co. Mówi szyfrem (zrób mi herbatę = nie dbasz o mnie) i jest wymagana do urodzenia dziecka.',
+                            shortDesc: '',
+                            aliases: ['kobieta', 'żona', 'dziewczyna'],
+                            expectedArgs: [
+                                {
+                                    name: 'odciąż mnie',
+                                    desc: 'Wszystko muszę robić sama. Nie mam z wami żadnego pożytku',
+                                },
+                            ],
+                            allowedRoles: [],
+                            allowedUsers: [],
+                            execute(msg, args, commands) {},
+                        },
+                    ]
                 ],
-                allowedRoles: [],
-                allowedUsers: [],
-                category: "kto wie",
-            },
-            ...commands,
-        ];
+                ...commands.entries()
+            ]
+        );
 
         if (args.length == 0) {
             return log.replyError(msg, 'Nie tędy droga...', 'No nie wiem jak ty, ale ja bym wolał, żeby man opisywał funkcje, które już znasz.\nDokładne logi błędu:\n```What manual page do you want?\nFor example, try \'man man\'.```');
         }
         const cmdName = args[0];
-        const command = manuals.find((cmd) => cmd.name === cmdName || cmd.aliases.includes(cmdName));
-        if (!command) {
+
+        const found = findCommand(cmdName, manuals);
+        if (!found) {
             return log.replyError(msg, 'Nie tędy droga...', `Tak w ogóle, to wiesz, że nawet nie ma takiej komendy?\nDokładne logi błędu:\n\`\`\`No manual entry for  ${cmdName}\`\`\``);
         }
-        let args_cmd: string[] = [];
+        const { command, category } = found;
+
+        let formattedArgs: string[] = [];
         for (const arg of command.expectedArgs) {
-            args_cmd.push(`**${arg.name}**: ${arg.desc}`);
+            formattedArgs.push(`**${arg.name}**: ${arg.desc}`);
         }
-        let allowed_roles: string[] = [];
+
+        let formattedAllowedRoles: string[] = [];
         if (command.allowedRoles !== null) {
-            for (const ar of command.allowedRoles) {
-                allowed_roles.push(`<@&${ar}>`);
+            for (const role of command.allowedRoles) {
+                formattedAllowedRoles.push(`<@&${role}>`);
             }
         } else {
-            allowed_roles.push('każda rola')
+            formattedAllowedRoles.push('każda rola')
         }
-        msg.reply({
-            embeds: [
-                new dsc.EmbedBuilder()
-                    .setTitle(':loudspeaker: Instrukcja')
-                    .setColor(PredefinedColors.Purple)
-                    .setDescription(`:diamond_shape_with_a_dot_inside: **Wywołanie:** ${cfg.general.prefix}${command.name}\n:diamond_shape_with_a_dot_inside: **Aliasy do nazwy**: ${command.aliases.length === 0 ? 'brak aliasów' : command.aliases.join(', ')}\n:diamond_shape_with_a_dot_inside: **Opis**: ${command.desc}\n:diamond_shape_with_a_dot_inside: **Kategoria:** ${command.category}\n:diamond_shape_with_a_dot_inside: **Argumenty**: ${args_cmd.length == 0 ? 'brak' : `\n> ${args_cmd.join('\n> ')}`}\n:diamond_shape_with_a_dot_inside: **Uprawnienia**: ${(command.allowedRoles != null && !msg.member.roles.cache.some((role) => command.allowedRoles.includes(role.id))) ? ':thumbsdown: nie masz wymaganych uprawnień, by użyć tej komendy' : ':thumbsup: możesz użyć tej komendy'}; **dozwolone role**: ${allowed_roles.length == 0 ? 'brak' : `${allowed_roles.join(', ')}`}; **dozwoleni użytkownicy**: te ustawienie nie ma jeszcze efektu`)
-            ]
-        })
+
+        const emoji: string = ':diamond_shape_with_a_dot_inside:';
+
+        const embed = new dsc.EmbedBuilder()
+            .setTitle(':loudspeaker: Instrukcja')
+            .setColor(category.color)
+            .setDescription([
+            `${emoji} **Wywołanie:** ${cfg.general.prefix}${command.name}`,
+            `${emoji} **Aliasy do nazwy**: ${command.aliases.length === 0 ? 'brak aliasów' : command.aliases.join(', ')}`,
+            `${emoji} **Opis**: ${command.longDesc}`,
+            `${emoji} **Kategoria:** ${category.name} ${category.emoji}`,
+            `${emoji} **Argumenty**: ${formattedArgs.length === 0 ? 'brak' : `\n> ${formattedArgs.join('\n> ')}`}`,
+            `${emoji} **Uprawnienia**: ${
+                command.allowedRoles != null && !msg.member.roles.cache.some((role) => command.allowedRoles.includes(role.id))
+                ? ':thumbsdown: nie masz wymaganych uprawnień, by użyć tej komendy'
+                : ':thumbsup: możesz użyć tej komendy'
+            }; **dozwolone role**: ${formattedAllowedRoles.length === 0 ? 'brak' : formattedAllowedRoles.join(', ')}; **dozwoleni użytkownicy**: te ustawienie nie ma jeszcze efektu`
+            ].join('\n'));
+
+        msg.reply({ embeds: [embed] });
     },
 };

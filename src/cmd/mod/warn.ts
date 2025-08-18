@@ -15,8 +15,8 @@ const cmdCfg = cfg.mod.commands.warn;
 
 export const warnCmd: Command = {
     name: 'warn',
-    desc: 'Daj komuś warna, by go onieśmielić, uciszyć, zamknąć mu morde i nadużyć władzy. Żart, ale nie nadużywaj bo to się źle skończy... Nie wiesz z czym zadzierasz przybyszu!',
-    category: 'moderacyjne rzeczy',
+    longDesc: 'Daj komuś warna, by go onieśmielić, uciszyć, zamknąć mu morde i nadużyć władzy. Żart, ale nie nadużywaj bo to się źle skończy... Nie wiesz z czym zadzierasz przybyszu!',
+    shortDesc: 'Warnuje podaną osobe',
     expectedArgs: [
         { name: 'user',   desc: 'No ten, tu podaj użytkownika którego chcesz zwarnować' },
         { name: 'points', desc:

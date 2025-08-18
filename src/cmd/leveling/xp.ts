@@ -11,7 +11,7 @@ import { PredefinedColors } from '../../util/color.js';
 
 export const xpCmd: Command = {
     name: 'xp',
-    desc: 'Dodaj komuś levela... Jak nadużyjesz, no to, chyba nie wiesz z jaką siłą igrasz! Pospólstwo jak pomyśli, że sobie za darmoszkę doda poziomów, no to nie! Do widzenia.',
+    longDesc: 'Dodaj komuś levela... Jak nadużyjesz, no to, chyba nie wiesz z jaką siłą igrasz! Pospólstwo jak pomyśli, że sobie za darmoszkę doda poziomów, no to nie! Do widzenia.',
     category: 'poziomy',
     expectedArgs: [
         {
@@ -53,7 +53,7 @@ export const xpCmd: Command = {
         } else {
             amount = parseInt((amount as any as string));
         }
-        if (should_leveler) amount = cfg.general.leveling.level_divider * (amount * (amount - 1) / 2);
+        if (should_leveler) amount = cfg.general.leveling.levelDivider * (amount * (amount - 1) / 2);
 
         if (action === 'add') {
             db.run(

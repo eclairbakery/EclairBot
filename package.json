@@ -18,7 +18,7 @@
     "type": "module",
     "main": "dist/main",
     "scripts": {
-        "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/main.ts",
+        "dev": "nodemon",
         "build": "node build-pella.cjs",
         "start": "tsc && node dist/main.js"
     },

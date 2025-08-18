@@ -7,8 +7,8 @@ import { PredefinedColors } from '../../util/color.js';
 
 export const warnClearCmd: Command = {
     name: 'warn-clear',
-    desc: 'Usuwa warna o podanym ID. W dużym skrócie...',
-    category: 'moderacyjne rzeczy',
+    longDesc: 'Usuwa warna o podanym ID. W dużym skrócie...',
+    shortDesc: 'Usuwa warna',
     expectedArgs: [ { name: 'id', desc: 'No powiedz jaki warn...' } ],
 
     aliases: ['clearwarn', 'warnusun'],

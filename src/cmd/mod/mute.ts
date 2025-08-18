@@ -13,8 +13,8 @@ const cmdCfg = cfg.mod.commands.mute;
 
 export const muteCmd: Command = {
     name: 'mute',
-    desc: 'Zamykam Ci buzię na czacie, żebyś mógł w ciszy przemyśleć swoje wybory życiowe. Jak chcesz pogadać, to poczekaj, aż Cię ktoś wypuści z izolatki.',
-    category: 'moderacyjne rzeczy',
+    longDesc: 'Zamykam Ci buzię na czacie, żebyś mógł w ciszy przemyśleć swoje wybory życiowe. Jak chcesz pogadać, to poczekaj, aż Cię ktoś wypuści z izolatki.',
+    shortDesc: 'Zamyka morde podanemu użytkownikowi',
     expectedArgs: [
         { name: 'user',   desc: 'Komu mute chcesz dać?' },
         { name: 'reason', desc:

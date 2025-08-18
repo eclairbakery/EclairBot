@@ -11,8 +11,8 @@ import { PredefinedColors } from '../../util/color.js';
 
 export const warnlistCmd: Command = {
     name: 'warnlist',
-    desc: 'Lubisz warnować? No to przeczytaj log tych warnów...',
-    category: 'moderacyjne rzeczy',
+    longDesc: 'Lubisz warnować? No to przeczytaj log tych warnów...',
+    shortDesc: 'Pokazuje liste warnów',
     expectedArgs: [],
 
     aliases: ['warnlista'],

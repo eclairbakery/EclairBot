@@ -12,13 +12,13 @@ import { PredefinedColors } from '../../util/color.js';
 
 function calculateLevel(xp: number, level_divider: number): number {
     return Math.floor(
-        (1 + Math.sqrt(1 + 8 * xp / cfg.general.leveling.level_divider)) / 2
+        (1 + Math.sqrt(1 + 8 * xp / cfg.general.leveling.levelDivider)) / 2
     );
 }
 
 export const toplvlCmd: Command = {
     name: 'toplvl',
-    desc: 'Czas popatrzeć na najlepszych użytkowników serwera...',
+    longDesc: 'Czas popatrzeć na najlepszych użytkowników serwera...',
     category: 'poziomy',
     expectedArgs: [],
 
@@ -48,7 +48,7 @@ export const toplvlCmd: Command = {
 
                 fields.push({
                     name: `${i} » ${member.user.username}`,
-                    value: `${userLvlRole ? `<@&${userLvlRole}>` : 'Nowicjusz...'}\n**Lvl**: ${calculateLevel(row.xp, cfg.general.leveling.level_divider)}\n**XP**: ${row.xp}${i % 2 == 1 ? '‎' : ''}`,
+                    value: `${userLvlRole ? `<@&${userLvlRole}>` : 'Nowicjusz...'}\n**Lvl**: ${calculateLevel(row.xp, cfg.general.leveling.levelDivider)}\n**XP**: ${row.xp}${i % 2 == 1 ? '‎' : ''}`,
                     inline: true
                 });
             }
