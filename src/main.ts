@@ -32,7 +32,6 @@ import { siemaCmd } from './cmd/general/siema.js';
 import { workCmd } from './cmd/economy/work.js';
 import { slutCmd } from './cmd/economy/slut.js';
 import { crimeCmd } from './cmd/economy/crime.js';
-import { addExperiencePoints } from './bot/level.js';
 import { xpCmd } from './cmd/leveling/xp.js';
 import { lvlCmd } from './cmd/leveling/lvl.js';
 import { toplvlCmd } from './cmd/leveling/toplvl.js';
