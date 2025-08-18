@@ -97,6 +97,7 @@ export const detailHelpCmd: Command = {
             let category = Category.fromString(arg);
             if (category == null) {
                 log.replyError(msg, 'Nieznana kategoria', `Nie znam kategori ${arg}. Czy możesz powtórzyć?`);
+                return;
             } else {
                 categoriesToShow.add(category);
             }
