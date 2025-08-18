@@ -21,7 +21,8 @@ export interface CommandInput {
     channel: dsc.TextBasedChannel,
     reply: (options: string | dsc.MessagePayload | dsc.MessageReplyOptions) => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>>,
     client: dsc.Client,
-    mentions: dsc.MessageMentions
+    mentions: dsc.MessageMentions,
+    [additional_fields: string | number | symbol]: any
 }
 
 export interface Command {
