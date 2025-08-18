@@ -52,16 +52,16 @@ export interface Config {
          * involves model's "imagination" and setting it to
          * a bigger value means it's send the exact same thing
          * that it was trained to.
-         * 
+         *
          * Remember that model trains on pretrained hints, this
          * makes some probability, that the pretrained suggestion
          * will be printed, even in **0** state (100% "imagination").
-         * 
+         *
          * **1** - it's going to reply the exact thing
-         * 
+         *
          * **0** - it's going to generate random thing
          *         and ignore the hint
-         * 
+         *
          * I suggest setting it to a float like 0.5, even 0.4.
          */
         temperature: number;
@@ -245,7 +245,7 @@ const defaultConfig: Config = {
             warn: {
                 enabled: true,
                 aliases: [],
-                allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096'],
+                allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096', '1403684128485806182'],
                 allowedUsers: [],
                 reasonRequired: false,
                 maxPoints: 30,

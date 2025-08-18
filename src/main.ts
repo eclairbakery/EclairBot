@@ -1,18 +1,14 @@
-// BEGIN DISABLE  THE ENTIRE THING BY ONE ERROR
 process.on('uncaughtException', (e) => {
     console.error(e);
 });
-process.on('SIGSEGV', () => {
-    // there is no other fucking way to make
-    // this happen rather than my broken cpu/motherboard
-    console.log('komputer gorcia detected');
-})
-// END DISABLE  THE ENTIRE THING BY ONE ERROR
 
 import { Command, CommandInput, Category } from './bot/command.js';
 import { cfg } from './bot/cfg.js';
 import { db, sqlite } from './bot/db.js';
 import { PredefinedColors } from './util/color.js';
+
+import { initExpiredWarnsDeleter } from './features/deleteExpiredWarns.js';
+import { addExperiencePoints } from './bot/level.js';
 
 import * as log from './util/log.js';
 import * as cfgManager from './bot/cfgManager.js';
@@ -26,29 +22,28 @@ dotenv.config({ quiet: true });
 import { client } from './client.js';
 import { EclairAI } from './bot/eclairai.js';
 
-import { warnCmd } from './cmd/mod/warn.js';
-import { kickCmd } from './cmd/mod/kick.js';
-import { banCmd } from './cmd/mod/ban.js';
-import { detailHelpCmd } from './cmd/general/detail-help.js';
-import { manCmd } from './cmd/general/man.js';
-import { warnlistCmd } from './cmd/mod/warnlist.js';
-import { siemaCmd } from './cmd/general/siema.js';
-import { workCmd } from './cmd/economy/work.js';
-import { slutCmd } from './cmd/economy/slut.js';
-import { crimeCmd } from './cmd/economy/crime.js';
-import { addExperiencePoints } from './bot/level.js';
-import { xpCmd } from './cmd/leveling/xp.js';
-import { lvlCmd } from './cmd/leveling/lvl.js';
-import { toplvlCmd } from './cmd/leveling/toplvl.js';
-import { topecoCmd } from './cmd/economy/topeco.js';
-import { balCmd } from './cmd/economy/bal.js';
-import { warnClearCmd } from './cmd/mod/warnClear.js';
-import { blackjackCmd } from './cmd/economy/blackjack.js';
+import { warnCmd }        from './cmd/mod/warn.js';
+import { kickCmd }        from './cmd/mod/kick.js';
+import { banCmd }         from './cmd/mod/ban.js';
+import { detailHelpCmd }  from './cmd/general/detail-help.js';
+import { manCmd }         from './cmd/general/man.js';
+import { warnlistCmd }    from './cmd/mod/warnlist.js';
+import { siemaCmd }       from './cmd/general/siema.js';
+import { workCmd }        from './cmd/economy/work.js';
+import { slutCmd }        from './cmd/economy/slut.js';
+import { crimeCmd }       from './cmd/economy/crime.js';
+import { xpCmd }          from './cmd/leveling/xp.js';
+import { lvlCmd }         from './cmd/leveling/lvl.js';
+import { toplvlCmd }      from './cmd/leveling/toplvl.js';
+import { topecoCmd }      from './cmd/economy/topeco.js';
+import { balCmd }         from './cmd/economy/bal.js';
+import { warnClearCmd }   from './cmd/mod/warnClear.js';
+import { blackjackCmd }   from './cmd/economy/blackjack.js';
 import { catCmd, dogCmd } from './cmd/gif/gifs.js';
-import { pfpCmd } from './cmd/general/pfp.js';
-import { bannerCmd } from './cmd/general/banner.js';
-import { muteCmd } from './cmd/mod/mute.js';
-import { unmuteCmd } from './cmd/mod/unmute.js';
+import { pfpCmd }         from './cmd/general/pfp.js';
+import { bannerCmd }      from './cmd/general/banner.js';
+import { muteCmd }        from './cmd/mod/mute.js';
+import { unmuteCmd }      from './cmd/mod/unmute.js';
 
 const commands: Map<Category, Command[]> = new Map([
     [
@@ -88,8 +83,10 @@ const commands: Map<Category, Command[]> = new Map([
     ]
 ]);
 
+
 client.once('ready', () => {
     console.log(`Logged in.`);
+    initExpiredWarnsDeleter();
 });
 
 client.on('messageCreate', async (msg) => {
@@ -126,19 +123,25 @@ client.on('messageCreate', async (msg) => {
     const args = msg.content.slice(cfg.general.prefix.length).trim().split(/\s+/);
     const command = args.shift().toLowerCase();
 
+    let cmdObject: Command | undefined;
     for (const [_, cmds] of commands) {
-        const cmdObject = cmds.find((val) => val.name == command || val.aliases.includes(command));
-        if (cfg.general.blockedChannels.includes(msg.channelId) && !cfg.general.commandsExcludedFromBlockedChannels.includes(cmdObject !== undefined ? cmdObject.name : command)) {
-            return msg.react('❌');
-        } else if (!cmdObject) {
-            log.replyError(msg, 'Panie, ja nie panimaju!', `Wpisz se \`${cfg.general.prefix}help\` i dostarczę Ci listę komend!`);
-            return;
-        } else if (cmdObject.allowedRoles != null && !msg.member.roles.cache.some((role) => cmdObject.allowedRoles.includes(role.id))) {
-            log.replyError(msg, 'Hej, a co ty odpie*dalasz?', `Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...`);
-            return;
-        } else {
-            return cmdObject.execute(msg, args, commands);
+        cmdObject = cmds.find((val) => val.name === command || val.aliases.includes(command));
+        if (cmdObject) {
+            break;
         }
+    }
+
+    if (cfg.general.blockedChannels.includes(msg.channelId) && !cfg.general.commandsExcludedFromBlockedChannels.includes(cmdObject ? cmdObject.name : command)) {
+        return msg.react('❌');
+    } else if (!cmdObject) {
+        log.replyError(msg, 'Panie, ja nie panimaju!', `Wpisz se ${cfg.general.prefix}help i dostarczę Ci listę komend!`);
+        return;
+    } else if (cmdObject.allowedRoles != null && !msg.member.roles.cache.some((role) => cmdObject.allowedRoles.includes(role.id))) {
+        log.replyError(msg, 'Hej, a co ty odpie*dalasz?', `Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...
+`);
+        return;
+    } else {
+        return cmdObject.execute(msg, args, commands);
     }
 });
 

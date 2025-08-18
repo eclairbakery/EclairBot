@@ -1,11 +1,11 @@
 import { Color, PredefinedColors } from '../util/color.js';
 
 export class Category {
-    emoji: string;
-    name: string;
-    shortDesc: string;
-    longDesc: string;
-    color: Color;
+    public emoji: string;
+    public name: string;
+    public shortDesc: string;
+    public longDesc: string;
+    public color: Color;
 
     constructor(emoji: string, name: string, shortDesc: string, longDesc: string, color: Color) {
         this.emoji = emoji;

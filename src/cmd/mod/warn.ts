@@ -1,4 +1,5 @@
 import clamp from '../../util/clamp.js';
+import parseTimestamp from '../../util/parseTimestamp.js';
 
 import { Command } from '../../bot/command.js';
 import { PredefinedColors } from '../../util/color.js';
@@ -6,12 +7,9 @@ import { cfg } from '../../bot/cfg.js'
 import { db, sqlite } from '../../bot/db.js';
 
 import * as log from '../../util/log.js';
-import * as cfgManager from '../../bot/cfgManager.js';
-import * as automod from '../../bot/automod.js';
 
 import * as dsc from 'discord.js';
-
-const cmdCfg = cfg.mod.commands.warn;
+import { scheduleWarnDeletion } from '../../features/deleteExpiredWarns.js';
 
 export const warnCmd: Command = {
     name: 'warn',
@@ -20,22 +18,24 @@ export const warnCmd: Command = {
     expectedArgs: [
         { name: 'user',   desc: 'No ten, tu podaj użytkownika którego chcesz zwarnować' },
         { name: 'points', desc:
-            `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cmdCfg.maxPoints}`
+            `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cfg.mod.commands.warn.maxPoints}`
         },
         { name: 'reason', desc:
-            cmdCfg.reasonRequired ? 'Poprostu powód warna' : 'Poprostu powód warna. Możesz go pominąć ale nie polecam',
+            cfg.mod.commands.warn.reasonRequired ? 'Poprostu powód warna' : 'Poprostu powód warna. Możesz go pominąć ale nie polecam',
         }
     ],
 
-    aliases: cmdCfg.aliases,
-    allowedRoles: cmdCfg.allowedRoles,
-    allowedUsers: cmdCfg.allowedUsers,
+    aliases: cfg.mod.commands.warn.aliases,
+    allowedRoles: cfg.mod.commands.warn.allowedRoles,
+    allowedUsers: cfg.mod.commands.warn.allowedUsers,
 
     async execute(msg, args) {
         let targetUser: dsc.GuildMember | null = null;
         let points = 1;
         let reason = '';
         let reasonArgs = [...args];
+        let duration: number | null = null;
+        let expiresAt: number | null = null;
 
         if (args.length > 0) {
             const userMention = args[0].match(/^<@!?(\d+)>$/);
@@ -49,10 +49,12 @@ export const warnCmd: Command = {
             }
 
             if (userId) {
-                targetUser = await msg.guild.members.fetch(userId);
-                if (targetUser) {
-                    reasonArgs = args.slice(1);
-                }
+                try {
+                    targetUser = await msg.guild.members.fetch(userId);
+                    if (targetUser) {
+                        reasonArgs = args.slice(1);
+                    }
+                } catch {}
             }
         }
 
@@ -76,15 +78,22 @@ export const warnCmd: Command = {
             return;
         }
 
-        if (reasonArgs.length > 0 && /^\d+$/.test(reasonArgs[0])) {
-            points = parseInt(reasonArgs[0], 10);
-            reason = reasonArgs.slice(1).join(' ').trim();
-        } else {
-            reason = reasonArgs.join(' ').trim();
+        if (reasonArgs.length > 0) {
+            const possibleTime = reasonArgs[0];
+            duration = parseTimestamp(possibleTime);
+            if (duration != null) {
+                reason = reasonArgs.slice(1).join(' ').trim();
+                expiresAt = Math.floor(Date.now() / 1000) + duration;
+            } else if (/^\d+$/.test(reasonArgs[0])) {
+                points = parseInt(reasonArgs[0], 10);
+                reason = reasonArgs.slice(1).join(' ').trim();
+            } else {
+                reason = reasonArgs.join(' ').trim();
+            }
         }
 
         if (reason == "" || reason == undefined) {
-            if (cmdCfg.reasonRequired) {
+            if (cfg.mod.commands.warn.reasonRequired) {
                 log.replyError(msg, 'Nie podano powodu', 'Ale za co ten warn? proszę o doprecyzowanie!');
                 return;
             } else {
@@ -97,45 +106,58 @@ export const warnCmd: Command = {
             return;
         }
 
-        points = clamp(cmdCfg.minPoints, points, cmdCfg.maxPoints);
+        points = clamp(cfg.mod.commands.warn.minPoints, points, cfg.mod.commands.warn.maxPoints);
 
-        db.run('INSERT INTO warns VALUES (NULL, ?, ?, ?)', [targetUser.id, reason, points]);
+
+        db.run(
+            'INSERT INTO warns (user_id, reason_string, points, expires_at) VALUES (?, ?, ?, ?)',
+            [targetUser.id, reason, points, expiresAt],
+            function(this: { lastID }) {
+                if (expiresAt) {
+                    scheduleWarnDeletion(this.lastID, expiresAt);
+                }
+            }
+        );
+        const embed = new dsc.EmbedBuilder()
+            .setTitle(`📢 Masz warna, ${targetUser.user.username}!`)
+            .setDescription(
+                `Właśnie dostałeś darmoweeego warna (punktów: ${points})!`,
+            )
+            .addFields(
+                {
+                    name: 'Moderator',
+                    value: `<@${msg.author.id}>`,
+                    inline: true,
+                },
+                {
+                    name: 'Użytkownik',
+                    value: `<@${targetUser.id}>`,
+                    inline: true,
+                },
+                {
+                    name: '',
+                    value: '',
+                    inline: false,
+                },
+                {
+                    name: 'Powód',
+                    value: reason,
+                    inline: true,
+                },
+                {
+                    name: 'Punkty',
+                    value: points.toString(),
+                    inline: true,
+                }
+            )
+            .setColor(PredefinedColors.Orange);
+
+        if (duration) {
+            embed.addFields({ name: 'Wygasa', value: `<t:${expiresAt}:R>`, inline: false });
+        }
+
         msg.reply({
-            embeds: [
-                new dsc.EmbedBuilder()
-                    .setTitle(`📢 Masz warna, ${targetUser.user.username}!`)
-                    .setDescription(
-                        `Właśnie dostałeś darmoweeego warna (punktów: ${points})!`,
-                    )
-                    .addFields(
-                        {
-                            name: 'Moderator',
-                            value: `<@${msg.author.id}>`,
-                            inline: true,
-                        },
-                        {
-                            name: 'Użytkownik',
-                            value: `<@${targetUser.id}>`,
-                            inline: true,
-                        },
-                        {
-                            name: '',
-                            value: '',
-                            inline: false,
-                        },
-                        {
-                            name: 'Powód',
-                            value: reason,
-                            inline: true,
-                        },
-                        {
-                            name: 'Punkty',
-                            value: points.toString(),
-                            inline: true,
-                        }
-                    )
-                    .setColor(PredefinedColors.Orange),
-            ],
+            embeds: [embed],
         });
     }
 }
