@@ -58,3 +58,34 @@ export const dogCmd: Command = {
         msg.reply(await getGIF('dog'));
     }
 };
+
+export const parrotCmd: Command = {
+    name: 'dog',
+    longDesc: 'Gru... bierzesz coś? Bierze bierze Hepaslimin. Daj spokój papuga.',
+    shortDesc: 'Pokazuje losową papugę',
+    expectedArgs: [],
+
+    aliases: ['papuga'],
+    allowedRoles: null,
+    allowedUsers: [],
+
+    async execute(msg, args) {
+        msg.reply(await getGIF('parrot'));
+    }
+};
+
+export const animalCmd: Command = {
+    name: 'animal',
+    longDesc: 'Chcesz do ZOO? Mamy ZOO w domu. ZOO w domu: [wpisz jakiego gifa chcesz]',
+    shortDesc: 'Pokazuje losowego zwierza',
+    expectedArgs: [],
+
+    aliases: ['zwierz', 'zwierzęcie'],
+    allowedRoles: null,
+    allowedUsers: [],
+
+    async execute(msg, args) {
+        const lmfao = ['parrot', 'dog', 'giraffe', 'elephant', 'cat'];
+        msg.reply(await getGIF(lmfao[Math.floor(Math.random() * lmfao.length)]));
+    }
+};
