@@ -11,4 +11,4 @@ db.exec(
     'CREATE TABLE IF NOT EXISTS leveling (user_id TEXT UNIQUE, id INTEGER, xp INTEGER);'
 );
 
-export {sqlite};
+export { sqlite };

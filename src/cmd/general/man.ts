@@ -25,14 +25,32 @@ export const manCmd: Command = {
     allowedUsers: [],
 
     async execute(msg, args, commands) {
+        const manuals: Command[] = [
+            {
+                name: "woman",
+                desc: "Kobieta. Po prostu kobieta. Ta komenda nie istnieje naprawdę, ale jest śmieszne, więc dodałem. Lubi się wkurzać o byle co. Mówi szyfrem (zrób mi herbatę = nie dbasz o mnie) i jest wymagana do urodzenia dziecka.",
+                execute(msg, args, commands) {},
+                aliases: ["kobieta", "żona", "dziewczyna"],
+                expectedArgs: [
+                    {
+                        name: "odciąż mnie",
+                        desc: "Wszystko muszę robić sama. Nie mam z wami żadnego pożytku",
+                    },
+                ],
+                allowedRoles: [],
+                allowedUsers: [],
+                category: "kto wie",
+            },
+            ...commands,
+        ];
+
         if (args.length == 0) {
             return log.replyError(msg, 'Nie tędy droga...', 'No nie wiem jak ty, ale ja bym wolał, żeby man opisywał funkcje, które już znasz.\nDokładne logi błędu:\n```What manual page do you want?\nFor example, try \'man man\'.```');
         }
-        const cmd_name = args[0];
-        const woman: Command = {name: 'woman', desc: 'Kobieta. Po prostu kobieta. Ta komenda nie istnieje naprawdę, ale jest śmieszne, więc dodałem. Lubi się wkurzać o byle co. Mówi szyfrem (zrób mi herbatę = nie dbasz o mnie) i jest wymagana do urodzenia dziecka.',execute(msg, args, commands){},aliases:['kobieta', 'żona', 'dziewczyna'],expectedArgs:[{name: 'odciąż mnie', desc: 'Wszystko muszę robić sama. Nie mam z wami żadnego pożytku'}],allowedRoles:[],allowedUsers:[],category:'kto wie'};
-        const command = cmd_name === 'woman' ? woman : commands.find((cmd) => cmd.name === cmd_name || cmd.aliases.includes(cmd_name));
+        const cmdName = args[0];
+        const command = manuals.find((cmd) => cmd.name === cmdName || cmd.aliases.includes(cmdName));
         if (!command) {
-            return log.replyError(msg, 'Nie tędy droga...', `Tak w ogóle, to wiesz, że nawet nie ma takiej komendy?\nDokładne logi błędu:\n\`\`\`No manual entry for  ${cmd_name}\`\`\``);
+            return log.replyError(msg, 'Nie tędy droga...', `Tak w ogóle, to wiesz, że nawet nie ma takiej komendy?\nDokładne logi błędu:\n\`\`\`No manual entry for  ${cmdName}\`\`\``);
         }
         let args_cmd: string[] = [];
         for (const arg of command.expectedArgs) {

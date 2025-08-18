@@ -2,13 +2,10 @@ import { Command } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
 import { db, sqlite } from '../../bot/db.js';
 
-import * as log from '../../util/log.js';
-import * as cfgManager from '../../bot/cfgManager.js';
-import * as automod from '../../bot/automod.js';
-
-import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
 import { likeInASentence } from '../../util/lias.js';
+
+import * as dsc from 'discord.js';
 
 export const helpCmd: Command = {
     name: 'help',
@@ -22,7 +19,7 @@ export const helpCmd: Command = {
     async execute(msg, args, commands) {
         let blockedCmds: string[] = [];
         const commandsByCategory: Record<string, dsc.APIEmbedField[]> = {};
-        
+
         commands.forEach((command) => {
             if (
                 command.allowedRoles != null &&
