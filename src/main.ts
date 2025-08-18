@@ -293,7 +293,7 @@ client.on('interactionCreate', async (int) => {
         await cmdObject.execute(interact, args, commands);
     } catch (err) {
         console.error(err);
-        await int.reply({ content: 'Coś poszło nie tak podczas wykonywania komendy.', ephemeral: true });
+        await int.reply({ content: 'Coś poszło nie tak podczas wykonywania komendy.', flags: ["Ephemeral"] });
     }
 });
 

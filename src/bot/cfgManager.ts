@@ -207,8 +207,8 @@ const defaultConfig: Config = {
     },
 
     ai: {
-        //channel: '1276271917665484801',
-        channel: '1406643477210726550',
+        channel: '1276271917665484801',
+        //channel: '1406643477210726550',
         allowedCharacters: [/* lowercase*/ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'w', 'x', 'y', 'z', /* uppercase */ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'W', 'X', 'Y', 'Z' /* polish characters */, 'ą', 'ę', 'ć', 'ś', 'ó', 'ł', 'ż', 'ź', 'Ą', 'Ę', 'Ć', 'Ś', 'Ó', 'Ł', 'Ż', 'Ź', /* common characters */, ',', '.', ';', ' ', ':'],
         modelPath: './bot/eclairai-db.json',
         aiTokensLimit: 250, // believe me it's a lot, you won't get more if you're not flooding
