@@ -22,7 +22,7 @@ dotenv.config({ quiet: true });
 import { client } from './client.js';
 import { EclairAI } from './bot/eclairai.js';
 
-import { actionsManager, PredefinedActionCallbacks } from './features/actions.js';
+import { ActionEventType, actionsManager, PredefinedActionConstraints, PredefinedActionCallbacks } from './features/actions.js';
 import { eclairAIYesNoAction } from './features/actions/ecliaraiYesNo.js';
 import { mkAutoreplyAction } from './features/actions/autoreply.js';
 
@@ -30,6 +30,8 @@ import { warnCmd } from './cmd/mod/warn.js';
 import { kickCmd } from './cmd/mod/kick.js';
 import { banCmd } from './cmd/mod/ban.js';
 import { detailHelpCmd } from './cmd/general/detail-help.js';
+import { quickHelpCmd } from './cmd/general/quick-help.js';
+import { commandsCmd } from './cmd/general/commands.js';
 import { manCmd } from './cmd/general/man.js';
 import { warnlistCmd } from './cmd/mod/warnlist.js';
 import { siemaCmd } from './cmd/general/siema.js';
@@ -54,7 +56,8 @@ const commands: Map<Category, Command[]> = new Map([
     [
         Category.General,
         [
-            detailHelpCmd, manCmd,
+            detailHelpCmd, quickHelpCmd,
+            commandsCmd, manCmd,
             siemaCmd, pfpCmd,
             bannerCmd
         ]
@@ -369,22 +372,26 @@ async function main() {
     actionsManager.addAction(eclairAIYesNoAction);
     actionsManager.addAction(mkAutoreplyAction({
         activationOptions: [
-            {type:'is-equal-to', keyword:'git'}
+            { type: 'starts-with', keyword: 'git' }
         ],
         reply: 'hub'
     }));
-    actionsManager.addAction(mkAutoreplyAction({
-        activationOptions: [
-            { type: 'is-equal-to', keyword: 'git' }
-        ],
-        reply: 'hub'
-    }));
+    // actionsManager.addAction({
+    //     activationEventType: ActionEventType.OnMessageCreateOrEdit,
+    //     constraints: [
+    //         PredefinedActionConstraints.msgContains('git'),
+    //     ],
+    //     callbacks: [
+    //         PredefinedActionCallbacks.reply('hub')
+    //     ]
+    // });
+
     actionsManager.addAction(mkAutoreplyAction({
         activationOptions: [
             { type: 'is-equal-to', keyword: 'kiedy odcinek' },
             { type: 'is-equal-to', keyword: 'kiedy odcinek?' },
             { type: 'is-equal-to', keyword: 'kiedy film' },
-            { type: 'is-equal-to', keyword: 'kiedy film?' }
+            { type: 'is-equal-to', keyword: 'kiedy film?' },
         ],
         reply: 'nigdy - powiedział StartIT, ale ponieważ startit jest jebanym gównem no to spinguj eklerke by odpowiedział'
     }));

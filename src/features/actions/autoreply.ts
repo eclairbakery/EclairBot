@@ -50,7 +50,7 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
     return {
         activationEventType: ActionEventType.OnMessageCreateOrEdit,
         constraints: [
-            ...constraints,
+            PredefinedActionConstraints.or(...constraints),
             ...additionalConstraints || [],
         ],
         callbacks: [

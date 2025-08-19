@@ -118,7 +118,7 @@ export class PredefinedActionConstraints {
         return (msg) => {
             if (msg.content.includes(text)) return Ok;
             return Skip;
-        }
+        };
     }
 
     static msgIsEqualTo(text: string): ConstraintCallback<MessageEventCtx> {
@@ -155,12 +155,17 @@ class ActionManager {
     ) {
         client.on(eventName, (...args: any[]) => {
             const ctx = getCtx(...args);
+
+        actionsLoop:
             for (const action of this.actions.get(eventType) ?? []) {
                 if (actionFilter && !actionFilter(action, ...args)) continue;
 
                 for (const constraint of action.constraints) {
-                    if (constraint(ctx) == Skip) return;
+                    if (constraint(ctx) == Skip) {
+                        continue actionsLoop;
+                    }
                 }
+
                 for (const callback of action.callbacks) {
                     callback(ctx);
                 }
@@ -247,7 +252,6 @@ class ActionManager {
             (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
             (action, oldState, newState) => !oldState.selfDeaf && newState.selfDeaf,
         );
-
     }
 }
 

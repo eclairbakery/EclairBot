@@ -8,7 +8,7 @@ import * as automod from '../../bot/automod.js';
 
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
-import { likeInASentence } from '../../util/lias.js';
+import capitalizeFirst from '../../util/capitalizeFirst.js';
 
 export const siemaCmd: Command = {
     name: 'siema',

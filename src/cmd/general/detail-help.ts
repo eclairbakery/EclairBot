@@ -2,39 +2,65 @@ import { Category, Command } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
 
 import { PredefinedColors } from '../../util/color.js';
-import { likeInASentence } from '../../util/lias.js';
+import capitalizeFirst from '../../util/capitalizeFirst.js';
 import canExecuteCmd from '../../util/canExecuteCmd.js';
 
 import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
 
+function buildSelectMenu(commands: Map<Category, Command[]>): dsc.StringSelectMenuBuilder {
+    return new dsc.StringSelectMenuBuilder()
+        .setCustomId('help_select')
+        .setPlaceholder('⚡ Wybierz kategorię...')
+        .addOptions(
+            [...commands.keys()].map((category: Category) => ({
+                label: capitalizeFirst(category.name),
+                value: category.name,
+                emoji: category.emoji ?? undefined,
+                description: category.shortDesc ?? undefined,
+            }))
+        );
+}
+
+function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: string[] = []): dsc.EmbedBuilder {
+    const embed = new dsc.EmbedBuilder()
+        .setTitle(`${category.emoji} ${category.name}`)
+        .setDescription(category.longDesc)
+        .setColor(category.color);
+
+    for (const cmd of cmds) {
+        if (blockedCmds.includes(cmd.name)) continue;
+
+        let formattedName = cmd.name;
+        if (cmd.aliases.length === 1) {
+            formattedName += ` *(a.k.a. \`${cfg.general.prefix}${cmd.aliases[0]}\`)*`;
+        } else if (cmd.aliases.length >= 2) {
+            formattedName += ` *(a.k.a. \`${cfg.general.prefix}${cmd.aliases[0]}\` i \`${cfg.general.prefix}${cmd.aliases[1]}\`)*`;
+        }
+
+        embed.addFields([{
+            name: `:star: ${cfg.general.prefix}${formattedName}`,
+            value: cmd.longDesc,
+            inline: false,
+        }]);
+    }
+
+    return embed;
+}
+
 export const detailHelpCmd: Command = {
-    name: 'help',
+    name: 'detail-help',
     longDesc: 'Pokazuje losowe komendy z bota wraz z dokładnymi opisami, by w końcu nauczyć Twojego zapyziałego mózgu jego używania.',
     shortDesc: 'Lista komend',
     expectedArgs: [],
-    aliases: ['detail-help'],
+    aliases: [],
     allowedRoles: null,
     allowedUsers: [],
 
     async execute(msg, args, commands) {
-        let categoriesToShow: Set<Category> = new Set();
-
-        if (args.length == 0) {
-            const selectMenu = new dsc.StringSelectMenuBuilder()
-                .setCustomId('help_select')
-                .setPlaceholder('⚡ Wybierz kategorię...')
-                .addOptions(
-                    [...commands.keys()].map((category: Category) => ({
-                        label: likeInASentence(category.name),
-                        value: category.name,
-                        emoji: category.emoji ?? undefined,
-                        description: category.shortDesc ?? undefined,
-                    }))
-                );
-
-            const row = new dsc.ActionRowBuilder<dsc.StringSelectMenuBuilder>()
-                .addComponents(selectMenu);
+        const sendInteractiveMenu = async () => {
+            const selectMenu = buildSelectMenu(commands);
+            const row = new dsc.ActionRowBuilder<dsc.StringSelectMenuBuilder>().addComponents(selectMenu);
 
             const introEmbed = new dsc.EmbedBuilder()
                 .setTitle('📢 Moje komendy, władzco!')
@@ -45,7 +71,7 @@ export const detailHelpCmd: Command = {
 
             const collector = replyMsg.createMessageComponentCollector({
                 componentType: dsc.ComponentType.StringSelect,
-                time: 60_000, 
+                time: 60_000,
             });
 
             collector.on('collect', async (interaction: dsc.StringSelectMenuInteraction) => {
@@ -54,28 +80,14 @@ export const detailHelpCmd: Command = {
                     return;
                 }
 
-                const chosen = interaction.values[0];
-                const category = [...commands.keys()].find(c => c.name === chosen);
-                if (!category) {
+                const chosenCategory = [...commands.keys()].find(c => c.name === interaction.values[0]);
+                if (!chosenCategory) {
                     await interaction.reply({ content: 'Nie znaleziono tej kategorii!', flags: ["Ephemeral"] });
                     return;
                 }
 
-                const cmds = commands.get(category) ?? [];
-
-                const embed = new dsc.EmbedBuilder()
-                    .setTitle(`${category.emoji} ${category.name}`)
-                    .setDescription(category.longDesc)
-                    .setColor(category.color);
-
-                for (const cmd of cmds) {
-                    embed.addFields({
-                        name: `:star: ${cfg.general.prefix}${cmd.name}`,
-                        value: cmd.longDesc,
-                        inline: false,
-                    });
-                }
-
+                const cmds = commands.get(chosenCategory) ?? [];
+                const embed = buildCategoryEmbed(chosenCategory, cmds);
                 await interaction.update({ embeds: [embed], components: [row] });
             });
 
@@ -84,27 +96,28 @@ export const detailHelpCmd: Command = {
                     .addComponents(selectMenu.setDisabled(true));
                 await replyMsg.edit({ components: [disabledRow] }).catch(() => {});
             });
+        };
 
+        if (args.length === 0) {
+            await sendInteractiveMenu();
             return;
         }
 
-        if (args[0] == 'all') categoriesToShow = new Set([...commands.keys()]);
-        for (const arg of args) {
-            if (arg == 'all') {
-                categoriesToShow = new Set([...commands.keys()]);
-                continue;
-            }
-            let category = Category.fromString(arg);
-            if (category == null) {
-                log.replyError(msg, 'Nieznana kategoria', `Nie znam kategori ${arg}. Czy możesz powtórzyć?`);
-                return;
-            } else {
+        let categoriesToShow: Set<Category> = new Set();
+        if (args.includes('all')) {
+            categoriesToShow = new Set([...commands.keys()]);
+        } else {
+            for (const arg of args) {
+                const category = Category.fromString(arg);
+                if (!category) {
+                    log.replyError(msg, 'Nieznana kategoria', `Nie znam kategori ${arg}. Czy możesz powtórzyć?`);
+                    return;
+                }
                 categoriesToShow.add(category);
             }
         }
 
-        let blockedCmds: string[] = [];
-
+        const blockedCmds: string[] = [];
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
@@ -117,40 +130,10 @@ export const detailHelpCmd: Command = {
             .setDescription('O to lista komend podzielona na kategorie!')
             .setColor(PredefinedColors.Cyan);
 
-        const allEmbeds: dsc.EmbedBuilder[] = [];
-        allEmbeds.push(introEmbed);
-
-        function buildHelpEmbed(category: Category, cmds: Command[]) {
-            let embed = new dsc.EmbedBuilder()
-                .setTitle(`${category.emoji} ${category.name}`)
-                .setDescription(category.longDesc)
-                .setColor(category.color);
-
-            for (const cmd of cmds) {
-                if (blockedCmds.includes(cmd.name)) continue;
-
-                let formattedName = cmd.name;
-                if (cmd.aliases.length == 1) {
-                    formattedName += ` *(a.k.a. \`${cfg.general.prefix}${cmd.aliases[0]}\`)*`;
-                } else if (cmd.aliases.length >= 2) {
-                    formattedName += ` *(a.k.a. \`${cfg.general.prefix}${cmd.aliases[0]}\` i \`${cfg.general.prefix}${cmd.aliases[1]}\`)*`;
-                }
-
-                embed.addFields([
-                    {
-                        name: `:star: ${cfg.general.prefix}${formattedName}`,
-                        value: cmd.longDesc,
-                        inline: false,
-                    }
-                ]);
-            }
-            return embed;
-        }
-
+        const allEmbeds = [introEmbed];
         for (const category of categoriesToShow) {
-            const cmds = commands.get(category);
-            const embed = buildHelpEmbed(category, cmds || []);
-            allEmbeds.push(embed);
+            const cmds = commands.get(category) || [];
+            allEmbeds.push(buildCategoryEmbed(category, cmds, blockedCmds));
         }
 
         if (blockedCmds.length > 0) {
@@ -161,6 +144,5 @@ export const detailHelpCmd: Command = {
         }
 
         await msg.reply({ embeds: allEmbeds });
-        return;
     },
 };

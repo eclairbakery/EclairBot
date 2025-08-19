@@ -25,7 +25,7 @@ export const manCmd: Command = {
         const manuals: Map<Category, Command[]> = new Map(
             [
                 [
-                    new Category('💔', 'inne', '', '', 0x0),
+                    new Category('💔', 'inne', '', '', PredefinedColors.Pink),
                     [
                         {
                             name: 'woman',
