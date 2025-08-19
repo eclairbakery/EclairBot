@@ -22,6 +22,9 @@ dotenv.config({ quiet: true });
 import { client } from './client.js';
 import { EclairAI } from './bot/eclairai.js';
 
+import { actionsManager } from './features/actions.js';
+import { eclairAIYesNoAction } from './features/actions/ecliaraiYesNo.js';
+
 import { warnCmd } from './cmd/mod/warn.js';
 import { kickCmd } from './cmd/mod/kick.js';
 import { banCmd } from './cmd/mod/ban.js';
@@ -109,17 +112,17 @@ client.on('messageCreate', async (msg) => {
     }
 
     // eclairAI
-    if (msg.content.startsWith(`<@${msg.client.user.id}> czy`) || msg.content.startsWith(`<@!${msg.client.user.id}> czy`) || (msg.content.startsWith(`czy`) && msg.channelId == cfg.ai.channel && !msg.author.bot)) {
-        const responses = ['tak', 'nie', 'idk', 'kto wie', 'raczej nie', 'niezbyt', 'raczej tak', 'definitynie NIE', 'definitywnie TAK', 'TAK!', 'NIE!', 'zaprzeczam', 'potwierdzam', 'nie chce mi sie tego osądzać'];
-        const response: string = (msg.content.toLowerCase().includes('windows jest lepszy od linux') || msg.content.toLowerCase().includes('windows jest lepszy niz linux') || msg.content.toLowerCase().includes('windows jest lepszy niż linux')) ? 'NIE' : ((msg.content.toLowerCase().includes('linux jest lepszy od windows') || msg.content.toLowerCase().includes('linux jest lepszy niz windows') || msg.content.toLowerCase().includes('linux jest lepszy niż windows')) ? 'TAK' : (responses[Math.floor(Math.random() * responses.length)])); // propaganda piekarnii eklerki
-        return msg.reply(response);
-    } else if (msg.channelId == cfg.ai.channel && !msg.author.bot) {
-        if (msg.content.startsWith(cfg.general.prefix)) {
-            return msg.reply('-# Komendy nie są obsługiwane na kanale EclairAI fan edition.');
-        }
-        const ai = new EclairAI(msg);
-        return ai.reply();
-    }
+    // if (msg.content.startsWith(`<@${msg.client.user.id}> czy`) || msg.content.startsWith(`<@!${msg.client.user.id}> czy`) || (msg.content.startsWith(`czy`) && msg.channelId == cfg.ai.channel && !msg.author.bot)) {
+    //     const responses = ['tak', 'nie', 'idk', 'kto wie', 'raczej nie', 'niezbyt', 'raczej tak', 'definitynie NIE', 'definitywnie TAK', 'TAK!', 'NIE!', 'zaprzeczam', 'potwierdzam', 'nie chce mi sie tego osądzać'];
+    //     const response: string = (msg.content.toLowerCase().includes('windows jest lepszy od linux') || msg.content.toLowerCase().includes('windows jest lepszy niz linux') || msg.content.toLowerCase().includes('windows jest lepszy niż linux')) ? 'NIE' : ((msg.content.toLowerCase().includes('linux jest lepszy od windows') || msg.content.toLowerCase().includes('linux jest lepszy niz windows') || msg.content.toLowerCase().includes('linux jest lepszy niż windows')) ? 'TAK' : (responses[Math.floor(Math.random() * responses.length)])); // propaganda piekarnii eklerki
+    //     return msg.reply(response);
+    // } else if (msg.channelId == cfg.ai.channel && !msg.author.bot) {
+    //     if (msg.content.startsWith(cfg.general.prefix)) {
+    //         return msg.reply('-# Komendy nie są obsługiwane na kanale EclairAI fan edition.');
+    //     }
+    //     const ai = new EclairAI(msg);
+    //     return ai.reply();
+    // }
 
     // commands logic [ugly code warn]
     if (!msg.content.startsWith(cfg.general.prefix)) return;
@@ -140,8 +143,7 @@ client.on('messageCreate', async (msg) => {
         log.replyError(msg, 'Panie, ja nie panimaju!', `Wpisz se ${cfg.general.prefix}help i dostarczę Ci listę komend!`);
         return;
     } else if (cmdObject.allowedRoles != null && !msg.member.roles.cache.some((role) => cmdObject.allowedRoles.includes(role.id))) {
-        log.replyError(msg, 'Hej, a co ty odpie*dalasz?', `Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...
-`);
+        log.replyError(msg, 'Hej, a co ty odpie*dalasz?', `Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...`);
         return;
     } else {
         return cmdObject.execute(msg, args, commands);
@@ -362,6 +364,9 @@ async function main() {
     await client.login(process.env.TOKEN);
 
     const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
+
+    actionsManager.addAction(eclairAIYesNoAction);
+    actionsManager.registerEvents(client);
 
     let commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
     // commands.forEach((cmd) => {

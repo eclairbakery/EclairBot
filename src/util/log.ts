@@ -53,6 +53,10 @@ export function getTipEmbed(title: string, desc: string) {
 }
 
 
+export function replyError(msg: CommandInput | dsc.Message, title: string, desc: string) {
+    msg.reply(getErrorEmbed(title, desc));
+}
+
 export function replyWarn(msg: CommandInput | dsc.Message, title: string, desc: string) {
     msg.reply(getWarnEmbed(title, desc));
 }
@@ -67,10 +71,6 @@ export function replySuccess(msg: CommandInput | dsc.Message, title: string, des
 
 export function replyTip(msg: CommandInput | dsc.Message, title: string, desc: string) {
     msg.reply(getTipEmbed(title, desc));
-}
-
-export function replyError(msg: CommandInput | dsc.Message, title: string, desc: string) {
-    msg.reply(getErrorEmbed(title, desc));
 }
 
 
