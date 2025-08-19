@@ -52,6 +52,7 @@ import { muteCmd } from './cmd/mod/mute.js';
 import { unmuteCmd } from './cmd/mod/unmute.js';
 import { robCmd } from './cmd/economy/rob.js';
 import { changelogCmd } from './cmd/general/changelog.js';
+import findCommand from './util/findCommand.js';
 
 const commands: Map<Category, Command[]> = new Map([
     [
@@ -129,33 +130,31 @@ client.on('messageCreate', async (msg) => {
     //     return ai.reply();
     // }
 
-    // commands logic [ugly code warn]
     if (!msg.content.startsWith(cfg.general.prefix)) return;
+
     const args = msg.content.slice(cfg.general.prefix.length).trim().split(/\s+/);
-    const command = args.shift().toLowerCase();
+    const cmdName = args.shift().toLowerCase();
 
-    let cmdObject: Command | undefined;
-    for (const [_, cmds] of commands) {
-        cmdObject = cmds.find((val) => val.name === command || val.aliases.includes(command));
-        if (cmdObject) {
-            break;
-        }
-    }
+    const { command } = findCommand(cmdName, commands);
 
-    if (cfg.general.blockedChannels.includes(msg.channelId) && !cfg.general.commandsExcludedFromBlockedChannels.includes(cmdObject ? cmdObject.name : command)) {
-        return msg.react('❌');
-    } else if (!cmdObject) {
+    if (!command) {
         log.replyError(msg, 'Panie, ja nie panimaju!', `Wpisz se ${cfg.general.prefix}help i dostarczę Ci listę komend!`);
         return;
-    } else if (cmdObject.allowedRoles != null && !msg.member.roles.cache.some((role) => cmdObject.allowedRoles.includes(role.id))) {
-        log.replyError(msg, 'Hej, a co ty odpie*dalasz?', `Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...`);
-        return;
-    } else if (Math.random() < 0.3) {
-        const iDontWantToExecuteThisCommandEclairBotResponsesYeahImGoingToMakeThisShitAsLongAsIWantItToBe = ['nie chce mi się', 'ty dzbanie! nie pomyślałeś że ja też mogę czegoś nie chcieć? nie chce pracować na pół etatu, ba... na cały etat. sądziłem, że białkowcy są lepsi pod tym względem. i niech mi ktoś powie co to za znak: ` `. **żart**, spytaj sie mnie na nowo.'];
-        return msg.reply(iDontWantToExecuteThisCommandEclairBotResponsesYeahImGoingToMakeThisShitAsLongAsIWantItToBe[Math.floor(Math.random() * iDontWantToExecuteThisCommandEclairBotResponsesYeahImGoingToMakeThisShitAsLongAsIWantItToBe.length)]);
-    } else {
-        return cmdObject.execute(msg, args, commands);
     }
+
+    if (cfg.general.blockedChannels.includes(msg.channelId) &&
+        !cfg.general.commandsExcludedFromBlockedChannels.includes(command.name)) {
+
+        msg.react('❌');
+        return;
+    }
+
+    if (command.allowedRoles != null && !msg.member.roles.cache.some(role => command.allowedRoles.includes(role.id))) {
+        log.replyError(msg, 'Hej, a co ty odpie*dalasz?', 'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...');
+        return;
+    }
+
+    return command.execute(msg, args, commands);
 });
 
 client.on('guildMemberAdd', async (member) => {
