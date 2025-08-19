@@ -150,6 +150,9 @@ client.on('messageCreate', async (msg) => {
     } else if (cmdObject.allowedRoles != null && !msg.member.roles.cache.some((role) => cmdObject.allowedRoles.includes(role.id))) {
         log.replyError(msg, 'Hej, a co ty odpie*dalasz?', `Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...`);
         return;
+    } else if (Math.random() < 0.3) {
+        const iDontWantToExecuteThisCommandEclairBotResponsesYeahImGoingToMakeThisShitAsLongAsIWantItToBe = ['nie chce mi się', 'ty dzbanie! nie pomyślałeś że ja też mogę czegoś nie chcieć? nie chce pracować na pół etatu, ba... na cały etat. sądziłem, że białkowcy są lepsi pod tym względem. i niech mi ktoś powie co to za znak: ` `. **żart**, spytaj sie mnie na nowo.'];
+        return msg.reply(iDontWantToExecuteThisCommandEclairBotResponsesYeahImGoingToMakeThisShitAsLongAsIWantItToBe[Math.floor(Math.random() * iDontWantToExecuteThisCommandEclairBotResponsesYeahImGoingToMakeThisShitAsLongAsIWantItToBe.length)]);
     } else {
         return cmdObject.execute(msg, args, commands);
     }
