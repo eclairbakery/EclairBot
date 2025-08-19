@@ -50,11 +50,11 @@ function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: st
 }
 
 export const quickHelpCmd: Command = {
-    name: 'quick-help',
+    name: 'help',
     longDesc: 'Pokazuje losowe komendy z bota wraz z krótkimi opisami, by w końcu nauczyć Twojego zapyziałego mózgu jego używania.',
     shortDesc: 'Lista komend',
     expectedArgs: [],
-    aliases: ['help'],
+    aliases: ['quick-help'],
     allowedRoles: null,
     allowedUsers: [],
 
@@ -65,7 +65,7 @@ export const quickHelpCmd: Command = {
 
             const introEmbed = new dsc.EmbedBuilder()
                 .setTitle('📢 Moje komendy, władzco!')
-                .setDescription('Wybierz kategorię z menu poniżej, aby zobaczyć jej komendy!')
+                .setDescription('Wybierz kategorię z menu poniżej, aby zobaczyć jej komendy! Plus, używasz uproszczonej wersji `help`. Użyj `detail-help`/`man`, jak serio się chcesz komend nauczyć...')
                 .setColor(PredefinedColors.Cyan);
 
             const replyMsg = await msg.reply({ embeds: [introEmbed], components: [row] });

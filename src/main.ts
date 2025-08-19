@@ -29,8 +29,8 @@ import { mkAutoreplyAction } from './features/actions/autoreply.js';
 import { warnCmd } from './cmd/mod/warn.js';
 import { kickCmd } from './cmd/mod/kick.js';
 import { banCmd } from './cmd/mod/ban.js';
-import { detailHelpCmd } from './cmd/general/detail-help.js';
-import { quickHelpCmd } from './cmd/general/quick-help.js';
+import { detailHelpCmd } from './cmd/general/detailHelp.js';
+import { quickHelpCmd } from './cmd/general/help.js';
 import { commandsCmd } from './cmd/general/commands.js';
 import { manCmd } from './cmd/general/man.js';
 import { warnlistCmd } from './cmd/mod/warnlist.js';
@@ -51,6 +51,7 @@ import { bannerCmd } from './cmd/general/banner.js';
 import { muteCmd } from './cmd/mod/mute.js';
 import { unmuteCmd } from './cmd/mod/unmute.js';
 import { robCmd } from './cmd/economy/rob.js';
+import { changelogCmd } from './cmd/general/changelog.js';
 
 const commands: Map<Category, Command[]> = new Map([
     [
@@ -59,7 +60,7 @@ const commands: Map<Category, Command[]> = new Map([
             detailHelpCmd, quickHelpCmd,
             commandsCmd, manCmd,
             siemaCmd, pfpCmd,
-            bannerCmd
+            bannerCmd, changelogCmd
         ]
     ],
     [
@@ -104,7 +105,7 @@ client.on('messageCreate', async (msg) => {
     if (!msg.inGuild()) return;
 
     // a little reverse automod
-    //if (!msg.author.bot) if (await automod.automod(msg, client)) return;
+    if (!msg.author.bot) if (await automod.automod(msg, client)) return;
 
     // now goes leveling
     if (!msg.author.bot) addExperiencePoints(msg);
@@ -369,40 +370,32 @@ async function main() {
 
     const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
 
-    actionsManager.addAction(eclairAIYesNoAction);
-    actionsManager.addAction(mkAutoreplyAction({
-        activationOptions: [
-            { type: 'starts-with', keyword: 'git' }
-        ],
-        reply: 'hub'
-    }));
-    // actionsManager.addAction({
-    //     activationEventType: ActionEventType.OnMessageCreateOrEdit,
-    //     constraints: [
-    //         PredefinedActionConstraints.msgContains('git'),
-    //     ],
-    //     callbacks: [
-    //         PredefinedActionCallbacks.reply('hub')
-    //     ]
-    // });
-
-    actionsManager.addAction(mkAutoreplyAction({
-        activationOptions: [
-            { type: 'is-equal-to', keyword: 'kiedy odcinek' },
-            { type: 'is-equal-to', keyword: 'kiedy odcinek?' },
-            { type: 'is-equal-to', keyword: 'kiedy film' },
-            { type: 'is-equal-to', keyword: 'kiedy film?' },
-        ],
-        reply: 'nigdy - powiedział StartIT, ale ponieważ startit jest jebanym gównem no to spinguj eklerke by odpowiedział'
-    }));
-    actionsManager.addAction(mkAutoreplyAction({
-        activationOptions: [
-            { type: 'contains', keyword: '@everyone' },
-        ],
-        reply: 'Pan piekarz, czy tam Eklerka będzie zły...',
-        additionalCallbacks: [PredefinedActionCallbacks.deleteMsg]
-    }));
-    actionsManager.registerEvents(client);
+    if (false) { // dear maqix, enable this, but disable the automod
+        actionsManager.addAction(eclairAIYesNoAction);
+        actionsManager.addAction(mkAutoreplyAction({
+            activationOptions: [
+                { type: 'starts-with', keyword: 'git' }
+            ],
+            reply: 'hub'
+        }));
+        actionsManager.addAction(mkAutoreplyAction({
+            activationOptions: [
+                { type: 'is-equal-to', keyword: 'kiedy odcinek' },
+                { type: 'is-equal-to', keyword: 'kiedy odcinek?' },
+                { type: 'is-equal-to', keyword: 'kiedy film' },
+                { type: 'is-equal-to', keyword: 'kiedy film?' },
+            ],
+            reply: 'nigdy - powiedział StartIT, ale ponieważ startit jest jebanym gównem no to spinguj eklerke by odpowiedział'
+        }));
+        actionsManager.addAction(mkAutoreplyAction({
+            activationOptions: [
+                { type: 'contains', keyword: '@everyone' },
+            ],
+            reply: 'Pan piekarz, czy tam Eklerka będzie zły...',
+            additionalCallbacks: [PredefinedActionCallbacks.deleteMsg]
+        }));
+        actionsManager.registerEvents(client);
+    }
 
     let commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
     // commands.forEach((cmd) => {

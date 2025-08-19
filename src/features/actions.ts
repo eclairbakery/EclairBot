@@ -11,7 +11,7 @@ export type ChannelEventCtx       = dsc.Channel;
 
 export type AnyEventCtx = MessageEventCtx | UserEventCtx | VoiceChannelsEventCtx | ThreadEventCtx | ChannelEventCtx | ReactionEventCtx;
 
-export type ActionCallback<CtxType> = (ctx: CtxType) => void;
+export type ActionCallback<CtxType> = (ctx: CtxType) => void | Promise<any>;
 export type AnyActionCallback       = (ctx: AnyEventCtx) => void;
 
 export type ConstraintCallback<CtxType> = (ctx: CtxType) => boolean;
@@ -153,7 +153,7 @@ class ActionManager {
         getCtx: (...args: any[]) => T,
         actionFilter?: (action: AnyAction, ...args: any[]) => boolean
     ) {
-        client.on(eventName, (...args: any[]) => {
+        client.on(eventName, async (...args: any[]) => {
             const ctx = getCtx(...args);
 
         actionsLoop:
@@ -167,7 +167,10 @@ class ActionManager {
                 }
 
                 for (const callback of action.callbacks) {
-                    callback(ctx);
+                    const result = callback(ctx);
+                    if (result && typeof (result as any).then === "function") {
+                        await result;
+                    }
                 }
             }
         });
