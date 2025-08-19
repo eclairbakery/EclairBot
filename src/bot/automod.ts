@@ -61,12 +61,6 @@ export async function automod(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boo
         // then go the least important
         {
             activationType: 'is_equal_to',
-            activationKeyword: 'git',
-            response: 'hub',
-            deleteTargetMessage: false,
-        },
-        {
-            activationType: 'is_equal_to',
             activationKeyword: 'kiedy odcinek',
             response: 'nigdy - powiedział StartIT, ale ponieważ startit jest jebanym gównem no to spinguj eklerke by odpowiedział',
             deleteTargetMessage: false,

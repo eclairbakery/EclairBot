@@ -22,8 +22,9 @@ dotenv.config({ quiet: true });
 import { client } from './client.js';
 import { EclairAI } from './bot/eclairai.js';
 
-import { actionsManager } from './features/actions.js';
+import { actionsManager, PredefinedActionCallbacks } from './features/actions.js';
 import { eclairAIYesNoAction } from './features/actions/ecliaraiYesNo.js';
+import { mkAutoreplyAction } from './features/actions/autoreply.js';
 
 import { warnCmd } from './cmd/mod/warn.js';
 import { kickCmd } from './cmd/mod/kick.js';
@@ -100,7 +101,7 @@ client.on('messageCreate', async (msg) => {
     if (!msg.inGuild()) return;
 
     // a little reverse automod
-    if (!msg.author.bot) if (await automod.automod(msg, client)) return;
+    //if (!msg.author.bot) if (await automod.automod(msg, client)) return;
 
     // now goes leveling
     if (!msg.author.bot) addExperiencePoints(msg);
@@ -366,6 +367,34 @@ async function main() {
     const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
 
     actionsManager.addAction(eclairAIYesNoAction);
+    actionsManager.addAction(mkAutoreplyAction({
+        activationOptions: [
+            {type:'is-equal-to', keyword:'git'}
+        ],
+        reply: 'hub'
+    }));
+    actionsManager.addAction(mkAutoreplyAction({
+        activationOptions: [
+            { type: 'is-equal-to', keyword: 'git' }
+        ],
+        reply: 'hub'
+    }));
+    actionsManager.addAction(mkAutoreplyAction({
+        activationOptions: [
+            { type: 'is-equal-to', keyword: 'kiedy odcinek' },
+            { type: 'is-equal-to', keyword: 'kiedy odcinek?' },
+            { type: 'is-equal-to', keyword: 'kiedy film' },
+            { type: 'is-equal-to', keyword: 'kiedy film?' }
+        ],
+        reply: 'nigdy - powiedział StartIT, ale ponieważ startit jest jebanym gównem no to spinguj eklerke by odpowiedział'
+    }));
+    actionsManager.addAction(mkAutoreplyAction({
+        activationOptions: [
+            { type: 'contains', keyword: '@everyone' },
+        ],
+        reply: 'Pan piekarz, czy tam Eklerka będzie zły...',
+        additionalCallbacks: [PredefinedActionCallbacks.deleteMsg]
+    }));
     actionsManager.registerEvents(client);
 
     let commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
