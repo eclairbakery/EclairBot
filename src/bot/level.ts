@@ -9,6 +9,19 @@ function calculateLevel(xp: number, levelDivider: number): number {
     );
 }
 
+export const lvlRoles = [
+    "1297559525989158912",
+    "1235550102563852348",
+    "1235550105751392276",
+    "1235550109891035218",
+    "1235570092218122251",
+    "1235594078305914880",
+    "1235594081556627577",
+    "1235594083544858667",
+    "1235594085188767835",
+    "1390802440739356762"
+];
+
 export function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     // check if eligible
     if (cfg.general.leveling.excludedChannels.includes(msg.channelId)) return;
