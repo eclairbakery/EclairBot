@@ -216,11 +216,11 @@ const defaultConfig: Config = {
     },
 
     ai: {
-        channel: '1276271917665484801',
-        //channel: '1406643477210726550',
+        //channel: '1276271917665484801',
+        channel: '1406643477210726550',
         allowedCharacters: [/* lowercase*/ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'w', 'x', 'y', 'z', /* uppercase */ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'W', 'X', 'Y', 'Z' /* polish characters */, 'ą', 'ę', 'ć', 'ś', 'ó', 'ł', 'ż', 'ź', 'Ą', 'Ę', 'Ć', 'Ś', 'Ó', 'Ł', 'Ż', 'Ź', /* common characters */, ',', '.', ';', ' ', ':'],
         modelPath: './bot/eclairai-db.json',
-        aiTokensLimit: 250, // believe me it's a lot, you won't get more if you're not flooding
+        aiTokensLimit: 100, // believe me it's a lot, you won't get more if you're not flooding
         bannedSequences: ['@here', '@everyone', 'choler', 'chuj', 'debil', 'fiucie', 'fiut', 'fuck', 'gówn', 'hitler', 'ja pierdole', 'ja pierdolę', 'jeba', 'jebany', 'jebi', 'jprdl', 'kurwa', 'kutas', 'niger', 'nigger', 'penis', 'pierdol', 'porn', 'putin', 'rucha', 'skibidi', 'skibidi toilet', 'spierdalaj', 'toilet', 'wypierdalaj', 'zapierdalaj'],
         unlimitedAiRole: ['1235594078305914880', '1235594081556627577', '1235594083544858667', '1235594085188767835', '1390802440739356762', '1255213321301524643'],
         temperature: 0.5, // this is a lot... i need to decrease this

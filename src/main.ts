@@ -24,7 +24,7 @@ import { client } from './client.js';
 import { EclairAI } from './bot/eclairai.js';
 
 import { ActionEventType, actionsManager, PredefinedActionConstraints, PredefinedActionCallbacks } from './features/actions.js';
-import { eclairAIYesNoAction } from './features/actions/ecliaraiYesNo.js';
+import { eclairAIAction } from './features/actions/eclairai.js';
 import { mkAutoreplyAction } from './features/actions/autoreply.js';
 
 import { warnCmd } from './cmd/mod/warn.js';
@@ -373,7 +373,7 @@ async function main() {
 
     const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
 
-    actionsManager.addAction(eclairAIYesNoAction);
+    actionsManager.addAction(eclairAIAction);
     actionsManager.addActions(...AutoModRules.all());
     actionsManager.registerEvents(client);
 
