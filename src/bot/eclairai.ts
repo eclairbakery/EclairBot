@@ -21,7 +21,7 @@ import * as log from '../util/log.js'
 import { Snowflake } from "../defs.js";
 import * as fs from 'node:fs';
 
-export class EclairAI {
+export class EclairAiFirstEdition {
     private config: typeof cfg.ai;
     private model: {
         tokenLimitsCounter: Record<string, number>,
