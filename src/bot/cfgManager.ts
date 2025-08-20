@@ -10,9 +10,9 @@ export interface Config {
 
     radio: {
         enabled: boolean;
-        default_playlist: string[],
-        piekarnia_ad: string,
-        radio_channel: Snowflake
+        defaultPlaylist: string[],
+        piekarniaAD: string,
+        radioChannel: Snowflake
     };
 
     general: {
@@ -38,6 +38,11 @@ export interface Config {
         hallOfFame: Snowflake,
         hallOfFameEligibleChannels: Snowflake[]
     };
+
+    cheatsRoles: {
+        automodBypassRoles: Snowflake[];
+    },
+
 
     ai: {
         channel: Snowflake;
@@ -143,7 +148,7 @@ const defaultConfig: Config = {
 
     radio: {
         enabled: false,
-        default_playlist: [
+        defaultPlaylist: [
             'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
             'https://www.youtube.com/watch?v=iqoNoU-rm14',
             'https://www.youtube.com/watch?v=D-TQB-T-UJ4',
@@ -163,8 +168,12 @@ const defaultConfig: Config = {
             'https://www.youtube.com/watch?v=2up_Eq6r6Ko',
             'https://www.youtube.com/watch?v=60ItHLz5WEA'
         ],
-        radio_channel: '1404793848542007308',
-        piekarnia_ad: '💎 Szukasz radia na swój serwer Discord? Skontaktuj się z administratorami Piekarnii Eklerki: <https://discord.gg/aEyZS3nMDE>'
+        radioChannel: '1404793848542007308',
+        piekarniaAD: '💎 Szukasz radia na swój serwer Discord? Skontaktuj się z administratorami Piekarnii Eklerki: <https://discord.gg/aEyZS3nMDE>'
+    },
+
+    cheatsRoles: {
+        automodBypassRoles: ['1380875827998097418'],
     },
 
     general: {
@@ -197,7 +206,7 @@ const defaultConfig: Config = {
             enabled: true,
             general: '1264971505662689311'
         },
-        moderationProtectedRoles: ['1280884378586845216', '1280081773019140096']
+        moderationProtectedRoles: ['1280884378586845216', '1280081773019140096'],
     },
 
     unfilteredRelated: {
@@ -216,7 +225,7 @@ const defaultConfig: Config = {
         unlimitedAiRole: ['1235594078305914880', '1235594081556627577', '1235594083544858667', '1235594085188767835', '1390802440739356762', '1255213321301524643'],
         temperature: 0.5, // this is a lot... i need to decrease this
         pretrainedSuggestions: {"siema": ["witam, w czym mogę zepsuć"], "ile to": ["co ty myslisz że ja matematyk"], "witaj": ["witam bardzo średnioserdecznie"], "jaka pogoda": ["wyjrzyj za okno"]},
-        memoryLimit: 15
+        memoryLimit: 15,
     },
 
     mod: {
@@ -249,10 +258,10 @@ const defaultConfig: Config = {
                 allowedUsers: [],
                 reasonRequired: false,
                 maxPoints: 30,
-                minPoints: 1
+                minPoints: 1,
             },
         },
-    }
+    },
 };
 
 function mergeConfigs(userCfg: Partial<Config>, defaultCfg: Config = defaultConfig): Config {

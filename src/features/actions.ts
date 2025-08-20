@@ -4,8 +4,8 @@ import * as dsc from 'discord.js';
 // import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx }
 export type MessageEventCtx       = dsc.Message;
 export type ReactionEventCtx      = { reaction: dsc.MessageReaction, user: dsc.User };
-export type UserEventCtx          = dsc.User;
-export type VoiceChannelsEventCtx = { channel: dsc.VoiceBasedChannel, user: dsc.User };
+export type UserEventCtx          = dsc.GuildMember;
+export type VoiceChannelsEventCtx = { channel: dsc.VoiceBasedChannel, user: dsc.GuildMember };
 export type ThreadEventCtx        = dsc.ThreadChannel;
 export type ChannelEventCtx       = dsc.Channel;
 
@@ -141,6 +141,21 @@ export class PredefinedActionConstraints {
             return Skip;
         }
     }
+
+    static msgMatchesRegex(regex: string | RegExp): ConstraintCallback<MessageEventCtx> {
+        const re = typeof regex === 'string' ? new RegExp(regex) : regex;
+        return (msg) => {
+            if (re.test(msg.content)) return Ok;
+            return Skip;
+        };
+    }
+
+    static userHasRole(roleId: dsc.Snowflake): ConstraintCallback<UserEventCtx> {
+        return (userCtx) => {
+            if (userCtx.roles.cache.has(roleId)) return Ok;
+            return Skip;
+        };
+    }
 }
 
 class ActionManager {
@@ -187,6 +202,12 @@ class ActionManager {
         }
     }
 
+    addActions(...actions: AnyAction[]) {
+        for (const action of actions) {
+            this.addAction(action);
+        }
+    }
+
     registerEvents(client: dsc.Client): void {
         // ---- Message Events ----
         this.handleEvent(client, 'messageCreate', ActionEventType.OnMessageCreate, (msg: dsc.Message) => msg,
@@ -202,8 +223,8 @@ class ActionManager {
         this.handleEvent(client, 'messageReactionRemove', ActionEventType.OnMessageReactionRemove, (reaction: dsc.MessageReaction, user: dsc.User) => ({ reaction, user }));
 
         // ---- User Events ----
-        this.handleEvent(client, 'guildMemberAdd', ActionEventType.OnUserJoin, (member: dsc.GuildMember) => member.user);
-        this.handleEvent(client, 'guildMemberRemove', ActionEventType.OnUserQuit, (member: dsc.GuildMember) => member.user);
+        this.handleEvent(client, 'guildMemberAdd', ActionEventType.OnUserJoin, (member: dsc.GuildMember) => member);
+        this.handleEvent(client, 'guildMemberRemove', ActionEventType.OnUserQuit, (member: dsc.GuildMember) => member);
 
         // ---- Threads Events ----
         this.handleEvent(client, 'threadCreate', ActionEventType.OnThreadCreate, (thread: dsc.ThreadChannel) => thread);

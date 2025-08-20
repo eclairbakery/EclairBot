@@ -7,13 +7,15 @@ import * as dsc from 'discord.js';
 
 
 export interface AutoReplyActivationOption {
-    type: 'contains' | 'is-equal-to' | 'starts-with' | 'ends-with';
+    type: 'contains' | 'is-equal-to' | 'starts-with' | 'ends-with' | 'matches-regex';
     keyword: string;
 }
 
+export type AutoReplyGetMessageCallback = (msg: dsc.Message) => (string | dsc.MessagePayload | dsc.MessageReplyOptions);
+
 export interface AutoReplyOptions {
     activationOptions: AutoReplyActivationOption[];
-    reply: string | dsc.MessagePayload | dsc.MessageReplyOptions;
+    reply: (string | dsc.MessagePayload | dsc.MessageReplyOptions) | AutoReplyGetMessageCallback;
     additionalConstraints?: ConstraintCallback<MessageEventCtx>[];
     additionalCallbacks?: ActionCallback<MessageEventCtx>[];
 }
@@ -42,6 +44,9 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
         case 'ends-with':
             constraints.push(PredefinedActionConstraints.msgEndsWith(opt.keyword));
             break;
+        case 'matches-regex':
+            constraints.push(PredefinedActionConstraints.msgMatchesRegex(opt.keyword));
+            break;
         default:
             throw new Error(`Unknown activation option type: ${opt.type}`);
         }
@@ -54,7 +59,15 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
             ...additionalConstraints || [],
         ],
         callbacks: [
-            PredefinedActionCallbacks.reply(reply),
+            (msg) => {
+                let replyValue: string | dsc.MessagePayload | dsc.MessageReplyOptions;
+                if (typeof reply == 'function') {
+                    replyValue = (reply as AutoReplyGetMessageCallback)(msg);
+                } else {
+                    replyValue = reply as (string | dsc.MessagePayload | dsc.MessageReplyOptions);
+                }
+                return msg.reply(replyValue);
+            },
             ...additionalCallbacks || [],
         ],
     };

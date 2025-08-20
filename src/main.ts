@@ -7,12 +7,13 @@ import { cfg } from './bot/cfg.js';
 import { db, sqlite } from './bot/db.js';
 import { PredefinedColors } from './util/color.js';
 
+import AutoModRules from './features/actions/automod.js';
+
 import { initExpiredWarnsDeleter } from './features/deleteExpiredWarns.js';
 import { addExperiencePoints } from './bot/level.js';
 
 import * as log from './util/log.js';
 import * as cfgManager from './bot/cfgManager.js';
-import * as automod from './bot/automod.js';
 
 import * as dotenv from 'dotenv';
 import * as dsc from 'discord.js';
@@ -106,7 +107,7 @@ client.on('messageCreate', async (msg) => {
     if (!msg.inGuild()) return;
 
     // a little reverse automod
-    if (!msg.author.bot) if (await automod.automod(msg, client)) return;
+    // if (!msg.author.bot) if (await automod.automod(msg, client)) return;
 
     // now goes leveling
     if (!msg.author.bot) addExperiencePoints(msg);
@@ -241,7 +242,7 @@ client.on('interactionCreate', async (int) => {
         const channelRegex = /^<#(\d+)>$/;
 
         for (const arg of args) {
-            let match;
+            let match: RegExpExecArray | null = null;
 
             if ((match = userRegex.exec(arg))) {
                 const id = match[1];
@@ -372,47 +373,11 @@ async function main() {
 
     const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
 
-    if (false) { // dear maqix, enable this, but disable the automod
-        actionsManager.addAction(eclairAIYesNoAction);
-        actionsManager.addAction(mkAutoreplyAction({
-            activationOptions: [
-                { type: 'starts-with', keyword: 'git' }
-            ],
-            reply: 'hub'
-        }));
-        actionsManager.addAction(mkAutoreplyAction({
-            activationOptions: [
-                { type: 'is-equal-to', keyword: 'kiedy odcinek' },
-                { type: 'is-equal-to', keyword: 'kiedy odcinek?' },
-                { type: 'is-equal-to', keyword: 'kiedy film' },
-                { type: 'is-equal-to', keyword: 'kiedy film?' },
-            ],
-            reply: 'nigdy - powiedział StartIT, ale ponieważ startit jest jebanym gównem no to spinguj eklerke by odpowiedział'
-        }));
-        actionsManager.addAction(mkAutoreplyAction({
-            activationOptions: [
-                { type: 'contains', keyword: '@everyone' },
-            ],
-            reply: 'Pan piekarz, czy tam Eklerka będzie zły...',
-            additionalCallbacks: [PredefinedActionCallbacks.deleteMsg]
-        }));
-        actionsManager.registerEvents(client);
-    }
+    actionsManager.addAction(eclairAIYesNoAction);
+    actionsManager.addActions(...AutoModRules.all());
+    actionsManager.registerEvents(client);
 
     let commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
-    // commands.forEach((cmd) => {
-    //     const scb = new dsc.SlashCommandBuilder()
-    //         .setName(cmd.name)
-    //         .setDescription(cmd.longDesc.length > 97 - cmd.category.name.length ? `[${cmd.category}] Użyj 'man' po opis, opis zbyt długi dla discord.js.` : `[${cmd.category}] ${cmd.longDesc}`);
-    //     cmd.expectedArgs.forEach(arg => {
-    //         scb.addStringOption((option) => option
-    //             .setName(arg.name)
-    //             .setDescription('Domyśl się, bo discord.js nie pozwala dużo znaków.')
-    //             .setRequired(false)
-    //         );
-    //     });
-    //     commandsArray.push(scb.toJSON());
-    // });
     for (const [category, cmds] of commands) {
         for (const cmd of cmds) {
             const scb = new dsc.SlashCommandBuilder()
