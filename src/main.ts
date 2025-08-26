@@ -56,6 +56,7 @@ import { robCmd } from './cmd/economy/rob.js';
 import { changelogCmd } from './cmd/general/changelog.js';
 import { addTemplateChannel } from './features/actions/templateChannels.js';
 import canExecuteCmd from './util/canExecuteCmd.js';
+import { randsiteCmd } from './cmd/general/randsite.js';
 
 const commands: Map<Category, Command[]> = new Map([
     [
@@ -64,7 +65,8 @@ const commands: Map<Category, Command[]> = new Map([
             detailHelpCmd, quickHelpCmd,
             commandsCmd, manCmd,
             siemaCmd, pfpCmd,
-            bannerCmd, changelogCmd
+            bannerCmd, changelogCmd,
+            randsiteCmd
         ]
     ],
     [
