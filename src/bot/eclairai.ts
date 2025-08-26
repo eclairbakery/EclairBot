@@ -16,271 +16,193 @@
  */
 
 import { cfg } from "./cfg.js";
-import * as dsc from 'discord.js';
-import * as log from '../util/log.js'
-import { Snowflake } from "../defs.js";
 import * as fs from 'node:fs';
 
-export class EclairAiFirstEdition {
-    private config: typeof cfg.ai;
-    private model: {
-        tokenLimitsCounter: Record<string, number>,
-        model: Record<string, Record<string, number>>,
-        memory: object,
-        embeddings: {}
-    };
-    private shouldReply: boolean = true;
-    private msg: dsc.Message;
-    
-    constructor(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
-        this.msg = msg;
-        this.loadConfig();
+export class EclairAI {
+    private vocab: string[] = [];
+    private embeddings: Record<string, number[]> = {};
+    private hiddenWeights: number[][];
+    private outputWeights: number[][];
+    private hiddenSize: number;
+    private embeddingSize: number;
+
+    constructor() {
+        this.hiddenSize = cfg.ai.hiddenSize;
+        this.embeddingSize = cfg.ai.embeddingSize;
+        this.hiddenWeights = [];
+        this.outputWeights = [];
         this.loadModel();
-        for (const seq of this.config.bannedSequences) {
-            if (msg.content.toLowerCase().includes(seq)) {
-                this.shouldReply = false;
-                log.replyError(
-                    msg,
-                    'Ta wiadomość narusza zasady korzystania z EclairAI Fan Edition',
-                    `Jeżeli uważasz, że to pomyłka, skontaktuj się z deweloperami fanowskiej wersji EclairAI. Sekwencja wywołująca komunikat: \`${seq}\``
-                );
-                return;
-            }
+    }
+
+    private getEmbedding(word: string): number[] {
+        if (!this.embeddings[word]) {
+            this.embeddings[word] = Array.from({ length: this.embeddingSize }, () => Math.random() * 0.2 - 0.1);
         }
-        if (!this.validateCharacters(msg.content)) {
-            log.replyError(
-                msg,
-                'Hej, niepoprawny znak!',
-                'Napisz coś z poprawnymi znakami. Nie chcemy by AI się uczyło nie wiadomo czego...'
-            );
-            this.shouldReply = false;
-            return;
-        }
-        this.learn(msg.content);
-        this.tokensHandler();
-        this.remember(msg.author.id, msg.content);
+        return this.embeddings[word];
     }
 
-    private loadConfig() {
-        this.config = cfg.ai;
+    private sigmoid(x: number): number {
+        return 1 / (1 + Math.exp(-x));
     }
 
-    private loadModel() {
-        try {
-            if (fs.existsSync(this.config.modelPath)) {
-                this.model = JSON.parse(fs.readFileSync(this.config.modelPath, "utf-8"));
-                if (!this.model.embeddings) this.model.embeddings = {};
-                if (!this.model.memory) this.model.memory = {};
-            } else {
-                this.model = {
-                    tokenLimitsCounter: {},
-                    model: {},
-                    memory: {},
-                    embeddings: {}
-                };
-            }
-        } catch (e) {
-            this.shouldReply = false;
-            console.error(e);
-        }
+    private sigmoidDerivative(x: number): number {
+        return x * (1 - x);
     }
 
-    private saveModel() {
-        fs.writeFileSync(this.config.modelPath, JSON.stringify(this.model, null, 2));
+    private dot(a: number[], b: number[]): number {
+        return a.reduce((sum, val, i) => sum + val * b[i], 0);
     }
 
-    private remember(userId: string, text: string) {
-        if (!this.model.memory[userId]) this.model.memory[userId] = [];
-        this.model.memory[userId].push(text);
-        if (this.model.memory[userId].length > this.config.memoryLimit) {
-            this.model.memory[userId].shift();
-        }
+    private randomMatrix(rows: number, cols: number): number[][] {
+        return Array.from({ length: rows }, () => Array.from({ length: cols }, () => Math.random() * 0.2 - 0.1));
     }
 
-    private validateCharacters(content: Snowflake): boolean {
-        let hasInvalidCharacters = false;
-        content.split("").forEach((char) => {
-            if (!this.config.allowedCharacters.includes(char)) hasInvalidCharacters = true;
-        });
-        return !hasInvalidCharacters;
+    /** @unused */
+    private addVectors(a: number[], b: number[]): number[] {
+        return a.map((v, i) => v + b[i]);
     }
 
     private tokenize(text: string): string[] {
-        return text.toLowerCase().split(/\s+/).filter(Boolean);
+        return text
+            .toLowerCase()
+            .match(/\b\w+\b|[^\s\w]/g) || [];
     }
 
-    private learn(text: string) {
-        text = this.replacePronouns(text);
-        const tokens = this.tokenize(text);
+    private relu(x: number): number {
+        return Math.max(0, x);
+    }
 
-        for (let i = 0; i < tokens.length - 1; i++) {
-            const current = tokens[i];
-            const next = tokens[i + 1];
+    private reluDerivative(x: number): number {
+        return x > 0 ? 1 : 0;
+    }
 
-            if (!this.model.model[current]) this.model.model[current] = {};
-            if (!this.model.model[current][next]) this.model.model[current][next] = 0;
-            this.model.model[current][next]++;
+    private crossEntropyLoss(output: number[], targetIdx: number): number {
+        const eps = 1e-9;
+        return -Math.log(output[targetIdx] + eps);
+    }
 
-            if (!this.model.embeddings[current]) {
-                this.model.embeddings[current] = this.createEmbedding(current);
+    public train(pairs: { question: string, response: string }[], lr = 0.05, epochs = 500) {
+        for (const { question, response } of pairs) {
+            for (const word of [...this.tokenize(question), ...this.tokenize(response)]) {
+                this.getEmbedding(word);
             }
-            if (!this.model.embeddings[next]) {
-                this.model.embeddings[next] = this.createEmbedding(next);
+        }
+
+        if (this.hiddenWeights.length === 0) {
+            this.hiddenWeights = this.randomMatrix(this.hiddenSize, this.embeddingSize);
+            this.vocab = Object.keys(this.embeddings);
+            this.outputWeights = this.randomMatrix(this.vocab.length, this.hiddenSize);
+        }
+
+        for (let epoch = 0; epoch < epochs; epoch++) {
+            let totalLoss = 0;
+            for (const { question, response } of pairs) {
+                const qTokens = this.tokenize(question);
+                const rTokens = this.tokenize(response);
+
+                for (let i = 0; i < Math.min(qTokens.length, rTokens.length); i++) {
+                    const input = this.getEmbedding(qTokens[i]);
+                    const targetIdx = this.vocab.indexOf(rTokens[i]);
+                    if (targetIdx === -1) continue;
+
+                    const hidden = this.hiddenWeights.map(row => this.relu(this.dot(row, input)));
+                    const output = this.outputWeights.map(row => this.dot(row, hidden));
+                    const probs = this.softmaxWithTemperature(output);
+
+                    totalLoss += this.crossEntropyLoss(probs, targetIdx);
+
+                    const outputDelta = probs.map((p, idx) => (idx === targetIdx ? 1 : 0) - p);
+                    const hiddenError = this.hiddenWeights.map((_, j) =>
+                        this.outputWeights.reduce((sum, row, k) => sum + outputDelta[k] * row[j], 0)
+                    );
+                    const hiddenDelta = hiddenError.map((e, idx) => e * this.reluDerivative(hidden[idx]));
+
+                    for (let j = 0; j < this.outputWeights.length; j++)
+                        for (let k = 0; k < this.outputWeights[0].length; k++)
+                            this.outputWeights[j][k] += lr * outputDelta[j] * hidden[k];
+
+                    for (let j = 0; j < this.hiddenWeights.length; j++)
+                        for (let k = 0; k < this.hiddenWeights[0].length; k++)
+                            this.hiddenWeights[j][k] += lr * hiddenDelta[j] * input[k];
+                }
             }
+            console.log(`Epoch ${epoch + 1}, Loss: ${totalLoss.toFixed(4)}`);
         }
         this.saveModel();
     }
 
-    private weightedChoice(options: Record<string, number>): string {
-        let total = Object.values(options).reduce((a, b) => a + b, 0);
-        let rand = Math.random() * total;
-        let cumulative = 0;
-        for (let [word, count] of Object.entries(options)) {
-            cumulative += count;
-            if (rand < cumulative) return word;
-        }
-        return Object.keys(options)[0];
+    private softmaxWithTemperature(values: number[]): number[] {
+        const max = Math.max(...values);
+        const expVals = values.map(v => Math.exp((v - max) / (cfg.ai.temperature || 1)));
+        const sum = expVals.reduce((a, b) => a + b, 0);
+        return expVals.map(v => v / sum);
     }
 
-    private cosineSimilarity(a: number[], b: number[]): number {
-        let dot = 0, normA = 0, normB = 0;
-        for (let i = 0; i < a.length; i++) {
-            dot += a[i] * b[i];
-            normA += a[i] ** 2;
-            normB += b[i] ** 2;
-        }
-        return dot / (Math.sqrt(normA) * Math.sqrt(normB) || 1);
-    }
+    public predict(question: string, maxTokens = 5): string {
+        const qTokens = this.tokenize(question);
+        const context = qTokens.slice(-1);
+        const result: string[] = [];
 
-    private createEmbedding(word: string): number[] {
-        const vec = new Array(26).fill(0);
-        for (const char of word) {
-            const idx = char.charCodeAt(0) % 26;
-            vec[idx]++;
-        }
-        return vec;
-    }
+        for (let t = 0; t < maxTokens; t++) {
+            const input = this.getEmbedding(context[context.length - 1]);
+            const hidden = this.hiddenWeights.map(row => this.relu(this.dot(row, input)));
+            const output = this.outputWeights.map(row => this.sigmoid(this.dot(row, hidden)));
 
-    private generate(seed: string, maxWords: number = null, userId?: string): string {
-        if (userId && this.model.memory[userId]) {
-            const context = this.model.memory[userId].slice(-3).join(" ");
-            seed = `${context} ${seed}`;
-        }
-
-        if (maxWords == null) {
-            maxWords = this.tokenize(seed).length + 5;
-        }
-
-        let tokens = this.tokenize(seed);
-        if (tokens.length === 0) return "";
-
-        for (const [pattern, suggestions] of Object.entries(this.config.pretrainedSuggestions)) {
-            if (seed.toLowerCase().includes(pattern.toLowerCase())) {
-                if (Math.random() > (1 - this.config.temperature)) {
-                    return suggestions[Math.floor(Math.random() * suggestions.length)];
+            const probs = this.softmaxWithTemperature(output);
+            let r = Math.random();
+            let chosenIdx = 0;
+            for (let i = 0; i < probs.length; i++) {
+                r -= probs[i];
+                if (r <= 0) {
+                    chosenIdx = i;
+                    break;
                 }
             }
+
+            const word = this.vocab[chosenIdx];
+            result.push(word);
+            context.push(word);
         }
 
-        let current = tokens[tokens.length - 1];
-        if (!this.model.model[current]) {
-            const keys = Object.keys(this.model.model);
-            if (keys.length === 0) return seed;
-            current = keys[Math.floor(Math.random() * keys.length)];
-        }
-
-        const result = [current];
-
-        for (let i = 0; i < maxWords; i++) {
-            const nextOptions = this.model.model[current];
-            if (!nextOptions) break;
-
-            let nextWord = this.weightedChoice(nextOptions);
-            if (this.model.embeddings[current]) {
-                let best = "";
-                let bestScore = -1;
-                for (const candidate of Object.keys(nextOptions)) {
-                    if (this.model.embeddings[candidate]) {
-                        const score = this.cosineSimilarity(
-                            this.model.embeddings[current],
-                            this.model.embeddings[candidate]
-                        );
-                        if (score > bestScore) {
-                            bestScore = score;
-                            best = candidate;
-                        }
-                    }
-                }
-                if (best) nextWord = best;
-            }
-
-            result.push(nextWord);
-            current = nextWord;
-            if (/[.!?]/.test(nextWord)) break;
-        }
-
-        return result.join(" ");
+        return result.join(' ');
     }
 
-    private tokensHandler() {
-        const userid = this.msg.author.id;
-        const datetime = new Date();
-        const entry = `${datetime.getUTCDate()}-${datetime.getUTCMonth()}-${datetime.getUTCFullYear()}-${userid}`;
-        if (!this.model.tokenLimitsCounter[entry]) {
-            this.model.tokenLimitsCounter[entry] = this.tokenize(this.msg.content).length;
-        } else {
-            if (
-                this.model.tokenLimitsCounter[entry] > this.config.aiTokensLimit &&
-                !this.msg.member.roles.cache.hasAny(...this.config.unlimitedAiRole)
-            ) {
-                log.replyError(
-                    this.msg,
-                    "Wykorzystano limit zapytań",
-                    "Spróbuj ponownie jutro..."
-                );
-                this.shouldReply = false;
-                return;
-            }
-            this.model.tokenLimitsCounter[entry] += this.tokenize(this.msg.content).length;
-        }
-    }
-
-    private replacePronouns(text: string): string {
-        const replacements: Record<string, string> = {
-            "ja": "ty",
-            "mnie": "ciebie",
-            "mi": "tobie",
-            "mój": "twój",
-            "moja": "twoja",
-            "moje": "twoje",
-            "mną": "tobą",
-            "ze mną": "z tobą",
-            "dla mnie": "dla ciebie",
-            "i": "you",
-            "me": "you",
-            "my": "your",
-            "mine": "yours"
+    private saveModel() {
+        const data = {
+            vocab: this.vocab,
+            embeddings: this.embeddings,
+            hiddenWeights: this.hiddenWeights,
+            outputWeights: this.outputWeights,
+            hiddenSize: this.hiddenSize,
+            embeddingSize: this.embeddingSize
         };
-
-        const sortedKeys = Object.keys(replacements).sort((a, b) => b.length - a.length);
-        let result = text.toLowerCase();
-
-        for (const key of sortedKeys) {
-            const regex = new RegExp(`\\b${key}\\b`, "gi");
-            result = result.replace(regex, replacements[key]);
-        }
-        return result;
+        fs.writeFileSync('./bot/eclairai-model.json', JSON.stringify(data));
     }
 
-    public reply() {
-        if (!this.shouldReply) return;
-        const result = this.generate(this.msg.content, null, this.msg.author.id);
-        this.learn(result);
-        this.msg.reply({
-            allowedMentions: { parse: [], users: [], roles: [], repliedUser: false },
-            content: `${result}\n-# ~ eclairAI fan edition`
-        });
-        this.remember(this.msg.author.id, result);
-        this.saveModel();
+    private trainAI() {
+        this.train([
+            {
+                question: 'witaj',
+                response: 'w czym mogę zepsuć/pomóc/[wstaw czasownik]'
+            },
+            {
+                question: 'jaka pogoda',
+                response: 'jako model językowy nie mam dośtępu do aktualnych danych pogo... dobra, co ja taki sztywny? wyjrzyj za okno.'
+            }
+        ], 0.5, 1000);
+    }
+
+    private loadModel() {
+        if (fs.existsSync('./bot/eclairai-model.json')) {
+            const data = JSON.parse(fs.readFileSync('./bot/eclairai-model.json', 'utf-8'));
+            this.vocab = data.vocab;
+            this.embeddings = data.embeddings;
+            this.hiddenWeights = data.hiddenWeights;
+            this.outputWeights = data.outputWeights;
+            this.hiddenSize = data.hiddenSize;
+            this.embeddingSize = data.embeddingSize;
+        } else {
+            this.trainAI();
+        }
     }
 }

@@ -72,12 +72,15 @@ export interface Config {
         temperature: number;
         pretrainedSuggestions: Record<string, string[]>;
         memoryLimit: number;
+        embeddingSize: number;
+        hiddenSize: number;
     };
 
     unfilteredRelated: {
         eligibleToRemoveGifBan: Snowflake[],
         gifBan: Snowflake,
-        unfilteredChannel: Snowflake
+        unfilteredChannel: Snowflake,
+        makeNeocities: Snowflake
     };
 
     mod: {
@@ -212,7 +215,8 @@ const defaultConfig: Config = {
     unfilteredRelated: {
         eligibleToRemoveGifBan: ["1280081773019140096", "1280884378586845216"],
         gifBan: "1406369089634435204",
-        unfilteredChannel: '1397628186795311246'
+        unfilteredChannel: '1397628186795311246',
+        makeNeocities: '1409824205712920576'
     },
 
     ai: {
@@ -226,6 +230,8 @@ const defaultConfig: Config = {
         temperature: 0.5, // this is a lot... i need to decrease this
         pretrainedSuggestions: {"siema": ["witam, w czym mogę zepsuć"], "ile to": ["co ty myslisz że ja matematyk"], "witaj": ["witam bardzo średnioserdecznie"], "jaka pogoda": ["wyjrzyj za okno"]},
         memoryLimit: 15,
+        hiddenSize: 32,
+        embeddingSize: 16
     },
 
     mod: {

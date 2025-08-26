@@ -50,16 +50,16 @@ export default class AutoModRules {
             { type: 'contains', keyword: 'nigga' },
             { type: 'contains', keyword: 'czarnuch' },
         ],
-        reply: 'osoba nademną jest gejem 🥀',
-        additionalConstraints: [ AutoModRules.msgAuthorIsNotImmuneToAutomod ],
+        reply: 'osoba na którą wiadomość odpowiadam jest gejem 🥀',
+        additionalConstraints: [],
     });
 
     static readonly BlockAnime: Action<MessageEventCtx> = mkAutoreplyAction({
         activationOptions: [
             { type: 'contains', keyword: 'anime' },
         ],
-        reply: 'osoba nademną jest gejem 🥀',
-        additionalConstraints: [ AutoModRules.msgAuthorIsNotImmuneToAutomod ],
+        reply: 'osoba na którą wiadomość odpowiadam jest gejem 🥀',
+        additionalConstraints: [],
     });
 
     static readonly Ecliar25VideoQuestion: Action<MessageEventCtx> = mkAutoreplyAction({
@@ -81,9 +81,14 @@ export default class AutoModRules {
     });
 
     static all(): AnyAction[] {
-        return [
-            AutoModRules.EveryoneAutoreply, AutoModRules.Ecliar25VideoQuestion, AutoModRules.GitHubAutoreply,
-            AutoModRules.BlockInvites, AutoModRules.BlockNWords, AutoModRules.BlockAnime,
+        const rules = [
+            AutoModRules.EveryoneAutoreply,
+            AutoModRules.Ecliar25VideoQuestion,
+            AutoModRules.GitHubAutoreply,
+            AutoModRules.BlockInvites,
+            AutoModRules.BlockNWords,
+            /*AutoModRules.BlockAnime*/
         ];
+        return rules;
     }
 }

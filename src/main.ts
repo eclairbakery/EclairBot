@@ -22,10 +22,11 @@ dotenv.config({ quiet: true });
 
 import { client } from './client.js';
 import { EclairAI } from './bot/eclairai.js';
-
+import { Snowflake } from './defs.js';
 import { ActionEventType, actionsManager, PredefinedActionConstraints, PredefinedActionCallbacks } from './features/actions.js';
 import { eclairAIAction } from './features/actions/eclairai.js';
 import { mkAutoreplyAction } from './features/actions/autoreply.js';
+import findCommand from './util/findCommand.js';
 
 import { warnCmd } from './cmd/mod/warn.js';
 import { kickCmd } from './cmd/mod/kick.js';
@@ -53,7 +54,6 @@ import { muteCmd } from './cmd/mod/mute.js';
 import { unmuteCmd } from './cmd/mod/unmute.js';
 import { robCmd } from './cmd/economy/rob.js';
 import { changelogCmd } from './cmd/general/changelog.js';
-import findCommand from './util/findCommand.js';
 
 const commands: Map<Category, Command[]> = new Map([
     [
@@ -118,6 +118,11 @@ client.on('messageCreate', async (msg) => {
         return await msg.delete();
     }
 
+    // neocity warn
+    if (msg.member!.roles.cache.has(cfg.unfilteredRelated.makeNeocities)) {
+        return await msg.reply('https://youcantsitwithus.neocities.org');
+    }
+
     // eclairAI
     // if (msg.content.startsWith(`<@${msg.client.user.id}> czy`) || msg.content.startsWith(`<@!${msg.client.user.id}> czy`) || (msg.content.startsWith(`czy`) && msg.channelId == cfg.ai.channel && !msg.author.bot)) {
     //     const responses = ['tak', 'nie', 'idk', 'kto wie', 'raczej nie', 'niezbyt', 'raczej tak', 'definitynie NIE', 'definitywnie TAK', 'TAK!', 'NIE!', 'zaprzeczam', 'potwierdzam', 'nie chce mi sie tego osądzać'];
@@ -136,7 +141,7 @@ client.on('messageCreate', async (msg) => {
     const args = msg.content.slice(cfg.general.prefix.length).trim().split(/\s+/);
     const cmdName = args.shift().toLowerCase();
 
-    const { command } = findCommand(cmdName, commands);
+    const command = findCommand(cmdName, commands);
 
     if (!command) {
         log.replyError(msg, 'Panie, ja nie panimaju!', `Wpisz se ${cfg.general.prefix}help i dostarczę Ci listę komend!`);
@@ -144,18 +149,18 @@ client.on('messageCreate', async (msg) => {
     }
 
     if (cfg.general.blockedChannels.includes(msg.channelId) &&
-        !cfg.general.commandsExcludedFromBlockedChannels.includes(command.name)) {
+        !cfg.general.commandsExcludedFromBlockedChannels.includes(command.command.name)) {
 
         msg.react('❌');
         return;
     }
 
-    if (command.allowedRoles != null && !msg.member.roles.cache.some(role => command.allowedRoles.includes(role.id))) {
+    if (command.command.allowedRoles != null && !msg.member.roles.cache.some(role => command.command.allowedRoles.includes(role.id))) {
         log.replyError(msg, 'Hej, a co ty odpie*dalasz?', 'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...');
         return;
     }
 
-    return command.execute(msg, args, commands);
+    return command.command.execute(msg, args, commands);
 });
 
 client.on('guildMemberAdd', async (member) => {
@@ -192,13 +197,14 @@ client.on('guildMemberRemove', async (member) => {
 });
 
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
-    const roleIdToWatch = cfg.unfilteredRelated.gifBan;
+    const rolesToWatch = [cfg.unfilteredRelated.gifBan, cfg.unfilteredRelated.makeNeocities];
     const allowedRoleIds = cfg.unfilteredRelated.eligibleToRemoveGifBan;
 
-    const hadRole = oldMember.roles.cache.has(roleIdToWatch);
-    const hasRole = newMember.roles.cache.has(roleIdToWatch);
+    const removedRoles = rolesToWatch.filter(roleId => 
+        oldMember.roles.cache.has(roleId) && !newMember.roles.cache.has(roleId)
+    );
 
-    if (hadRole && !hasRole) {
+    if (removedRoles.length > 0) {
         try {
             const fetchedLogs = await newMember.guild.fetchAuditLogs({
                 limit: 1,
@@ -212,7 +218,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
                 logEntry.target.id === newMember.id &&
                 logEntry.changes.some(change =>
                     change.key === "$remove" &&
-                    change.new.some(r => r.id === roleIdToWatch)
+                    change.new.some(r => removedRoles.includes(r.id))
                 )
             ) {
                 const executor = logEntry.executor;
@@ -221,7 +227,9 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
                 const hasAllowedRole = allowedRoleIds.some(id => memberExecutor.roles.cache.has(id));
 
                 if (!hasAllowedRole) {
-                    await newMember.roles.add(roleIdToWatch, "Nieautoryzowane odebranie roli");
+                    for (const roleId of removedRoles) {
+                        await newMember.roles.add(roleId, "Nieautoryzowane odebranie roli");
+                    }
                 }
             }
         } catch (err) {
@@ -328,6 +336,8 @@ client.on('interactionCreate', async (int) => {
     }
 });
 
+let alreadyInHallOfFame: Snowflake[] = [];
+
 client.on('messageReactionAdd', async (reaction) => {
     if (reaction.partial) {
         try {
@@ -342,10 +352,12 @@ client.on('messageReactionAdd', async (reaction) => {
     const count = reaction.count;
     const emoji = reaction.emoji.name;
 
-    if ((emoji === "⭐" || emoji === "💎") && count === 3 && cfg.general.hallOfFameEligibleChannels.includes(msg.channelId)) {
+    if ((emoji === "⭐" || emoji === "💎" || emoji === "🔥") && count === 3 && cfg.general.hallOfFameEligibleChannels.includes(msg.channelId)) {
         const channel = await msg.guild.channels.fetch(cfg.general.hallOfFame);
         if (!channel) return;
         if (!channel.isTextBased()) return;
+        if (alreadyInHallOfFame.includes(msg.id)) return;
+        alreadyInHallOfFame.push(msg.id);
         channel.send({
             embeds: [
                 new dsc.EmbedBuilder()

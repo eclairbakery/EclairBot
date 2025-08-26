@@ -33,19 +33,19 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
     for (const opt of activationOptions) {
         switch (opt.type) {
         case 'contains':
-            constraints.push(PredefinedActionConstraints.msgContains(opt.keyword));
+            constraints.push(PredefinedActionConstraints.msgContains(opt.keyword.toLowerCase()));
             break;
         case 'is-equal-to':
-            constraints.push(PredefinedActionConstraints.msgIsEqualTo(opt.keyword));
+            constraints.push(PredefinedActionConstraints.msgIsEqualTo(opt.keyword.toLowerCase()));
             break;
         case 'starts-with':
-            constraints.push(PredefinedActionConstraints.msgStartsWith(opt.keyword));
+            constraints.push(PredefinedActionConstraints.msgStartsWith(opt.keyword.toLowerCase()));
             break;
         case 'ends-with':
-            constraints.push(PredefinedActionConstraints.msgEndsWith(opt.keyword));
+            constraints.push(PredefinedActionConstraints.msgEndsWith(opt.keyword.toLowerCase()));
             break;
         case 'matches-regex':
-            constraints.push(PredefinedActionConstraints.msgMatchesRegex(opt.keyword));
+            constraints.push(PredefinedActionConstraints.msgMatchesRegex(opt.keyword.toLowerCase()));
             break;
         default:
             throw new Error(`Unknown activation option type: ${opt.type}`);

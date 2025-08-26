@@ -7,3 +7,4 @@ package-lock.json
 **/.nvim
 bundle.js*
 bot/eclairai-db.json
+bot/eclairai-model.json

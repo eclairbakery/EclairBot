@@ -120,7 +120,8 @@ export const eclairAIAction: Action<MessageEventCtx> = {
                 const response: string = (msg.content.toLowerCase().includes('windows jest lepszy od linux') || msg.content.toLowerCase().includes('windows jest lepszy niz linux') || msg.content.toLowerCase().includes('windows jest lepszy niż linux')) ? 'NIE' : ((msg.content.toLowerCase().includes('linux jest lepszy od windows') || msg.content.toLowerCase().includes('linux jest lepszy niz windows') || msg.content.toLowerCase().includes('linux jest lepszy niż windows')) ? 'TAK' : (responses[Math.floor(Math.random() * responses.length)]));
                 return msg.reply(response);
             } else {
-                return (new EclairAI(msg as any as OmitPartialGroupDMChannel<Message<boolean>>)).reply();
+                const ai = new EclairAI();
+                msg.reply({content: ai.predict(msg.content), allowedMentions: {parse:[],users:[],roles:[],repliedUser:false}});
             }
         }
     ]
