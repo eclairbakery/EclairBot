@@ -35,11 +35,25 @@ export const warnClearCmd: Command = {
                 return log.replyError(msg, 'Nie znaleziono', `Jak masz warnlist, co nie? No to masz tam w nawiasie ID. Te ID potrzebujemy.`);
             }
 
-            db.run('DELETE FROM warns WHERE id = ?', [warnId], (delErr) => {
+            db.run('DELETE FROM warns WHERE id = ?', [warnId], async (delErr) => {
                 if (delErr) {
                     console.error(delErr);
                     return log.replyError(msg, 'Błąd podczas usuwania', 'Spróbuj ponownie później.');
                 }
+
+                const channel = await msg.client.channels.fetch(cfg.logs.channel);
+                if (!channel.isSendable()) return;
+                channel.send({
+                    embeds: [
+                        new dsc.EmbedBuilder()
+                            .setAuthor({
+                                name: 'EclairBOT'
+                            })
+                            .setColor(PredefinedColors.DarkAqua)
+                            .setTitle('Pozbyto się warna!')
+                            .setDescription(`Usunięto warna o ID \`${warnId}\`.`)
+                    ]
+                });
 
                 return msg.reply({
                     embeds: [

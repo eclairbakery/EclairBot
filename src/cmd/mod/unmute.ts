@@ -76,6 +76,25 @@ export const unmuteCmd: Command = {
             const role = msg.guild.roles.cache.find(r => r.name.toLowerCase().includes("zamknij ryj"));
             if (!role) throw new Error('lmfao');
             await targetUser.roles.remove(role, reason);
+            const channel = await msg.client.channels.fetch(cfg.logs.channel);
+            if (!channel.isSendable()) return;
+            channel.send({
+                embeds: [
+                    new dsc.EmbedBuilder()
+                        .setAuthor({
+                            name: 'EclairBOT'
+                        })
+                        .setColor(PredefinedColors.Pink)
+                        .setTitle('Odciszono ludzia')
+                        .setDescription(`Użytkownik <@${targetUser.id}> został odciszony przez <@${msg.author.id}>.`)
+                        .setFields([
+                            {
+                                name: 'Powód',
+                                value: reason
+                            }
+                        ])
+                ]
+            });
         } catch (e) {
             console.log(e);
             return log.replyError(msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał?');

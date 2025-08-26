@@ -78,6 +78,25 @@ export const kickCmd: Command = {
 
         try {
             await targetUser.kick();
+            const channel = await msg.client.channels.fetch(cfg.logs.channel);
+            if (!channel.isSendable()) return;
+            channel.send({
+                embeds: [
+                    new dsc.EmbedBuilder()
+                        .setAuthor({
+                            name: 'EclairBOT'
+                        })
+                        .setColor(PredefinedColors.DarkGrey)
+                        .setTitle('Wywalono członka')
+                        .setDescription(`Użytkownik <@${targetUser.id}> (${targetUser.user.username}) został wyrzucony z serwera przez <@${msg.author.id}>!`)
+                        .setFields([
+                            {
+                                name: 'Powód',
+                                value: reason
+                            }
+                        ])
+                ]
+            });
         } catch (e) {
             console.log(e);
             return log.replyError(msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że kickujesz admina...');

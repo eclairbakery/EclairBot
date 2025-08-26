@@ -23,7 +23,7 @@ export interface Config {
             xpPerMessage: number;
             levelDivider: number;
             excludedChannels: string[];
-            milestone_roles: {[key: number]: Snowflake};
+            milestone_roles: { [key: number]: Snowflake };
             canChangeXP: Snowflake[];
         },
         /* The welcomer configuration */
@@ -43,6 +43,9 @@ export interface Config {
         automodBypassRoles: Snowflake[];
     },
 
+    logs: {
+        channel: Snowflake
+    },
 
     ai: {
         channel: Snowflake;
@@ -149,6 +152,10 @@ export interface Config {
 const defaultConfig: Config = {
     enabled: true,
 
+    logs: {
+        channel: '1235641912241819669'
+    },
+
     radio: {
         enabled: false,
         defaultPlaylist: [
@@ -228,7 +235,7 @@ const defaultConfig: Config = {
         bannedSequences: ['@here', '@everyone', 'choler', 'chuj', 'debil', 'fiucie', 'fiut', 'fuck', 'gówn', 'hitler', 'ja pierdole', 'ja pierdolę', 'jeba', 'jebany', 'jebi', 'jprdl', 'kurwa', 'kutas', 'niger', 'nigger', 'penis', 'pierdol', 'porn', 'putin', 'rucha', 'skibidi', 'skibidi toilet', 'spierdalaj', 'toilet', 'wypierdalaj', 'zapierdalaj'],
         unlimitedAiRole: ['1235594078305914880', '1235594081556627577', '1235594083544858667', '1235594085188767835', '1390802440739356762', '1255213321301524643'],
         temperature: 0.5, // this is a lot... i need to decrease this
-        pretrainedSuggestions: {"siema": ["witam, w czym mogę zepsuć"], "ile to": ["co ty myslisz że ja matematyk"], "witaj": ["witam bardzo średnioserdecznie"], "jaka pogoda": ["wyjrzyj za okno"]},
+        pretrainedSuggestions: { "siema": ["witam, w czym mogę zepsuć"], "ile to": ["co ty myslisz że ja matematyk"], "witaj": ["witam bardzo średnioserdecznie"], "jaka pogoda": ["wyjrzyj za okno"] },
         memoryLimit: 15,
         hiddenSize: 32,
         embeddingSize: 16

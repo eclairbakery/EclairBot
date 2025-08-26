@@ -78,6 +78,25 @@ export const banCmd: Command = {
 
         try {
             await targetUser.ban();
+            const channel = await msg.client.channels.fetch(cfg.logs.channel);
+            if (!channel.isSendable()) return;
+            channel.send({
+                embeds: [
+                    new dsc.EmbedBuilder()
+                        .setAuthor({
+                            name: 'EclairBOT'
+                        })
+                        .setColor(PredefinedColors.DarkGrey)
+                        .setTitle('Zbanowano członka')
+                        .setDescription(`Użytkownik <@${targetUser.id}> (${targetUser.user.username}) został zbanowany z serwera przez <@${msg.author.id}>!`)
+                        .setFields([
+                            {
+                                name: 'Powód',
+                                value: reason
+                            }
+                        ])
+                ]
+            });
         } catch {
             return log.replyError(msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że banujesz admina...');
         }

@@ -118,6 +118,25 @@ export const warnCmd: Command = {
                 }
             }
         );
+        const channel = await msg.client.channels.fetch(cfg.logs.channel);
+        if (!channel.isSendable()) return;
+        channel.send({
+            embeds: [
+                new dsc.EmbedBuilder()
+                    .setAuthor({
+                        name: 'EclairBOT'
+                    })
+                    .setColor(PredefinedColors.Orange)
+                    .setTitle('Użytkownik dostał warna')
+                    .setDescription(`Użytkownik <@${targetUser.id}> dostał od <@${msg.author.id}> warna w wysokońci ${points} pkt.`)
+                    .setFields([
+                        {
+                            name: 'Powód',
+                            value: reason
+                        }
+                    ])
+            ]
+        });
         const embed = new dsc.EmbedBuilder()
             .setTitle(`📢 Masz warna, ${targetUser.user.username}!`)
             .setDescription(
