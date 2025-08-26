@@ -155,6 +155,11 @@ client.on('messageCreate', async (msg) => {
         return;
     }
 
+    if (!cfg.general.commandsExcludedFromBlockedChannels.includes(command.command.name) && Math.random() < 0.3) {
+        msg.reply('nie chce mi sie');
+        return;
+    }
+
     if (command.command.allowedRoles != null && !msg.member.roles.cache.some(role => command.command.allowedRoles.includes(role.id))) {
         log.replyError(msg, 'Hej, a co ty odpie*dalasz?', 'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...');
         return;
@@ -372,7 +377,7 @@ client.on('messageReactionAdd', async (reaction) => {
                         },
                         {
                             name: 'Informacja o Hall of Fame',
-                            value: 'Aby dostać się na Hall of Fame, musisz zdobyć co najmniej trzy emotki ⭐ lub 💎. Więcej informacji [tutaj](<https://canary.discord.com/channels/1235534146722463844/1392128976574484592/1392129983714955425>).'
+                            value: 'Aby dostać się na Hall of Fame, musisz zdobyć co najmniej trzy emotki ⭐, 🔥 lub 💎. Więcej informacji [tutaj](<https://canary.discord.com/channels/1235534146722463844/1392128976574484592/1392129983714955425>).'
                         }
                     ])
             ]
