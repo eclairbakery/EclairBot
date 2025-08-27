@@ -210,7 +210,7 @@ const defaultConfig: Config = {
         hallOfFame: '1392128976574484592',
         hallOfFameEligibleChannels: ['1397628186795311246', '1264971505662689311', '1342793182265741394', '1392567715407073402'],
         blockedChannels: ['1264971505662689311', '1392567715407073402'],
-        commandsExcludedFromBlockedChannels: ['ban', 'mute', 'unmute', 'warn', 'kick', 'warnlist', 'warn-clear', 'cat', 'dog', 'parrot', 'animal', 'xp'],
+        commandsExcludedFromBlockedChannels: ['ban', 'mute', 'unmute', 'warn', 'kick', 'warnlist', 'warn-clear', 'cat', 'dog', 'parrot', 'animal', 'xp', 'shitwarn'],
         welcomer: {
             channelId: "1235560269871190056",
             enabled: true,
