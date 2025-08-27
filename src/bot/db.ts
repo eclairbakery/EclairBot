@@ -55,6 +55,6 @@ db.exec(`
     );
 `);
 
-addColumnIfNotExists("warns", "moderator_id", "TEXT", "");
+addColumnIfNotExists("warns", "moderator_id", "TEXT", "NULL");
 
 export { sqlite };
