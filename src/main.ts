@@ -270,7 +270,7 @@ client.on('guildMemberAdd', async (member) => {
                 .setThumbnail(member.displayAvatarURL({ size: 128 }))
         ]
     });
-    await secchannel.send(`witaj <@${member.user.id}>, będzie nam miło jak się przywitasz czy coś <:emoji_a_radosci_nie_bylo_konca:1376664467416420362>\n-# jak już zdołałeś się domyślić, no to eklerka... piecze pieczywo; robi też odcinki na swojej żonie (komputerze). właśnie Cię upiekł, i zostałeś jednym z pieczyw... tych na sprzedaż. sprzedaż nastąpi wtedy kiedy wyjdziesz z serwera. no to tyle z lore'u na razie, resztę zobaczysz jak chwilę popiszesz...`);
+    await secchannel.send(`witaj <@${member.user.id}>, będzie nam miło jak się przywitasz czy coś <:emoji_a_radosci_nie_bylo_konca:1376664467416420362>`);
 });
 
 client.on('guildMemberRemove', async (member) => {
