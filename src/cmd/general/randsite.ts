@@ -13,11 +13,25 @@ const neocitiesPages = [
     'https://melonking.net',
     'https://chlebek.neocities.org',
     'https://gorciu.neocities.org',
-    'https://youcantsitwithus.neocities.org'
+    'https://youcantsitwithus.neocities.org',
+    'https://cinni.net',
+    'https://neocities.org/browse',
+    'https://nekoweb.org',
+    'https://00s.neocities.org',
+    'https://y2kid.xyz'
 ];
 
 const nonNeocitiesPages = [
-    'https://spacehey.com'
+    'https://spacehey.com',
+    'https://youtube.com',
+    'https://web.whatsapp.com',
+    'https://fusionanomaly.net/',
+    'https://chatgpt.com',
+    'https://bard.google.com',
+    'https://gemini.google.com',
+    'https://grok.com',
+    'https://copilot.microsoft.com',
+    'https://internet.com'
 ];
 
 export const randsiteCmd: Command = {
