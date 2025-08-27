@@ -144,7 +144,7 @@ function isFlood(content: string) {
         .replace(/<#\d+>/g, '') 
         .trim();
 
-    cleaned = cleaned.replace(/\b(x+d+|xd+|haha+|lol+)\b/gi, '').trim();
+    cleaned = cleaned.replace(/\b(x+d+|xd+|ej+|-+|haha+|lol+)\b/gi, '').trim();
 
     if (!cleaned) return false;
 
