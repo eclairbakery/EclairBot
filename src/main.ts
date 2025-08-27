@@ -491,7 +491,7 @@ async function main() {
 
     addTemplateChannel({
         channel: await getChannel('1409990462726738040') as RenameableChannel,
-        updateEvent: ActionEventType.OnUserJoin,
+        updateOnEvents: [ActionEventType.OnUserJoin],
         format: async (ctx) => {
             console.log('Updating population channel');
             return `👥・Populacja: ${(await getChannel('1409990462726738040') as dsc.GuildChannel).guild.memberCount} osób`;
