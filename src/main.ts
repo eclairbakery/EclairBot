@@ -107,12 +107,116 @@ client.once('ready', () => {
     initExpiredWarnsDeleter();
 });
 
+const userMessagesAntiSpamMapIGuessIDontHaveIdeaOnHowToNameTHis = new Map();
+let userRecentlyInTheList: Record<Snowflake, boolean> = {};
+
+async function filterLog(msg: dsc.Message, system: string) {
+    const channel = await msg.client.channels.fetch(cfg.logs.channel);
+    if (!channel.isSendable()) return;
+    await channel.send({
+        content: '<@&1410323193763463188>',
+        embeds: [
+            new dsc.EmbedBuilder()
+                .setAuthor({
+                    name: 'EclairBOT'
+                })
+                .setColor(0xff0000)
+                .setTitle('Wiadomość została usunięta przez filtry AutoMod')
+                .setDescription(`Tu masz autora co nie: <@${msg.author.id}>\nA tu masz link co nie: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`)
+                .setFields([
+                    {
+                        name: 'Wiadomość',
+                        value: msg.content
+                    },
+                    {
+                        name: 'System moderacyjny',
+                        value: system
+                    }
+                ])
+        ]
+    });
+}
+
+function isFlood(content: string) {
+    let cleaned = content
+        .replace(/<@!?\d+>/g, '')
+        .replace(/<@&\d+>/g, '')  
+        .replace(/<#\d+>/g, '') 
+        .trim();
+
+    cleaned = cleaned.replace(/\b(x+d+|xd+|haha+|lol+)\b/gi, '').trim();
+
+    if (!cleaned) return false;
+
+    const normalized = cleaned.replace(/\s+/g, '');
+    const shortRegex = /(.{1,3})\1{4,}/;
+    if (shortRegex.test(normalized)) return true;
+
+    const parts = cleaned.toLowerCase().split(/\s+/);
+    for (let size = 2; size <= Math.min(10, Math.floor(parts.length / 2)); size++) {
+        const chunk = parts.slice(0, size).join(' ');
+        let repeats = 0;
+        for (let i = 0; i < parts.length; i += size) {
+            if (parts.slice(i, i + size).join(' ') === chunk) {
+                repeats++;
+            } else {
+                break;
+            }
+        }
+        if (repeats >= 3) return true;
+    }
+
+    return false;
+}
+
 client.on('messageCreate', async (msg) => {
     // block dm's, if you want to dm me, fuck out
     if (!msg.inGuild()) return;
 
-    // a little reverse automod
-    // if (!msg.author.bot) if (await automod.automod(msg, client)) return;
+    // antispam
+    const antispam_now = Date.now();
+    const antispam_timeframe = 10000;
+    const antispam_limit = 5; 
+    if (!userMessagesAntiSpamMapIGuessIDontHaveIdeaOnHowToNameTHis.has(msg.author.id)) {
+        userMessagesAntiSpamMapIGuessIDontHaveIdeaOnHowToNameTHis.set(msg.author.id, []);
+    }
+    const timestamps = userMessagesAntiSpamMapIGuessIDontHaveIdeaOnHowToNameTHis.get(msg.author.id);
+    while (timestamps.length > 0 && antispam_now - timestamps[0] > antispam_timeframe) {
+        timestamps.shift();
+    }
+    timestamps.push(antispam_now);
+    userMessagesAntiSpamMapIGuessIDontHaveIdeaOnHowToNameTHis.set(msg.author.id, timestamps);
+    if (timestamps.length > antispam_limit && client.user.id !== msg.author.id && !userRecentlyInTheList[msg.author.id]) {
+        userRecentlyInTheList[msg.author.id] = true;
+        await msg.channel.send(`🚨 <@${msg.author.id}> co ty odsigmiasz`);
+        try {
+            await msg.member.timeout(5 * 60 * 1000, 'co ty odsigmiasz? czemu spamisz?');
+        } catch {}
+        setTimeout(() => {
+            userRecentlyInTheList[msg.author.id] = false; // prevents from bot's spamming
+        }, 5000);
+        await msg.delete();
+        try {
+            const messages = await msg.channel.messages.fetch({ limit: 25 });
+            const sameContent = messages.filter(m => 
+                m.author.id === msg.author.id && m.content === msg.content
+            );
+            const toDelete = sameContent.first(10);
+            for (const m of toDelete) {
+                try { await m.delete(); } catch {}
+            }
+        } catch {}
+        await filterLog(msg, 'antispam/co ty odsigmiasz TM');
+        return;
+    }
+
+    // antiflood
+    if (client.user.id !== msg.author.id && isFlood(msg.content)) {
+        await msg.channel.send(`🚨 <@${msg.author.id}> za dużo floodu pozdrawiam`);
+        await msg.delete();
+        await filterLog(msg, 'antiflood/za dużo floodu TM');
+        return;
+    }
 
     // now goes leveling
     if (!msg.author.bot) addExperiencePoints(msg);
@@ -127,19 +231,6 @@ client.on('messageCreate', async (msg) => {
     if (msg.member!.roles.cache.has(cfg.unfilteredRelated.makeNeocities)) {
         return await msg.reply('https://youcantsitwithus.neocities.org');
     }
-
-    // eclairAI
-    // if (msg.content.startsWith(`<@${msg.client.user.id}> czy`) || msg.content.startsWith(`<@!${msg.client.user.id}> czy`) || (msg.content.startsWith(`czy`) && msg.channelId == cfg.ai.channel && !msg.author.bot)) {
-    //     const responses = ['tak', 'nie', 'idk', 'kto wie', 'raczej nie', 'niezbyt', 'raczej tak', 'definitynie NIE', 'definitywnie TAK', 'TAK!', 'NIE!', 'zaprzeczam', 'potwierdzam', 'nie chce mi sie tego osądzać'];
-    //     const response: string = (msg.content.toLowerCase().includes('windows jest lepszy od linux') || msg.content.toLowerCase().includes('windows jest lepszy niz linux') || msg.content.toLowerCase().includes('windows jest lepszy niż linux')) ? 'NIE' : ((msg.content.toLowerCase().includes('linux jest lepszy od windows') || msg.content.toLowerCase().includes('linux jest lepszy niz windows') || msg.content.toLowerCase().includes('linux jest lepszy niż windows')) ? 'TAK' : (responses[Math.floor(Math.random() * responses.length)])); // propaganda piekarnii eklerki
-    //     return msg.reply(response);
-    // } else if (msg.channelId == cfg.ai.channel && !msg.author.bot) {
-    //     if (msg.content.startsWith(cfg.general.prefix)) {
-    //         return msg.reply('-# Komendy nie są obsługiwane na kanale EclairAI fan edition.');
-    //     }
-    //     const ai = new EclairAI(msg);
-    //     return ai.reply();
-    // }
 
     if (!msg.content.startsWith(cfg.general.prefix)) return;
 
