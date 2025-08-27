@@ -480,6 +480,15 @@ async function getChannel(id: Snowflake): Promise<dsc.Channel> {
     return channel;
 }
 
+function getNextGoal(memberCount: number): number {
+    const base = Math.floor(memberCount / 50) * 50;
+    let goal = base + 50;
+    if (goal <= memberCount) {
+        goal += 50;
+    }
+    return goal;
+}
+
 async function main() {
     await client.login(process.env.TOKEN);
 
@@ -490,11 +499,39 @@ async function main() {
     actionsManager.registerEvents(client);
 
     addTemplateChannel({
-        channel: await getChannel('1409990462726738040') as RenameableChannel,
-        updateOnEvents: [ActionEventType.OnUserJoin],
+        channel: await getChannel('1235591547437973557') as RenameableChannel,
+        updateOnEvents: [ActionEventType.OnUserJoin, ActionEventType.OnUserQuit, ActionEventType.OnThreadDelete /* easy to trigger event but it's not super common so i'll leave it as "force reload" */],
         format: async (ctx) => {
             console.log('Updating population channel');
-            return `👥・Populacja: ${(await getChannel('1409990462726738040') as dsc.GuildChannel).guild.memberCount} osób`;
+            return `👥・Populacja: ${(await getChannel('1235591547437973557') as dsc.GuildChannel).guild.memberCount} osób`;
+        },
+    });
+
+    addTemplateChannel({
+        channel: await getChannel('1276862197099794514') as RenameableChannel,
+        updateOnEvents: [
+            ActionEventType.OnUserJoin,
+            ActionEventType.OnUserQuit,
+            ActionEventType.OnThreadDelete
+        ],
+        format: async (ctx) => {
+            const guild = (await getChannel('1276862197099794514') as dsc.GuildChannel).guild;
+            const goal = getNextGoal(guild.memberCount);
+            return `🎯・Cel: ${goal} osób`;
+        },
+    });
+
+    addTemplateChannel({
+        channel: await getChannel('1235591871020011540') as RenameableChannel,
+        updateOnEvents: [
+            ActionEventType.OnUserJoin,
+            ActionEventType.OnUserQuit, 
+            ActionEventType.OnThreadDelete
+        ],
+        format: async (ctx) => {
+            const guild = (await getChannel('1235591871020011540') as dsc.GuildChannel).guild;
+            const bans = await guild.bans.fetch();
+            return `🚫・Bany: ${bans.size}`;
         },
     });
 
