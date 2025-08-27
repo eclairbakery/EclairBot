@@ -5,11 +5,21 @@ import * as dsc from 'discord.js';
 export type MessageEventCtx       = dsc.Message;
 export type ReactionEventCtx      = { reaction: dsc.MessageReaction, user: dsc.User };
 export type UserEventCtx          = dsc.GuildMember;
+export type BanEventCtx           = dsc.GuildBan;
 export type VoiceChannelsEventCtx = { channel: dsc.VoiceBasedChannel, user: dsc.GuildMember };
 export type ThreadEventCtx        = dsc.ThreadChannel;
 export type ChannelEventCtx       = dsc.Channel;
 
-export type AnyEventCtx = MessageEventCtx | UserEventCtx | VoiceChannelsEventCtx | ThreadEventCtx | ChannelEventCtx | ReactionEventCtx;
+export type AnyEventCtx =
+    | MessageEventCtx
+    | UserEventCtx
+    | VoiceChannelsEventCtx
+    | ThreadEventCtx
+    | ChannelEventCtx
+    | ReactionEventCtx
+    | BanEventCtx
+    | any /* for custom events */
+;;
 
 export type ActionCallback<CtxType> = (ctx: CtxType) => void | Promise<any>;
 export type AnyActionCallback       = (ctx: AnyEventCtx) => void;
@@ -19,40 +29,46 @@ export type AnyConstraintCallback       = (ctx: AnyEventCtx) => boolean;
 export const Skip = false;
 export const Ok = true;
 
-export enum ActionEventType {
+export type ActionEventType = symbol;
+
+export class PredefinedActionEventTypes {
     // message events
-    OnMessageCreate,
-    OnMessageEdit,
-    OnMessageCreateOrEdit,
-    OnMessageDelete,
+    static readonly OnMessageCreate:       ActionEventType = Symbol('OnMessageCreate');
+    static readonly OnMessageEdit:         ActionEventType = Symbol('OnMessageEdit');
+    static readonly OnMessageCreateOrEdit: ActionEventType = Symbol('OnMessageCreateOrEdit');
+    static readonly OnMessageDelete:       ActionEventType = Symbol('OnMessageDelete');
 
     // reaction events
-    OnMessageReactionAdd,
-    OnMessageReactionRemove,
+    static readonly OnMessageReactionAdd:    ActionEventType = Symbol('OnMessageReactionAdd');
+    static readonly OnMessageReactionRemove: ActionEventType = Symbol('OnMessageReactionRemove');
 
     // user events
-    OnUserJoin,
-    OnUserQuit,
+    static readonly OnUserJoin: ActionEventType = Symbol('OnUserJoin');
+    static readonly OnUserQuit: ActionEventType = Symbol('OnUserQuit');
+
+    // bans events
+    static readonly OnUserBan:   ActionEventType = Symbol('OnUserBan');
+    static readonly OnUserUnban: ActionEventType = Symbol('OnUserUnban');
 
     // threads events
-    OnThreadCreate,
-    OnThreadDelete,
-    OnThreadUpdate,
+    static readonly OnThreadCreate: ActionEventType = Symbol('OnThreadCreate');
+    static readonly OnThreadDelete: ActionEventType = Symbol('OnThreadDelete');
+    static readonly OnThreadUpdate: ActionEventType = Symbol('OnThreadUpdate');
 
     // channels events
-    OnChannelCreate,
-    OnChannelDelete,
-    OnChannelUpdate,
+    static readonly OnChannelCreate: ActionEventType = Symbol('OnChannelCreate');
+    static readonly OnChannelDelete: ActionEventType = Symbol('OnChannelDelete');
+    static readonly OnChannelUpdate: ActionEventType = Symbol('OnChannelUpdate');
 
     // voice channels events
-    OnVoiceChannelJoin,
-    OnVoiceChannelQuit,
-    OnVoiceChannelStartStream,
-    OnVoiceChannelEndStream,
-    OnVoiceChannelMute,
-    OnVoiceChannelSelfMute,
-    OnVoiceChannelDeaf,
-    OnVoiceChannelSelfDeaf,
+    static readonly OnVoiceChannelJoin:        ActionEventType = Symbol('OnVoiceChannelJoin');
+    static readonly OnVoiceChannelQuit:        ActionEventType = Symbol('OnVoiceChannelQuit');
+    static readonly OnVoiceChannelStartStream: ActionEventType = Symbol('OnVoiceChannelStartStream');
+    static readonly OnVoiceChannelEndStream:   ActionEventType = Symbol('OnVoiceChannelEndStream');
+    static readonly OnVoiceChannelMute:        ActionEventType = Symbol('OnVoiceChannelMute');
+    static readonly OnVoiceChannelSelfMute:    ActionEventType = Symbol('OnVoiceChannelSelfMute');
+    static readonly OnVoiceChannelDeaf:        ActionEventType = Symbol('OnVoiceChannelDeaf');
+    static readonly OnVoiceChannelSelfDeaf:    ActionEventType = Symbol('OnVoiceChannelSelfDeaf');
 }
 
 export interface Action<CallbackCtxType> {
@@ -192,8 +208,8 @@ class ActionManager {
     }
 
     addAction(action: AnyAction) {
-        const eventTypes = action.activationEventType === ActionEventType.OnMessageCreateOrEdit
-            ? [ActionEventType.OnMessageCreate, ActionEventType.OnMessageEdit]
+        const eventTypes = action.activationEventType === PredefinedActionEventTypes.OnMessageCreateOrEdit
+            ? [PredefinedActionEventTypes.OnMessageCreate, PredefinedActionEventTypes.OnMessageEdit]
             : [action.activationEventType];
 
         for (const eventType of eventTypes) {
@@ -210,72 +226,102 @@ class ActionManager {
 
     registerEvents(client: dsc.Client): void {
         // ---- Message Events ----
-        this.handleEvent(client, 'messageCreate', ActionEventType.OnMessageCreate, (msg: dsc.Message) => msg,
-            action => [ActionEventType.OnMessageCreate, ActionEventType.OnMessageCreateOrEdit].includes(action.activationEventType)
+        this.handleEvent(client, 'messageCreate', PredefinedActionEventTypes.OnMessageCreate, (msg: dsc.Message) => msg,
+            action => [PredefinedActionEventTypes.OnMessageCreate, PredefinedActionEventTypes.OnMessageCreateOrEdit].includes(action.activationEventType)
         );
-        this.handleEvent(client, 'messageUpdate', ActionEventType.OnMessageEdit, (_old, newMsg: dsc.Message) => newMsg,
-            action => [ActionEventType.OnMessageEdit, ActionEventType.OnMessageCreateOrEdit].includes(action.activationEventType)
+        this.handleEvent(client, 'messageUpdate', PredefinedActionEventTypes.OnMessageEdit, (_old, newMsg: dsc.Message) => newMsg,
+            action => [PredefinedActionEventTypes.OnMessageEdit, PredefinedActionEventTypes.OnMessageCreateOrEdit].includes(action.activationEventType)
         );
-        this.handleEvent(client, 'messageDelete', ActionEventType.OnMessageDelete, (msg: dsc.Message) => msg);
+        this.handleEvent(client, 'messageDelete', PredefinedActionEventTypes.OnMessageDelete, (msg: dsc.Message) => msg);
 
         // ---- Reaction Events ----
-        this.handleEvent(client, 'messageReactionAdd', ActionEventType.OnMessageReactionAdd, (reaction: dsc.MessageReaction, user: dsc.User) => ({ reaction, user }));
-        this.handleEvent(client, 'messageReactionRemove', ActionEventType.OnMessageReactionRemove, (reaction: dsc.MessageReaction, user: dsc.User) => ({ reaction, user }));
+        this.handleEvent(client, 'messageReactionAdd', PredefinedActionEventTypes.OnMessageReactionAdd, (reaction: dsc.MessageReaction, user: dsc.User) => ({ reaction, user }));
+        this.handleEvent(client, 'messageReactionRemove', PredefinedActionEventTypes.OnMessageReactionRemove, (reaction: dsc.MessageReaction, user: dsc.User) => ({ reaction, user }));
 
         // ---- User Events ----
-        this.handleEvent(client, 'guildMemberAdd', ActionEventType.OnUserJoin, (member: dsc.GuildMember) => member);
-        this.handleEvent(client, 'guildMemberRemove', ActionEventType.OnUserQuit, (member: dsc.GuildMember) => member);
+        this.handleEvent(client, 'guildMemberAdd', PredefinedActionEventTypes.OnUserJoin, (member: dsc.GuildMember) => member);
+        this.handleEvent(client, 'guildMemberRemove', PredefinedActionEventTypes.OnUserQuit, (member: dsc.GuildMember) => member);
 
         // ---- Threads Events ----
-        this.handleEvent(client, 'threadCreate', ActionEventType.OnThreadCreate, (thread: dsc.ThreadChannel) => thread);
-        this.handleEvent(client, 'threadDelete', ActionEventType.OnThreadDelete, (thread: dsc.ThreadChannel) => thread);
+        this.handleEvent(client, 'threadCreate', PredefinedActionEventTypes.OnThreadCreate, (thread: dsc.ThreadChannel) => thread);
+        this.handleEvent(client, 'threadDelete', PredefinedActionEventTypes.OnThreadDelete, (thread: dsc.ThreadChannel) => thread);
 
         // ---- Channels Events ----
-        this.handleEvent(client, 'channelCreate', ActionEventType.OnChannelCreate, (channel: dsc.Channel) => channel);
-        this.handleEvent(client, 'channelDelete', ActionEventType.OnChannelDelete, (channel: dsc.Channel) => channel);
-        this.handleEvent(client, 'channelUpdate', ActionEventType.OnChannelUpdate, (_old, newChannel: dsc.Channel) => newChannel);
+        this.handleEvent(client, 'channelCreate', PredefinedActionEventTypes.OnChannelCreate, (channel: dsc.Channel) => channel);
+        this.handleEvent(client, 'channelDelete', PredefinedActionEventTypes.OnChannelDelete, (channel: dsc.Channel) => channel);
+        this.handleEvent(client, 'channelUpdate', PredefinedActionEventTypes.OnChannelUpdate, (_old, newChannel: dsc.Channel) => newChannel);
 
         // ---- Voice Channels Events ----
         this.handleEvent<VoiceChannelsEventCtx>(
-            client, 'voiceStateUpdate', ActionEventType.OnVoiceChannelJoin,
+            client, 'voiceStateUpdate', PredefinedActionEventTypes.OnVoiceChannelJoin,
             (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
             (action, oldState, newState) => newState.channelId && !oldState.channelId,
         );
         this.handleEvent<VoiceChannelsEventCtx>(
-            client, 'voiceStateUpdate', ActionEventType.OnVoiceChannelQuit,
+            client, 'voiceStateUpdate', PredefinedActionEventTypes.OnVoiceChannelQuit,
             (oldState, newState) => ({ channel: oldState.channel, user: oldState.member.user }),
             (action, oldState, newState) => oldState.channelId && !newState.channelId,
         );
         this.handleEvent<VoiceChannelsEventCtx>(
-            client, 'voiceStateUpdate', ActionEventType.OnVoiceChannelStartStream,
+            client, 'voiceStateUpdate', PredefinedActionEventTypes.OnVoiceChannelStartStream,
             (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
             (action, oldState, newState) => newState.streaming && !oldState.streaming,
         );
         this.handleEvent<VoiceChannelsEventCtx>(
-            client, 'voiceStateUpdate', ActionEventType.OnVoiceChannelEndStream,
+            client, 'voiceStateUpdate', PredefinedActionEventTypes.OnVoiceChannelEndStream,
             (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
             (action, oldState, newState) => oldState.streaming && !newState.streaming,
         );
         this.handleEvent<VoiceChannelsEventCtx>(
-            client, 'voiceStateUpdate', ActionEventType.OnVoiceChannelMute,
+            client, 'voiceStateUpdate', PredefinedActionEventTypes.OnVoiceChannelMute,
             (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
             (action, oldState, newState) => !oldState.mute && newState.mute,
         );
         this.handleEvent<VoiceChannelsEventCtx>(
-            client, 'voiceStateUpdate', ActionEventType.OnVoiceChannelSelfMute,
+            client, 'voiceStateUpdate', PredefinedActionEventTypes.OnVoiceChannelSelfMute,
             (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
             (action, oldState, newState) => !oldState.selfMute && newState.selfMute,
         );
         this.handleEvent<VoiceChannelsEventCtx>(
-            client, 'voiceStateUpdate', ActionEventType.OnVoiceChannelDeaf,
+            client, 'voiceStateUpdate', PredefinedActionEventTypes.OnVoiceChannelDeaf,
             (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
             (action, oldState, newState) => !oldState.deaf && newState.deaf,
         );
         this.handleEvent<VoiceChannelsEventCtx>(
-            client, 'voiceStateUpdate', ActionEventType.OnVoiceChannelSelfDeaf,
+            client, 'voiceStateUpdate', PredefinedActionEventTypes.OnVoiceChannelSelfDeaf,
             (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
             (action, oldState, newState) => !oldState.selfDeaf && newState.selfDeaf,
         );
+
+        this.handleEvent(client, 'guildBanAdd', PredefinedActionEventTypes.OnUserBan, (ban: dsc.GuildBan) => ban);
+        this.handleEvent(client, 'guildBanRemove', PredefinedActionEventTypes.OnUserUnban, (ban: dsc.GuildBan) => ban);
+    }
+
+    async emit<CtxType>(eventType: ActionEventType, ctx: CtxType) {
+        const actions = this.actions.get(eventType);
+        if (!actions) return;
+
+    actionsLoop:
+        for (const action of actions) {
+            // check constraints
+            for (const constraint of action.constraints) {
+                if (constraint(ctx as any) == Skip) {
+                    continue actionsLoop;
+                }
+            }
+
+            // execute callbacks
+            for (const callback of action.callbacks) {
+                const result = callback(ctx as any);
+                if (result && typeof (result as any).then === "function") {
+                    await result;
+                }
+            }
+        }
+    }
+
+    mkEvent(name: string): ActionEventType {
+        return Symbol(name);
     }
 }
 

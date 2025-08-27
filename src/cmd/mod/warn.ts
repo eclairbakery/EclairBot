@@ -11,6 +11,8 @@ import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
 import { scheduleWarnDeletion } from '../../features/deleteExpiredWarns.js';
 
+import actionsManager, { OnWarnGiven, OnWarnDeleted, WarnEventCtx } from '../warnEvents.js';
+
 export const warnCmd: Command = {
     name: 'warn',
     longDesc: 'Daj komuś warna, by go onieśmielić, uciszyć, zamknąć mu morde i nadużyć władzy. Żart, ale nie nadużywaj bo to się źle skończy... Nie wiesz z czym zadzierasz przybyszu!',
@@ -109,18 +111,31 @@ export const warnCmd: Command = {
         points = clamp(cfg.mod.commands.warn.minPoints, points, cfg.mod.commands.warn.maxPoints);
 
 
-        db.run(
-            'INSERT INTO warns (user_id, reason_string, points, expires_at) VALUES (?, ?, ?, ?)',
-            [targetUser.id, reason, points, expiresAt],
-            function(this: { lastID }) {
-                if (expiresAt) {
-                    scheduleWarnDeletion(this.lastID, expiresAt);
-                }
-            }
-        );
-        const channel = await msg.client.channels.fetch(cfg.logs.channel);
-        if (!channel.isSendable()) return;
-        channel.send({
+        let warnID: number;
+        try {
+            const result = await new Promise<{ lastID: number }>((resolve, reject) => {
+                db.run(
+                    'INSERT INTO warns (user_id, moderator_id, reason_string, points, expires_at) VALUES (?, ?, ?, ?, ?)',
+                    [targetUser.id, msg.author.id, reason, points, expiresAt],
+                    function(err) {
+                        if (err) reject(err);
+                        else resolve({ lastID: this.lastID });
+                    }
+                );
+            });
+            warnID = result.lastID;
+        } catch (error) {
+            log.replyError(msg, 'Błąd bazy danych', 'Nie udało się zapisać warna');
+            return;
+        }
+
+        if (expiresAt) {
+            scheduleWarnDeletion(warnID, expiresAt);
+        }
+
+        const logChannel = await msg.client.channels.fetch(cfg.logs.channel);
+        if (logChannel == null || !logChannel.isSendable()) return;
+        logChannel.send({
             embeds: [
                 new dsc.EmbedBuilder()
                     .setAuthor({
@@ -137,6 +152,7 @@ export const warnCmd: Command = {
                     ])
             ]
         });
+
         const embed = new dsc.EmbedBuilder()
             .setTitle(`📢 Masz warna, ${targetUser.user.username}!`)
             .setDescription(
@@ -177,6 +193,16 @@ export const warnCmd: Command = {
 
         msg.reply({
             embeds: [embed],
+        });
+        actionsManager.emit<WarnEventCtx>(OnWarnGiven, {
+            id: warnID,
+
+            user: targetUser,
+            moderator: msg.author,
+            reason: reason,
+            points: points,
+            duration: duration,
+            expiresAt: expiresAt,
         });
     }
 }

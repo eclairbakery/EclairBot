@@ -1,6 +1,6 @@
 import { Message, OmitPartialGroupDMChannel } from 'discord.js';
 import { cfg } from '../../bot/cfg.js';
-import { Action, ActionEventType, ActionCallback, ConstraintCallback } from '../actions.js';
+import { Action, PredefinedActionEventTypes, ActionCallback, ConstraintCallback } from '../actions.js';
 import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx } from '../actions.js';
 import { PredefinedActionCallbacks, PredefinedActionConstraints } from '../actions.js';
 import { EclairAI } from '../../bot/eclairai.js';
@@ -12,7 +12,7 @@ function checkYesNo(msg: Message) {
 }
 
 export const eclairAIAction: Action<MessageEventCtx> = {
-    activationEventType: ActionEventType.OnMessageCreateOrEdit,
+    activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
     constraints: [
         (msg) => {
             if (msg.author.bot) return false;

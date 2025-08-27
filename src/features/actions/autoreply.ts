@@ -1,4 +1,4 @@
-import { Action, ActionEventType, ActionCallback, ConstraintCallback } from '../actions.js';
+import { Action, PredefinedActionEventTypes, ActionCallback, ConstraintCallback } from '../actions.js';
 import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx } from '../actions.js';
 import { PredefinedActionCallbacks, PredefinedActionConstraints } from '../actions.js';
 
@@ -53,7 +53,7 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
     }
 
     return {
-        activationEventType: ActionEventType.OnMessageCreateOrEdit,
+        activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
         constraints: [
             PredefinedActionConstraints.or(...constraints),
             ...additionalConstraints || [],

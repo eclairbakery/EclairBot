@@ -23,7 +23,7 @@ dotenv.config({ quiet: true });
 import { client } from './client.js';
 import { EclairAI } from './bot/eclairai.js';
 import { RenameableChannel, Snowflake } from './defs.js';
-import actionsManager, { ActionEventType, PredefinedActionConstraints, PredefinedActionCallbacks } from './features/actions.js';
+import actionsManager, { PredefinedActionEventTypes, PredefinedActionConstraints, PredefinedActionCallbacks } from './features/actions.js';
 import { eclairAIAction } from './features/actions/eclairai.js';
 import { mkAutoreplyAction } from './features/actions/autoreply.js';
 import findCommand from './util/findCommand.js';
@@ -501,7 +501,11 @@ async function main() {
 
     addTemplateChannel({
         channel: await getChannel('1235591547437973557') as RenameableChannel,
-        updateOnEvents: [ActionEventType.OnUserJoin, ActionEventType.OnUserQuit, ActionEventType.OnThreadDelete /* easy to trigger event but it's not super common so i'll leave it as "force reload" */],
+        updateOnEvents: [
+            PredefinedActionEventTypes.OnUserJoin,
+            PredefinedActionEventTypes.OnUserQuit,
+            PredefinedActionEventTypes.OnThreadDelete, /* easy to trigger event but it's not super common so i'll leave it as "force reload" */
+        ],
         format: async (ctx) => {
             console.log('Updating population channel');
             return `👥・Populacja: ${(await getChannel('1235591547437973557') as dsc.GuildChannel).guild.memberCount} osób`;
@@ -511,9 +515,9 @@ async function main() {
     addTemplateChannel({
         channel: await getChannel('1276862197099794514') as RenameableChannel,
         updateOnEvents: [
-            ActionEventType.OnUserJoin,
-            ActionEventType.OnUserQuit,
-            ActionEventType.OnThreadDelete
+            PredefinedActionEventTypes.OnUserJoin,
+            PredefinedActionEventTypes.OnUserQuit,
+            PredefinedActionEventTypes.OnThreadDelete,
         ],
         format: async (ctx) => {
             const guild = (await getChannel('1276862197099794514') as dsc.GuildChannel).guild;
@@ -525,9 +529,9 @@ async function main() {
     addTemplateChannel({
         channel: await getChannel('1235591871020011540') as RenameableChannel,
         updateOnEvents: [
-            ActionEventType.OnUserJoin,
-            ActionEventType.OnUserQuit, 
-            ActionEventType.OnThreadDelete
+            PredefinedActionEventTypes.OnUserJoin,
+            PredefinedActionEventTypes.OnUserQuit,
+            PredefinedActionEventTypes.OnThreadDelete,
         ],
         format: async (ctx) => {
             const guild = (await getChannel('1235591871020011540') as dsc.GuildChannel).guild;

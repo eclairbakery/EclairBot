@@ -1,4 +1,4 @@
-import { Action, ActionEventType, ActionCallback, ConstraintCallback, Skip, Ok, AnyAction } from '../actions.js';
+import { Action, PredefinedActionEventTypes, ActionCallback, ConstraintCallback, Skip, Ok, AnyAction } from '../actions.js';
 import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx } from '../actions.js';
 import { PredefinedActionCallbacks, PredefinedActionConstraints } from '../actions.js';
 

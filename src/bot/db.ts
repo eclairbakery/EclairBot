@@ -28,6 +28,7 @@ db.exec(`
     CREATE TABLE IF NOT EXISTS warns (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT NOT NULL,
+        moderator_id TEXT NOT NULL,
         reason_string TEXT NOT NULL,
         points INTEGER NOT NULL,
         expires_at INTEGER
@@ -54,6 +55,6 @@ db.exec(`
     );
 `);
 
-addColumnIfNotExists("warns", "expires_at", "INTEGER", 0);
+addColumnIfNotExists("warns", "moderator_id", "TEXT", "");
 
-export {sqlite};
+export { sqlite };
