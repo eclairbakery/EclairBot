@@ -279,4 +279,5 @@ class ActionManager {
     }
 }
 
-export const actionsManager = new ActionManager();
+const actionsManager = new ActionManager();
+export default actionsManager;

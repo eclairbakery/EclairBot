@@ -22,8 +22,8 @@ dotenv.config({ quiet: true });
 
 import { client } from './client.js';
 import { EclairAI } from './bot/eclairai.js';
-import { Snowflake } from './defs.js';
-import { ActionEventType, actionsManager, PredefinedActionConstraints, PredefinedActionCallbacks } from './features/actions.js';
+import { RenameableChannel, Snowflake } from './defs.js';
+import actionsManager, { ActionEventType, PredefinedActionConstraints, PredefinedActionCallbacks } from './features/actions.js';
 import { eclairAIAction } from './features/actions/eclairai.js';
 import { mkAutoreplyAction } from './features/actions/autoreply.js';
 import findCommand from './util/findCommand.js';
@@ -54,6 +54,8 @@ import { muteCmd } from './cmd/mod/mute.js';
 import { unmuteCmd } from './cmd/mod/unmute.js';
 import { robCmd } from './cmd/economy/rob.js';
 import { changelogCmd } from './cmd/general/changelog.js';
+import { addTemplateChannel } from './features/actions/templateChannels.js';
+import canExecuteCmd from './util/canExecuteCmd.js';
 
 const commands: Map<Category, Command[]> = new Map([
     [
@@ -141,31 +143,33 @@ client.on('messageCreate', async (msg) => {
     const args = msg.content.slice(cfg.general.prefix.length).trim().split(/\s+/);
     const cmdName = args.shift().toLowerCase();
 
-    const command = findCommand(cmdName, commands);
+    const commandObj = findCommand(cmdName, commands);
 
-    if (!command) {
+    if (!commandObj) {
         log.replyError(msg, 'Panie, ja nie panimaju!', `Wpisz se ${cfg.general.prefix}help i dostarczę Ci listę komend!`);
         return;
     }
 
+    const  { command } = commandObj;
+
     if (cfg.general.blockedChannels.includes(msg.channelId) &&
-        !cfg.general.commandsExcludedFromBlockedChannels.includes(command.command.name)) {
+        !cfg.general.commandsExcludedFromBlockedChannels.includes(command.name)) {
 
         msg.react('❌');
         return;
     }
 
-    if (!cfg.general.commandsExcludedFromBlockedChannels.includes(command.command.name) && Math.random() < 0.3) {
+    if (!cfg.general.commandsExcludedFromBlockedChannels.includes(command.name) && Math.random() < 0.3) {
         msg.reply('nie chce mi sie');
         return;
     }
 
-    if (command.command.allowedRoles != null && !msg.member.roles.cache.some(role => command.command.allowedRoles.includes(role.id))) {
+    if (!canExecuteCmd(command, msg.member!)) {
         log.replyError(msg, 'Hej, a co ty odpie*dalasz?', 'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...');
         return;
     }
 
-    return command.command.execute(msg, args, commands);
+    return command.execute(msg, args, commands);
 });
 
 client.on('guildMemberAdd', async (member) => {
@@ -205,7 +209,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
     const rolesToWatch = [cfg.unfilteredRelated.gifBan, cfg.unfilteredRelated.makeNeocities];
     const allowedRoleIds = cfg.unfilteredRelated.eligibleToRemoveGifBan;
 
-    const removedRoles = rolesToWatch.filter(roleId => 
+    const removedRoles = rolesToWatch.filter(roleId =>
         oldMember.roles.cache.has(roleId) && !newMember.roles.cache.has(roleId)
     );
 
@@ -385,6 +389,15 @@ client.on('messageReactionAdd', async (reaction) => {
     }
 });
 
+async function getChannel(id: Snowflake): Promise<dsc.Channel> {
+    let channel = client.channels.cache.get(id);
+    if (channel == null) {
+        channel = await client.channels.fetch(id);
+    }
+
+    return channel;
+}
+
 async function main() {
     await client.login(process.env.TOKEN);
 
@@ -393,6 +406,15 @@ async function main() {
     actionsManager.addAction(eclairAIAction);
     actionsManager.addActions(...AutoModRules.all());
     actionsManager.registerEvents(client);
+
+    addTemplateChannel({
+        channel: await getChannel('1409990462726738040') as RenameableChannel,
+        updateEvent: ActionEventType.OnUserJoin,
+        format: async (ctx) => {
+            console.log('Updating population channel');
+            return `👥・Populacja: ${(await getChannel('1409990462726738040') as dsc.GuildChannel).guild.memberCount} osób`;
+        },
+    });
 
     let commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
     for (const [category, cmds] of commands) {

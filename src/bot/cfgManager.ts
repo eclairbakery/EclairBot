@@ -247,7 +247,7 @@ const defaultConfig: Config = {
                 enabled: true,
                 aliases: [],
                 allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096'],
-                allowedUsers: [],
+                allowedUsers: ['1274610053843783768'],
                 reasonRequired: false,
             },
             mute: {
