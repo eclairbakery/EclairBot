@@ -26,7 +26,7 @@ export const forceReloadTemplatesCmd: Command = {
             embeds: [
                 {
                     title: 'Przeladowano wszystkie template channels!',
-                    description: 'Teraz wszystko powinno być aktualne! a jeśli nie jest to już nie mój problem :joe_noniewiemno:',
+                    description: 'Teraz wszystko powinno być aktualne! a jeśli nie jest to już nie mój problem <:joe_noniewiemno:1317904812779503676>',
                     color: PredefinedColors.Aqua,
                 }
             ],
