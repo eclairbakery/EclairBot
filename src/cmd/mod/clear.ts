@@ -33,32 +33,36 @@ export const clearCmd: Command = {
             });
         }
         const how_much = parseInt(args[0]);
-        if (isNaN(how_much)) {
-            msg.reply({
+        if (isNaN(how_much) || how_much < 1) {
+            return msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setTitle(`Hej!`)
-                        .setDescription(
-                            `Jako pierwszy argument się podaje yyyyy liczbę wiadomości do usunięcia!`,
-                        )
+                        .setDescription(`Pierwszy argument to liczba wiadomości do usunięcia!`)
                         .setColor(PredefinedColors.Red),
                 ],
             });
         }
-        const messages = await msg.channel.messages.fetch({ limit: how_much + 1 });
+
         const who = msg.mentions.users.first();
-        await (msg.channel as dsc.TextChannel).bulkDelete(messages.filter(m => {
-            if (m.id == msg.id) return false;
-            if (who && who.id !== m.author.id) return false;
-            return true;
-        }), true);
-        msg.reply({
+
+        if (who) {
+            const fetched = await msg.channel.messages.fetch({ limit: 100 });
+            const filtered = fetched
+                .filter(m => m.author.id === who.id && m.id !== msg.id)
+                .first(how_much);
+
+            await (msg.channel as dsc.TextChannel).bulkDelete(filtered, true);
+        } else {
+            const fetched = await msg.channel.messages.fetch({ limit: how_much + 1 });
+            await (msg.channel as dsc.TextChannel).bulkDelete(fetched.filter(m => m.id !== msg.id), true);
+        }
+
+        await msg.reply({
             embeds: [
                 new dsc.EmbedBuilder()
                     .setTitle(`Już!`)
-                    .setDescription(
-                        `Wywaliłem!`,
-                    )
+                    .setDescription(`Usunąłem ${how_much} wiadomości${who ? ` od ${who}` : ''}.`)
                     .setColor(PredefinedColors.YellowGreen),
             ],
         });

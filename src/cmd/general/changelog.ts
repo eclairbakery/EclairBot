@@ -28,7 +28,7 @@ export const changelogCmd: Command = {
                         .setDescription('Krótko mówiąc dodane zostały te komendy: `bal`, `blackjack`, `crime`, `rob`, `slut`, `work`, `topeco`, `banner`, `changelog`, `commands`, `help`, `detail-help`, `man`, `pfp`, `siema`, `animal`, `dog`, `cat`, `parrot`, `lvl`, `toplvl`, `xp`, `ban`, `kick`, `mute`, `unmute`, `warn`, `warn-clear`, `warnlist`. Pewnie pojawi się jeszcze więcej.')
                 ]
             });
-        } else {
+        } else if (args.includes('1.0')) {
             msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
@@ -36,6 +36,16 @@ export const changelogCmd: Command = {
                         .setColor(PredefinedColors.Pink)
                         .setTitle('EclairBOT 1.0')
                         .setDescription('Zostały dodane logi, template channels, które na przykład liczą bany, system akcji i tak dalej. Podaj `beta-1.0` jako argument by zobaczyć poprzednią aktualizację.')
+                ]
+            });
+        } else {
+            msg.reply({
+                embeds: [
+                    new dsc.EmbedBuilder()
+                        .setAuthor( { name: 'EclairBOT' } )
+                        .setColor(PredefinedColors.Pink)
+                        .setTitle('EclairBOT 1.1')
+                        .setDescription('Teraz można wyświetlać najlepsze artykuły z fandomu Piekarnii Eklerki. Dodano też komendę wiki, która wyświetla rzeczy z Wikipedii. Została dodana komenda do restartu bota. A i prawie bym zapomniał, teraz masz dość łatwy sposób by usuwać wiadomości.')
                 ]
             });
         }

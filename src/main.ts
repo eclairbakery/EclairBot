@@ -61,6 +61,9 @@ import { randsiteCmd } from './cmd/general/randsite.js';
 import { shitwarnCmd } from './cmd/mod/shitwarn.js';
 import { forceReloadTemplatesCmd } from './cmd/mod/force-reload-templates.js';
 import { clearCmd } from './cmd/mod/clear.js';
+import { restartCmd } from './cmd/mod/restart.js';
+import { wikiCmd } from './cmd/general/wiki.js';
+import { fandomCmd } from './cmd/general/fandom.js';
 
 const commands: Map<Category, Command[]> = new Map([
     [
@@ -70,7 +73,8 @@ const commands: Map<Category, Command[]> = new Map([
             commandsCmd, manCmd,
             siemaCmd, pfpCmd,
             bannerCmd, changelogCmd,
-            randsiteCmd
+            randsiteCmd, restartCmd,
+            wikiCmd, fandomCmd
         ]
     ],
     [
