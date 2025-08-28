@@ -18,14 +18,26 @@ export const changelogCmd: Command = {
     allowedUsers: [],
 
     execute(msg, args, commands) {
-        msg.reply({
-            embeds: [
-                new dsc.EmbedBuilder()
-                    .setAuthor( { name: 'EclairBOT' } )
-                    .setColor(PredefinedColors.Pink)
-                    .setTitle('EclairBOT beta 1.0')
-                    .setDescription('Krótko mówiąc dodane zostały te komendy: `bal`, `blackjack`, `crime`, `rob`, `slut`, `work`, `topeco`, `banner`, `changelog`, `commands`, `help`, `detail-help`, `man`, `pfp`, `siema`, `animal`, `dog`, `cat`, `parrot`, `lvl`, `toplvl`, `xp`, `ban`, `kick`, `mute`, `unmute`, `warn`, `warn-clear`, `warnlist`. Pewnie pojawi się jeszcze więcej.')
-            ]
-        });
+        if (args.includes('beta-1.0')) {
+            msg.reply({
+                embeds: [
+                    new dsc.EmbedBuilder()
+                        .setAuthor( { name: 'EclairBOT' } )
+                        .setColor(PredefinedColors.Pink)
+                        .setTitle('EclairBOT beta 1.0')
+                        .setDescription('Krótko mówiąc dodane zostały te komendy: `bal`, `blackjack`, `crime`, `rob`, `slut`, `work`, `topeco`, `banner`, `changelog`, `commands`, `help`, `detail-help`, `man`, `pfp`, `siema`, `animal`, `dog`, `cat`, `parrot`, `lvl`, `toplvl`, `xp`, `ban`, `kick`, `mute`, `unmute`, `warn`, `warn-clear`, `warnlist`. Pewnie pojawi się jeszcze więcej.')
+                ]
+            });
+        } else {
+            msg.reply({
+                embeds: [
+                    new dsc.EmbedBuilder()
+                        .setAuthor( { name: 'EclairBOT' } )
+                        .setColor(PredefinedColors.Pink)
+                        .setTitle('EclairBOT 1.0')
+                        .setDescription('Zostały dodane logi, template channels, które na przykład liczą bany, system akcji i tak dalej. Podaj `beta-1.0` jako argument by zobaczyć poprzednią aktualizację.')
+                ]
+            });
+        }
     },
 };
