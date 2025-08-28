@@ -354,15 +354,7 @@ client.on('guildMemberAdd', async (member) => {
     const generalChannel = await client.channels.fetch(cfg.general.welcomer.general);
     if (generalChannel == null || !generalChannel.isSendable()) return;
 
-    await welcomeChannel.send({
-        embeds: [
-            new dsc.EmbedBuilder()
-                .setTitle(`Właśnie Eklerka upiekł ${member.user.username}!`)
-                .setColor(PredefinedColors.Purple)
-                .setDescription(`Siema <@${member.id}>. Jak ci mija życie, bo mi git (chyba)? Jak to czytasz to popisz na generalu, nie będę cię za rączkę prowadził...`)
-                .setThumbnail(member.displayAvatarURL({ size: 128 }))
-        ]
-    });
+    await welcomeChannel.send(`<:emoji1:1410551894023082027> siema, ale przystojny jesteś ${member.username} ngl; witam na serwerze czy coś`);
     await generalChannel.send(`witaj <@${member.user.id}>, będzie nam miło jak się przywitasz czy coś <:emoji_a_radosci_nie_bylo_konca:1376664467416420362>`);
 });
 
@@ -370,15 +362,7 @@ client.on('guildMemberRemove', async (member) => {
     if (!cfg.general.welcomer.enabled) return;
     const channel = await client.channels.fetch(cfg.general.welcomer.channelId);
     if (!channel.isSendable()) return;
-    await channel.send({
-        embeds: [
-            new dsc.EmbedBuilder()
-                .setTitle(`Eklerka sprzedał bagietkę "${member.user.username}"!`)
-                .setColor(PredefinedColors.DarkButNotBlack)
-                .setDescription(`Naszemu naczelnemu piekarzowi się powodzi. Właśnie sprzedał kolejną bagietkę. Ludzie bardzo chętnie kupują od niego również chleb. Ale to nie ważne. Dla innych pieczyw jest to wielka i bolesna strata użytkownika...`)
-                .setThumbnail(member.displayAvatarURL({ size: 128 }))
-        ]
-    });
+    await channel.send(`<:emoji2:1410551857935290368> do widzenia ${member.username} 🥀 już zmieniłem zdanie nie jesteś przystojny`);
 });
 
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
@@ -476,7 +460,7 @@ client.on('interactionCreate', async (int) => {
     }
     if (!cmdObject) {
         await int.reply({ content: 'Nie znam takiej komendy!', flags: ["Ephemeral"] });
-        return;
+        return; 
     }
 
     if (cfg.general.blockedChannels.includes(channelId) &&
