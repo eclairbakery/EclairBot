@@ -60,6 +60,7 @@ import { addTemplateChannel } from './features/actions/templateChannels.js';
 import { randsiteCmd } from './cmd/general/randsite.js';
 import { shitwarnCmd } from './cmd/mod/shitwarn.js';
 import { forceReloadTemplatesCmd } from './cmd/mod/force-reload-templates.js';
+import { clearCmd } from './cmd/mod/clear.js';
 
 const commands: Map<Category, Command[]> = new Map([
     [
@@ -78,7 +79,7 @@ const commands: Map<Category, Command[]> = new Map([
             warnCmd, kickCmd, banCmd,
             warnlistCmd, warnClearCmd,
             muteCmd, unmuteCmd, shitwarnCmd,
-            forceReloadTemplatesCmd,
+            forceReloadTemplatesCmd, clearCmd
         ]
     ],
     [
