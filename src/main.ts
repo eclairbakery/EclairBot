@@ -354,7 +354,7 @@ client.on('guildMemberAdd', async (member) => {
     const generalChannel = await client.channels.fetch(cfg.general.welcomer.general);
     if (generalChannel == null || !generalChannel.isSendable()) return;
 
-    await welcomeChannel.send(`<:emoji1:1410551894023082027> Siema, ale przystojny jesteś ${member.displayName} ngl`);
+    await welcomeChannel.send(`<:emoji1:1410551894023082027> siema, ale przystojny jesteś ${member.username} ngl; witam na serwerze czy coś`);
     await generalChannel.send(`witaj <@${member.user.id}>, będzie nam miło jak się przywitasz czy coś <:emoji_a_radosci_nie_bylo_konca:1376664467416420362>`);
 });
 
@@ -362,7 +362,7 @@ client.on('guildMemberRemove', async (member) => {
     if (!cfg.general.welcomer.enabled) return;
     const channel = await client.channels.fetch(cfg.general.welcomer.channelId);
     if (!channel.isSendable()) return;
-    await channel.send(`<:emoji2:1410551857935290368> Dowidzenia ${member.displayName} 🥀 Zmieniłem zdanie nie jesteś przystojny`);
+    await channel.send(`<:emoji2:1410551857935290368> do widzenia ${member.username} 🥀 już zmieniłem zdanie nie jesteś przystojny`);
 });
 
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
@@ -460,7 +460,7 @@ client.on('interactionCreate', async (int) => {
     }
     if (!cmdObject) {
         await int.reply({ content: 'Nie znam takiej komendy!', flags: ["Ephemeral"] });
-        return;
+        return; 
     }
 
     if (cfg.general.blockedChannels.includes(channelId) &&
