@@ -206,7 +206,7 @@ export const cfg: Config = {
                 100: '1390802440739356762'
             },
             levelChannel: '1235592947831930993',
-            shallPingWhenNewLevel: true
+            shallPingWhenNewLevel: false
         },
         hallOfFame: '1392128976574484592',
         hallOfFameEligibleChannels: ['1397628186795311246', '1264971505662689311', '1342793182265741394', '1392567715407073402'],

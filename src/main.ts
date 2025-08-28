@@ -583,7 +583,7 @@ async function main() {
     actionsManager.addActions(...AutoModRules.all());
     actionsManager.registerEvents(client);
 
-    const populationTemplateChannel = await getChannel('1235552454838456433') as dsc.GuildChannel;
+    const populationTemplateChannel = await getChannel('1235591547437973557') as dsc.GuildChannel;
     addTemplateChannel({
         channel: populationTemplateChannel,
         updateOnEvents: [
