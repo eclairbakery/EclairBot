@@ -221,7 +221,7 @@ client.on('messageCreate', async (msg): Promise<void> => {
     }
 
     // now goes leveling
-    if (!msg.author.bot) addExperiencePoints(msg);
+    if (!msg.author.bot) await addExperiencePoints(msg);
 
     // gifs ban
     if (msg.member!.roles.cache.has(cfg.unfilteredRelated.gifBan) && msg.channelId !== cfg.unfilteredRelated.unfilteredChannel && (msg.attachments.some(att => att.name?.toLowerCase().endsWith('.gif')) || msg.content.includes('tenor.com') || msg.content.includes('.gif'))) {

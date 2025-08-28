@@ -22,7 +22,7 @@ export const lvlRoles = [
     "1390802440739356762"
 ];
 
-export function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
+export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     // check if eligible
     if (cfg.general.leveling.excludedChannels.includes(msg.channelId)) return;
     if (msg.channelId == cfg.unfilteredRelated.unfilteredChannel) return;
@@ -37,7 +37,7 @@ export function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Messa
     db.get(
         `SELECT xp FROM leveling WHERE user_id = ?`,
         [msg.author.id],
-        (err, row: any) => {
+        async (err, row: any) => {
             if (err) {
                 log.replyError(msg, 'Błąd', err.message);
                 return;
@@ -69,6 +69,11 @@ export function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Messa
                         });
                     }
                 }
+
+                // Let's ping this guy
+                const channelLvl = await msg.client.channels.fetch(cfg.general.leveling.levelChannel);
+                if (!channelLvl || !channelLvl.isSendable()) return;
+                channelLvl.send(`${cfg.general.leveling.shallPingWhenNewLevel ? `<@${msg.author.id}>` : msg.author.username} wbił poziom ${newLevel}! Wow co za osiągnięcie!${milestoneRoleId ? ' I btw nową rolę zdobyłeś!' : ''}`);
             }
         }
     );
