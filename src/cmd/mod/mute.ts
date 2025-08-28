@@ -3,9 +3,8 @@ import { cfg } from '../../bot/cfg.js'
 import { db, sqlite } from '../../bot/db.js';
 
 import * as log from '../../util/log.js';
-import * as cfgManager from '../../bot/cfgManager.js';
-
 import * as dsc from 'discord.js';
+
 import { PredefinedColors } from '../../util/color.js';
 
 const cmdCfg = cfg.mod.commands.mute;

@@ -13,7 +13,6 @@ import { initExpiredWarnsDeleter } from './features/deleteExpiredWarns.js';
 import { addExperiencePoints } from './bot/level.js';
 
 import * as log from './util/log.js';
-import * as cfgManager from './bot/cfgManager.js';
 
 import * as dotenv from 'dotenv';
 import * as dsc from 'discord.js';
@@ -26,7 +25,10 @@ import { RenameableChannel, Snowflake } from './defs.js';
 import actionsManager, { PredefinedActionEventTypes, PredefinedActionConstraints, PredefinedActionCallbacks } from './features/actions.js';
 import { eclairAIAction } from './features/actions/eclairai.js';
 import { mkAutoreplyAction } from './features/actions/autoreply.js';
+import { OnForceReloadTemplates } from './events/templatesEvents.js';
+
 import findCommand from './util/findCommand.js';
+import canExecuteCmd from './util/canExecuteCmd.js';
 
 import { warnCmd } from './cmd/mod/warn.js';
 import { kickCmd } from './cmd/mod/kick.js';
@@ -45,7 +47,7 @@ import { lvlCmd } from './cmd/leveling/lvl.js';
 import { toplvlCmd } from './cmd/leveling/toplvl.js';
 import { topecoCmd } from './cmd/economy/topeco.js';
 import { balCmd } from './cmd/economy/bal.js';
-import { warnClearCmd } from './cmd/mod/warnClear.js';
+import { warnClearCmd } from './cmd/mod/warn-clear.js';
 import { blackjackCmd } from './cmd/economy/blackjack.js';
 import { animalCmd, catCmd, dogCmd, parrotCmd } from './cmd/gif/gifs.js';
 import { pfpCmd } from './cmd/general/pfp.js';
@@ -55,9 +57,9 @@ import { unmuteCmd } from './cmd/mod/unmute.js';
 import { robCmd } from './cmd/economy/rob.js';
 import { changelogCmd } from './cmd/general/changelog.js';
 import { addTemplateChannel } from './features/actions/templateChannels.js';
-import canExecuteCmd from './util/canExecuteCmd.js';
 import { randsiteCmd } from './cmd/general/randsite.js';
 import { shitwarnCmd } from './cmd/mod/shitwarn.js';
+import { forceReloadTemplatesCmd } from './cmd/mod/force-reload-templates.js';
 
 const commands: Map<Category, Command[]> = new Map([
     [
@@ -75,7 +77,8 @@ const commands: Map<Category, Command[]> = new Map([
         [
             warnCmd, kickCmd, banCmd,
             warnlistCmd, warnClearCmd,
-            muteCmd, unmuteCmd, shitwarnCmd
+            muteCmd, unmuteCmd, shitwarnCmd,
+            forceReloadTemplatesCmd,
         ]
     ],
     [
@@ -169,7 +172,7 @@ function isFlood(content: string) {
     return false;
 }
 
-client.on('messageCreate', async (msg) => {
+client.on('messageCreate', async (msg): Promise<void> => {
     // block dm's, if you want to dm me, fuck out
     if (!msg.inGuild()) return;
 
@@ -223,12 +226,14 @@ client.on('messageCreate', async (msg) => {
     // gifs ban
     if (msg.member!.roles.cache.has(cfg.unfilteredRelated.gifBan) && msg.channelId !== cfg.unfilteredRelated.unfilteredChannel && (msg.attachments.some(att => att.name?.toLowerCase().endsWith('.gif')) || msg.content.includes('tenor.com') || msg.content.includes('.gif'))) {
         await msg.reply('masz bana na gify');
-        return await msg.delete();
+        await msg.delete();
+        return;
     }
 
     // neocity warn
     if (msg.member!.roles.cache.has(cfg.unfilteredRelated.makeNeocities)) {
-        return await msg.reply('https://youcantsitwithus.neocities.org');
+        await msg.reply('https://youcantsitwithus.neocities.org');
+        return;
     }
 
     if (!msg.content.startsWith(cfg.general.prefix)) return;
@@ -237,23 +242,19 @@ client.on('messageCreate', async (msg) => {
     const cmdName = args.shift().toLowerCase();
 
     const commandObj = findCommand(cmdName, commands);
+    console.log(commandObj);
 
     if (!commandObj) {
         log.replyError(msg, 'Panie, ja nie panimaju!', `Wpisz se ${cfg.general.prefix}help i dostarczę Ci listę komend!`);
         return;
     }
 
-    const  { command } = commandObj;
+    const { command } = commandObj;
 
     if (cfg.general.blockedChannels.includes(msg.channelId) &&
         !cfg.general.commandsExcludedFromBlockedChannels.includes(command.name)) {
 
         msg.react('❌');
-        return;
-    }
-
-    if (!cfg.general.commandsExcludedFromBlockedChannels.includes(command.name) && Math.random() < 0.3) {
-        msg.reply('nie chce mi sie');
         return;
     }
 
@@ -591,42 +592,38 @@ async function main() {
     actionsManager.addActions(...AutoModRules.all());
     actionsManager.registerEvents(client);
 
+    const populationTemplateChannel = await getChannel('1235552454838456433') as dsc.GuildChannel;
     addTemplateChannel({
-        channel: await getChannel('1235591547437973557') as RenameableChannel,
+        channel: populationTemplateChannel,
         updateOnEvents: [
             PredefinedActionEventTypes.OnUserJoin,
             PredefinedActionEventTypes.OnUserQuit,
-            PredefinedActionEventTypes.OnThreadDelete, /* easy to trigger event but it's not super common so i'll leave it as "force reload" */
+            OnForceReloadTemplates,
         ],
-        format: async (ctx) => {
-            console.log('Updating population channel');
-            return `👥・Populacja: ${(await getChannel('1235591547437973557') as dsc.GuildChannel).guild.memberCount} osób`;
-        },
+        format: (ctx) => `👥・Populacja: ${populationTemplateChannel.guild.memberCount} osób`,
     });
 
+    const templateChannelTarget = await getChannel('1276862197099794514') as dsc.GuildChannel;
     addTemplateChannel({
-        channel: await getChannel('1276862197099794514') as RenameableChannel,
+        channel: templateChannelTarget,
         updateOnEvents: [
             PredefinedActionEventTypes.OnUserJoin,
             PredefinedActionEventTypes.OnUserQuit,
-            PredefinedActionEventTypes.OnThreadDelete,
+            OnForceReloadTemplates,
         ],
-        format: async (ctx) => {
-            const guild = (await getChannel('1276862197099794514') as dsc.GuildChannel).guild;
-            const goal = getNextGoal(guild.memberCount);
-            return `🎯・Cel: ${goal} osób`;
-        },
+        format: (ctx) => `🎯・Cel: ${getNextGoal(templateChannelTarget.guild.memberCount)} osób`,
     });
 
+    const bansTemplateChannel = await getChannel('1235591871020011540') as dsc.GuildChannel;
     addTemplateChannel({
-        channel: await getChannel('1235591871020011540') as RenameableChannel,
+        channel: bansTemplateChannel,
         updateOnEvents: [
-            PredefinedActionEventTypes.OnUserJoin,
-            PredefinedActionEventTypes.OnUserQuit,
-            PredefinedActionEventTypes.OnThreadDelete,
+            PredefinedActionEventTypes.OnUserBan,
+            PredefinedActionEventTypes.OnUserUnban,
+            OnForceReloadTemplates,
         ],
         format: async (ctx) => {
-            const guild = (await getChannel('1235591871020011540') as dsc.GuildChannel).guild;
+            const guild = bansTemplateChannel.guild;
             const bans = await guild.bans.fetch();
             return `🚫・Bany: ${bans.size}`;
         },

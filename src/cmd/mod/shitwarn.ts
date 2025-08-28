@@ -7,8 +7,8 @@ import { cfg } from '../../bot/cfg.js'
 import { db, sqlite } from '../../bot/db.js';
 
 import * as log from '../../util/log.js';
-
 import * as dsc from 'discord.js';
+
 import { scheduleWarnDeletion } from '../../features/deleteExpiredWarns.js';
 
 export const shitwarnCmd: Command = {

@@ -7,11 +7,11 @@ import { cfg } from '../../bot/cfg.js'
 import { db, sqlite } from '../../bot/db.js';
 
 import * as log from '../../util/log.js';
-
 import * as dsc from 'discord.js';
+
 import { scheduleWarnDeletion } from '../../features/deleteExpiredWarns.js';
 
-import actionsManager, { OnWarnGiven, OnWarnDeleted, WarnEventCtx } from '../warnEvents.js';
+import actionsManager, { OnWarnGiven, OnWarnDeleted, WarnEventCtx } from '../../events/warnEvents.js';
 
 export const warnCmd: Command = {
     name: 'warn',
