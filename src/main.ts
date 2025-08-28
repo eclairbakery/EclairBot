@@ -355,10 +355,10 @@ client.on('guildMemberAdd', async (member) => {
     if (generalChannel == null || !generalChannel.isSendable()) return;
 
     const messages = [
-        `<:emoji1:1410551894023082027> Siema, ale przystojny jesteś ${member.displayName} ngl`,
-        `<:emoji1:1410551894023082027> Kocham cię ${member.displayName}`,
-        `<:emoji1:1410551894023082027> C-cczęsto masz tak na imie ${member.displayName}?`,
-        `<:emoji1:1410551894023082027> nie chce mi się, ${member.displayName}`
+        `<:emoji1:1410551894023082027> Siema, ale przystojny jesteś ${member.user.username} ngl`,
+        `<:emoji1:1410551894023082027> Kocham cię ${member.user.username}`,
+        `<:emoji1:1410551894023082027> C-cczęsto masz tak na imie ${member.user.username}?`,
+        `<:emoji1:1410551894023082027> nie chce mi się, ${member.user.username}`
     ];
 
     await welcomeChannel.send(messages[Math.floor(Math.random() * messages.length)]);
@@ -369,7 +369,7 @@ client.on('guildMemberRemove', async (member) => {
     if (!cfg.general.welcomer.enabled) return;
     const channel = await client.channels.fetch(cfg.general.welcomer.channelId);
     if (!channel.isSendable()) return;
-    await channel.send(`<:emoji2:1410551857935290368> do widzenia ${member.username} 🥀 już zmieniłem zdanie nie jesteś przystojny`);
+    await channel.send(`<:emoji2:1410551857935290368> do widzenia ${member.user.username} 🥀 już zmieniłem zdanie nie jesteś przystojny`);
 });
 
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
