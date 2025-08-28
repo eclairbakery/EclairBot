@@ -354,7 +354,14 @@ client.on('guildMemberAdd', async (member) => {
     const generalChannel = await client.channels.fetch(cfg.general.welcomer.general);
     if (generalChannel == null || !generalChannel.isSendable()) return;
 
-    await welcomeChannel.send(`<:emoji1:1410551894023082027> siema, ale przystojny jesteś ${member.user.username} ngl; witam na serwerze czy coś`);
+    const messages = [
+        `<:emoji1:1410551894023082027> Siema, ale przystojny jesteś ${member.user.username} ngl`,
+        `<:emoji1:1410551894023082027> Kocham cię ${member.user.username}`,
+        `<:emoji1:1410551894023082027> C-cczęsto masz tak na imie ${member.user.username}?`,
+        `<:emoji1:1410551894023082027> nie chce mi się, ${member.user.username}`
+    ];
+
+    await welcomeChannel.send(messages[Math.floor(Math.random() * messages.length)]);
     await generalChannel.send(`witaj <@${member.user.id}>, będzie nam miło jak się przywitasz czy coś <:emoji_a_radosci_nie_bylo_konca:1376664467416420362>`);
 });
 
