@@ -75,7 +75,7 @@ export default class AutoModRules {
 
     static readonly GitHubAutoreply: Action<MessageEventCtx> = mkAutoreplyAction({
         activationOptions: [
-            { type: 'starts-with', keyword: 'git' }
+            { type: 'is-equal-to', keyword: 'git' }
         ],
         reply: 'hub'
     });

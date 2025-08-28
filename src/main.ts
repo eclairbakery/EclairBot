@@ -212,8 +212,7 @@ client.on('messageCreate', async (msg) => {
 
     // antiflood
     if (client.user.id !== msg.author.id && isFlood(msg.content)) {
-        await msg.channel.send(`🚨 <@${msg.author.id}> za dużo floodu pozdrawiam`);
-        await msg.delete();
+        await msg.channel.send(`🚨 <@${msg.author.id}> za dużo floodu pozdrawiam\n-# nie usuwam wiadomości bo ten antiflood tak średnio działa teraz`);
         await filterLog(msg, 'antiflood/za dużo floodu TM');
         return;
     }
