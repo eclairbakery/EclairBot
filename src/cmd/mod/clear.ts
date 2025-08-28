@@ -46,7 +46,12 @@ export const clearCmd: Command = {
             });
         }
         const messages = await msg.channel.messages.fetch({ limit: how_much + 1 });
-        await (msg.channel as dsc.TextChannel).bulkDelete(messages.filter(m => m.id !== msg.id), true);
+        const who = msg.mentions.users.first();
+        await (msg.channel as dsc.TextChannel).bulkDelete(messages.filter(m => {
+            if (m.id == msg.id) return false;
+            if (who && who.id !== m.author.id) return false;
+            return true;
+        }), true);
         msg.reply({
             embeds: [
                 new dsc.EmbedBuilder()
