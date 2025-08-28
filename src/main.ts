@@ -107,7 +107,7 @@ client.once('ready', () => {
     initExpiredWarnsDeleter();
 });
 
-const userMessagesAntiSpamMapIGuessIDontHaveIdeaOnHowToNameTHis = new Map();
+const userMessagesAntiSpamMap: Map<Snowflake, number[]> = new Map();
 let userRecentlyInTheList: Record<Snowflake, boolean> = {};
 
 async function filterLog(msg: dsc.Message, system: string) {
@@ -140,8 +140,8 @@ async function filterLog(msg: dsc.Message, system: string) {
 function isFlood(content: string) {
     let cleaned = content
         .replace(/<@!?\d+>/g, '')
-        .replace(/<@&\d+>/g, '')  
-        .replace(/<#\d+>/g, '') 
+        .replace(/<@&\d+>/g, '')
+        .replace(/<#\d+>/g, '')
         .trim();
 
     cleaned = cleaned.replace(/\b(x+d+|xd+|ej+|-+|haha+|lol+)\b/gi, '').trim();
@@ -174,19 +174,19 @@ client.on('messageCreate', async (msg) => {
     if (!msg.inGuild()) return;
 
     // antispam
-    const antispam_now = Date.now();
-    const antispam_timeframe = 10000;
-    const antispam_limit = 5; 
-    if (!userMessagesAntiSpamMapIGuessIDontHaveIdeaOnHowToNameTHis.has(msg.author.id)) {
-        userMessagesAntiSpamMapIGuessIDontHaveIdeaOnHowToNameTHis.set(msg.author.id, []);
+    const antispamNow = Date.now();
+    const antispamTimeframe = 10000;
+    const antispamLimit = 5;
+    if (!userMessagesAntiSpamMap.has(msg.author.id)) {
+        userMessagesAntiSpamMap.set(msg.author.id, []);
     }
-    const timestamps = userMessagesAntiSpamMapIGuessIDontHaveIdeaOnHowToNameTHis.get(msg.author.id);
-    while (timestamps.length > 0 && antispam_now - timestamps[0] > antispam_timeframe) {
+    const timestamps = userMessagesAntiSpamMap.get(msg.author.id);
+    while (timestamps.length > 0 && antispamNow - timestamps[0] > antispamTimeframe) {
         timestamps.shift();
     }
-    timestamps.push(antispam_now);
-    userMessagesAntiSpamMapIGuessIDontHaveIdeaOnHowToNameTHis.set(msg.author.id, timestamps);
-    if (timestamps.length > antispam_limit && client.user.id !== msg.author.id && !userRecentlyInTheList[msg.author.id]) {
+    timestamps.push(antispamNow);
+    userMessagesAntiSpamMap.set(msg.author.id, timestamps);
+    if (timestamps.length > antispamLimit && client.user.id !== msg.author.id && !userRecentlyInTheList[msg.author.id]) {
         userRecentlyInTheList[msg.author.id] = true;
         await msg.channel.send(`🚨 <@${msg.author.id}> co ty odsigmiasz`);
         try {
@@ -198,7 +198,7 @@ client.on('messageCreate', async (msg) => {
         await msg.delete();
         try {
             const messages = await msg.channel.messages.fetch({ limit: 25 });
-            const sameContent = messages.filter(m => 
+            const sameContent = messages.filter(m =>
                 m.author.id === msg.author.id && m.content === msg.content
             );
             const toDelete = sameContent.first(10);
@@ -347,11 +347,13 @@ client.on('channelDelete', async (chan) => {
 
 client.on('guildMemberAdd', async (member) => {
     if (!cfg.general.welcomer.enabled) return;
-    const channel = await client.channels.fetch(cfg.general.welcomer.channelId);
-    if (!channel.isSendable()) return;
-    const secchannel = await client.channels.fetch(cfg.general.welcomer.general);
-    if (!secchannel.isSendable()) return;
-    await channel.send({
+    const welcomeChannel = await client.channels.fetch(cfg.general.welcomer.channelId);
+    if (welcomeChannel == null || !welcomeChannel.isSendable()) return;
+
+    const generalChannel = await client.channels.fetch(cfg.general.welcomer.general);
+    if (generalChannel == null || !generalChannel.isSendable()) return;
+
+    await welcomeChannel.send({
         embeds: [
             new dsc.EmbedBuilder()
                 .setTitle(`Właśnie Eklerka upiekł ${member.user.username}!`)
@@ -360,7 +362,7 @@ client.on('guildMemberAdd', async (member) => {
                 .setThumbnail(member.displayAvatarURL({ size: 128 }))
         ]
     });
-    await secchannel.send(`witaj <@${member.user.id}>, będzie nam miło jak się przywitasz czy coś <:emoji_a_radosci_nie_bylo_konca:1376664467416420362>`);
+    await generalChannel.send(`witaj <@${member.user.id}>, będzie nam miło jak się przywitasz czy coś <:emoji_a_radosci_nie_bylo_konca:1376664467416420362>`);
 });
 
 client.on('guildMemberRemove', async (member) => {
