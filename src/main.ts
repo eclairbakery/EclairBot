@@ -1,5 +1,10 @@
-process.on('uncaughtException', (e) => {
+process.on('uncaughtException', async (e) => {
     console.error(e);
+    try {
+        const stringed = e.message ? e.message : (e.toString ? e.toString() : e as any as string);
+        const user = await client.users.fetch('990959984005222410');
+        await user.send(`siema hiouston jest problem:\n\`\`\`${stringed}\`\`\``);
+    } catch {}
 });
 
 import { Command, CommandInput, Category } from './bot/command.js';
