@@ -25,7 +25,7 @@ export const toplvlCmd: Command = {
     allowedUsers: [],
 
     execute(msg, args) {
-        db.all('SELECT * FROM leveling ORDER BY xp DESC LIMIT 12', [], async (err, rows: any[]) => {
+        db.all('SELECT * FROM leveling ORDER BY xp DESC LIMIT 50', [], async (err, rows: any[]) => {
             if (err) {
                 console.error(err);
                 return log.replyError(msg, 'Błąd pobierania poziomów', 'Pytaj twórców biblioteki sqlite3...');
@@ -39,16 +39,21 @@ export const toplvlCmd: Command = {
             let i = 0;
 
             for (const row of rows) {
-                if (++i === 25) return;
+                if (++i > 12) break;
 
-                const member = await msg.guild.members.fetch(row.user_id);
-                const userLvlRole = lvlRoles.filter(id => member.roles.cache.has(id)).at(-1);
-
-                fields.push({
-                    name: `${i} » ${member.user.username}`,
-                    value: `${userLvlRole ? `<@&${userLvlRole}>` : 'Nowicjusz...'}\n**Lvl**: ${calculateLevel(row.xp, cfg.general.leveling.levelDivider)}\n**XP**: ${row.xp}${i % 2 == 1 ? '‎' : ''}`,
-                    inline: true
-                });
+                try {
+                    const member = await msg.guild.members.fetch(row.user_id);
+                    const userLvlRole = lvlRoles.filter(id => member.roles.cache.has(id)).at(-1);
+                    fields.push({
+                        name: `${i} » ${member.user.username}`,
+                        value: `${userLvlRole ? `<@&${userLvlRole}>` : 'Nowicjusz...'}\n**Lvl**: ${calculateLevel(row.xp, cfg.general.leveling.levelDivider)}\n**XP**: ${row.xp}${i % 2 == 1 ? '‎' : ''}`,
+                        inline: true
+                    });
+                } catch (e) {
+                    console.log(e);
+                    i--;
+                    continue;
+                }
             }
 
             return msg.reply({

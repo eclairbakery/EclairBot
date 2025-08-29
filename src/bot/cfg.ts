@@ -31,6 +31,16 @@ export interface Config {
             channelId: string;
             general: Snowflake;
         },
+        forFun: {
+            media: {
+                addReactions: Snowflake[],
+                deleteMessageIfNotMedia: boolean,
+                channel: Snowflake,
+                shallCreateThread: boolean
+            } [],
+            lastLetterChannel: Snowflake,
+            countingChannel: Snowflake
+        },
         blockedChannels: Snowflake[],
         commandsExcludedFromBlockedChannels: string[],
         moderationProtectedRoles: Snowflake[],
@@ -82,7 +92,7 @@ export interface Config {
         eligibleToRemoveGifBan: Snowflake[],
         gifBan: Snowflake,
         unfilteredChannel: Snowflake,
-        makeNeocities: Snowflake
+        makeNeocities: Snowflake[]
     };
 
     mod: {
@@ -218,13 +228,31 @@ export const cfg: Config = {
             general: '1264971505662689311'
         },
         moderationProtectedRoles: ['1280884378586845216', '1280081773019140096'],
+        forFun: {
+            media: [
+                {
+                    channel: '1235567551753486407', // media channel
+                    addReactions: ['👍', '👎', '😭', '🙏', '🤣', '<:joe_i_git:1376096877610799205>'],
+                    deleteMessageIfNotMedia: true,
+                    shallCreateThread: true
+                },
+                {
+                    channel: '1290327060970995812', // hall of shame
+                    addReactions: ['🙏'],
+                    deleteMessageIfNotMedia: false,
+                    shallCreateThread: false
+                }
+            ],
+            countingChannel: '1235566520310956184',
+            lastLetterChannel: '1235566646324887562'
+        }
     },
 
     unfilteredRelated: {
         eligibleToRemoveGifBan: ["1280081773019140096", "1280884378586845216"],
         gifBan: "1406369089634435204",
         unfilteredChannel: '1397628186795311246',
-        makeNeocities: '1409824205712920576'
+        makeNeocities: ['1274610053843783768']
     },
 
     ai: {

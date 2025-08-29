@@ -61,9 +61,10 @@ import { randsiteCmd } from './cmd/general/randsite.js';
 import { shitwarnCmd } from './cmd/mod/shitwarn.js';
 import { forceReloadTemplatesCmd } from './cmd/mod/force-reload-templates.js';
 import { clearCmd } from './cmd/mod/clear.js';
-import { restartCmd } from './cmd/mod/restart.js';
+import { restartCmd } from './cmd/dev/restart.js';
 import { wikiCmd } from './cmd/general/wiki.js';
 import { fandomCmd } from './cmd/general/fandom.js';
+import { evalCmd } from './cmd/dev/eval.js';
 
 const commands: Map<Category, Command[]> = new Map([
     [
@@ -73,8 +74,8 @@ const commands: Map<Category, Command[]> = new Map([
             commandsCmd, manCmd,
             siemaCmd, pfpCmd,
             bannerCmd, changelogCmd,
-            randsiteCmd, restartCmd,
-            wikiCmd, fandomCmd
+            randsiteCmd, wikiCmd,
+            fandomCmd
         ]
     ],
     [
@@ -105,6 +106,12 @@ const commands: Map<Category, Command[]> = new Map([
         [
             catCmd, dogCmd, parrotCmd,
             animalCmd
+        ]
+    ],
+    [
+        Category.DevelopersOnly,
+        [
+            restartCmd, evalCmd
         ]
     ]
 ]);
@@ -146,6 +153,8 @@ async function filterLog(msg: dsc.Message, system: string) {
 }
 
 function isFlood(content: string) {
+    return false; // you can remove this to activate anti-flood
+
     let cleaned = content
         .replace(/<@!?\d+>/g, '')
         .replace(/<@&\d+>/g, '')
@@ -177,7 +186,11 @@ function isFlood(content: string) {
     return false;
 }
 
-client.on('messageCreate', async (msg): Promise<void> => {
+function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+client.on('messageCreate', async (msg): Promise<any> => {
     // block dm's, if you want to dm me, fuck out
     if (!msg.inGuild()) return;
 
@@ -236,39 +249,64 @@ client.on('messageCreate', async (msg): Promise<void> => {
     }
 
     // neocity warn
-    if (msg.member!.roles.cache.has(cfg.unfilteredRelated.makeNeocities)) {
-        await msg.reply('https://youcantsitwithus.neocities.org');
+    if (cfg.unfilteredRelated.makeNeocities.includes(msg.author.id) && !msg.content.startsWith(cfg.general.prefix) && Math.random() < 0.01) {
+        await msg.reply('https://youcantsitwithus.neocities.org\n-# to ma bardzo mały math random więc...');
         return;
     }
 
     if (!msg.content.startsWith(cfg.general.prefix)) return;
-
-    const args = msg.content.slice(cfg.general.prefix.length).trim().split(/\s+/);
-    const cmdName = args.shift().toLowerCase();
-
-    const commandObj = findCommand(cmdName, commands);
-    console.log(commandObj);
-
-    if (!commandObj) {
-        log.replyError(msg, 'Panie, ja nie panimaju!', `Wpisz se ${cfg.general.prefix}help i dostarczę Ci listę komend!`);
-        return;
+    const messageContents = msg.content.split('&&');
+    if (cfg.general.blockedChannels.includes(msg.channelId) && messageContents.length > 1) {
+        const reply = await msg.reply('nie możesz używać operatora wielu komend, jeżeli robisz to na kanale, gdzie używanie większości komend jest zabronione...');
+        await sleep(3000);
+        return await reply.delete();
     }
-
-    const { command } = commandObj;
-
-    if (cfg.general.blockedChannels.includes(msg.channelId) &&
-        !cfg.general.commandsExcludedFromBlockedChannels.includes(command.name)) {
-
-        msg.react('❌');
-        return;
+    if (messageContents.length > 5) {
+        const reply = await msg.reply('nie możesz używać operatora wielu komend do spamowania kanałów losowymi komendami....');
+        await sleep(3000);
+        return await reply.delete();
     }
-
-    if (!canExecuteCmd(command, msg.member!)) {
-        log.replyError(msg, 'Hej, a co ty odpie*dalasz?', 'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...');
-        return;
+    let check = true;
+    messageContents.forEach((messageContent) => {
+        if (!messageContent.trim().startsWith(cfg.general.prefix)) {
+            check = false;
+        }
+    });
+    if (!check) {
+        const reply = await msg.reply('nie możesz używać operatora wielu komend, jeżeli po tym operatorze nie występuje mój prefix');
+        await sleep(3000);
+        return await reply.delete();
     }
+    messageContents.forEach(async (messageContent) => {
+        messageContent = messageContent.trim();
+        if (!messageContent.startsWith(cfg.general.prefix)) return;
+        const args = messageContent.slice(cfg.general.prefix.length).trim().split(/\s+/);
+        const cmdName = args.shift().toLowerCase();
 
-    return command.execute(msg, args, commands);
+        const commandObj = findCommand(cmdName, commands);
+        console.log(commandObj);
+
+        if (cfg.general.blockedChannels.includes(msg.channelId) &&
+            !cfg.general.commandsExcludedFromBlockedChannels.includes(cmdName)) {
+
+            await msg.react('❌');
+            return;
+        }
+
+        if (!commandObj) {
+            log.replyError(msg, 'Panie, ja nie panimaju!', `Taka komenda jak \`${cmdName.replace('\`','')}\` nie istnieje. Wpisz se ${cfg.general.prefix}help i dostarczę Ci listę komend!`);
+            return;
+        }
+
+        const { command } = commandObj;
+
+        if (!canExecuteCmd(command, msg.member!)) {
+            log.replyError(msg, 'Hej, a co ty odpie*dalasz?', 'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...');
+            return;
+        }
+
+        command.execute(msg, args, commands);
+    })
 });
 
 client.on('messageUpdate', async (oldMsg, msg) => {
@@ -378,7 +416,7 @@ client.on('guildMemberRemove', async (member) => {
 });
 
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
-    const rolesToWatch = [cfg.unfilteredRelated.gifBan, cfg.unfilteredRelated.makeNeocities];
+    const rolesToWatch = [cfg.unfilteredRelated.gifBan];
     const allowedRoleIds = cfg.unfilteredRelated.eligibleToRemoveGifBan;
 
     const removedRoles = rolesToWatch.filter(roleId =>
@@ -586,6 +624,144 @@ async function main() {
 
     actionsManager.addAction(eclairAIAction);
     actionsManager.addActions(...AutoModRules.all());
+    actionsManager.addAction({
+        activationEventType: PredefinedActionEventTypes.OnMessageCreate,
+        constraints: [
+            (msg: dsc.Message) => {
+                if (msg.author.bot) return false;
+                const channel = cfg.general.forFun.media.find((mc) => mc.channel == msg.channelId);
+                if (channel == null || channel == undefined) return false;
+                return true;
+            }
+        ],
+        callbacks: [
+            async (msg: dsc.Message) => {
+                const channelConfig = cfg.general.forFun.media.find((mc) => mc.channel == msg.channelId)!;
+                let check = false;
+                if (msg.attachments.size > 0) {
+                    for (const attachment of msg.attachments.values()) {
+                        if (attachment.contentType?.startsWith("image/")) {
+                            check = true;
+                        } else if (attachment.contentType?.startsWith("video/")) {
+                            check = true;
+                        }
+                    }
+                }
+                if (/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}/.test(msg.content)) {
+                    check = true;
+                }
+                if (check) {
+                    if (channelConfig.shallCreateThread) {
+                        await msg.startThread({
+                            name: 'Odpowiedzi!',
+                            reason: 'Tutaj się pisze odpowiedzi czy coś.'
+                        });
+                    }
+                    for (const reaction of channelConfig.addReactions) {
+                        await msg.react(reaction);
+                    }
+                } else if (channelConfig.deleteMessageIfNotMedia) {
+                    const reply = await msg.reply('to nie do tego kanał <:joe_wow:1308174905489100820>');
+                    await sleep(2000);
+                    await msg.delete();
+                    await reply.delete();
+                    return;
+                }
+            }
+        ]
+    });
+    actionsManager.addAction({
+        activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
+        constraints: [
+            (msg: dsc.Message) => {
+                if (msg.author.bot) return false;
+                if (msg.channelId !== cfg.general.forFun.countingChannel) return false;
+                return true;
+            }
+        ],
+        callbacks: [
+            async (msg: dsc.Message) => {
+                const number = parseInt(msg.content.trim());
+                if (isNaN(number)) {
+                    const reply = await msg.reply(`to nie do tego kanał <:joe_wow:1308174905489100820>`);
+                    await sleep(1000);
+                    await msg.delete();
+                    await reply.delete();
+                    return;
+                }
+
+                const messages = await msg.channel.messages.fetch({ limit: 2 });
+                const lastMsg = messages.filter(m => m.id !== msg.id).first();
+
+                let lastNumber = 0;
+                if (lastMsg) {
+                    const parsed = parseInt(lastMsg.content.trim());
+                    if (!isNaN(parsed)) {
+                        lastNumber = parsed;
+                    }
+                }
+
+                if (number === lastNumber + 1) {
+                    return;
+                } else {
+                    const reply = await msg.reply(`pomyliłeś się <:joe_smutny:1317904814025474088>`);
+                    await sleep(1000);
+                    await msg.delete();
+                    await reply.delete();
+                    return;
+                }
+            }
+        ]
+    });
+    actionsManager.addAction({
+        activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
+        constraints: [
+            (msg: dsc.Message) => {
+                if (msg.author.bot) return false;
+                if (msg.channelId !== cfg.general.forFun.lastLetterChannel) return false; 
+                return true;
+            }
+        ],
+        callbacks: [
+            async (msg: dsc.Message) => {
+                const word = msg.content.trim();
+                if (word.length < 1) {
+                    const reply = await msg.reply(`to nie do tego kanał <:joe_wow:1308174905489100820>`);
+                    await sleep(1000);
+                    await msg.delete();
+                    await reply.delete();
+                    return;
+                }
+
+                const messages = await msg.channel.messages.fetch({ limit: 2 });
+                const lastMsg = messages.filter(m => m.id !== msg.id).first();
+
+                if (lastMsg) {
+                    const lastWord = lastMsg.content.trim();
+                    if (lastWord.length > 0) {
+                        const expectedFirst = lastWord[lastWord.length - 1].toLowerCase();
+                        const actualFirst = word[0].toLowerCase();
+
+                        if (expectedFirst !== actualFirst) {
+                            const reply = await msg.reply(`pomyliłeś się <:joe_smutny:1317904814025474088>`);
+                            await sleep(1000);
+                            await msg.delete();
+                            await reply.delete();
+                            return;
+                        }
+                    }
+                }
+                if (msg.content.endsWith('ą')) {
+                    const reply = await msg.reply(`no ej no przeczytałeś kanał opis? <:joe_zatrzymanie_akcji_serca:1308174897758994443>`);
+                    await sleep(1000);
+                    await msg.delete();
+                    await reply.delete();
+                    return;
+                }
+            }
+        ]
+    });
+
     actionsManager.registerEvents(client);
 
     const populationTemplateChannel = await getChannel('1235591547437973557') as dsc.GuildChannel;

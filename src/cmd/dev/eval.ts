@@ -7,10 +7,10 @@ import * as dsc from 'discord.js';
 
 import { PredefinedColors } from '../../util/color.js';
 
-export const restartCmd: Command = {
-    name: 'restart',
-    longDesc: 'Restartuje bota... Nie tykaj!',
-    shortDesc: 'Szybki restart bota!',
+export const evalCmd: Command = {
+    name: 'eval',
+    longDesc: 'Wykonuje kod JavaScript. Jest naprawdę potencjalnie unsafe, dlatego to jest locknięte do granic możliwości.',
+    shortDesc: 'Wykonuje kod JavaScript, więc jest bardzo unsafe.',
     expectedArgs: [],
 
     aliases: [],
@@ -21,8 +21,6 @@ export const restartCmd: Command = {
         if (msg.author.id !== '990959984005222410') {
             return msg.reply('nuh uh');
         }
-        console.log('Issued restart. This will work due to the behaviour of Pterodactyl Daemon.');
-        await msg.reply('jusz siem restartujem plis łejt plis plis plis łejt');
-        process.exit(1);
+        msg.reply(`wynik twojej super komendy:\n\`\`\`${(0, eval)(args.join(' '))}\`\`\``) // eval command
     }
 }

@@ -41,6 +41,10 @@ export class Category {
         case 'gifs':
             return Category.Gifs;
 
+        case 'deweloperskie':
+        case 'dev':
+            return Category.DevelopersOnly;
+
         default:
             return null;
         }
@@ -59,6 +63,11 @@ export class Category {
     static readonly Economy = new Category(
         '💸', 'Ekonomia', 'Komendy dotyczące ekonomi',
         'Chcesz troche popracować albo sprawdzić swój stan konta? Komendy z tej kategorii właśnie to umożliwiają!',
+        PredefinedColors.DarkGreen,
+    );
+    static readonly DevelopersOnly = new Category(
+        '💻', 'Deweloperskie', 'Komendy dla deweloperów',
+        'Komendy które Ci nie zadziałają, bo nie jesteś deweloperem. A jak jesteś to dużo i tak zablokowałem bo są limity o których nie wiesz / są potencjalnie unsafe, np. restart może być tylko raz na 60 sekund, a eval to... well... jest unsafe.',
         PredefinedColors.DarkGreen,
     );
     static readonly Leveling = new Category(

@@ -45,7 +45,7 @@ export const changelogCmd: Command = {
                         .setAuthor( { name: 'EclairBOT' } )
                         .setColor(PredefinedColors.Pink)
                         .setTitle('EclairBOT 1.1')
-                        .setDescription('Teraz można wyświetlać najlepsze artykuły z fandomu Piekarnii Eklerki. Dodano też komendę wiki, która wyświetla rzeczy z Wikipedii. Została dodana komenda do restartu bota. A i prawie bym zapomniał, teraz masz dość łatwy sposób by usuwać wiadomości.')
+                        .setDescription('Teraz można wyświetlać najlepsze artykuły z fandomu Piekarnii Eklerki. Dodano też komendę wiki, która wyświetla rzeczy z Wikipedii. Została dodana komenda do restartu bota. A i prawie bym zapomniał, teraz masz dość łatwy sposób by usuwać wiadomości. Został dodany filt anti-spam i anti-flood (anti-flood obecnie wyłączony ze względu na jego słabą jakość). Podaj `1.0` jako argument by zobaczyć poprzednią aktualizację.')
                 ]
             });
         }
