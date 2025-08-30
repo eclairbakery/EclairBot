@@ -249,6 +249,13 @@ client.on('messageCreate', async (msg): Promise<any> => {
     // now goes leveling
     if (!msg.author.bot) await addExperiencePoints(msg);
 
+    // easter egg
+    if (msg.content === 'obserwuję was' && msg.author.id == '1409902422108934226') {
+        return msg.reply('ja cb też');
+    } else if (msg.author.id == '1409902422108934226' && (await msg.fetchReference()).author.id == client.user.id) {
+        return msg.reply('jestem istotą wyższą a jeśli to kwestionujesz lub sądzisz że wyższy jesteś to kłamiesz');
+    }
+
     // gifs ban
     if (msg.member!.roles.cache.has(cfg.unfilteredRelated.gifBan) && msg.channelId !== cfg.unfilteredRelated.unfilteredChannel && (msg.attachments.some(att => att.name?.toLowerCase().endsWith('.gif')) || msg.content.includes('tenor.com') || msg.content.includes('.gif'))) {
         await msg.reply('masz bana na gify');

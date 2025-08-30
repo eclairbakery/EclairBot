@@ -62,6 +62,17 @@ async function getDisambiguationTitles(title: string): Promise<string[]> {
     return titles;
 }
 
+async function downloadFromWikipedia(language_versions: string[], args: string[]) {
+    let fetched: Response;
+    for (const lang of language_versions) {
+        const url = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(args.join('_'))}`;
+        fetched = await fetch(url);
+        if (!fetched.ok) continue;
+        break;
+    }
+    return fetched;
+}
+
 export const wikiCmd: Command = {
     name: 'wiki',
     longDesc: 'Generalnie pobiera artykuł z Wikipedii. Super użyteczne!',
@@ -71,8 +82,7 @@ export const wikiCmd: Command = {
     allowedRoles: null,
     allowedUsers: [],
     async execute(msg, args) {
-        const url = `https://pl.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(args.join('_'))}`;
-        const fetched = await fetch(url);
+        const fetched = await downloadFromWikipedia(['pl' /** polish */, 'simple' /** simple english */, 'en' /** english */], args);
         if (!fetched.ok) {
             return msg.reply({
                 embeds: [
