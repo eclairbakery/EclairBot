@@ -9,18 +9,7 @@ function calculateLevel(xp: number, levelDivider: number): number {
     );
 }
 
-export const lvlRoles = [
-    "1297559525989158912",
-    "1235550102563852348",
-    "1235550105751392276",
-    "1235550109891035218",
-    "1235570092218122251",
-    "1235594078305914880",
-    "1235594081556627577",
-    "1235594083544858667",
-    "1235594085188767835",
-    "1390802440739356762"
-];
+export const lvlRoles = Object.values(cfg.general.leveling.milestone_roles);
 
 export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     // check if eligible
@@ -64,6 +53,11 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
                 if (milestoneRoleId && msg.guild) {
                     const member = msg.guild.members.cache.get(msg.author.id);
                     if (member) {
+                        lvlRoles.forEach((roleId) => {
+                            try {
+                                if (member.roles.cache.has(roleId)) member.roles.remove(roleId);
+                            } catch {}
+                        });
                         member.roles.add(milestoneRoleId).catch((e: any) => {
                             log.replyError(msg, `Błąd`, e.message ?? e);
                         });
