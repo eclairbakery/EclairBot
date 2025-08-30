@@ -34,6 +34,13 @@ import { OnForceReloadTemplates } from './events/templatesEvents.js';
 
 import findCommand from './util/findCommand.js';
 import canExecuteCmd from './util/canExecuteCmd.js';
+import sleep from './util/sleep.js';
+
+import { countingChannelAction } from './features/actions/countingChannel.js';
+import { lastLetterChannelAction } from './features/actions/lastLetterChannel.js';
+import { mediaChannelAction } from './features/actions/mediaChannelAction.js';
+
+import { welcomeNewUserAction, sayGoodbyeAction } from './features/actions/welcomer.js';
 
 import { warnCmd } from './cmd/mod/warn.js';
 import { kickCmd } from './cmd/mod/kick.js';
@@ -189,10 +196,6 @@ function isFlood(content: string) {
     }
 
     return false;
-}
-
-function sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 client.on('messageCreate', async (msg): Promise<any> => {
@@ -395,29 +398,12 @@ client.on('channelDelete', async (chan) => {
 });
 
 client.on('guildMemberAdd', async (member) => {
-    if (!cfg.general.welcomer.enabled) return;
-    const welcomeChannel = await client.channels.fetch(cfg.general.welcomer.channelId);
-    if (welcomeChannel == null || !welcomeChannel.isSendable()) return;
 
-    const generalChannel = await client.channels.fetch(cfg.general.welcomer.general);
-    if (generalChannel == null || !generalChannel.isSendable()) return;
-
-    const messages = [
-        `<:emoji1:1410551894023082027> Siema, ale przystojny jesteś ${member.user.username} ngl`,
-        `<:emoji1:1410551894023082027> Kocham cię ${member.user.username}`,
-        `<:emoji1:1410551894023082027> C-cczęsto masz tak na imie ${member.user.username}?`,
-        `<:emoji1:1410551894023082027> nie chce mi się, ${member.user.username}`
-    ];
-
-    await welcomeChannel.send(messages[Math.floor(Math.random() * messages.length)]);
-    await generalChannel.send(`witaj <@${member.user.id}>, będzie nam miło jak się przywitasz czy coś <:emoji_a_radosci_nie_bylo_konca:1376664467416420362>`);
 });
 
 client.on('guildMemberRemove', async (member) => {
     if (!cfg.general.welcomer.enabled) return;
-    const channel = await client.channels.fetch(cfg.general.welcomer.channelId);
-    if (!channel.isSendable()) return;
-    await channel.send(`<:emoji2:1410551857935290368> do widzenia ${member.user.username} 🥀 już zmieniłem zdanie nie jesteś przystojny`);
+
 });
 
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
@@ -515,7 +501,7 @@ client.on('interactionCreate', async (int) => {
     }
     if (!cmdObject) {
         await int.reply({ content: 'Nie znam takiej komendy!', flags: ["Ephemeral"] });
-        return; 
+        return;
     }
 
     if (cfg.general.blockedChannels.includes(channelId) &&
@@ -629,143 +615,12 @@ async function main() {
 
     actionsManager.addAction(eclairAIAction);
     actionsManager.addActions(...AutoModRules.all());
-    actionsManager.addAction({
-        activationEventType: PredefinedActionEventTypes.OnMessageCreate,
-        constraints: [
-            (msg: dsc.Message) => {
-                if (msg.author.bot) return false;
-                const channel = cfg.general.forFun.media.find((mc) => mc.channel == msg.channelId);
-                if (channel == null || channel == undefined) return false;
-                return true;
-            }
-        ],
-        callbacks: [
-            async (msg: dsc.Message) => {
-                const channelConfig = cfg.general.forFun.media.find((mc) => mc.channel == msg.channelId)!;
-                let check = false;
-                if (msg.attachments.size > 0) {
-                    for (const attachment of msg.attachments.values()) {
-                        if (attachment.contentType?.startsWith("image/")) {
-                            check = true;
-                        } else if (attachment.contentType?.startsWith("video/")) {
-                            check = true;
-                        }
-                    }
-                }
-                if (/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}/.test(msg.content)) {
-                    check = true;
-                }
-                if (check) {
-                    if (channelConfig.shallCreateThread) {
-                        await msg.startThread({
-                            name: 'Odpowiedzi!',
-                            reason: 'Tutaj się pisze odpowiedzi czy coś.'
-                        });
-                    }
-                    for (const reaction of channelConfig.addReactions) {
-                        await msg.react(reaction);
-                    }
-                } else if (channelConfig.deleteMessageIfNotMedia) {
-                    const reply = await msg.reply('to nie do tego kanał <:joe_wow:1308174905489100820>');
-                    await sleep(2000);
-                    await msg.delete();
-                    await reply.delete();
-                    return;
-                }
-            }
-        ]
-    });
-    actionsManager.addAction({
-        activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
-        constraints: [
-            (msg: dsc.Message) => {
-                if (msg.author.bot) return false;
-                if (msg.channelId !== cfg.general.forFun.countingChannel) return false;
-                return true;
-            }
-        ],
-        callbacks: [
-            async (msg: dsc.Message) => {
-                const number = parseInt(msg.content.trim());
-                if (isNaN(number)) {
-                    const reply = await msg.reply(`to nie do tego kanał <:joe_wow:1308174905489100820>`);
-                    await sleep(1000);
-                    await msg.delete();
-                    await reply.delete();
-                    return;
-                }
 
-                const messages = await msg.channel.messages.fetch({ limit: 2 });
-                const lastMsg = messages.filter(m => m.id !== msg.id).first();
+    actionsManager.addAction(mediaChannelAction);
+    actionsManager.addAction(countingChannelAction);
+    actionsManager.addAction(lastLetterChannelAction);
 
-                let lastNumber = 0;
-                if (lastMsg) {
-                    const parsed = parseInt(lastMsg.content.trim());
-                    if (!isNaN(parsed)) {
-                        lastNumber = parsed;
-                    }
-                }
-
-                if (number === lastNumber + 1) {
-                    return;
-                } else {
-                    const reply = await msg.reply(`pomyliłeś się <:joe_smutny:1317904814025474088>`);
-                    await sleep(1000);
-                    await msg.delete();
-                    await reply.delete();
-                    return;
-                }
-            }
-        ]
-    });
-    actionsManager.addAction({
-        activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
-        constraints: [
-            (msg: dsc.Message) => {
-                if (msg.author.bot) return false;
-                if (msg.channelId !== cfg.general.forFun.lastLetterChannel) return false; 
-                return true;
-            }
-        ],
-        callbacks: [
-            async (msg: dsc.Message) => {
-                const word = msg.content.trim();
-                if (word.length < 1) {
-                    const reply = await msg.reply(`to nie do tego kanał <:joe_wow:1308174905489100820>`);
-                    await sleep(1000);
-                    await msg.delete();
-                    await reply.delete();
-                    return;
-                }
-
-                const messages = await msg.channel.messages.fetch({ limit: 2 });
-                const lastMsg = messages.filter(m => m.id !== msg.id).first();
-
-                if (lastMsg) {
-                    const lastWord = lastMsg.content.trim();
-                    if (lastWord.length > 0) {
-                        const expectedFirst = lastWord[lastWord.length - 1].toLowerCase();
-                        const actualFirst = word[0].toLowerCase();
-
-                        if (expectedFirst !== actualFirst) {
-                            const reply = await msg.reply(`pomyliłeś się <:joe_smutny:1317904814025474088>`);
-                            await sleep(1000);
-                            await msg.delete();
-                            await reply.delete();
-                            return;
-                        }
-                    }
-                }
-                if (msg.content.endsWith('ą')) {
-                    const reply = await msg.reply(`no ej no przeczytałeś kanał opis? <:joe_zatrzymanie_akcji_serca:1308174897758994443>`);
-                    await sleep(1000);
-                    await msg.delete();
-                    await reply.delete();
-                    return;
-                }
-            }
-        ]
-    });
+    actionsManager.addActions(welcomeNewUserAction, sayGoodbyeAction);
 
     actionsManager.registerEvents(client);
 
