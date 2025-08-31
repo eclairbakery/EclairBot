@@ -1,9 +1,8 @@
 process.on('uncaughtException', async (e) => {
     console.error(e);
     try {
-        const stringed = e.message ? e.message : (e.toString ? e.toString() : e as any as string);
         const user = await client.users.fetch('990959984005222410');
-        await user.send(`siema hiouston jest problem:\n\`\`\`${stringed}\`\`\``);
+        await user.send(`siema hiouston jest problem:\n\`\`\`${e}\`\`\``);
     } catch {}
 });
 
@@ -254,6 +253,8 @@ client.on('messageCreate', async (msg): Promise<any> => {
         return msg.reply('ja cb też');
     } else if (msg.author.id == '1409902422108934226' && (await msg.fetchReference()).author.id == client.user.id) {
         return msg.reply('jestem istotą wyższą a jeśli to kwestionujesz lub sądzisz że wyższy jesteś to kłamiesz');
+    } else if (msg.content === 'siema' && msg.author.id == '1409902422108934226') {
+        return msg.reply('siema watchdog, pogódźmy się\n-#(jak znowu zaczniesz mieć do mnie problemy to skończy się anti-spamem, uważaj podwładny)');
     }
 
     // gifs ban
