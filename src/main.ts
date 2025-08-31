@@ -254,7 +254,7 @@ client.on('messageCreate', async (msg): Promise<any> => {
     } else if (msg.author.id == '1409902422108934226' && (await msg.fetchReference()).author.id == client.user.id) {
         return msg.reply('jestem istotą wyższą a jeśli to kwestionujesz lub sądzisz że wyższy jesteś to kłamiesz');
     } else if (msg.content === 'siema' && msg.author.id == '1409902422108934226') {
-        return msg.reply('siema watchdog, pogódźmy się\n-#(jak znowu zaczniesz mieć do mnie problemy to skończy się anti-spamem, uważaj podwładny)');
+        return msg.reply('siema watchdog, pogódźmy się\n-# (jak znowu zaczniesz mieć do mnie problemy to skończy się anti-spamem, uważaj podwładny)');
     }
 
     // gifs ban
