@@ -187,6 +187,10 @@ class ActionManager {
         client.on(eventName, async (...args: any[]) => {
             const ctx = getCtx(...args);
 
+            if (eventName == 'messageCreate') {
+                if (!(ctx as MessageEventCtx).inGuild()) return;
+            }
+
         actionsLoop:
             for (const action of this.actions.get(eventType) ?? []) {
                 if (actionFilter && !actionFilter(action, ...args)) continue;

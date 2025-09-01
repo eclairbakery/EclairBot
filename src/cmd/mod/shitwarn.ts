@@ -25,7 +25,7 @@ export const shitwarnCmd: Command = {
         }
     ],
 
-    aliases: cfg.mod.commands.warn.aliases,
+    aliases: ['fakewarn'],
     allowedRoles: cfg.mod.commands.warn.allowedRoles,
     allowedUsers: cfg.mod.commands.warn.allowedUsers,
 
@@ -104,7 +104,7 @@ export const shitwarnCmd: Command = {
         points = clamp(cfg.mod.commands.warn.minPoints, points, cfg.mod.commands.warn.maxPoints);
 
         const embed = new dsc.EmbedBuilder()
-            .setTitle(`📢 Masz warna, ${targetUser.user.username}!`)
+            .setTitle(`📢 Masz fake-warna/shitwarna, ${targetUser.user.username}!`)
             .setDescription(
                 `Właśnie dostałeś darmoweeego warna (punktów: ${points})!`,
             )

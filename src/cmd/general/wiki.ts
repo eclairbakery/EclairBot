@@ -82,6 +82,20 @@ export const wikiCmd: Command = {
     allowedRoles: null,
     allowedUsers: [],
     async execute(msg, args) {
+        if (args.join(' ').toLocaleLowerCase().includes('auroros') || args.join(' ').toLocaleLowerCase().includes('eklerka') || args.join(' ').toLocaleLowerCase().includes('piekarnia eklerki') || args.join(' ').toLocaleLowerCase().includes('gorciu') || args.join(' ').toLocaleLowerCase().includes('maqix')) {
+            return msg.reply({
+                embeds: [
+                    {
+                        author: {
+                            name: 'EclairBOT'
+                        },
+                        title: 'Ta komenda nie jest do tego!',
+                        description: 'Rzeczy takie jak `eklerka`, `aurorOS`, `piekarnia eklerki`, `gorciu`, `maqix`, itd. nie są na wikipedii... Ale **są na fandomie**, więc możesz użyć komendy fandom!',
+                        color: PredefinedColors.Blurple
+                    }
+                ]
+            });
+        }
         const fetched = await downloadFromWikipedia(['pl' /** polish */, 'simple' /** simple english */, 'en' /** english */], args);
         if (!fetched.ok) {
             return msg.reply({

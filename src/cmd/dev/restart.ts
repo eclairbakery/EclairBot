@@ -10,7 +10,7 @@ import { PredefinedColors } from '../../util/color.js';
 let canRestart = false;
 
 setTimeout(() => {
-    canRestart = true;
+    canRestart = true; //fix: aborting automatic restart, last crash occurred less than 60 seconds ago
 }, 61 * 1000);
 
 export const restartCmd: Command = {

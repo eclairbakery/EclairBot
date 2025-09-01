@@ -45,7 +45,8 @@ export interface Config {
         commandsExcludedFromBlockedChannels: string[],
         moderationProtectedRoles: Snowflake[],
         hallOfFame: Snowflake,
-        hallOfFameEligibleChannels: Snowflake[]
+        hallOfFameEligibleChannels: Snowflake[],
+        worksInDM: string[]
     };
 
     cheatsRoles: {
@@ -154,6 +155,11 @@ export interface Config {
                 /* Minimum points that can be given for a warn */
                 minPoints: number;
             };
+            ping: {
+                allowedRoles: Snowflake[],
+                deathChatRenewInterval: number,
+                eclairNewsRenewInterval: number
+            }
         };
     };
 }
@@ -197,6 +203,7 @@ export const cfg: Config = {
 
     general: {
         prefix: 'sudo ',
+        worksInDM: ['cat', 'dog', 'parrot', 'animal', 'changelog', 'wiki', 'fandom', 'randsite'],
         leveling: {
             // leave it like it was in startIT
             xpPerMessage: 4,
@@ -221,7 +228,7 @@ export const cfg: Config = {
         hallOfFame: '1392128976574484592',
         hallOfFameEligibleChannels: ['1397628186795311246', '1264971505662689311', '1342793182265741394', '1392567715407073402'],
         blockedChannels: ['1264971505662689311', '1392567715407073402'],
-        commandsExcludedFromBlockedChannels: ['ban', 'mute', 'unmute', 'warn', 'kick', 'warnlist', 'warn-clear', 'cat', 'dog', 'parrot', 'animal', 'xp', 'shitwarn', 'clear', 'wiki', 'fandom', 'restart'],
+        commandsExcludedFromBlockedChannels: ['ban', 'mute', 'unmute', 'warn', 'kick', 'warnlist', 'warn-clear', 'cat', 'dog', 'parrot', 'animal', 'xp', 'shitwarn', 'clear', 'wiki', 'fandom', 'restart', 'notify'],
         welcomer: {
             channelId: "1235560269871190056",
             enabled: true,
@@ -302,6 +309,11 @@ export const cfg: Config = {
                 maxPoints: 30,
                 minPoints: 1,
             },
+            ping: {
+                allowedRoles: ['1368301367655141446', '1274478730697510997', '1280884378586845216', '1368171061585117224'],
+                deathChatRenewInterval: 2 * 60 * 60 * 1000,
+                eclairNewsRenewInterval: 6 * 60 * 60 * 1000
+            }
         },
     },
 };

@@ -110,6 +110,17 @@ export const warnCmd: Command = {
 
         points = clamp(cfg.mod.commands.warn.minPoints, points, cfg.mod.commands.warn.maxPoints);
 
+        if (targetUser.id == msg.client.user.id) {
+            points = 2;
+            reason = 'nie warnuje się istoty wyższej panie';
+            targetUser = msg.member;
+        }
+
+        if (targetUser.id == '1409902422108934226') {
+            points = 2;
+            reason = 'co prawda watchdog istotą wyższą nie jest ale sie lubimy więc daje ci warna. nice try';
+            targetUser = msg.member;
+        }
 
         let warnID: number;
         try {
