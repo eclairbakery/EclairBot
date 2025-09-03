@@ -1,2 +1,2 @@
 # EcliarBot
-discord bot specifically for the ecliar bakery
+Discord bot specifically for the ecliar bakery.
