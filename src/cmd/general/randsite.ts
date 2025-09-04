@@ -1,4 +1,4 @@
-import { Command, Category } from '../../bot/command.js';
+import { Command, Category, NextGenerationCommand } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
 import { db, sqlite } from '../../bot/db.js';
 
@@ -33,23 +33,30 @@ const nonNeocitiesPages = [
     'https://internet.com'
 ];
 
-export const randsiteCmd: Command = {
+export const randsiteCmd: NextGenerationCommand = {
     name: 'randsite',
-    longDesc: 'Siema... Czujesz się fajnie? Chcesz eksploracji? Tą komendą wyświetlisz losową stronę na Internecie.',
-    shortDesc: 'Tą komendą wyświetlisz losową stronę na Internecie.',
-    expectedArgs: [
+    description: {
+        main: 'Siema... Czujesz się fajnie? Chcesz eksploracji? Tą komendą wyświetlisz losową stronę na Internecie.',
+        short: 'Tą komendą wyświetlisz losową stronę na Internecie.',
+    },
+    args: [
         {
             name: 'neocities-bypass',
-            desc: 'Napisz tutaj `all` by nie wyświetlało tylko stron z Neocities/Nekoweb'
+            description: 'Napisz tutaj `all` by nie wyświetlało tylko stron z Neocities/Nekoweb',
+            optional: true,
+            type: 'string'
         }
     ],
     aliases: [],
-    allowedRoles: null,
-    allowedUsers: [],
+    permissions: {
+        discordPerms: [],
+        allowedRoles: null,
+        allowedUsers: null,
+    },
 
-    async execute(msg, args, commands) {
+    async execute(api) {
         const everything = [...neocitiesPages];
-        if (args.includes('all')) everything.push(...nonNeocitiesPages);
-        return msg.reply(everything[Math.floor(Math.random() * everything.length)]);
+        if ((api.getTypedArg('neocities-bypass', 'string').value as string ?? 'xd').includes('all')) everything.push(...nonNeocitiesPages);
+        return api.msg.reply(everything[Math.floor(Math.random() * everything.length)]);
     },
 };

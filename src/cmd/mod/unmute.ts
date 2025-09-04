@@ -1,113 +1,105 @@
-import { Command } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js'
-import { db, sqlite } from '../../bot/db.js';
-
+import { NextGenerationCommand } from '../../bot/command.js';
+import { cfg } from '../../bot/cfg.js';
 import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
-
 import { PredefinedColors } from '../../util/color.js';
 
 const cmdCfg = cfg.mod.commands.mute;
 
-export const unmuteCmd: Command = {
+export const unmuteCmd: NextGenerationCommand = {
     name: 'unmute',
-    longDesc: 'Oddaję Ci prawo głosu. Nie marnuj go na pisanie "xd" i emoji bakłażana.',
-    shortDesc: 'Poprostu unmute',
-    expectedArgs: [
-        { name: 'user',   desc: 'Komu unmute chcesz dać?' },
-        { name: 'reason', desc:
-            cmdCfg.reasonRequired ? 'Po prostu powód otworzenia mordy chłopa.' : 'Po prostu powód otworzenia mordy chłopa. Możesz pominąć, ale bądź tak dobry i tego nie rób...',
-        }
+    description: {
+        main: 'Oddaję Ci prawo głosu. Nie marnuj go na pisanie "xd" i emoji bakłażana.',
+        short: 'Po prostu unmute',
+    },
+    args: [
+        { name: 'user', type: 'string', description: 'Komu unmute chcesz dać?', optional: false },
+        {
+            name: 'reason',
+            type: 'string',
+            description: cmdCfg.reasonRequired
+                ? 'Po prostu powód otworzenia mordy chłopa.'
+                : 'Po prostu powód otworzenia mordy chłopa. Możesz pominąć, ale bądź tak dobry i tego nie rób...',
+            optional: !cmdCfg.reasonRequired
+        },
     ],
-
     aliases: cmdCfg.aliases,
-    allowedRoles: cmdCfg.allowedRoles,
-    allowedUsers: cmdCfg.allowedUsers,
+    permissions: {
+        discordPerms: null,
+        allowedRoles: cmdCfg.allowedRoles,
+        allowedUsers: cmdCfg.allowedUsers,
+    },
 
-    async execute(msg, args) {
+    async execute(api) {
         let targetUser: dsc.GuildMember | null = null;
         let reason = '';
 
-        if (msg.reference?.messageId) {
-            const repliedMsg = await msg.channel.messages.fetch(msg.reference.messageId);
-            if (repliedMsg) {
-                targetUser = repliedMsg.member;
-            }
-            reason = args.join(' ').trim();
-        } else if (args.length > 0) {
-            const userMention = args[0].match(/^<@!?(\d+)>$/);
-            let userId: string | null = null;
-            let reasonArgs: string[];
+        const userArg = api.getArg('user')?.value;
+        const reasonArg = api.args.find((a) => a.name === 'reason')?.value as string | undefined;
 
-            if (userMention) {
-                userId = userMention[1];
-                reasonArgs = args.slice(1);
-            } else if (/^\d+$/.test(args[0])) {
-                userId = args[0];
-                reasonArgs = args.slice(1);
-            } else {
-                reasonArgs = [...args];
-            }
+        if (api.referenceMessage) {
+            targetUser = api.referenceMessage.member.plainMember;
+            reason = reasonArg ?? '';
+        } else if (userArg) {
+            const mention = (userArg as string).match(/^<@!?(\d+)>$/);
+            const userId = mention ? mention[1] : /^\d+$/.test(userArg as string) ? (userArg as string) : null;
 
             if (userId) {
-                targetUser = await msg.guild.members.fetch(userId).catch(() => null);
+                targetUser = await api.msg.guild?.members.fetch(userId).catch(() => null) ?? null;
             }
 
-            reason = reasonArgs.join(' ').trim();
+            reason = reasonArg ?? '';
         }
 
-        if (targetUser == null) {
-            log.replyError(msg, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyśle komu ty chcesz dać tego untimeouta? Użycie: odpowiedzi na wiadomość lub !mute <@user> <powód>');
-            return;
+        if (!targetUser) {
+            return log.replyError(
+                api.msg,
+                'Nie podano celu',
+                'Musisz wskazać kogo odciszyć (odpowiedź na wiadomość lub /unmute <@user> <powód>).'
+            );
         }
 
-        if (reason == "" || reason == undefined) {
+        if (!reason) {
             if (cmdCfg.reasonRequired) {
-                log.replyError(msg, 'Nie podano powodu', 'Ale za co te odwyciszenie? Poproszę o doprecyzowanie!');
-                return;
-            } else {
-                reason = 'Moderator nie poszczycił się zbytnią znajomością komendy i nie podał powodu... Ale może to i lepiej';
+                return log.replyError(api.msg, 'Nie podano powodu', 'Ale za co te odwyciszenie? Poproszę o doprecyzowanie!');
             }
+            reason =
+                'Moderator nie poszczycił się zbytnią znajomością komendy i nie podał powodu... Ale może to i lepiej';
         }
 
         try {
-            await targetUser.timeout(null, reason);
-            const role = msg.guild.roles.cache.find(r => r.name.toLowerCase().includes("zamknij ryj"));
-            if (!role) throw new Error('lmfao');
-            await targetUser.roles.remove(role, reason);
-            const channel = await msg.client.channels.fetch(cfg.logs.channel);
-            if (!channel.isSendable()) return;
-            channel.send({
+            await targetUser.timeout(null, reason).catch(() => null);
+
+            const muteRole = api.msg.guild?.roles.cache.find((r) => r.name.toLowerCase().includes('zamknij ryj'));
+            if (muteRole) {
+                await targetUser.roles.remove(muteRole, reason).catch(() => null);
+            }
+
+            const channel = await api.msg.guild?.channels.fetch(cfg.logs.channel).catch(() => null);
+            if (channel && (channel as dsc.TextChannel).isSendable()) {
+                (channel as dsc.TextChannel).send({
+                    embeds: [
+                        new dsc.EmbedBuilder()
+                            .setAuthor({ name: 'EclairBOT' })
+                            .setColor(PredefinedColors.Pink)
+                            .setTitle('Odciszono użytkownika')
+                            .setDescription(`Użytkownik <@${targetUser.id}> został odciszony przez <@${api.msg.author.id}>.`)
+                            .addFields({ name: 'Powód', value: reason }),
+                    ],
+                });
+            }
+
+            return api.msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
-                        .setAuthor({
-                            name: 'EclairBOT'
-                        })
-                        .setColor(PredefinedColors.Pink)
-                        .setTitle('Odciszono ludzia')
-                        .setDescription(`Użytkownik <@${targetUser.id}> został odciszony przez <@${msg.author.id}>.`)
-                        .setFields([
-                            {
-                                name: 'Powód',
-                                value: reason
-                            }
-                        ])
-                ]
+                        .setTitle(`📢 ${targetUser.user.username} został odmutowany!`)
+                        .setDescription('Tylko nie spam chatu i przestrzegaj regulaminu... I guess...')
+                        .setColor(PredefinedColors.Purple),
+                ],
             });
-        } catch (e) {
-            console.log(e);
-            return log.replyError(msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał?');
+        } catch (err) {
+            console.error(err);
+            return log.replyError(api.msg, 'Błąd', 'Nie udało się odciszyć użytkownika. Sprawdź permisje.');
         }
-
-        msg.reply({
-            embeds: [
-                new dsc.EmbedBuilder()
-                    .setTitle(`📢 ${targetUser.user.username} został odmutowany!`)
-                    .setDescription(
-                        `Tylko nie spam chatu i przestrzegaj regulaminu... I guess...`,
-                    )
-                    .setColor(PredefinedColors.Purple),
-            ],
-        });
-    }
-}
+    },
+};

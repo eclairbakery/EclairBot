@@ -1,10 +1,9 @@
 import { Command } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js'
-import { db, sqlite } from '../../bot/db.js';
+import { cfg } from '../../bot/cfg.js';
+import { db } from '../../bot/db.js';
 
 import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
-
 import { PredefinedColors } from '../../util/color.js';
 
 export const warnlistCmd: Command = {
@@ -28,15 +27,31 @@ export const warnlistCmd: Command = {
                 return log.replyError(msg, 'Zero warnów', 'Nie ma żadnego w bazie warna...');
             }
 
-            let fields: dsc.APIEmbedField[] = [];
+            const fields: dsc.APIEmbedField[] = [];
             let i = 0;
 
             for (const row of rows) {
                 i++;
-                if (i == 25) return;
+                if (i > 25) break;
+
+                const user = await msg.client.users.fetch(row.user_id).catch(() => null);
+                const moderator = row.moderator_id
+                    ? await msg.client.users.fetch(row.moderator_id).catch(() => null)
+                    : null;
+
+                let value = `\`${row.reason_string}\` (punktów: ${row.points}, id: ${row.id})`;
+
+                if (moderator) {
+                    value += `\nModerator: <@${moderator.id}>`;
+                }
+
+                if (row.expires_at) {
+                    value += `\nWygasa: <t:${row.expires_at}:R>`;
+                }
+
                 fields.push({
-                    name: `${i}. Upomnienie dla ${(await msg.client.users.fetch(row.user_id)).username}`,
-                    value: `\`${row.reason_string}\` (punktów: ${row.points}, id: ${row.id})`
+                    name: `${i}. Upomnienie dla ${user ? user.username : 'Nieznany użytkownik'}`,
+                    value
                 });
             }
 
@@ -50,4 +65,4 @@ export const warnlistCmd: Command = {
             });
         });
     }
-}
+};

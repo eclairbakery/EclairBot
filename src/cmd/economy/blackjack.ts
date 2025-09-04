@@ -1,9 +1,7 @@
-import { Command } from '../../bot/command.js';
-import { db } from '../../bot/db.js';
-import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
-import { dbGet } from '../../bot/shared.js';
+import { dbGet, dbRun } from '../../bot/shared.js';
+import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
 
 interface Card {
     name: string;
@@ -12,34 +10,17 @@ interface Card {
 
 function drawCard(): Card {
     const cards: Card[] = [
-        { name: 'A', value: 11 },
-        { name: 'K', value: 10 },
-        { name: 'Q', value: 10 },
-        { name: 'J', value: 10 },
-        { name: '10', value: 10 },
-        { name: '9', value: 9 },
-        { name: '8', value: 8 },
-        { name: '7', value: 7 },
-        { name: '6', value: 6 },
-        { name: '5', value: 5 },
-        { name: '4', value: 4 },
-        { name: '3', value: 3 },
-        { name: '2', value: 2 }
+        { name: 'A', value: 11 }, { name: 'K', value: 10 }, { name: 'Q', value: 10 }, { name: 'J', value: 10 },
+        { name: '10', value: 10 }, { name: '9', value: 9 }, { name: '8', value: 8 }, { name: '7', value: 7 },
+        { name: '6', value: 6 }, { name: '5', value: 5 }, { name: '4', value: 4 }, { name: '3', value: 3 }, { name: '2', value: 2 }
     ];
     return cards[Math.floor(Math.random() * cards.length)];
 }
 
 function calcHandValue(hand: Card[]): number {
-    let value = 0;
-    let aces = 0;
-    for (const card of hand) {
-        value += card.value;
-        if (card.name === 'A') aces++;
-    }
-    while (value > 21 && aces > 0) {
-        value -= 10;
-        aces--;
-    }
+    let value = 0, aces = 0;
+    for (const card of hand) { value += card.value; if (card.name === 'A') aces++; }
+    while (value > 21 && aces > 0) { value -= 10; aces--; }
     return value;
 }
 
@@ -47,57 +28,38 @@ function handToString(hand: Card[]): string {
     return hand.map(c => c.name).join(' ');
 }
 
-export const blackjackCmd: Command = {
+export const blackjackCmd: NextGenerationCommand = {
     name: 'blackjack',
-    longDesc: 'Gra w blackjacka za określoną kwotę. Jak chcesz no to możesz przewalić w kasynie kasę!',
-    shortDesc: 'Gra w blackjacka za określoną kwotę',
-    expectedArgs: [
-        {
-            name: 'amount',
-            desc: 'O ile gramy?'
-        }
-    ],
-
+    description: {
+        main: 'Gra w blackjacka za określoną kwotę. Jak chcesz, możesz przewalić w kasynie kasę!',
+        short: 'Gra w blackjacka za określoną kwotę',
+    },
+    permissions: { discordPerms: null, allowedRoles: null, allowedUsers: null },
+    args: [{ name: 'amount', description: 'O ile gramy?', optional: false, type: 'number' }],
     aliases: ['bj'],
-    allowedRoles: null,
-    allowedUsers: [],
 
-    async execute(msg, args): Promise<void> {
-        const bet = parseInt(args[0]);
-        if (isNaN(bet) || bet <= 0) {
-            return log.replyError(msg, 'Błąd', 'Podaj poprawną kwotę zakładu.');
+    async execute(api: NextGenerationCommandAPI) {
+        const betArg = api.getTypedArg('amount', 'number');
+        const bet = betArg?.value as number;
+        if (!bet || bet <= 0) {
+            return api.msg.reply('❌ Podaj poprawną kwotę zakładu.');
         }
 
-        const userId = msg.author.id;
+        const userId = api.msg.author.id;
         const row = await dbGet('SELECT * FROM economy WHERE user_id = ?', [userId]);
-
-        if (!row) {
-            return log.replyError(msg, 'Błąd', 'Nie masz konta w systemie ekonomii.');
-        }
-
-        if (row.money < bet) {
-            return log.replyError(msg, 'Błąd', 'Nie masz wystarczającej ilości pieniędzy.');
-        }
+        if (!row) return api.msg.reply('❌ Nie masz konta w systemie ekonomii.');
+        if (row.money < bet) return api.msg.reply('❌ Nie masz wystarczającej ilości pieniędzy.');
 
         let playerHand: Card[] = [drawCard(), drawCard()];
         let dealerHand: Card[] = [drawCard(), drawCard()];
 
-        const hitBtn = new dsc.ButtonBuilder()
-            .setCustomId('hit')
-            .setLabel('Hit')
-            .setStyle(dsc.ButtonStyle.Primary);
-
-        const standBtn = new dsc.ButtonBuilder()
-            .setCustomId('stand')
-            .setLabel('Stand')
-            .setStyle(dsc.ButtonStyle.Secondary);
-
-        const rowBtns = new dsc.ActionRowBuilder<dsc.ButtonBuilder>()
-            .addComponents(hitBtn, standBtn);
+        const hitBtn = new dsc.ButtonBuilder().setCustomId('hit').setLabel('Hit').setStyle(dsc.ButtonStyle.Primary);
+        const standBtn = new dsc.ButtonBuilder().setCustomId('stand').setLabel('Stand').setStyle(dsc.ButtonStyle.Secondary);
+        const rowBtns = new dsc.ActionRowBuilder<dsc.ButtonBuilder>().addComponents(hitBtn, standBtn);
 
         let gameOver = false;
 
-        const getEmbed = (hideDealer: boolean = true): dsc.EmbedBuilder => {
+        const getEmbed = (hideDealer = true): dsc.EmbedBuilder => {
             const dealerShown = hideDealer ? `${dealerHand[0].name} ❓` : handToString(dealerHand);
             return new dsc.EmbedBuilder()
                 .setTitle('♠️ Blackjack ♠️')
@@ -108,28 +70,22 @@ export const blackjackCmd: Command = {
                 );
         };
 
-        const gameMsg = await msg.reply({ embeds: [getEmbed()], components: [rowBtns] });
+        const gameMsg = await api.msg.reply({ embeds: [getEmbed()], components: [rowBtns] });
 
         const collector = gameMsg.createMessageComponentCollector({
             time: 30000,
-            filter: (i: dsc.Interaction) => i.isButton() && i.user.id === userId
+            filter: (i: dsc.ButtonInteraction) => i.user.id === userId
         });
 
-        collector.on('collect', async (i: dsc.Interaction) => {
-            if (!i.isButton()) return;
-            const button = i as dsc.ButtonInteraction;
-
+        collector.on('collect', async (button: dsc.ButtonInteraction) => {
             if (gameOver) return;
 
             if (button.customId === 'hit') {
                 playerHand.push(drawCard());
                 if (calcHandValue(playerHand) > 21) {
-                    db.prepare('UPDATE economy SET money = money - ? WHERE user_id = ?').run(bet, userId);
+                    await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ?', [bet, userId]);
                     gameOver = true;
-                    await button.update({
-                        embeds: [getEmbed(false).setDescription('💥 Przegrałeś! Przekroczyłeś 21.')],
-                        components: []
-                    });
+                    await button.update({ embeds: [getEmbed(false).setDescription('💥 Przegrałeś! Przekroczyłeś 21.')], components: [] });
                     collector.stop();
                     return;
                 }
@@ -137,39 +93,31 @@ export const blackjackCmd: Command = {
             }
 
             if (button.customId === 'stand') {
-                while (calcHandValue(dealerHand) < 17) {
-                    dealerHand.push(drawCard());
-                }
+                while (calcHandValue(dealerHand) < 17) dealerHand.push(drawCard());
 
                 const playerValue = calcHandValue(playerHand);
                 const dealerValue = calcHandValue(dealerHand);
                 let result: string;
 
                 if (dealerValue > 21 || playerValue > dealerValue) {
-                    db.prepare('UPDATE economy SET money = money + ? WHERE user_id = ?').run(bet, userId);
+                    await dbRun('UPDATE economy SET money = money + ? WHERE user_id = ?', [bet, userId]);
                     result = '🏆 Wygrałeś!';
                 } else if (playerValue === dealerValue) {
                     result = '🤝 Remis!';
                 } else {
-                    db.prepare('UPDATE economy SET money = money - ? WHERE user_id = ?').run(bet, userId);
+                    await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ?', [bet, userId]);
                     result = '💥 Przegrałeś!';
                 }
 
                 gameOver = true;
-                await button.update({
-                    embeds: [getEmbed(false).setDescription(result)],
-                    components: []
-                });
+                await button.update({ embeds: [getEmbed(false).setDescription(result)], components: [] });
                 collector.stop();
             }
         });
 
         collector.on('end', async () => {
             if (!gameOver) {
-                await gameMsg.edit({
-                    embeds: [getEmbed(false).setDescription('⏳ Czas minął!')],
-                    components: []
-                });
+                await gameMsg.edit({ embeds: [getEmbed(false).setDescription('⏳ Czas minął!')], components: [] });
             }
         });
     }

@@ -1,36 +1,44 @@
-import { Category, Command } from '../../bot/command.js';
+import { Category, Command, NextGenerationCommand } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
 
 import { PredefinedColors } from '../../util/color.js';
 import capitalizeFirst from '../../util/capitalizeFirst.js';
-import canExecuteCmd from '../../util/canExecuteCmd.js';
+import canExecuteCmd, { canExecuteNewCmd } from '../../util/canExecuteCmd.js';
 
 import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
 
-export const commandsCmd: Command = {
+export const commandsCmd: NextGenerationCommand = {
     name: 'commands',
-    longDesc: 'Pokazuje pełną listę dostępnych komend bota.',
-    shortDesc: 'Lista komend',
-    expectedArgs: [
+    description: {
+        main: 'Pokazuje pełną listę dostępnych komend bota.',
+        short: 'Lista komend',
+    },
+    args: [
         {
             name: 'category',
-            desc: 'Kategoria komend, którą chcesz zobaczyć. Jeśli nie podasz, pokaże wszystkie.',
-        },
+            description: 'Kategoria komend, którą chcesz zobaczyć. Jeśli nie podasz, pokaże wszystkie. Oddziel je przecinkiem, a potem spacją!',
+            optional: true,
+            type: 'string'
+        }
     ],
     aliases: ['cmds', 'komendy'],
-    allowedRoles: null,
-    allowedUsers: [],
+    permissions: {
+        discordPerms: [],
+        allowedRoles: null,
+        allowedUsers: null,
+    },
 
-    async execute(msg, args, commands) {
+    async execute(api) {
+        const commands = api.commands;
         let categoriesToShow: Set<Category> = new Set();
-        if (args.length == 0 || args.includes('all')) {
+        if (api.args.length == 0 || !api.args[0]!.value || (api.args[0]?.value as string).includes('all')) {
             categoriesToShow = new Set([...commands.keys()]);
         } else {
-            for (const arg of args) {
+            for (const arg of (api.args[0]!.value as string).split(', ')) {
                 const category = Category.fromString(arg);
                 if (!category) {
-                    log.replyError(msg, 'Nieznana kategoria', `Nie znam kategori ${arg}. Czy możesz powtórzyć?`);
+                    log.replyError(api.msg, 'Nieznana kategoria', `Nie znam kategori ${arg}. Czy możesz powtórzyć?`);
                     return;
                 }
                 categoriesToShow.add(category);
@@ -41,7 +49,7 @@ export const commandsCmd: Command = {
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
-                if (!canExecuteCmd(cmd, msg.member)) blockedCmds.push(cmd.name);
+                if (!canExecuteNewCmd(cmd, api.msg.member.plainMember)) blockedCmds.push(cmd.name);
             }
         }
 
@@ -62,7 +70,7 @@ export const commandsCmd: Command = {
                     formattedName += ` *(a.k.a. \`${cfg.general.prefix}${cmd.aliases[0]}\`)*`;
                 }
 
-                if (canExecuteCmd(cmd, msg.member)) {
+                if (canExecuteNewCmd(cmd, api.msg.member.plainMember)) {
                     formattedName = `**${formattedName}**`;
                 }
 
@@ -77,7 +85,7 @@ export const commandsCmd: Command = {
             embed.addFields(categoryField);
         }
 
-        msg.reply({
+        api.msg.reply({
             embeds: [embed],
         });
     }

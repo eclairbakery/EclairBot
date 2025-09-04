@@ -1,5 +1,4 @@
-import { Command } from '../../bot/command.js';
-
+import { NextGenerationCommand } from '../../bot/command.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
 import { dbGet, dbRun, getRandomInt } from '../../bot/shared.js';
@@ -42,21 +41,25 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
     return { ok: true };
 }
 
-export const slutCmd: Command = {
+export const slutCmd: NextGenerationCommand = {
     name: 'slut',
-    longDesc: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
-    shortDesc: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
-    expectedArgs: [],
-
+    description: {
+        main: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
+        short: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
+    },
+    args: [],
     aliases: [],
-    allowedRoles: null,
-    allowedUsers: [],
+    permissions: {
+        discordPerms: null,
+        allowedRoles: null,
+        allowedUsers: [],
+    },
 
-    async execute(msg, args) {
+    async execute(api) {
         try {
             let amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
             let win = Math.random() < PERCENTAGE;
-            const result = await trySlut(msg.author.id, amount, win);
+            const result = await trySlut(api.msg.author.id, amount, win);
 
             if (!result.ok) {
                 const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);
@@ -64,23 +67,26 @@ export const slutCmd: Command = {
                 const embed = new dsc.EmbedBuilder()
                     .setColor(PredefinedColors.Yellow)
                     .setTitle('Chwila przerwy!')
-                    .setDescription(`Ktoś tam Ci każe czekać **${waitSeconds}** sekund zanim znowu popr*cujesz, żebyś nie naspamił komendami w chuja hajsu...`)
+                    .setDescription(`Ktoś tam Ci każe czekać **${waitSeconds}** sekund zanim znowu popr*cujesz, żebyś nie naspamił komendami w chuja hajsu...`);
 
-                return msg.reply({ embeds: [embed] });
+                return api.msg.reply({ embeds: [embed] });
             }
 
             let embed: dsc.EmbedBuilder;
 
-            if (win) embed = new dsc.EmbedBuilder()
-                .setColor(PredefinedColors.Blue)
-                .setTitle('Yay!')
-                .setDescription(`Praca dorywcza dała Ci *prawie* darmowe **${amount}** dolarów!`)
-            else embed = new dsc.EmbedBuilder()
-                .setColor(PredefinedColors.Red)
-                .setTitle('Niestety, nie tym razem...')
-                .setDescription(`Straciłeś **${amount}** dolarów!`)
+            if (win) {
+                embed = new dsc.EmbedBuilder()
+                    .setColor(PredefinedColors.Blue)
+                    .setTitle('Yay!')
+                    .setDescription(`Praca dorywcza dała Ci *prawie* darmowe **${amount}** dolarów!`);
+            } else {
+                embed = new dsc.EmbedBuilder()
+                    .setColor(PredefinedColors.Red)
+                    .setTitle('Niestety, nie tym razem...')
+                    .setDescription(`Straciłeś **${amount}** dolarów!`);
+            }
 
-            return msg.reply({ embeds: [embed] });
+            return api.msg.reply({ embeds: [embed] });
         } catch (error) {
             console.error(error);
 
@@ -90,7 +96,7 @@ export const slutCmd: Command = {
                 .setDescription('Coś się złego odwaliło z tą ekonomią...')
                 .setTimestamp();
 
-            return msg.reply({ embeds: [embed] });
+            return api.msg.reply({ embeds: [embed] });
         }
-    }
+    },
 };

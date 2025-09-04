@@ -1,14 +1,14 @@
-import { Category, Command } from '../../bot/command.js';
+import { Category, NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
 
 import { PredefinedColors } from '../../util/color.js';
 import capitalizeFirst from '../../util/capitalizeFirst.js';
-import canExecuteCmd from '../../util/canExecuteCmd.js';
+import canExecuteCmd, { canExecuteNewCmd } from '../../util/canExecuteCmd.js';
 
 import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
 
-function buildSelectMenu(commands: Map<Category, Command[]>): dsc.StringSelectMenuBuilder {
+function buildSelectMenu(commands: Map<Category, NextGenerationCommand[]>): dsc.StringSelectMenuBuilder {
     return new dsc.StringSelectMenuBuilder()
         .setCustomId('help_select')
         .setPlaceholder('⚡ Wybierz kategorię...')
@@ -22,7 +22,7 @@ function buildSelectMenu(commands: Map<Category, Command[]>): dsc.StringSelectMe
         );
 }
 
-function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: string[] = []): dsc.EmbedBuilder {
+function buildCategoryEmbed(category: Category, cmds: NextGenerationCommand[], blockedCmds: string[] = []): dsc.EmbedBuilder {
     const embed = new dsc.EmbedBuilder()
         .setTitle(`${category.emoji} ${category.name}`)
         .setDescription(category.longDesc)
@@ -40,7 +40,7 @@ function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: st
 
         embed.addFields([{
             name: `:star: ${cfg.general.prefix}${formattedName}`,
-            value: cmd.longDesc,
+            value: cmd.description.main,
             inline: false,
         }]);
     }
@@ -48,16 +48,30 @@ function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: st
     return embed;
 }
 
-export const detailHelpCmd: Command = {
+export const detailHelpCmd: NextGenerationCommand = {
     name: 'detail-help',
-    longDesc: 'Pokazuje losowe komendy z bota wraz z dokładnymi opisami, by w końcu nauczyć Twojego zapyziałego mózgu jego używania.',
-    shortDesc: 'Lista komend',
-    expectedArgs: [],
+    description: {
+        main: 'Pokazuje losowe komendy z bota wraz z dokładnymi opisami, by w końcu nauczyć Twojego zapyziałego mózgu jego używania.',
+        short: 'Lista komend',
+    },
+    permissions: {
+        discordPerms: null,
+        allowedRoles: null,
+        allowedUsers: [],
+    },
+    args: [
+        {
+            type: 'string',
+            optional: true,
+            name: 'category',
+            description: 'Kategoria lub "all" aby zobaczyć wszystkie',
+        }
+    ],
     aliases: [],
-    allowedRoles: null,
-    allowedUsers: [],
 
-    async execute(msg, args, commands) {
+    async execute(api: NextGenerationCommandAPI) {
+        const { args, msg, commands } = api;
+
         const sendInteractiveMenu = async () => {
             const selectMenu = buildSelectMenu(commands);
             const row = new dsc.ActionRowBuilder<dsc.StringSelectMenuBuilder>().addComponents(selectMenu);
@@ -98,19 +112,23 @@ export const detailHelpCmd: Command = {
             });
         };
 
-        if (args.length === 0) {
+        const argCategory = api.getArg('category') as any;
+
+        if (!argCategory || !argCategory.value) {
             await sendInteractiveMenu();
             return;
         }
 
+        const values = (argCategory.value as string).split(/\s+/);
         let categoriesToShow: Set<Category> = new Set();
-        if (args.includes('all')) {
+
+        if (values.includes('all')) {
             categoriesToShow = new Set([...commands.keys()]);
         } else {
-            for (const arg of args) {
-                const category = Category.fromString(arg);
+            for (const val of values) {
+                const category = Category.fromString(val);
                 if (!category) {
-                    log.replyError(msg, 'Nieznana kategoria', `Nie znam kategori ${arg}. Czy możesz powtórzyć?`);
+                    log.replyError(msg, 'Nieznana kategoria', `Nie znam kategorii ${val}. Czy możesz powtórzyć?`);
                     return;
                 }
                 categoriesToShow.add(category);
@@ -121,7 +139,7 @@ export const detailHelpCmd: Command = {
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
-                if (!canExecuteCmd(cmd, msg.member)) blockedCmds.push(cmd.name);
+                if (!canExecuteNewCmd(cmd, msg.member.plainMember)) blockedCmds.push(cmd.name);
             }
         }
 

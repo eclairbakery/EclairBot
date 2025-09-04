@@ -1,27 +1,29 @@
-import { Command } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js'
-import { db, sqlite } from '../../bot/db.js';
-
+import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import { cfg } from '../../bot/cfg.js';
+import { db } from '../../bot/db.js';
 import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
 
-import { PredefinedColors } from '../../util/color.js';
-
 let ecoRoles = [
-    "1235548306550161451" // na razie
+    "1235548306550161451"
 ];
 
-export const topecoCmd: Command = {
+export const topecoCmd: NextGenerationCommand = {
     name: 'topeco',
-    longDesc: 'Janusze biznesu z Allegro.',
-    shortDesc: 'Janusze biznesu z Allegro.',
-    expectedArgs: [],
-
+    description: {
+        main: 'Janusze biznesu z Allegro.',
+        short: 'Janusze biznesu z Allegro.'
+    },
+    permissions: {
+        discordPerms: null,
+        allowedRoles: null,
+        allowedUsers: []
+    },
+    args: [],
     aliases: ['topmoney'],
-    allowedRoles: null,
-    allowedUsers: [],
+    execute: async (api: NextGenerationCommandAPI) => {
+        const msg = api.msg;
 
-    execute(msg, args) {
         db.all('SELECT * FROM economy ORDER BY money DESC LIMIT 12', [], async (err, rows: any[]) => {
             if (err) {
                 console.error(err);
@@ -38,7 +40,7 @@ export const topecoCmd: Command = {
             for (const row of rows) {
                 if (++i === 25) return;
 
-                const member = await msg.guild.members.fetch(row.user_id);
+                const member = await msg.guild!.members.fetch(row.user_id);
                 const userEcoRole = ecoRoles.filter(id => member.roles.cache.has(id)).at(-1);
 
                 fields.push({
@@ -57,4 +59,4 @@ export const topecoCmd: Command = {
             });
         });
     }
-}
+};

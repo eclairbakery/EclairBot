@@ -1,5 +1,4 @@
-import { Command } from '../../bot/command.js';
-
+import { NextGenerationCommand, NextGenerationCommandAPI, NextGenerationCommandArgumentWithStringValue } from '../../bot/command.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
 import { dbGet, dbRun, getRandomInt } from '../../bot/shared.js';
@@ -42,54 +41,53 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
     return { ok: true };
 }
 
-export const crimeCmd: Command = {
+export const crimeCmd: NextGenerationCommand = {
     name: 'crime',
-    longDesc: 'Ohohohoho! Mamy na serwerze przestępców. Złapać ich! Schwytać i wziąć do niewoli. A tak na poważnie to metoda zarobku, gdzie możesz wszystko przejabć jak w kasynie, albo wygrać strasznie dużo kasiuryyyy!',
-    shortDesc: 'Ohohohoho! Mamy na serwerze przestępców. Chcesz dołączyć?',
-    expectedArgs: [],
-
+    description: {
+        main: 'Ohohohoho! Mamy na serwerze przestępców. Możesz popełnić przestępstwo i wygrać albo przegrać kasę!',
+        short: 'Sprawdź swoje szczęście w kryminalnym świecie.'
+    },
+    permissions: {
+        allowedRoles: null,
+        allowedUsers: null,
+        discordPerms: []
+    },
+    args: [],
     aliases: [],
-    allowedRoles: null,
-    allowedUsers: [],
-
-    async execute(msg, args) {
+    execute: async (api: NextGenerationCommandAPI) => {
+        const msg = api.msg;
         try {
-            let amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
-            let win = Math.random() < PERCENTAGE;
+            const amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
+            const win = Math.random() < PERCENTAGE;
+
             const result = await trySlut(msg.author.id, amount, win);
 
             if (!result.ok) {
                 const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);
-
                 const embed = new dsc.EmbedBuilder()
                     .setColor(PredefinedColors.Yellow)
                     .setTitle('Chwila przerwy!')
-                    .setDescription(`Ktoś tam Ci każe czekać **${waitSeconds}** sekund zanim znowu będziesz kryminalistą, żebyś nie naspamił komendami w chuja hajsu...`)
-
+                    .setDescription(`Musisz odczekać **${waitSeconds}** sekund zanim znowu popełnisz przestępstwo.`);
                 return msg.reply({ embeds: [embed] });
             }
 
-            let embed: dsc.EmbedBuilder;
-
-            if (win) embed = new dsc.EmbedBuilder()
-                .setColor(PredefinedColors.Blue)
-                .setTitle('Yay!')
-                .setDescription(`Popełniłeś przestępstwo i zarobiłeś **${amount}** dolarów!`)
-            else embed = new dsc.EmbedBuilder()
-                .setColor(PredefinedColors.Red)
-                .setTitle('Przestępstwo nie zawsze się opłaca...')
-                .setDescription(`Straciłeś **${amount}** dolarów, ponieważ musiałeś zapłacić mandat!`)
+            const embed = new dsc.EmbedBuilder()
+                .setColor(win ? PredefinedColors.Blue : PredefinedColors.Red)
+                .setTitle(win ? 'Yay!' : 'Przestępstwo nie zawsze się opłaca...')
+                .setDescription(win
+                    ? `Popełniłeś przestępstwo i zarobiłeś **${amount}** dolarów!`
+                    : `Straciłeś **${amount}** dolarów, ponieważ musiałeś zapłacić mandat!`
+                );
 
             return msg.reply({ embeds: [embed] });
+
         } catch (error) {
             console.error(error);
-
             const embed = new dsc.EmbedBuilder()
                 .setColor(PredefinedColors.Red)
                 .setTitle('Błąd')
                 .setDescription('Coś się złego odwaliło z tą ekonomią...')
                 .setTimestamp();
-
             return msg.reply({ embeds: [embed] });
         }
     }

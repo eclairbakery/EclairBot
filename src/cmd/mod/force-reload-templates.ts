@@ -1,35 +1,34 @@
-import { Command } from '../../bot/command.js';
 import { db } from '../../bot/db.js';
-
 import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
-import { cfg } from '../../bot/cfg.js';
+import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import actionsManager, { OnForceReloadTemplates } from '../../events/templatesEvents.js';
 
-import actionsManager, { OnForceReloadTemplates, ForceReloadTemplatesEventCtx } from '../../events/templatesEvents.js';
-
-export const forceReloadTemplatesCmd: Command = {
+export const forceReloadTemplatesCmd: NextGenerationCommand = {
     name: 'force-reload-templates',
-    longDesc: 'Jeśli uważasz że template channels się nie przeładowały i pokazują błędne dane to... mylisz się! eclair bot jest idealny. A tak serio to tą komendą możesz wymusić reload',
-    shortDesc: 'Wymusza przeładowanie wszystkich template channels',
-    expectedArgs: [],
-
+    description: {
+        main: 'Jeśli uważasz że template channels się nie przeładowały i pokazują błędne dane to... mylisz się! eclair bot jest idealny. A tak serio to tą komendą możesz wymusić reload',
+        short: 'Wymusza przeładowanie wszystkich template channels',
+    },
+    permissions: {
+        discordPerms: null,
+        allowedRoles: null,
+        allowedUsers: null,
+    },
+    args: [],
     aliases: [],
-    allowedRoles: null,
-    allowedUsers: null,
 
-    async execute(msg, args) {
-        void args;
-
+    async execute(api: NextGenerationCommandAPI) {
         actionsManager.emit(OnForceReloadTemplates, {});
-        msg.reply({
+
+        await api.msg.reply({
             embeds: [
-                {
-                    title: 'Przeladowano wszystkie template channels!',
-                    description: 'Teraz wszystko powinno być aktualne! a jeśli nie jest to już nie mój problem <:joe_noniewiemno:1317904812779503676>',
-                    color: PredefinedColors.Aqua,
-                }
-            ],
+                new dsc.EmbedBuilder()
+                    .setTitle('Przeladowano wszystkie template channels!')
+                    .setDescription('Teraz wszystko powinno być aktualne! a jeśli nie jest to już nie mój problem <:joe_noniewiemno:1317904812779503676>')
+                    .setColor(PredefinedColors.Aqua)
+            ]
         });
     }
 };

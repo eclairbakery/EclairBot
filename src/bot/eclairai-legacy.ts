@@ -50,8 +50,8 @@ export class EclairAiFirstEdition {
         if (!this.validateCharacters(msg.content)) {
             log.replyError(
                 msg,
-                'Hej, niepoprawny znak!',
-                'Napisz coś z poprawnymi znakami. Nie chcemy by AI się uczyło nie wiadomo czego...'
+                'Hej, niepoprawny znak / spam słowami!',
+                'Napisz coś z poprawnymi znakami, pamiętaj również, że ten komunikat pojawia się jak próbujesz tricknąć model w mówienie ciągle tego samego powtarzanie. Nie chcemy by AI się uczyło nie wiadomo czego...'
             );
             this.shouldReply = false;
             return;
@@ -99,9 +99,19 @@ export class EclairAiFirstEdition {
 
     private validateCharacters(content: Snowflake): boolean {
         let hasInvalidCharacters = false;
+
         content.split("").forEach((char) => {
-            if (!this.config.allowedCharacters.includes(char)) hasInvalidCharacters = true;
+            if (this.config.notAllowedCharacters.includes(char)) hasInvalidCharacters = true;
         });
+
+        const words = content.split(/\s+/);
+        for (let i = 0; i < words.length - 1; i++) {
+            if (words[i].toLowerCase() === words[i + 1].toLowerCase()) {
+                hasInvalidCharacters = true;
+                break;
+            }
+        }
+
         return !hasInvalidCharacters;
     }
 

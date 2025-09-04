@@ -1,52 +1,60 @@
-import { Command } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js'
-import { db, sqlite } from '../../bot/db.js';
+import { cfg } from '../../bot/cfg.js';
 import { lvlRoles } from '../../bot/level.js';
+import { db } from '../../bot/db.js';
 
-import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
-
 import { PredefinedColors } from '../../util/color.js';
+import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
 
-function calculateLevel(xp: number, level_divider: number): number {
+function calculateLevel(xp: number, levelDivider: number): number {
     return Math.floor(
-        (1 + Math.sqrt(1 + 8 * xp / cfg.general.leveling.levelDivider)) / 2
+        (1 + Math.sqrt(1 + 8 * xp / levelDivider)) / 2
     );
 }
 
-export const toplvlCmd: Command = {
+export const toplvlCmd: NextGenerationCommand = {
     name: 'toplvl',
-    longDesc: 'Czas popatrzeć na najlepszych użytkowników serwera...',
-    shortDesc: 'Czas popatrzeć na najlepszych użytkowników serwera...',
-    expectedArgs: [],
-
+    description: {
+        main: 'Czas popatrzeć na najlepszych użytkowników serwera...',
+        short: 'Czas popatrzeć na najlepszych użytkowników serwera...',
+    },
+    permissions: {
+        discordPerms: null,
+        allowedRoles: null,
+        allowedUsers: [],
+    },
+    args: [],
     aliases: ['topka', 'toplevel'],
-    allowedRoles: null,
-    allowedUsers: [],
 
-    execute(msg, args) {
-        db.all('SELECT * FROM leveling ORDER BY xp DESC LIMIT 50', [], async (err, rows: any[]) => {
-            if (err) {
-                console.error(err);
-                return log.replyError(msg, 'Błąd pobierania poziomów', 'Pytaj twórców biblioteki sqlite3...');
-            }
+    async execute(api: NextGenerationCommandAPI) {
+        const { msg } = api;
+
+        try {
+            const rows: { user_id: string, xp: number }[] = await new Promise((resolve, reject) => {
+                db.all('SELECT * FROM leveling ORDER BY xp DESC LIMIT 50', [], (err, rows: any[]) => {
+                    if (err) return reject(err);
+                    resolve(rows);
+                });
+            });
 
             if (!rows.length) {
-                return log.replyError(msg, 'Zero poziomów', 'Nie ma żadnego w bazie poziomu :sob:');
+                await msg.reply('Nie ma żadnego w bazie poziomu :sob:');
             }
 
-            let fields: dsc.APIEmbedField[] = [];
+            const fields: dsc.APIEmbedField[] = [];
             let i = 0;
 
             for (const row of rows) {
                 if (++i > 12) break;
 
                 try {
-                    const member = await msg.guild.members.fetch(row.user_id);
+                    const member = await msg.guild?.members.fetch(row.user_id);
+                    if (!member) { i--; continue; }
+
                     const userLvlRole = lvlRoles.filter(id => member.roles.cache.has(id)).at(-1);
                     fields.push({
                         name: `${i} » ${member.user.username}`,
-                        value: `${userLvlRole ? `<@&${userLvlRole}>` : 'Nowicjusz...'}\n**Lvl**: ${calculateLevel(row.xp, cfg.general.leveling.levelDivider)}\n**XP**: ${row.xp}${i % 2 == 1 ? '‎' : ''}`,
+                        value: `${userLvlRole ? `<@&${userLvlRole}>` : 'Nowicjusz...'}\n**Lvl**: ${calculateLevel(row.xp, cfg.general.leveling.levelDivider)}\n**XP**: ${row.xp}${i % 2 === 1 ? '‎' : ''}`,
                         inline: true
                     });
                 } catch (e) {
@@ -56,7 +64,7 @@ export const toplvlCmd: Command = {
                 }
             }
 
-            return msg.reply({
+            await msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setColor("#1ebfd5")
@@ -66,6 +74,9 @@ export const toplvlCmd: Command = {
                         .setColor("#1ebfd5")
                 ]
             });
-        });
-    }
-}
+        } catch (err) {
+            console.error(err);
+            await msg.reply('❌ Wystąpił błąd podczas pobierania topu poziomów.');
+        }
+    },
+};

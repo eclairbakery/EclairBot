@@ -1,4 +1,4 @@
-import { Command, Category } from '../../bot/command.js';
+import { Command, Category, NextGenerationCommand, NextGenerationCommandArgumentWithUserMentionValue } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
 import { db, sqlite } from '../../bot/db.js';
 
@@ -8,23 +8,30 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
 import capitalizeFirst from '../../util/capitalizeFirst.js';
 
-export const bannerCmd: Command = {
+export const bannerCmd: NextGenerationCommand = {
     name: 'banner',
-    longDesc: 'Dobra... Wyświetle Ci jełopa baner jak chcesz.',
-    shortDesc: 'Wyświetla baner danego użytkownika',
-    expectedArgs: [
+    description: {
+        main: 'Dobra... Wyświetle Ci jełopa baner jak chcesz.',
+        short: 'Wyświetla baner danego użytkownika'
+    },
+    args: [
         {
             name: 'user',
-            desc: 'Użytkownik generalnie...'
+            description: 'Użytkownik generalnie...',
+            type: 'user-mention',
+            optional: true
         }
     ],
     aliases: ['baner'],
-    allowedRoles: null,
-    allowedUsers: [],
+    permissions: {
+        discordPerms: null,
+        allowedRoles: null,
+        allowedUsers: null
+    },
 
-    async execute(msg, args, commands) {
-        const member = msg.mentions.members.first() || msg.member;
-        const user = member.user;
+    async execute(api) {
+        const member = api.getTypedArg('user', 'user-mention') as NextGenerationCommandArgumentWithUserMentionValue;
+        const user = member.value?.user ?? api.msg.author.plainUser;
 
         const fetchedUser = await user.fetch();
 
@@ -32,15 +39,16 @@ export const bannerCmd: Command = {
         const accentColor = fetchedUser.accentColor;
 
         if (!bannerURL && !accentColor) {
-            return msg.reply({ content: 'Ten użytkownik nie ma ustawionego banera ani koloru baneru.' });
+            return api.msg.reply({ content: 'Ten użytkownik nie ma ustawionego banera ani koloru baneru.' });
         }
 
-        if (bannerURL) msg.reply({
+        if (bannerURL) api.msg.reply({
             content: 'Proszę, oto baner:',
             files: [bannerURL]
         });
-        else msg.reply({
-            content: `Kolor akcentu (baneru): #${accentColor.toString(16).padStart(6, '0')}`
+        else api.msg.reply({
+            content: `Proszę, oto baner: (stały kolor, #${accentColor.toString(16).padStart(6, '0')})`,
+            files: [new dsc.AttachmentBuilder(Buffer.from(await (await fetch(`https://singlecolorimage.com/get/${accentColor.toString(16).padStart(6, '0')}/700x150.png`)).arrayBuffer()), { name: "color.png" })]
         })
     },
 };

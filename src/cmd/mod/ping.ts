@@ -1,39 +1,47 @@
-import { Command } from '../../bot/command.js';
-import { db } from '../../bot/db.js';
-
-import * as log from '../../util/log.js';
-import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
+import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
+import * as dsc from 'discord.js';
 
-import actionsManager, { OnForceReloadTemplates, ForceReloadTemplatesEventCtx } from '../../events/templatesEvents.js';
-import { Action, MessageEventCtx, PredefinedActionEventTypes } from '../../features/actions.js';
-
-// eclairnews
 let interval1: NodeJS.Timeout;
 let eclairPing = true;
 
-// death chat
 let interval2: NodeJS.Timeout;
 
-export const notifyCmd: Command = {
+export const notifyCmd: NextGenerationCommand = {
     name: 'notify',
-    longDesc: 'Siema... Chcesz pingować? No ok, to komenda dla ciebie.',
-    shortDesc: 'Pinguje jakiś ping.',
-    expectedArgs: [],
-
+    description: {
+        main: 'Siema... Chcesz pingować? No ok, to komenda dla ciebie.',
+        short: 'Pinguje jakiś ping.'
+    },
+    permissions: {
+        allowedRoles: cfg.mod.commands.ping.allowedRoles,
+        allowedUsers: [],
+        discordPerms: []
+    },
+    args: [
+        {
+            name: 'type',
+            type: 'string',
+            optional: false,
+            description: 'No podaj ten typ tego pingu, błagam!'
+        }
+    ],
     aliases: ['mention-ping'],
-    allowedRoles: cfg.mod.commands.ping.allowedRoles,
-    allowedUsers: [],
+    execute: async (api: NextGenerationCommandAPI) => {
+        const msg = api.msg;
+        const typeArg = api.getArg('type')?.value as string;
 
-    async execute(msg, args) {
-        if (args.includes('death-chat')) {
+        if (!typeArg) return msg.reply('Musisz podać typ pingu!');
+
+        if (typeArg === 'death-chat') {
             return msg.reply('ten ping jest zaautomatyzowany');
         }
-        if (args.includes('list')) {
+
+        if (typeArg === 'list') {
             return msg.reply('lista: `death-chat`, `eclairnews`');
         }
-        if (args.includes('eclairnews')) {
+
+        if (typeArg === 'eclairnews') {
             if (!eclairPing) {
                 return msg.reply('za szybko ig');
             }
@@ -42,25 +50,30 @@ export const notifyCmd: Command = {
             interval1 = setTimeout(() => {
                 eclairPing = true;
             }, cfg.mod.commands.ping.eclairNewsRenewInterval);
+
             if (msg.channel.isSendable()) msg.channel.send('<@&1402756114394644620>');
         }
     }
 };
 
+import { Action, MessageEventCtx, PredefinedActionEventTypes } from '../../features/actions.js';
+
 export const actionPing: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreate,
-    constraints: [(msg) => msg.channelId == '1264971505662689311'],
-    callbacks: [(msg) => {
-        clearTimeout(interval2);
-        interval2 = setTimeout(() => {
-            const now = new Date();
-            const hour = now.getHours();
+    constraints: [(msg) => msg.channelId === '1264971505662689311'],
+    callbacks: [
+        (msg) => {
+            clearTimeout(interval2);
+            interval2 = setTimeout(() => {
+                const now = new Date();
+                const hour = now.getHours();
 
-            if (hour >= 10 && hour < 20) {
-                if (msg.channel.isSendable()) {
-                    msg.channel.send('<@&1411646441511714827>');
+                if (hour >= 10 && hour < 20) {
+                    if (msg.channel.isSendable()) {
+                        msg.channel.send('<@&1411646441511714827>');
+                    }
                 }
-            }
-        }, cfg.mod.commands.ping.deathChatRenewInterval);
-    }]
+            }, cfg.mod.commands.ping.deathChatRenewInterval);
+        }
+    ]
 };

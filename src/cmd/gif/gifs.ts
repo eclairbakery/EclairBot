@@ -1,4 +1,4 @@
-import { Command } from '../../bot/command.js';
+import { Command, NextGenerationCommand } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js'
 import { db, sqlite } from '../../bot/db.js';
 
@@ -27,63 +27,84 @@ async function getGIF(searchTerm: string): Promise<string> {
     }
 }
 
-export const catCmd: Command = {
+export const catCmd: NextGenerationCommand = {
     name: 'cat',
-    longDesc: 'Lubisz koty? Jakże pięknie się składa. Możemy Ci pokazać losowego kota.',
-    shortDesc: 'Pokazuje losowego kota',
-    expectedArgs: [],
+    description: {
+        main: 'Lubisz koty? Jakże pięknie się składa. Możemy Ci pokazać losowego kota.',
+        short: 'Pokazuje losowego kota',
+    },
+    args: [],
 
     aliases: ['kot'],
-    allowedRoles: null,
-    allowedUsers: [],
+    permissions: {
+        discordPerms: [],
+        allowedRoles: null,
+        allowedUsers: null
+    },
 
-    async execute(msg, args) {
-        msg.reply(await getGIF('cat'));
+    async execute(api) {
+        api.msg.reply(await getGIF('cat'));
     }
 };
 
-export const dogCmd: Command = {
+export const dogCmd: NextGenerationCommand = {
     name: 'dog',
-    longDesc: 'Ohhh... dasz mi karmę? Chcesz zobaczyć moją słodką mordkę? To ja, piesek.',
-    shortDesc: 'Pokazuje losowego psa',
-    expectedArgs: [],
+    description: {
+        main: 'Ohhh... dasz mi karmę? Chcesz zobaczyć moją słodką mordkę? To ja, piesek.',
+        short: 'Pokazuje losowego psa',
+    },
+    args: [],
 
-    aliases: ['pies'],
-    allowedRoles: null,
-    allowedUsers: [],
+    aliases: ['kot'],
 
-    async execute(msg, args) {
-        msg.reply(await getGIF('dog'));
+    permissions: {
+        discordPerms: [],
+        allowedRoles: null,
+        allowedUsers: null
+    },
+
+    async execute(api) {
+        api.msg.reply(await getGIF('parrot'));
     }
 };
 
-export const parrotCmd: Command = {
-    name: 'parrot',
-    longDesc: 'Gru... bierzesz coś? Bierze bierze Hepaslimin. Daj spokój papuga.',
-    shortDesc: 'Pokazuje losową papugę',
-    expectedArgs: [],
-
-    aliases: ['papuga'],
-    allowedRoles: null,
-    allowedUsers: [],
-
-    async execute(msg, args) {
-        msg.reply(await getGIF('parrot'));
-    }
-};
-
-export const animalCmd: Command = {
+export const animalCmd: NextGenerationCommand = {
     name: 'animal',
-    longDesc: 'Chcesz do ZOO? Mamy ZOO w domu. ZOO w domu: [wpisz jakiego gifa chcesz]',
-    shortDesc: 'Pokazuje losowego zwierza',
-    expectedArgs: [],
+    description: {
+        main: 'Chcesz do ZOO? Mamy ZOO w domu. ZOO w domu: [wpisz jakiego gifa chcesz]',
+        short: 'Pokazuje losowego zwierza',
+    },
+    args: [],
 
     aliases: ['zwierz', 'zwierzęcie'],
-    allowedRoles: null,
-    allowedUsers: [],
+    permissions: {
+        discordPerms: [],
+        allowedRoles: null,
+        allowedUsers: null
+    },
 
-    async execute(msg, args) {
+    async execute(api) {
         const lmfao = ['parrot', 'dog', 'giraffe', 'elephant', 'cat'];
-        msg.reply(await getGIF(lmfao[Math.floor(Math.random() * lmfao.length)]));
+        api.msg.reply(await getGIF(lmfao[Math.floor(Math.random() * lmfao.length)]));
+    }
+};
+
+export const parrotCmd: NextGenerationCommand = {
+    name: 'parrot',
+    description: {
+        main: 'Pokazuje losową papugę czy coś!',
+        short: 'Pokazuje losową papugę!',
+    },
+    args: [],
+
+    aliases: [],
+    permissions: {
+        discordPerms: [],
+        allowedRoles: null,
+        allowedUsers: null
+    },
+
+    async execute(api) {
+        api.msg.reply(await getGIF('parrot'));
     }
 };

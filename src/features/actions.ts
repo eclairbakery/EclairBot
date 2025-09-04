@@ -21,7 +21,9 @@ export type AnyEventCtx =
     | any /* for custom events */
 ;;
 
-export type ActionCallback<CtxType> = (ctx: CtxType) => void | Promise<any>;
+export const MagicSkipAllActions = Symbol('MagicSkipAllActions');
+
+export type ActionCallback<CtxType> = (ctx: CtxType) => void | Promise<any> | symbol | Promise<symbol>;
 export type AnyActionCallback       = (ctx: AnyEventCtx) => void;
 
 export type ConstraintCallback<CtxType> = (ctx: CtxType) => boolean;
@@ -104,7 +106,7 @@ export class PredefinedActionCallbacks {
         return (msg) => log.replySuccess(msg, title, desc);
     }
 
-    static deleteMsg: ActionCallback<MessageEventCtx> = msg => msg.delete();
+    static deleteMsg: ActionCallback<MessageEventCtx> = msg => { msg.delete(); return MagicSkipAllActions; };
 }
 
 export class PredefinedActionConstraints {
@@ -191,8 +193,12 @@ class ActionManager {
                 if (!(ctx as MessageEventCtx).inGuild()) return;
             }
 
+            let skipAll = false;
+
         actionsLoop:
             for (const action of this.actions.get(eventType) ?? []) {
+                if (skipAll) break;
+
                 if (actionFilter && !actionFilter(action, ...args)) continue;
 
                 for (const constraint of action.constraints) {
@@ -203,8 +209,11 @@ class ActionManager {
 
                 for (const callback of action.callbacks) {
                     const result = callback(ctx);
-                    if (result && typeof (result as any).then === "function") {
-                        await result;
+                    const awaited = result instanceof Promise ? await result : result;
+
+                    if (awaited === MagicSkipAllActions) {
+                        skipAll = true;
+                        break;
                     }
                 }
             }

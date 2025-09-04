@@ -1,139 +1,114 @@
 import clamp from '../../util/clamp.js';
 import parseTimestamp from '../../util/parseTimestamp.js';
 
-import { Command } from '../../bot/command.js';
+import { NextGenerationCommand } from '../../bot/command.js';
 import { PredefinedColors } from '../../util/color.js';
-import { cfg } from '../../bot/cfg.js'
-import { db, sqlite } from '../../bot/db.js';
+import { cfg } from '../../bot/cfg.js';
 
 import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
+import warn from '../../bot/apis/warns.js';
 
-import { scheduleWarnDeletion } from '../../features/deleteExpiredWarns.js';
-
-export const shitwarnCmd: Command = {
-    name: 'shitwarn',
-    longDesc: 'Lubisz warnować? Świetnie się składa! To wysyła embed ale nie warnuje. Ochrona przed warnami jest wyłączona.',
-    shortDesc: 'Robi fake warna!',
-    expectedArgs: [
-        { name: 'user',   desc: 'No ten, tu podaj użytkownika którego chcesz zwarnować' },
-        { name: 'points', desc:
-            `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cfg.mod.commands.warn.maxPoints}`
+export const shitwarnCmd: NextGenerationCommand = {
+    name: 'warn',
+    description: {
+        main: 'Lubisz warnować? Świetnie! Ta komenda daje fake-warny!',
+        short: 'Ta komenda daje fake-warny!'
+    },
+    args: [
+        {
+            name: 'user',
+            type: 'user-mention',
+            description: 'No ten, tu podaj użytkownika którego chcesz zwarnować',
+            optional: false
         },
-        { name: 'reason', desc:
-            cfg.mod.commands.warn.reasonRequired ? 'Poprostu powód warna' : 'Poprostu powód warna. Możesz go pominąć ale nie polecam',
+        {
+            name: 'points',
+            type: 'number',
+            description: `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cfg.mod.commands.warn.maxPoints}`,
+            optional: true
+        },
+        {
+            name: 'reason',
+            type: 'string',
+            description: cfg.mod.commands.warn.reasonRequired
+                ? 'Po prostu powód warna'
+                : 'Po prostu powód warna. Możesz go pominąć ale nie polecam',
+            optional: !cfg.mod.commands.warn.reasonRequired
         }
     ],
 
-    aliases: ['fakewarn'],
-    allowedRoles: cfg.mod.commands.warn.allowedRoles,
-    allowedUsers: cfg.mod.commands.warn.allowedUsers,
+    aliases: cfg.mod.commands.warn.aliases,
+    permissions: {
+        discordPerms: null,
+        allowedRoles: cfg.mod.commands.warn.allowedRoles,
+        allowedUsers: cfg.mod.commands.warn.allowedUsers
+    },
 
-    async execute(msg, args) {
-        let targetUser: dsc.GuildMember | null = null;
-        let points = 1;
-        let reason = '';
-        let reasonArgs = [...args];
+    async execute(api) {
+        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | undefined;
+        let points = api.getTypedArg('points', 'number')?.value as number ?? 1;
+        let reason = api.getTypedArg('reason', 'string')?.value as string ?? '';
         let duration: number | null = null;
         let expiresAt: number | null = null;
 
-        if (args.length > 0) {
-            const userMention = args[0].match(/^<@!?(\d+)>$/);
-            const userIdMatch = /^\d+$/.test(args[0]);
-            let userId: string | null = null;
-
-            if (userMention) {
-                userId = userMention[1];
-            } else if (userIdMatch) {
-                userId = args[0];
-            }
-
-            if (userId) {
-                try {
-                    targetUser = await msg.guild.members.fetch(userId);
-                    if (targetUser) {
-                        reasonArgs = args.slice(1);
-                    }
-                } catch {}
-            }
+        if (!targetUser) {
+            return log.replyError(
+                api.msg,
+                'Nie podano celu',
+                'Kolego, myślisz że ja się sam domyślę komu chcesz dać warna? Użycie: reply na wiadomość lub !warn <@user> (punkty:1) <powód>'
+            );
         }
 
-        if (targetUser == null && msg.reference?.messageId) {
-            let repliedMsg: dsc.Message | null = null;
-            try {
-                repliedMsg = await msg.channel.messages.fetch(msg.reference.messageId);
-            } catch {}
-            if (repliedMsg) {
-                targetUser = repliedMsg.member;
-            }
-        }
+        if (reason) {
+            const split = reason.split(/\s+/);
+            const possibleTime = split[0];
+            const parsed = parseTimestamp(possibleTime);
 
-        if (targetUser == null) {
-            log.replyError(msg, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyśle komu ty chcesz dać warna? Uzycie: odpowiedzi na wiadomość lub !warn <@user> (punkty:1) <powód>');
-            return;
-        }
-
-        if (reasonArgs.length > 0) {
-            const possibleTime = reasonArgs[0];
-            duration = parseTimestamp(possibleTime);
-            if (duration != null) {
-                reason = reasonArgs.slice(1).join(' ').trim();
+            if (parsed != null) {
+                duration = parsed;
                 expiresAt = Math.floor(Date.now() / 1000) + duration;
-            } else if (/^\d+$/.test(reasonArgs[0])) {
-                points = parseInt(reasonArgs[0], 10);
-                reason = reasonArgs.slice(1).join(' ').trim();
-            } else {
-                reason = reasonArgs.join(' ').trim();
+                reason = split.slice(1).join(' ').trim();
             }
         }
 
-        if (reason == "" || reason == undefined) {
+        if (!reason) {
             if (cfg.mod.commands.warn.reasonRequired) {
-                log.replyError(msg, 'Nie podano powodu', 'Ale za co ten warn? proszę o doprecyzowanie!');
-                return;
+                return log.replyError(api.msg, 'Nie podano powodu', 'Ale za co ten warn? proszę o doprecyzowanie!');
             } else {
-                reason = 'Moderator nie poszczycił się zbytnią znajomością komendy i nie podał powodu... Ale może to i lepiej';
+                reason =
+                    'Moderator nie poszczycił się zbytnią znajomością komendy i nie podał powodu... Ale może to i lepiej';
             }
         }
 
-        if (targetUser.id == msg.author.id) {
-            log.replyError(msg, 'Bro co ty odpierdalasz', 'Co ty chcesz sobie dać warna :sob:? Co jest z tobą nie tak? Potrzebujesz pomocy?');
-            return;
+        if (targetUser.id === api.msg.author.id) {
+            return log.replyError(
+                api.msg,
+                'Bro co ty odpierdalasz',
+                'Co ty chcesz sobie dać warna :sob:? Co jest z tobą nie tak? Potrzebujesz pomocy?'
+            );
         }
 
         points = clamp(cfg.mod.commands.warn.minPoints, points, cfg.mod.commands.warn.maxPoints);
 
+        if (targetUser.id === api.msg.author.plainUser.client.user?.id) {
+            points = 2;
+            reason = 'nie warnuje się istoty wyższej panie';
+        }
+
+        if (targetUser.id === '1409902422108934226') {
+            points = 2;
+            reason = 'co prawda watchdog istotą wyższą nie jest ale się lubimy więc daje ci warna. nice try';
+        }
+
         const embed = new dsc.EmbedBuilder()
             .setTitle(`📢 Masz fake-warna/shitwarna, ${targetUser.user.username}!`)
-            .setDescription(
-                `Właśnie dostałeś darmoweeego warna (punktów: ${points})!`,
-            )
+            .setDescription(`Właśnie dostałeś darmoweeego warna (punktów: ${points})!`)
             .addFields(
-                {
-                    name: 'Moderator',
-                    value: `<@${msg.author.id}>`,
-                    inline: true,
-                },
-                {
-                    name: 'Użytkownik',
-                    value: `<@${targetUser.id}>`,
-                    inline: true,
-                },
-                {
-                    name: '',
-                    value: '',
-                    inline: false,
-                },
-                {
-                    name: 'Powód',
-                    value: reason,
-                    inline: true,
-                },
-                {
-                    name: 'Punkty',
-                    value: points.toString(),
-                    inline: true,
-                }
+                { name: 'Moderator', value: `<@${api.msg.author.id}>`, inline: true },
+                { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
+                { name: 'Powód', value: reason, inline: true },
+                { name: 'Punkty', value: points.toString(), inline: true }
             )
             .setColor(PredefinedColors.Orange);
 
@@ -141,8 +116,6 @@ export const shitwarnCmd: Command = {
             embed.addFields({ name: 'Wygasa', value: `<t:${expiresAt}:R>`, inline: false });
         }
 
-        msg.reply({
-            embeds: [embed],
-        });
+        await api.msg.reply({ embeds: [embed] });
     }
-}
+};

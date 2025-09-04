@@ -3,7 +3,7 @@ import { cfg } from '../../bot/cfg.js';
 import { Action, PredefinedActionEventTypes, ActionCallback, ConstraintCallback } from '../actions.js';
 import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx } from '../actions.js';
 import { PredefinedActionCallbacks, PredefinedActionConstraints } from '../actions.js';
-import { EclairAI } from '../../bot/eclairai.js';
+import { EclairAiFirstEdition } from '../../bot/eclairai-legacy.js';
 
 let openbabcia = 'openbabcia';
 
@@ -120,8 +120,8 @@ export const eclairAIAction: Action<MessageEventCtx> = {
                 const response: string = (msg.content.toLowerCase().includes('windows jest lepszy od linux') || msg.content.toLowerCase().includes('windows jest lepszy niz linux') || msg.content.toLowerCase().includes('windows jest lepszy niż linux')) ? 'NIE' : ((msg.content.toLowerCase().includes('linux jest lepszy od windows') || msg.content.toLowerCase().includes('linux jest lepszy niz windows') || msg.content.toLowerCase().includes('linux jest lepszy niż windows')) ? 'TAK' : (responses[Math.floor(Math.random() * responses.length)]));
                 return msg.reply(response);
             } else {
-                const ai = new EclairAI();
-                msg.reply({content: ai.predict(msg.content), allowedMentions: {parse:[],users:[],roles:[],repliedUser:false}});
+                const ai = new EclairAiFirstEdition(msg as any);
+                ai.reply();
             }
         }
     ]

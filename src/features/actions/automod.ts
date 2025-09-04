@@ -59,7 +59,7 @@ export default class AutoModRules {
             { type: 'contains', keyword: 'anime' },
         ],
         reply: 'osoba na którą wiadomość odpowiadam jest gejem 🥀',
-        additionalConstraints: [],
+        additionalConstraints: [ () => Math.random() < 0.14 ],
     });
 
     static readonly Ecliar25VideoQuestion: Action<MessageEventCtx> = mkAutoreplyAction({
@@ -87,7 +87,7 @@ export default class AutoModRules {
             AutoModRules.GitHubAutoreply,
             AutoModRules.BlockInvites,
             AutoModRules.BlockNWords,
-            /*AutoModRules.BlockAnime*/
+            AutoModRules.BlockAnime
         ];
         return rules;
     }

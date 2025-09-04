@@ -1,8 +1,7 @@
-import { Command } from '../../bot/command.js';
-
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
 import { dbGet, dbRun, getRandomInt } from '../../bot/shared.js';
+import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
 
 const COOLDOWN_MS = 30 * 1000;
 const WORK_AMOUNT_MIN = 50;
@@ -41,20 +40,24 @@ async function tryWork(userId: string, amount: number): Promise<{ ok: boolean; w
     return { ok: true };
 }
 
-export const workCmd: Command = {
+export const workCmd: NextGenerationCommand = {
     name: 'work',
-    longDesc: 'Pr\\*ca dla pana, pr\\*ca za darmo! Niewolnikiem naszym bądź... dobra, nie mam talentu do wierszy. Po prostu ekonomia.',
-    shortDesc: 'Pr\\*ca dla pana, pr\\*ca za darmo!',
-    expectedArgs: [],
-
+    description: {
+        main: 'Pr\\*ca dla pana, pr\\*ca za darmo! Niewolnikiem naszym bądź... dobra, nie mam talentu do wierszy. Po prostu ekonomia.',
+        short: 'Pr\\*ca dla pana, pr\\*ca za darmo!',
+    },
+    permissions: {
+        discordPerms: null,
+        allowedRoles: null,
+        allowedUsers: null,
+    },
+    args: [],
     aliases: [],
-    allowedRoles: null,
-    allowedUsers: [],
 
-    async execute(msg, args) {
+    async execute(api: NextGenerationCommandAPI) {
         try {
-            let amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
-            const result = await tryWork(msg.author.id, amount);
+            const amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
+            const result = await tryWork(api.msg.author.id, amount);
 
             if (!result.ok) {
                 const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);
@@ -62,17 +65,17 @@ export const workCmd: Command = {
                 const embed = new dsc.EmbedBuilder()
                     .setColor(PredefinedColors.Yellow)
                     .setTitle('Chwila przerwy!')
-                    .setDescription(`Ktoś tam Ci każe czekać **${waitSeconds}** sekund zanim znowu popr*cujesz, żebyś nie naspamił komendami w chuja hajsu...`)
+                    .setDescription(`Ktoś tam Ci każe czekać **${waitSeconds}** sekund zanim znowu popr*cujesz, żebyś nie naspamił komendami w chuja hajsu...`);
 
-                return msg.reply({ embeds: [embed] });
+                return api.msg.reply({ embeds: [embed] });
             }
 
             const embed = new dsc.EmbedBuilder()
                 .setColor(PredefinedColors.Blue)
                 .setTitle('Yay!')
-                .setDescription(`Zarobiłeś **${amount}** dolarów!`)
+                .setDescription(`Zarobiłeś **${amount}** dolarów!`);
 
-            return msg.reply({ embeds: [embed] });
+            return api.msg.reply({ embeds: [embed] });
         } catch (error) {
             console.error(error);
 
@@ -82,7 +85,7 @@ export const workCmd: Command = {
                 .setDescription('Coś się złego odwaliło z tą ekonomią...')
                 .setTimestamp();
 
-            return msg.reply({ embeds: [embed] });
+            return api.msg.reply({ embeds: [embed] });
         }
     }
 };

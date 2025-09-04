@@ -33,7 +33,7 @@ export interface Config {
         },
         forFun: {
             media: {
-                addReactions: Snowflake[],
+                addReactions: string[],
                 deleteMessageIfNotMedia: boolean,
                 channel: Snowflake,
                 shallCreateThread: boolean
@@ -59,7 +59,7 @@ export interface Config {
 
     ai: {
         channel: Snowflake;
-        allowedCharacters: string[];
+        notAllowedCharacters: string[];
         modelPath: string;
         aiTokensLimit: number;
         bannedSequences: string[];
@@ -259,13 +259,13 @@ export const cfg: Config = {
         eligibleToRemoveGifBan: ["1280081773019140096", "1280884378586845216"],
         gifBan: "1406369089634435204",
         unfilteredChannel: '1397628186795311246',
-        makeNeocities: ['1274610053843783768']
+        makeNeocities: []
     },
 
     ai: {
         channel: '1276271917665484801',
         //channel: '1406643477210726550',
-        allowedCharacters: [/* lowercase*/ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'w', 'x', 'y', 'z', /* uppercase */ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'W', 'X', 'Y', 'Z' /* polish characters */, 'ą', 'ę', 'ć', 'ś', 'ó', 'ł', 'ż', 'ź', 'Ą', 'Ę', 'Ć', 'Ś', 'Ó', 'Ł', 'Ż', 'Ź', /* common characters */, ',', '.', ';', ' ', ':'],
+        notAllowedCharacters: [':', '@', '#', '!', '&', '*'],
         modelPath: './bot/eclairai-db.json',
         aiTokensLimit: 100, // believe me it's a lot, you won't get more if you're not flooding
         bannedSequences: ['@here', '@everyone', 'choler', 'chuj', 'debil', 'fiucie', 'fiut', 'fuck', 'gówn', 'hitler', 'ja pierdole', 'ja pierdolę', 'jeba', 'jebany', 'jebi', 'jprdl', 'kurwa', 'kutas', 'niger', 'nigger', 'penis', 'pierdol', 'porn', 'putin', 'rucha', 'skibidi', 'skibidi toilet', 'spierdalaj', 'toilet', 'wypierdalaj', 'zapierdalaj'],
@@ -290,7 +290,7 @@ export const cfg: Config = {
                 enabled: true,
                 aliases: [],
                 allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096'],
-                allowedUsers: ['1274610053843783768'],
+                allowedUsers: [],
                 reasonRequired: false,
             },
             mute: {

@@ -1,26 +1,33 @@
-import { Command } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js'
-import { db, sqlite } from '../../bot/db.js';
-
-import * as log from '../../util/log.js';
+import { NextGenerationCommand } from '../../bot/command.js';
 import * as dsc from 'discord.js';
 
-import { PredefinedColors } from '../../util/color.js';
-
-export const evalCmd: Command = {
+export const evalCmd: NextGenerationCommand = {
     name: 'eval',
-    longDesc: 'Wykonuje kod JavaScript. Jest naprawdę potencjalnie unsafe, dlatego to jest locknięte do granic możliwości.',
-    shortDesc: 'Wykonuje kod JavaScript, więc jest bardzo unsafe.',
-    expectedArgs: [],
-
+    description: {
+        main: 'Wykonuje kod JavaScript. Jest naprawdę potencjalnie unsafe, dlatego to jest locknięte do granic możliwości.',
+        short: 'Wykonuje kod JavaScript, więc jest bardzo unsafe.',
+    },
+    args: [
+        { name: 'code', type: 'string', description: 'Kod JS do wykonania', optional: false },
+    ],
     aliases: [],
-    allowedRoles: null,
-    allowedUsers: [],
+    permissions: {
+        discordPerms: null,
+        allowedRoles: null,
+        allowedUsers: [],
+    },
 
-    async execute(msg, args) {
-        if (msg.author.id !== '990959984005222410') {
-            return msg.reply('nuh uh');
+    async execute(api) {
+        if (api.msg.author.id !== '990959984005222410') {
+            return api.msg.reply('nuh uh');
         }
-        msg.reply(`wynik twojej super komendy:\n\`\`\`${(0, eval)(args.join(' '))}\`\`\``) // eval command
-    }
-}
+
+        const code = api.getArg('code')?.value as string;
+        try {
+            const result = (0, eval)(code);
+            return api.msg.reply(`wynik twojej super komendy:\n\`\`\`${result}\`\`\``);
+        } catch (err) {
+            return api.msg.reply(`❌ Błąd podczas evala:\n\`\`\`${err}\`\`\``);
+        }
+    },
+};

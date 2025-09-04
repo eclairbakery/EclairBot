@@ -1,131 +1,78 @@
-import { Command } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js'
-import { db, sqlite } from '../../bot/db.js';
-
-import * as log from '../../util/log.js';
+import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import { cfg } from '../../bot/cfg.js';
 import * as dsc from 'discord.js';
-
 import { PredefinedColors } from '../../util/color.js';
+import * as log from '../../util/log.js';
+import ban from '../../bot/apis/bans.js';
 
 const cmdCfg = cfg.mod.commands.ban;
 
-export const banCmd: Command = {
+export const banCmd: NextGenerationCommand = {
     name: 'ban',
-    longDesc: 'Jak masz uprawnienia, no to banuj ludzi. Taka praca... A jak nie, to nawet nie próbuj tego tykać!',
-    shortDesc: 'Banuje danego użytkownika z serwera',
-    expectedArgs: [
-        { name: 'user',   desc: 'Osoba, która jest nieznośna idzie do tego pola...' },
-        { name: 'reason', desc:
-            cmdCfg.reasonRequired ? 'Powiedz innym modom czemu banujesz ludzi.' : 'Powiedz innym modom czemu banujesz ludzi. Możesz pominąć, ale jak to zrobisz, to naślę na ciebie FBI.',
-        }
+    description: {
+        main: 'Jak masz uprawnienia, no to banuj ludzi. Taka praca... A jak nie, to nawet nie próbuj tego tykać!',
+        short: 'Banuje danego użytkownika z serwera'
+    },
+    args: [
+        { name: 'user', type: 'user-mention', optional: false, description: 'Osoba, która jest nieznośna idzie do tego pola...' },
+        { name: 'reason', type: 'string', optional: !cmdCfg.reasonRequired, description: 'Powód bana' }
     ],
-
     aliases: cmdCfg.aliases,
-    allowedRoles: cmdCfg.allowedRoles,
-    allowedUsers: cmdCfg.allowedUsers,
+    permissions: {
+        discordPerms: null,
+        allowedRoles: cmdCfg.allowedRoles,
+        allowedUsers: cmdCfg.allowedUsers
+    },
+    execute: async (api: NextGenerationCommandAPI) => {
+        const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
+        const reasonArg = api.getTypedArg('reason', 'string').value as string;
+        const reason = reasonArg?.trim() || (cmdCfg.reasonRequired ? null : 'Moderator nie podał powodu.');
 
-    async execute(msg, args) {
-        let targetUser: dsc.GuildMember | null = null;
-        let reason = '';
-
-        if (msg.reference?.messageId) {
-            const repliedMsg = await msg.channel.messages.fetch(msg.reference.messageId);
-            if (repliedMsg) {
-                targetUser = repliedMsg.member;
-            }
-            reason = args.join(' ').trim();
-        } else if (args.length > 0) {
-            const userMention = args[0].match(/^<@!?(\d+)>$/);
-            let userId: string | null = null;
-            let reasonArgs: string[];
-
-            if (userMention) {
-                userId = userMention[1];
-                reasonArgs = args.slice(1);
-            } else if (/^\d+$/.test(args[0])) {
-                userId = args[0];
-                reasonArgs = args.slice(1);
-            } else {
-                reasonArgs = [...args];
-            }
-
-            if (userId) {
-                targetUser = await msg.guild.members.fetch(userId).catch(() => null);
-            }
-
-            reason = reasonArgs.join(' ').trim();
+        if (!targetUser) {
+            return log.replyError(api.msg, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyśle komu ty chcesz dać bana? Użycie: odpowiedzi na wiadomość lub !ban <@user> <powód>');
         }
 
-        if (targetUser == null) {
-            log.replyError(msg, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyśle komu ty chcesz dać bana? Użycie: odpowiedzi na wiadomość lub !ban <@user> <powód>');
-            return;
+        if (!reason) {
+            return log.replyError(api.msg, 'Nie podano powodu', 'Ale za co ten ban? Poproszę o doprecyzowanie!');
         }
 
         if (targetUser.roles.cache.hasAny(...cfg.general.moderationProtectedRoles)) {
-            log.replyError(msg, 'Chronimy go!', 'Użytkownik poprosił o ochronę i ją dostał!');
-            return;
-        }
-
-        if (reason == "" || reason == undefined) {
-            if (cmdCfg.reasonRequired) {
-                log.replyError(msg, 'Nie podano powodu', 'Ale za co ten ban? Poproszę o doprecyzowanie!');
-                return;
-            } else {
-                reason = 'Moderator nie poszczycił się zbytnią znajomością komendy i nie podał powodu... Ale może to i lepiej';
-            }
+            return log.replyError(api.msg, 'Chronimy go!', 'Użytkownik poprosił o ochronę i ją dostał!');
         }
 
         try {
-            await targetUser.ban();
-            const channel = await msg.client.channels.fetch(cfg.logs.channel);
-            if (!channel.isSendable()) return;
-            channel.send({
+            await ban(targetUser, { reason, expiresAt: null });
+
+            const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
+            if (logChannel?.isSendable()) {
+                logChannel.send({
+                    embeds: [
+                        new dsc.EmbedBuilder()
+                            .setAuthor({ name: 'EclairBOT' })
+                            .setColor(PredefinedColors.DarkGrey)
+                            .setTitle('Zbanowano członka')
+                            .setDescription(`Użytkownik <@${targetUser.id}> (${targetUser.user.username}) został zbanowany z serwera przez <@${api.msg.author.id}>!`)
+                            .addFields([{ name: 'Powód', value: reason }])
+                    ]
+                });
+            }
+
+            return api.msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
-                        .setAuthor({
-                            name: 'EclairBOT'
-                        })
-                        .setColor(PredefinedColors.DarkGrey)
-                        .setTitle('Zbanowano członka')
-                        .setDescription(`Użytkownik <@${targetUser.id}> (${targetUser.user.username}) został zbanowany z serwera przez <@${msg.author.id}>!`)
-                        .setFields([
-                            {
-                                name: 'Powód',
-                                value: reason
-                            }
-                        ])
+                        .setTitle(`📢 ${targetUser.user.username} został zbanowany!`)
+                        .setDescription(`Multikonto? Już po nim... Wkurzający chłop? Uciszony na zawsze... Ktokolwiek? Nie może wbić, chyba że zrobi alta...`)
+                        .addFields(
+                            { name: 'Moderator', value: `<@${api.msg.author.id}>`, inline: true },
+                            { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
+                            { name: 'Powód', value: reason, inline: false }
+                        )
+                        .setColor(PredefinedColors.Orange)
                 ]
             });
-        } catch {
-            return log.replyError(msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że banujesz admina...');
+        } catch (e) {
+            console.error(e);
+            return log.replyError(api.msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że banujesz admina...');
         }
-
-        msg.reply({
-            embeds: [
-                new dsc.EmbedBuilder()
-                    .setTitle(`📢 ${targetUser.user.username} został zbanowany!`)
-                    .setDescription(
-                        `Multikonto? Już po nim... Wkurzający chłop? Uciszony na zawsze... Ktokolwiek? Nie może wbić, chyba że zrobi alta...`,
-                    )
-                    .addFields(
-                        {
-                            name: 'Moderator',
-                            value: `<@${msg.author.id}>`,
-                            inline: true,
-                        },
-                        {
-                            name: 'Użytkownik',
-                            value: `<@${targetUser.id}>`,
-                            inline: true,
-                        },
-                        {
-                            name: 'Powód',
-                            value: reason,
-                            inline: false,
-                        },
-                    )
-                    .setColor(PredefinedColors.Orange),
-            ],
-        });
     }
-}
+};

@@ -1,37 +1,36 @@
-import { Command } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js'
-import { db, sqlite } from '../../bot/db.js';
-
-import * as log from '../../util/log.js';
+import { NextGenerationCommand } from '../../bot/command.js';
 import * as dsc from 'discord.js';
-
-import { PredefinedColors } from '../../util/color.js';
 
 let canRestart = false;
 
 setTimeout(() => {
-    canRestart = true; //fix: aborting automatic restart, last crash occurred less than 60 seconds ago
+    canRestart = true; // fix: aborting automatic restart, last crash occurred less than 60 seconds ago
 }, 61 * 1000);
 
-export const restartCmd: Command = {
+export const restartCmd: NextGenerationCommand = {
     name: 'restart',
-    longDesc: 'Restartuje bota... Nie tykaj!',
-    shortDesc: 'Szybki restart bota!',
-    expectedArgs: [],
-
+    description: {
+        main: 'Restartuje bota... Nie tykaj!',
+        short: 'Szybki restart bota!',
+    },
+    args: [],
     aliases: [],
-    allowedRoles: null,
-    allowedUsers: [],
+    permissions: {
+        discordPerms: null,
+        allowedRoles: null,
+        allowedUsers: [],
+    },
 
-    async execute(msg, args) {
-        if (msg.author.id !== '990959984005222410') {
-            return msg.reply('nuh uh');
+    async execute(api) {
+        if (api.msg.author.id !== '990959984005222410') {
+            return api.msg.reply('nuh uh');
         }
         if (!canRestart) {
-            return msg.reply('operacja unsafe w tym momencie');
+            return api.msg.reply('operacja unsafe w tym momencie');
         }
+
         console.log('Issued restart. This will work due to the behaviour of Pterodactyl Daemon.');
-        await msg.reply('jusz siem restartujem plis łejt plis plis plis łejt');
+        await api.msg.reply('jusz siem restartujem plis łejt plis plis plis łejt');
         process.exit(1);
-    }
-}
+    },
+};

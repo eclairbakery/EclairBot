@@ -1,4 +1,4 @@
-import { Action, PredefinedActionEventTypes, ActionCallback, ConstraintCallback } from '../actions.js';
+import { Action, PredefinedActionEventTypes, ActionCallback, ConstraintCallback, MagicSkipAllActions } from '../actions.js';
 import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx } from '../actions.js';
 import { PredefinedActionCallbacks, PredefinedActionConstraints } from '../actions.js';
 
@@ -18,6 +18,7 @@ export interface AutoReplyOptions {
     reply: (string | dsc.MessagePayload | dsc.MessageReplyOptions) | AutoReplyGetMessageCallback;
     additionalConstraints?: ConstraintCallback<MessageEventCtx>[];
     additionalCallbacks?: ActionCallback<MessageEventCtx>[];
+    shallEndActionsLoop?: boolean
 }
 
 export interface LogEmbedAutoReplyOptions {
@@ -28,7 +29,7 @@ export interface LogEmbedAutoReplyOptions {
     additionalCallbacks?: ActionCallback<MessageEventCtx>[];
 }
 
-export function mkAutoreplyAction({ activationOptions, reply, additionalCallbacks, additionalConstraints }: AutoReplyOptions): Action<MessageEventCtx> {
+export function mkAutoreplyAction({ activationOptions, reply, additionalCallbacks, additionalConstraints, shallEndActionsLoop }: AutoReplyOptions): Action<MessageEventCtx> {
     let constraints: ConstraintCallback<MessageEventCtx>[] = [];
     for (const opt of activationOptions) {
         switch (opt.type) {
@@ -66,7 +67,10 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
                 } else {
                     replyValue = reply as (string | dsc.MessagePayload | dsc.MessageReplyOptions);
                 }
-                return msg.reply(replyValue);
+                msg.reply(replyValue);
+                if (shallEndActionsLoop) {
+                    return MagicSkipAllActions;
+                }
             },
             ...additionalCallbacks || [],
         ],

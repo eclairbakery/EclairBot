@@ -1,62 +1,73 @@
-import { Command } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
-import { db, sqlite } from '../../bot/db.js';
-
-import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
-
 import { PredefinedColors } from '../../util/color.js';
-import capitalizeFirst from '../../util/capitalizeFirst.js';
+import { NextGenerationCommand } from '../../bot/command.js';
 
-export const changelogCmd: Command = {
+export const changelogCmd: NextGenerationCommand = {
     name: 'changelog',
-    longDesc: 'Ogólnie mówiąc bardzo długi changelog, gdzie tłumaczę w sposób niezrozumiały dla Ciebie, co się u mnie zmieniło ostatnio.',
-    shortDesc: 'Wyświetl changelog.',
-    expectedArgs: [],
+    description: {
+        main: 'Ogólnie mówiąc bardzo długi changelog, gdzie tłumaczę w sposób niezrozumiały dla Ciebie, co się u mnie zmieniło ostatnio.',
+        short: 'Wyświetl changelog.',
+    },
+    args: [
+        { name: 'version', type: 'string', description: 'Wersja changeloga (opcjonalnie).', optional: true },
+    ],
     aliases: [],
-    allowedRoles: null,
-    allowedUsers: [],
+    permissions: {
+        discordPerms: null,
+        allowedRoles: null,
+        allowedUsers: [],
+    },
 
-    execute(msg, args, commands) {
-        if (args.includes('beta-1.0')) {
-            msg.reply({
+    async execute(api) {
+        const version = api.getArg('version')?.value as string | undefined;
+
+        if (version === 'beta-1.0') {
+            return api.msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
-                        .setAuthor( { name: 'EclairBOT' } )
+                        .setAuthor({ name: 'EclairBOT' })
                         .setColor(PredefinedColors.Pink)
                         .setTitle('EclairBOT beta 1.0')
-                        .setDescription('Krótko mówiąc dodane zostały te komendy: `bal`, `blackjack`, `crime`, `rob`, `slut`, `work`, `topeco`, `banner`, `changelog`, `commands`, `help`, `detail-help`, `man`, `pfp`, `siema`, `animal`, `dog`, `cat`, `parrot`, `lvl`, `toplvl`, `xp`, `ban`, `kick`, `mute`, `unmute`, `warn`, `warn-clear`, `warnlist`. Pewnie pojawi się jeszcze więcej.')
-                ]
+                        .setDescription(
+                            'Krótko mówiąc dodane zostały te komendy: `bal`, `blackjack`, `crime`, `rob`, `slut`, `work`, `topeco`, `banner`, `changelog`, `commands`, `help`, `detail-help`, `man`, `pfp`, `siema`, `animal`, `dog`, `cat`, `parrot`, `lvl`, `toplvl`, `xp`, `ban`, `kick`, `mute`, `unmute`, `warn`, `warn-clear`, `warnlist`. Pewnie pojawi się jeszcze więcej.'
+                        ),
+                ],
             });
-        } else if (args.includes('1.0')) {
-            msg.reply({
+        } else if (version === '1.0') {
+            return api.msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
-                        .setAuthor( { name: 'EclairBOT' } )
+                        .setAuthor({ name: 'EclairBOT' })
                         .setColor(PredefinedColors.Pink)
                         .setTitle('EclairBOT 1.0')
-                        .setDescription('Zostały dodane logi, template channels, które na przykład liczą bany, system akcji i tak dalej. Podaj `beta-1.0` jako argument by zobaczyć poprzednią aktualizację.')
-                ]
+                        .setDescription(
+                            'Zostały dodane logi, template channels, które na przykład liczą bany, system akcji i tak dalej. Podaj `beta-1.0` jako argument by zobaczyć poprzednią aktualizację.'
+                        ),
+                ],
             });
-        } else if (args.includes('1.1')) {
-            msg.reply({
+        } else if (version === '1.1') {
+            return api.msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
-                        .setAuthor( { name: 'EclairBOT' } )
+                        .setAuthor({ name: 'EclairBOT' })
                         .setColor(PredefinedColors.Pink)
                         .setTitle('EclairBOT 1.1')
-                        .setDescription('Teraz można wyświetlać najlepsze artykuły z fandomu Piekarnii Eklerki. Dodano też komendę wiki, która wyświetla rzeczy z Wikipedii. Została dodana komenda do restartu bota. A i prawie bym zapomniał, teraz masz dość łatwy sposób by usuwać wiadomości. Został dodany filt anti-spam i anti-flood (anti-flood obecnie wyłączony ze względu na jego słabą jakość). Podaj `1.0` jako argument by zobaczyć poprzednią aktualizację.')
-                ]
+                        .setDescription(
+                            'Teraz można wyświetlać najlepsze artykuły z fandomu Piekarnii Eklerki. Dodano też komendę wiki, która wyświetla rzeczy z Wikipedii. Została dodana komenda do restartu bota. A i prawie bym zapomniał, teraz masz dość łatwy sposób by usuwać wiadomości. Został dodany filt anti-spam i anti-flood (anti-flood obecnie wyłączony ze względu na jego słabą jakość). Podaj `1.0` jako argument by zobaczyć poprzednią aktualizację.'
+                        ),
+                ],
             });
         } else {
-            msg.reply({
+            return api.msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
-                        .setAuthor( { name: 'EclairBOT' } )
+                        .setAuthor({ name: 'EclairBOT' })
                         .setColor(PredefinedColors.Pink)
                         .setTitle('EclairBOT 1.2')
-                        .setDescription('Witaj. W najnowszej aktualizacji zostało dodane oczywiście - tak zgadłeś, notify. Pozwala ono od admin+ pingować prawie każdy fajny ping. Podaj `1.1` jako argument by zobaczyć poprzednią aktualizację.')
-                ]
+                        .setDescription(
+                            'Witaj. W najnowszej aktualizacji zostało dodane oczywiście - tak zgadłeś, notify. Pozwala ono od admin+ pingować prawie każdy fajny ping. Podaj `1.1` jako argument by zobaczyć poprzednią aktualizację.'
+                        ),
+                ],
             });
         }
     },
