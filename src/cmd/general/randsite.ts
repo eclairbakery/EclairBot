@@ -1,4 +1,4 @@
-import { Command, Category, NextGenerationCommand } from '../../bot/command.js';
+import { Command } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
 import { db, sqlite } from '../../bot/db.js';
 
@@ -33,13 +33,13 @@ const nonNeocitiesPages = [
     'https://internet.com'
 ];
 
-export const randsiteCmd: NextGenerationCommand = {
+export const randsiteCmd: Command = {
     name: 'randsite',
     description: {
         main: 'Siema... Czujesz się fajnie? Chcesz eksploracji? Tą komendą wyświetlisz losową stronę na Internecie.',
         short: 'Tą komendą wyświetlisz losową stronę na Internecie.',
     },
-    args: [
+    expectedArgs: [
         {
             name: 'neocities-bypass',
             description: 'Napisz tutaj `all` by nie wyświetlało tylko stron z Neocities/Nekoweb',

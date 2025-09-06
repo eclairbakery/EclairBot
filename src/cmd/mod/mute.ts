@@ -1,4 +1,4 @@
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import { Command, CommandAPI } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
 import * as dsc from 'discord.js';
 import * as log from '../../util/log.js';
@@ -7,13 +7,13 @@ import mute from '../../bot/apis/muting.js';
 
 const cmdCfg = cfg.mod.commands.mute;
 
-export const muteCmd: NextGenerationCommand = {
+export const muteCmd: Command = {
     name: 'mute',
     description: {
         main: 'Zamykam Ci buzię na czacie, żebyś mógł w ciszy przemyśleć swoje wybory życiowe. Jak chcesz pogadać, to poczekaj, aż Cię ktoś wypuści z izolatki.',
         short: 'Zamyka morde podanemu użytkownikowi'
     },
-    args: [
+    expectedArgs: [
         { name: 'user', type: 'user-mention', optional: false, description: 'Komu mute chcesz dać?' },
         { name: 'reason', type: 'string', optional: !cmdCfg.reasonRequired, description: 'Powód wyciszenia użytkownika' }
     ],
@@ -23,7 +23,7 @@ export const muteCmd: NextGenerationCommand = {
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers
     },
-    execute: async (api: NextGenerationCommandAPI) => {
+    execute: async (api: CommandAPI) => {
         const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
         let reason = api.getTypedArg('reason', 'string').value as string || null;
 

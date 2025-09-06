@@ -1,21 +1,21 @@
-import { 
-    NextGenerationCommandArgument, 
-    NextGenerationCommandValuableArgument, 
-    NextGenerationCommandArgumentWithStringValue, 
-    NextGenerationCommandArgumentWithNumberValue, 
-    NextGenerationCommandArgumentWithTimestampValue, 
-    NextGenerationCommandArgumentWithUserMentionValue, 
-    NextGenerationCommandArgumentWithRoleMentionValue 
+import {
+    CommandArgument,
+    CommandValuableArgument,
+    CommandArgumentWithStringValue,
+    CommandArgumentWithNumberValue,
+    CommandArgumentWithTimestampValue,
+    CommandArgumentWithUserMentionValue,
+    CommandArgumentWithRoleMentionValue
 } from "../../bot/command.js";
 import * as dsc from 'discord.js';
 import parseTimestamp from "../../util/parseTimestamp.js";
 
 export async function parseArgs(
-    rawArgs: string[], 
-    declaredArgs: NextGenerationCommandArgument[],
+    rawArgs: string[],
+    declaredArgs: CommandArgument[],
     context?: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction }
-): Promise<NextGenerationCommandValuableArgument[]> {
-    const parsedArgs: NextGenerationCommandValuableArgument[] = [];
+): Promise<CommandValuableArgument[]> {
+    const parsedArgs: CommandValuableArgument[] = [];
 
     for (let i = 0; i < declaredArgs.length; i++) {
         const decl = declaredArgs[i];
@@ -29,19 +29,19 @@ export async function parseArgs(
 
         switch (decl.type) {
             case 'string':
-                parsedArgs.push({ ...decl, value: raw } as NextGenerationCommandArgumentWithStringValue);
+                parsedArgs.push({ ...decl, value: raw } as CommandArgumentWithStringValue);
                 break;
 
             case 'number':
                 const num = Number(raw);
                 if (isNaN(num) && !decl.optional) throw new Error(`Argument ${decl.name} must be a number`);
-                parsedArgs.push({ ...decl, value: isNaN(num) ? undefined : num } as NextGenerationCommandArgumentWithNumberValue);
+                parsedArgs.push({ ...decl, value: isNaN(num) ? undefined : num } as CommandArgumentWithNumberValue);
                 break;
 
             case 'timestamp': {
                 const ts = parseTimestamp(raw);
                 if (ts === undefined && !decl.optional) throw new Error(`Argument ${decl.name} must be a valid timestamp`);
-                parsedArgs.push({ ...decl, value: ts } as NextGenerationCommandArgumentWithTimestampValue);
+                parsedArgs.push({ ...decl, value: ts } as CommandArgumentWithTimestampValue);
                 break;
             }
 
@@ -64,7 +64,7 @@ export async function parseArgs(
                 }
 
                 if (!user && !decl.optional) throw new Error(`Argument ${decl.name} must be a user mention`);
-                parsedArgs.push({ ...decl, value: user } as NextGenerationCommandArgumentWithUserMentionValue);
+                parsedArgs.push({ ...decl, value: user } as CommandArgumentWithUserMentionValue);
                 break;
             }
 
@@ -78,7 +78,7 @@ export async function parseArgs(
                 }
 
                 if (!role && !decl.optional) throw new Error(`Argument ${decl.name} must be a role mention`);
-                parsedArgs.push({ ...decl, value: role } as NextGenerationCommandArgumentWithRoleMentionValue);
+                parsedArgs.push({ ...decl, value: role } as CommandArgumentWithRoleMentionValue);
                 break;
             }
 

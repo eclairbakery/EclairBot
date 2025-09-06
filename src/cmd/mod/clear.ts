@@ -2,11 +2,11 @@ import { cfg } from '../../bot/cfg.js';
 import * as dsc from 'discord.js';
 import * as log from '../../util/log.js';
 import { PredefinedColors } from '../../util/color.js';
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import { Command, CommandAPI } from '../../bot/command.js';
 
 const cmdCfg = cfg.mod.commands.warn;
 
-export const clearCmd: NextGenerationCommand = {
+export const clearCmd: Command = {
     name: 'clear',
     description: {
         main: 'Ktoś spami? Ta komenda pomoże Ci ogarnąć usuwanie wiadomości!',
@@ -17,7 +17,7 @@ export const clearCmd: NextGenerationCommand = {
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers,
     },
-    args: [
+    expectedArgs: [
         {
             type: 'number',
             optional: false,
@@ -33,7 +33,7 @@ export const clearCmd: NextGenerationCommand = {
     ],
     aliases: cmdCfg.aliases,
 
-    async execute(api: NextGenerationCommandAPI) {
+    async execute(api: CommandAPI) {
         const amount = api.getTypedArg('amount', 'number')?.value as number;
         const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember;
 

@@ -1,4 +1,4 @@
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import { Command, CommandAPI } from '../../bot/command.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
 
@@ -45,13 +45,13 @@ async function downloadFromWikipedia(language_versions: string[], args: string[]
     return fetched;
 }
 
-export const wikiCmd: NextGenerationCommand = {
+export const wikiCmd: Command = {
     name: 'wiki',
     description: {
         main: 'Generalnie pobiera artykuł z Wikipedii. Super użyteczne!',
         short: 'Pobiera rzecz z Wikipedii!'
     },
-    args: [
+    expectedArgs: [
         {
             name: 'query',
             type: 'string',
@@ -65,7 +65,7 @@ export const wikiCmd: NextGenerationCommand = {
         allowedUsers: null,
         discordPerms: []
     },
-    execute: async (api: NextGenerationCommandAPI) => {
+    execute: async (api: CommandAPI) => {
         const msg = api.msg;
         const query = api.getArg('query')?.value as string;
 

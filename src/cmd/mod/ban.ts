@@ -1,4 +1,4 @@
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import { Command, CommandAPI } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
@@ -7,13 +7,13 @@ import ban from '../../bot/apis/bans.js';
 
 const cmdCfg = cfg.mod.commands.ban;
 
-export const banCmd: NextGenerationCommand = {
+export const banCmd: Command = {
     name: 'ban',
     description: {
         main: 'Jak masz uprawnienia, no to banuj ludzi. Taka praca... A jak nie, to nawet nie próbuj tego tykać!',
         short: 'Banuje danego użytkownika z serwera'
     },
-    args: [
+    expectedArgs: [
         { name: 'user', type: 'user-mention', optional: false, description: 'Osoba, która jest nieznośna idzie do tego pola...' },
         { name: 'reason', type: 'string', optional: !cmdCfg.reasonRequired, description: 'Powód bana' }
     ],
@@ -23,7 +23,7 @@ export const banCmd: NextGenerationCommand = {
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers
     },
-    execute: async (api: NextGenerationCommandAPI) => {
+    execute: async (api: CommandAPI) => {
         const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
         const reasonArg = api.getTypedArg('reason', 'string').value as string;
         const reason = reasonArg?.trim() || (cmdCfg.reasonRequired ? null : 'Moderator nie podał powodu.');

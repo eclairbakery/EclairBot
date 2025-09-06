@@ -1,4 +1,4 @@
-import { NextGenerationCommand, NextGenerationCommandAPI, NextGenerationCommandArgumentWithUserMentionValue } from '../../bot/command.js';
+import { Command, CommandAPI, CommandArgumentWithUserMentionValue } from '../../bot/command.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
 import { dbGet, dbRun, getRandomInt } from '../../bot/shared.js';
@@ -42,7 +42,7 @@ async function tryRob(userId: string, targetId: string): Promise<{ ok: boolean; 
     return { ok: true, amount: robbedAmount, success };
 }
 
-export const robCmd: NextGenerationCommand = {
+export const robCmd: Command = {
     name: 'rob',
     description: {
         main: 'Spróbuj okraść innego gracza i zgarnąć trochę hajsu. Ale nie miej potem wyrzutów sumienia...',
@@ -53,7 +53,7 @@ export const robCmd: NextGenerationCommand = {
         allowedUsers: null,
         discordPerms: []
     },
-    args: [
+    expectedArgs: [
         {
             name: 'user',
             type: 'user-mention',
@@ -62,9 +62,9 @@ export const robCmd: NextGenerationCommand = {
         }
     ],
     aliases: [],
-    execute: async (api: NextGenerationCommandAPI) => {
+    execute: async (api: CommandAPI) => {
         const msg = api.msg;
-        const targetArg = api.getTypedArg('user', 'user-mention') as NextGenerationCommandArgumentWithUserMentionValue;
+        const targetArg = api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue;
 
         if (!targetArg.value) return msg.reply('Musisz oznaczyć osobę, którą chcesz okraść!');
         const target = targetArg.value;

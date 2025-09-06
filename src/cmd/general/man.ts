@@ -1,4 +1,4 @@
-import { NextGenerationCommand } from '../../bot/command.js';
+import { Command } from '../../bot/command.js';
 import { PredefinedColors } from '../../util/color.js';
 import { cfg } from '../../bot/cfg.js';
 import { db, sqlite } from '../../bot/db.js';
@@ -6,16 +6,16 @@ import { db, sqlite } from '../../bot/db.js';
 import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
 
-import findCommand, { findNewCommand } from '../../util/findCommand.js';
+import findCommand from '../../util/findCommand.js';
 import { Category } from '../../bot/command.js';
 
-export const manCmd: NextGenerationCommand = {
+export const manCmd: Command = {
     name: 'man',
     description: {
         main: 'Dokładniejsza dokumentacja, pokazująca użycie komend, czy możesz ich użyć oraz dokładny opis.',
         short: 'Dokładniejsza dokumentacja danej komendy',
     },
-    args: [
+    expectedArgs: [
         {
             name: 'command',
             description: 'Podaj tu bez prefixu komendę, o której chcesz się czegoś dowiedzieć...',
@@ -31,7 +31,7 @@ export const manCmd: NextGenerationCommand = {
     },
 
     async execute(api) {
-        const manuals: Map<Category, NextGenerationCommand[]> = new Map([
+        const manuals: Map<Category, Command[]> = new Map([
             [
                 new Category('💔', 'inne', '', '', PredefinedColors.Pink),
                 [
@@ -42,7 +42,7 @@ export const manCmd: NextGenerationCommand = {
                             short: ''
                         },
                         aliases: ['kobieta', 'żona', 'dziewczyna'],
-                        args: [
+                        expectedArgs: [
                             {
                                 name: 'odciąż mnie',
                                 description: 'Wszystko muszę robić sama. Nie mam z wami żadnego pożytku',
@@ -71,7 +71,7 @@ export const manCmd: NextGenerationCommand = {
         }
 
         const cmdName = api.args[0];
-        const found = findNewCommand(cmdName.value as string ?? 'man', manuals);
+        const found = findCommand(cmdName.value as string ?? 'man', manuals);
 
         if (!found) {
             return log.replyError(
@@ -83,7 +83,7 @@ export const manCmd: NextGenerationCommand = {
 
         const { command, category } = found;
 
-        const formattedArgs = command.args.map((arg) => `**${arg.name}**: ${arg.description}`);
+        const formattedArgs = command.expectedArgs.map((arg) => `**${arg.name}**: ${arg.description}`);
 
         const formattedAllowedRoles: string[] =
             command.permissions.allowedRoles !== null

@@ -2,7 +2,7 @@ import { PredefinedColors, Color } from '../util/color.js';
 import { SendableChannel } from '../defs.js';
 
 import * as dsc from 'discord.js';
-import { CommandInput, NextGenerationCommand, NextGenerationCommandAPI } from '../bot/command.js';
+import { Command, CommandAPI } from '../bot/command.js';
 
 enum LogType {
     Success,
@@ -53,23 +53,23 @@ export function getTipEmbed(title: string, desc: string) {
 }
 
 
-export function replyError(msg: CommandInput | dsc.Message | NextGenerationCommandAPI['msg'], title: string, desc: string) {
+export function replyError(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
     msg.reply(getErrorEmbed(title, desc));
 }
 
-export function replyWarn(msg: CommandInput | dsc.Message | NextGenerationCommandAPI['msg'], title: string, desc: string) {
+export function replyWarn(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
     msg.reply(getWarnEmbed(title, desc));
 }
 
-export function replyInfo(msg: CommandInput | dsc.Message | NextGenerationCommandAPI['msg'], title: string, desc: string) {
+export function replyInfo(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
     msg.reply(getInfoEmbed(title, desc));
 }
 
-export function replySuccess(msg: CommandInput | dsc.Message | NextGenerationCommandAPI['msg'], title: string, desc: string) {
+export function replySuccess(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
     msg.reply(getSuccessEmbed(title, desc));
 }
 
-export function replyTip(msg: CommandInput | dsc.Message | NextGenerationCommandAPI['msg'], title: string, desc: string) {
+export function replyTip(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
     msg.reply(getTipEmbed(title, desc));
 }
 

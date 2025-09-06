@@ -35,7 +35,7 @@ import { welcomeNewUserAction, sayGoodbyeAction } from './features/actions/welco
 import { actionPing } from './cmd/mod/ping.js';
 import { antiSpamAndAntiFlood } from './features/actions/anti-spam-flood.js';
 import { basicMsgCreateActions } from './features/actions/basic-msg-create-actions.js';
-import { newGenCommands } from './cmd/list.js';
+import { commands } from './cmd/list.js';
 import * as slashCommands from './features/commands/slash.js';
 import * as legacyCommands from './features/commands/legacy.js';
 
@@ -67,16 +67,16 @@ async function main() {
 
     const commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
 
-    for (const [, cmds] of newGenCommands) {
+    for (const [, cmds] of commands) {
         for (const cmd of cmds) {
             const scb = new dsc.SlashCommandBuilder()
                 .setName(cmd.name)
                 .setDescription(cmd.description.main.length > 90 ? (cmd.description.short.length > 90 ? 'Domyśl się, bo discord.js nie pozwala dużo znaków.' : cmd.description.short) : cmd.description.main);
 
-            for (const arg of cmd.args) {
+            for (const arg of cmd.expectedArgs) {
                 switch (arg.type) {
                     case 'string':
-                        scb.addStringOption(option => 
+                        scb.addStringOption(option =>
                             option
                                 .setName(arg.name)
                                 .setDescription('Podaj wartość')

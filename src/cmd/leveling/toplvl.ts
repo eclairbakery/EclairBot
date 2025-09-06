@@ -4,7 +4,7 @@ import { db } from '../../bot/db.js';
 
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import { Command, CommandAPI } from '../../bot/command.js';
 
 function calculateLevel(xp: number, levelDivider: number): number {
     return Math.floor(
@@ -12,7 +12,7 @@ function calculateLevel(xp: number, levelDivider: number): number {
     );
 }
 
-export const toplvlCmd: NextGenerationCommand = {
+export const toplvlCmd: Command = {
     name: 'toplvl',
     description: {
         main: 'Czas popatrzeć na najlepszych użytkowników serwera...',
@@ -23,10 +23,10 @@ export const toplvlCmd: NextGenerationCommand = {
         allowedRoles: null,
         allowedUsers: [],
     },
-    args: [],
+    expectedArgs: [],
     aliases: ['topka', 'toplevel'],
 
-    async execute(api: NextGenerationCommandAPI) {
+    async execute(api: CommandAPI) {
         const { msg } = api;
 
         try {

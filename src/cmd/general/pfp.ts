@@ -1,4 +1,4 @@
-import { Command, NextGenerationCommand, NextGenerationCommandArgumentWithUserMentionValue } from '../../bot/command.js';
+import { Command, CommandArgumentWithUserMentionValue } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
 import { db, sqlite } from '../../bot/db.js';
 
@@ -8,13 +8,13 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
 import capitalizeFirst from '../../util/capitalizeFirst.js';
 
-export const pfpCmd: NextGenerationCommand = {
+export const pfpCmd: Command = {
     name: 'pfp',
     description: {
         main: 'Któżby się spodziewał że komenda \'pfp\' wyświetli czyjeś pfp?',
         short: 'Wyświetla czyjeś pfp'
     },
-    args: [
+    expectedArgs: [
         {
             name: 'user',
             description: 'Użytkownik generalnie...',
@@ -30,7 +30,7 @@ export const pfpCmd: NextGenerationCommand = {
     },
 
     execute(api) {
-        const user = (api.getTypedArg('user', 'user-mention') as NextGenerationCommandArgumentWithUserMentionValue).value?.user ?? api.msg.author.plainUser;
+        const user = (api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue).value?.user ?? api.msg.author.plainUser;
         api.msg.reply({content: 'Tu masz profilowe i nie marudź:', files: [user.displayAvatarURL()]});
     },
 };

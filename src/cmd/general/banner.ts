@@ -1,4 +1,4 @@
-import { Command, Category, NextGenerationCommand, NextGenerationCommandArgumentWithUserMentionValue } from '../../bot/command.js';
+import { Command, CommandArgumentWithUserMentionValue } from '../../bot/command.js';
 import { cfg } from '../../bot/cfg.js';
 import { db, sqlite } from '../../bot/db.js';
 
@@ -8,13 +8,13 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
 import capitalizeFirst from '../../util/capitalizeFirst.js';
 
-export const bannerCmd: NextGenerationCommand = {
+export const bannerCmd: Command = {
     name: 'banner',
     description: {
         main: 'Dobra... Wyświetle Ci jełopa baner jak chcesz.',
         short: 'Wyświetla baner danego użytkownika'
     },
-    args: [
+    expectedArgs: [
         {
             name: 'user',
             description: 'Użytkownik generalnie...',
@@ -30,7 +30,7 @@ export const bannerCmd: NextGenerationCommand = {
     },
 
     async execute(api) {
-        const member = api.getTypedArg('user', 'user-mention') as NextGenerationCommandArgumentWithUserMentionValue;
+        const member = api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue;
         const user = member.value?.user ?? api.msg.author.plainUser;
 
         const fetchedUser = await user.fetch();

@@ -3,11 +3,11 @@ import kick from "../../bot/apis/kicks.js";
 import mute from "../../bot/apis/muting.js";
 import warn from "../../bot/apis/warns.js";
 import { cfg } from "../../bot/cfg.js";
-import { NextGenerationCommandAPI } from "../../bot/command.js";
+import { CommandAPI } from "../../bot/command.js";
 import { client } from "../../client.js";
-import { newGenCommands } from "../../cmd/list.js";
-import { canExecuteNewCmd } from "../../util/canExecuteCmd.js";
-import { findNewCommand } from "../../util/findCommand.js";
+import { commands } from "../../cmd/list.js";
+import canExecuteCmd from "../../util/canExecuteCmd.js";
+import findCommand from "../../util/findCommand.js";
 import * as log from '../../util/log.js';
 import { parseArgs } from "./helpers.js";
 import * as dsc from 'discord.js';
@@ -25,12 +25,12 @@ client.on('messageCreate', async (msg) => {
         return;
     }
 
-    const commandObj = findNewCommand(cmdName, newGenCommands)?.command;
+    const commandObj = findCommand(cmdName, commands)?.command;
     if (!commandObj) {
         return log.replyError(msg, 'Nie znam takiej komendy', `Komenda \`${cmdName}\` nie istnieje`);
     }
 
-    if (!canExecuteNewCmd(commandObj, msg.member!)) {
+    if (!canExecuteCmd(commandObj, msg.member!)) {
         log.replyError(
             msg,
             'Hej, a co ty odpie*dalasz?',
@@ -38,7 +38,7 @@ client.on('messageCreate', async (msg) => {
         );
         return;
     }
-    
+
     if (!msg.inGuild() && !cfg.general.worksInDM.includes(cmdName)) {
         log.replyError(
             msg,
@@ -49,8 +49,8 @@ client.on('messageCreate', async (msg) => {
     }
 
     try {
-        const parsedArgs = await parseArgs(argsRaw, commandObj.args);
-        const api: NextGenerationCommandAPI = {
+        const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs);
+        const api: CommandAPI = {
             args: parsedArgs,
             getArg: (name) => parsedArgs.find(a => a.name === name)!,
             getTypedArg: (name, type) => {const x = parsedArgs.find(a => a.name === name && a.type === type)!; console.log(x); return x;},
@@ -58,8 +58,8 @@ client.on('messageCreate', async (msg) => {
                 content: msg.content,
                 author: { id: msg.author.id, plainUser: msg.author },
                 member: msg.member
-                    ? { 
-                        id: msg.member.id, 
+                    ? {
+                        id: msg.member.id,
                         moderation: {
                             warn(data) {
                                 warn(msg.member, data);
@@ -73,8 +73,8 @@ client.on('messageCreate', async (msg) => {
                             ban(data) {
                                 ban(msg.member, data);
                             },
-                        }, 
-                        plainMember: msg.member 
+                        },
+                        plainMember: msg.member
                       }
                     : ({} as any),
                 reply: (options) => msg.reply(options as any),
@@ -83,7 +83,7 @@ client.on('messageCreate', async (msg) => {
                 channel: msg.channel
             },
             plainMessage: msg,
-            commands: newGenCommands
+            commands: commands
         };
 
         await commandObj.execute(api);

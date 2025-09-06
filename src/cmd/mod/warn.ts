@@ -1,7 +1,7 @@
 import clamp from '../../util/clamp.js';
 import parseTimestamp from '../../util/parseTimestamp.js';
 
-import { NextGenerationCommand } from '../../bot/command.js';
+import { Command } from '../../bot/command.js';
 import { PredefinedColors } from '../../util/color.js';
 import { cfg } from '../../bot/cfg.js';
 
@@ -9,13 +9,13 @@ import * as log from '../../util/log.js';
 import * as dsc from 'discord.js';
 import warn from '../../bot/apis/warns.js';
 
-export const warnCmd: NextGenerationCommand = {
+export const warnCmd: Command = {
     name: 'warn',
     description: {
         main: 'Daj komuś warna, by go onieśmielić, uciszyć, zamknąć mu morde i nadużyć władzy. Żart, ale nie nadużywaj bo to się źle skończy... Nie wiesz z czym zadzierasz przybyszu!',
         short: 'Warnuje podaną osobę'
     },
-    args: [
+    expectedArgs: [
         {
             name: 'user',
             type: 'user-mention',

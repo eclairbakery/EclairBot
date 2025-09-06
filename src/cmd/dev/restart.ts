@@ -1,4 +1,4 @@
-import { NextGenerationCommand } from '../../bot/command.js';
+import { Command } from '../../bot/command.js';
 import * as dsc from 'discord.js';
 
 let canRestart = false;
@@ -7,13 +7,13 @@ setTimeout(() => {
     canRestart = true; // fix: aborting automatic restart, last crash occurred less than 60 seconds ago
 }, 61 * 1000);
 
-export const restartCmd: NextGenerationCommand = {
+export const restartCmd: Command = {
     name: 'restart',
     description: {
         main: 'Restartuje bota... Nie tykaj!',
         short: 'Szybki restart bota!',
     },
-    args: [],
+    expectedArgs: [],
     aliases: [],
     permissions: {
         discordPerms: null,

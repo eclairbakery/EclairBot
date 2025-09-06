@@ -1,13 +1,13 @@
-import { NextGenerationCommand } from '../../bot/command.js';
+import { Command } from '../../bot/command.js';
 import * as dsc from 'discord.js';
 
-export const evalCmd: NextGenerationCommand = {
+export const evalCmd: Command = {
     name: 'eval',
     description: {
         main: 'Wykonuje kod JavaScript. Jest naprawdę potencjalnie unsafe, dlatego to jest locknięte do granic możliwości.',
         short: 'Wykonuje kod JavaScript, więc jest bardzo unsafe.',
     },
-    args: [
+    expectedArgs: [
         { name: 'code', type: 'string', description: 'Kod JS do wykonania', optional: false },
     ],
     aliases: [],

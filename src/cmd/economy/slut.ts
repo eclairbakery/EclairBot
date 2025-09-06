@@ -1,4 +1,4 @@
-import { NextGenerationCommand } from '../../bot/command.js';
+import { Command } from '../../bot/command.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '../../util/color.js';
 import { dbGet, dbRun, getRandomInt } from '../../bot/shared.js';
@@ -41,13 +41,13 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
     return { ok: true };
 }
 
-export const slutCmd: NextGenerationCommand = {
+export const slutCmd: Command = {
     name: 'slut',
     description: {
         main: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
         short: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
     },
-    args: [],
+    expectedArgs: [],
     aliases: [],
     permissions: {
         discordPerms: null,
