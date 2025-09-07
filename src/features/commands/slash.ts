@@ -1,11 +1,11 @@
 import { Interaction } from "discord.js";
-import { cfg } from "../../bot/cfg.js";
-import { CommandAPI } from "../../bot/command.js";
+import { cfg } from "@/bot/cfg.js";
+import { CommandAPI } from "@/bot/command.js";
 import { client } from "../../client.js";
 import { commands } from "../../cmd/list.js";
-import findCommand from "../../util/findCommand.js";
+import findCommand from "@/util/findCommand.js";
 import { parseArgs } from "./helpers.js";
-import canExecuteCmd from "../../util/canExecuteCmd.js";
+import canExecuteCmd from "@/util/canExecuteCmd.js";
 
 client.on('interactionCreate', async (int: Interaction) => {
     if (!int.isChatInputCommand()) return;

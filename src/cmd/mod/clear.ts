@@ -1,8 +1,8 @@
-import { cfg } from '../../bot/cfg.js';
+import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
-import * as log from '../../util/log.js';
-import { PredefinedColors } from '../../util/color.js';
-import { Command, CommandAPI } from '../../bot/command.js';
+import * as log from '@/util/log.js';
+import { PredefinedColors } from '@/util/color.js';
+import { Command, CommandAPI } from '@/bot/command.js';
 
 const cmdCfg = cfg.mod.commands.warn;
 

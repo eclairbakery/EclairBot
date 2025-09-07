@@ -1,14 +1,14 @@
-import ban from "../../bot/apis/bans.js";
-import kick from "../../bot/apis/kicks.js";
-import mute from "../../bot/apis/muting.js";
-import warn from "../../bot/apis/warns.js";
-import { cfg } from "../../bot/cfg.js";
-import { CommandAPI } from "../../bot/command.js";
+import ban from "@/bot/apis/bans.js";
+import kick from "@/bot/apis/kicks.js";
+import mute from "@/bot/apis/muting.js";
+import warn from "@/bot/apis/warns.js";
+import { cfg } from "@/bot/cfg.js";
+import { CommandAPI } from "@/bot/command.js";
 import { client } from "../../client.js";
 import { commands } from "../../cmd/list.js";
-import canExecuteCmd from "../../util/canExecuteCmd.js";
-import findCommand from "../../util/findCommand.js";
-import * as log from '../../util/log.js';
+import canExecuteCmd from "@/util/canExecuteCmd.js";
+import findCommand from "@/util/findCommand.js";
+import * as log from '@/util/log.js';
 import { parseArgs } from "./helpers.js";
 import * as dsc from 'discord.js';
 
@@ -53,7 +53,7 @@ client.on('messageCreate', async (msg) => {
         const api: CommandAPI = {
             args: parsedArgs,
             getArg: (name) => parsedArgs.find(a => a.name === name)!,
-            getTypedArg: (name, type) => {const x = parsedArgs.find(a => a.name === name && a.type === type)!; console.log(x); return x;},
+            getTypedArg: (name, type) => { const x = parsedArgs.find(a => a.name === name && a.type === type)!; console.log(x); return x; },
             msg: {
                 content: msg.content,
                 author: { id: msg.author.id, plainUser: msg.author },
@@ -62,24 +62,24 @@ client.on('messageCreate', async (msg) => {
                         id: msg.member.id,
                         moderation: {
                             warn(data) {
-                                warn(msg.member, data);
+                                return warn(msg.member, data);
                             },
                             mute(data) {
-                                mute(msg.member, data);
+                                return mute(msg.member, data);
                             },
                             kick(data) {
-                                kick(msg.member, data);
+                                return kick(msg.member, data);
                             },
                             ban(data) {
-                                ban(msg.member, data);
+                                return ban(msg.member, data);
                             },
                         },
                         plainMember: msg.member
                       }
-                    : ({} as any),
+                    : undefined,
                 reply: (options) => msg.reply(options as any),
                 mentions: msg.mentions,
-                guild: msg.guild,
+                guild: msg.guild != null ? msg.guild : undefined,
                 channel: msg.channel
             },
             plainMessage: msg,

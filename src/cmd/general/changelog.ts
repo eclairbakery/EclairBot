@@ -1,6 +1,6 @@
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import { Command } from '../../bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { Command } from '@/bot/command.js';
 
 export const changelogCmd: Command = {
     name: 'changelog',

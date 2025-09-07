@@ -1,12 +1,12 @@
-import { Command } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js'
-import { db, sqlite } from '../../bot/db.js';
+import { Command } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js'
+import { db, sqlite } from '@/bot/db.js';
 
-import * as log from '../../util/log.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
-import { PredefinedColors } from '../../util/color.js';
-import { dbGet } from '../../bot/shared.js';
+import { PredefinedColors } from '@/util/color.js';
+import { dbGet } from '@/bot/shared.js';
 
 async function getGIF(searchTerm: string): Promise<string> {
     const apiKey = process.env.TENOR_API;

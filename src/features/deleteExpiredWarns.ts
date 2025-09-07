@@ -1,4 +1,4 @@
-import { db, sqlite } from '../bot/db.js';
+import { db, sqlite } from '@/bot/db.js';
 
 const EXPIRED_WARNS_CHECK_INTERVAL = 10 * 60 * 1000; // 10m in ms
 const SHORT_TERM_THRESHOLD = 10 * 60; // 10m in seconds

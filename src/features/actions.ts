@@ -1,4 +1,4 @@
-import * as log from '../util/log.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
 // import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx }

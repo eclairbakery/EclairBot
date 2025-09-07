@@ -1,6 +1,6 @@
-import { Command, CommandAPI } from '../../bot/command.js';
-import { PredefinedColors } from '../../util/color.js';
-import * as log from '../../util/log.js';
+import { Command, CommandAPI } from '@/bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
 async function getFandomSummary(title: string) {

@@ -1,9 +1,9 @@
-import { cfg } from '../../bot/cfg.js';
-import { db } from '../../bot/db.js';
+import { cfg } from '@/bot/cfg.js';
+import { db } from '@/bot/db.js';
 
 import * as dsc from 'discord.js';
-import * as log from '../../util/log.js';
-import { Command, CommandAPI } from '../../bot/command.js';
+import * as log from '@/util/log.js';
+import { Command, CommandAPI } from '@/bot/command.js';
 
 export const xpCmd: Command = {
     name: 'xp',

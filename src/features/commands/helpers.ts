@@ -6,9 +6,9 @@ import {
     CommandArgumentWithTimestampValue,
     CommandArgumentWithUserMentionValue,
     CommandArgumentWithRoleMentionValue
-} from "../../bot/command.js";
+} from "@/bot/command.js";
 import * as dsc from 'discord.js';
-import parseTimestamp from "../../util/parseTimestamp.js";
+import parseTimestamp from "@/util/parseTimestamp.js";
 
 export async function parseArgs(
     rawArgs: string[],
@@ -40,7 +40,7 @@ export async function parseArgs(
 
             case 'timestamp': {
                 const ts = parseTimestamp(raw);
-                if (ts === undefined && !decl.optional) throw new Error(`Argument ${decl.name} must be a valid timestamp`);
+                if (ts == null && !decl.optional) throw new Error(`Argument ${decl.name} must be a valid timestamp`);
                 parsedArgs.push({ ...decl, value: ts } as CommandArgumentWithTimestampValue);
                 break;
             }

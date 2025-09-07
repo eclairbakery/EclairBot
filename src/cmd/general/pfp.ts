@@ -1,12 +1,12 @@
-import { Command, CommandArgumentWithUserMentionValue } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
-import { db, sqlite } from '../../bot/db.js';
+import { Command, CommandArgumentWithUserMentionValue } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
+import { db, sqlite } from '@/bot/db.js';
 
-import * as log from '../../util/log.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
-import { PredefinedColors } from '../../util/color.js';
-import capitalizeFirst from '../../util/capitalizeFirst.js';
+import { PredefinedColors } from '@/util/color.js';
+import capitalizeFirst from '@/util/capitalizeFirst.js';
 
 export const pfpCmd: Command = {
     name: 'pfp',

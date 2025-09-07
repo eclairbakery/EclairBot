@@ -1,10 +1,10 @@
-import { cfg } from "../../bot/cfg.js";
+import { cfg } from "@/bot/cfg.js";
 import { SendableChannel, Snowflake } from "../../defs.js";
 import * as dsc from 'discord.js';
 import { Action, MagicSkipAllActions, MessageEventCtx, PredefinedActionEventTypes } from "../actions.js";
 import { client } from "../../client.js";
-import parseTimestamp from "../../util/parseTimestamp.js";
-import { db } from "../../bot/db.js";
+import parseTimestamp from "@/util/parseTimestamp.js";
+import { db } from "@/bot/db.js";
 import { scheduleWarnDeletion } from "../deleteExpiredWarns.js";
 
 const userMessagesAntiSpamMap: Map<Snowflake, number[]> = new Map();

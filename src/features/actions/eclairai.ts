@@ -1,9 +1,9 @@
 import { Message, OmitPartialGroupDMChannel } from 'discord.js';
-import { cfg } from '../../bot/cfg.js';
+import { cfg } from '@/bot/cfg.js';
 import { Action, PredefinedActionEventTypes, ActionCallback, ConstraintCallback } from '../actions.js';
 import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx } from '../actions.js';
 import { PredefinedActionCallbacks, PredefinedActionConstraints } from '../actions.js';
-import { EclairAiFirstEdition } from '../../bot/eclairai-legacy.js';
+import { EclairAiFirstEdition } from '@/bot/eclairai-legacy.js';
 
 let openbabcia = 'openbabcia';
 

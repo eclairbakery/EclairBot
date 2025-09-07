@@ -33,7 +33,7 @@ import { wikiCmd } from '../cmd/general/wiki.js';
 import { fandomCmd } from '../cmd/general/fandom.js';
 import { evalCmd } from '../cmd/dev/eval.js';
 import { actionPing, notifyCmd } from '../cmd/mod/ping.js';
-import { Category, Command } from '../bot/command.js';
+import { Category, Command } from '@/bot/command.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [

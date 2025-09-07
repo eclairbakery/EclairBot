@@ -1,13 +1,13 @@
 import { client } from '../../client.js';
 
-import sleep from '../../util/sleep.js';
+import sleep from '@/util/sleep.js';
 
 import actionsManager, { Action, UserEventCtx, PredefinedActionEventTypes, PredefinedActionConstraints, PredefinedActionCallbacks, Ok, Skip } from '../actions.js';
 export default actionsManager;
 
 import * as dsc from 'discord.js';
 
-import { cfg } from '../../bot/cfg.js';
+import { cfg } from '@/bot/cfg.js';
 
 
 export const welcomeNewUserAction: Action<UserEventCtx> = {

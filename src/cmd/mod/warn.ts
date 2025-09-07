@@ -1,13 +1,13 @@
-import clamp from '../../util/clamp.js';
-import parseTimestamp from '../../util/parseTimestamp.js';
+import clamp from '@/util/clamp.js';
+import parseTimestamp from '@/util/parseTimestamp.js';
 
-import { Command } from '../../bot/command.js';
-import { PredefinedColors } from '../../util/color.js';
-import { cfg } from '../../bot/cfg.js';
+import { Command } from '@/bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { cfg } from '@/bot/cfg.js';
 
-import * as log from '../../util/log.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
-import warn from '../../bot/apis/warns.js';
+import warn from '@/bot/apis/warns.js';
 
 export const warnCmd: Command = {
     name: 'warn',

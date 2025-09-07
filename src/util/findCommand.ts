@@ -1,4 +1,4 @@
-import { Category, Command } from "../bot/command.js";
+import { Category, Command } from "@/bot/command.js";
 
 
 export default function findCommand(cmdName: string, cmdsMap: Map<Category, Command[]>): { command: Command, category: Category } | null {

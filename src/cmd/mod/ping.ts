@@ -1,5 +1,5 @@
-import { Command, CommandAPI } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
+import { Command, CommandAPI } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 
 let interval1: NodeJS.Timeout;
@@ -56,7 +56,7 @@ export const notifyCmd: Command = {
     }
 };
 
-import { Action, MessageEventCtx, PredefinedActionEventTypes } from '../../features/actions.js';
+import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions.js';
 
 export const actionPing: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreate,

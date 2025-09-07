@@ -1,8 +1,8 @@
-import { PredefinedColors, Color } from '../util/color.js';
+import { PredefinedColors, Color } from '@/util/color.js';
 import { SendableChannel } from '../defs.js';
 
 import * as dsc from 'discord.js';
-import { Command, CommandAPI } from '../bot/command.js';
+import { Command, CommandAPI } from '@/bot/command.js';
 
 enum LogType {
     Success,

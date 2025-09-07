@@ -1,11 +1,11 @@
-import { Category, Command } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
+import { Category, Command } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
 
-import { PredefinedColors } from '../../util/color.js';
-import capitalizeFirst from '../../util/capitalizeFirst.js';
-import canExecuteCmd from '../../util/canExecuteCmd.js';
+import { PredefinedColors } from '@/util/color.js';
+import capitalizeFirst from '@/util/capitalizeFirst.js';
+import canExecuteCmd from '@/util/canExecuteCmd.js';
 
-import * as log from '../../util/log.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
 export const commandsCmd: Command = {

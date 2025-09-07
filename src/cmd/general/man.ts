@@ -1,13 +1,13 @@
-import { Command } from '../../bot/command.js';
-import { PredefinedColors } from '../../util/color.js';
-import { cfg } from '../../bot/cfg.js';
-import { db, sqlite } from '../../bot/db.js';
+import { Command } from '@/bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { cfg } from '@/bot/cfg.js';
+import { db, sqlite } from '@/bot/db.js';
 
-import * as log from '../../util/log.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
-import findCommand from '../../util/findCommand.js';
-import { Category } from '../../bot/command.js';
+import findCommand from '@/util/findCommand.js';
+import { Category } from '@/bot/command.js';
 
 export const manCmd: Command = {
     name: 'man',
@@ -105,7 +105,7 @@ export const manCmd: Command = {
                     `${emoji} **Argumenty**: ${formattedArgs.length === 0 ? 'brak' : `\n> ${formattedArgs.join('\n> ')}`}`,
                     `${emoji} **Uprawnienia**: ${
                         command.permissions.allowedRoles != null &&
-                        !api.msg.member.plainMember.roles.cache.some((role: any) => command.permissions.allowedRoles.includes(role.id))
+                        !api.msg.member.plainMember.roles.cache.some((role: any) => command.permissions.allowedRoles!.includes(role.id))
                             ? ':thumbsdown: nie masz wymaganych uprawnień, by użyć tej komendy'
                             : ':thumbsup: możesz użyć tej komendy'
                     }; **dozwolone role**: ${formattedAllowedRoles.length === 0 ? 'brak' : formattedAllowedRoles.join(', ')}; **dozwoleni użytkownicy**: te ustawienie nie ma jeszcze efektu`,

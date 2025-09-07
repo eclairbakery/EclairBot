@@ -1,9 +1,9 @@
-import { cfg } from '../../bot/cfg.js';
-import { dbGet } from '../../bot/shared.js';
+import { cfg } from '@/bot/cfg.js';
+import { dbGet } from '@/bot/shared.js';
 
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import { Command, CommandAPI } from '../../bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { Command, CommandAPI } from '@/bot/command.js';
 
 function calculateLevel(xp: number, levelDivider: number): number {
     return Math.floor(

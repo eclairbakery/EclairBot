@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import { dbGet, dbRun } from '../../bot/shared.js';
-import { Command, CommandAPI } from '../../bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { dbGet, dbRun } from '@/bot/shared.js';
+import { Command, CommandAPI } from '@/bot/command.js';
 
 interface Card {
     name: string;

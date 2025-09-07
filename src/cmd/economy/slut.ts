@@ -1,7 +1,7 @@
-import { Command } from '../../bot/command.js';
+import { Command } from '@/bot/command.js';
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import { dbGet, dbRun, getRandomInt } from '../../bot/shared.js';
+import { PredefinedColors } from '@/util/color.js';
+import { dbGet, dbRun, getRandomInt } from '@/bot/shared.js';
 
 const COOLDOWN_MS = 2 * 60 * 1000;
 const WORK_AMOUNT_MIN = 500;

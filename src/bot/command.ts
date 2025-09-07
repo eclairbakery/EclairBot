@@ -6,8 +6,10 @@ export { Category };
 
 export type CommandPermissionResorvable = 'administrator' | 'mute' | 'kick' | 'ban';
 
+export type CommandArgType = 'string' | 'user-mention' | 'channel-mention' | 'role-mention' | 'timestamp' | 'number';
+
 export interface CommandArgument {
-    type: 'string' | 'user-mention' | 'channel-mention' | 'role-mention' | 'timestamp' | 'number';
+    type: CommandArgType;
     optional: boolean;
     name: string;
     description: string;
@@ -40,31 +42,41 @@ export interface CommandArgumentWithNumberValue extends CommandArgument {
 
 export type CommandValuableArgument = CommandArgumentWithNumberValue | CommandArgumentWithRoleMentionValue | CommandArgumentWithStringValue | CommandArgumentWithTimestampValue | CommandArgumentWithUserMentionValue;
 
+export interface CommandMessageAPI {
+    content: string;
+    author: {
+        id: Snowflake;
+        plainUser: dsc.User;
+    };
+    member?: {
+        id: Snowflake;
+        moderation: {
+            warn: (data: { reason: string; expiresAt: number; points: number; }) => Promise<any>;
+            mute: (data: { reason: string; duration: number; }) => Promise<any>;
+            kick: (data: { reason: string; }) => Promise<any>;
+            ban:  (data: { reason: string; expiresAt: number; }) => Promise<any>;
+        }
+        plainMember: dsc.GuildMember;
+    };
+    reply:
+        (options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions)
+        => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;
+
+    mentions: {
+        members: dsc.Collection<Snowflake, dsc.GuildMember>;
+        roles: dsc.Collection<Snowflake, dsc.Role>;
+        channels: dsc.Collection<string, dsc.Channel>;
+        users: dsc.Collection<Snowflake, dsc.User>;
+    };
+    guild?: dsc.Guild;
+    channel: dsc.Channel | dsc.GuildChannel
+};
+
 export interface CommandAPI {
     args: CommandValuableArgument[];
     getArg: (name: string) => CommandValuableArgument;
-    getTypedArg: (name: string, type: CommandArgument['type']) => CommandValuableArgument;
-    msg: {
-        content: string;
-        author: {
-            id: Snowflake;
-            plainUser: dsc.User;
-        };
-        member: {
-            id: Snowflake;
-            moderation: {
-                warn: (data: { reason: string; expiresAt: number; points: number; }) => Promise<any>;
-                mute: (data: { reason: string; duration: number; }) => Promise<any>;
-                kick: (data: { reason: string; }) => Promise<any>;
-                ban: (data: { reason: string; expiresAt: number; }) => Promise<any>;
-            }
-            plainMember: dsc.GuildMember
-        };
-        reply: (options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions) => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;
-        mentions: { members: dsc.Collection<Snowflake, dsc.GuildMember>, roles: dsc.Collection<Snowflake, dsc.Role>, channels: dsc.Collection<string, dsc.Channel>, users: dsc.Collection<Snowflake, dsc.User> };
-        guild?: dsc.Guild;
-        channel: dsc.Channel | dsc.GuildChannel
-    };
+    getTypedArg: (name: string, type: CommandArgType) => CommandValuableArgument;
+    msg: CommandMessageAPI;
     referenceMessage?: CommandAPI['msg'];
     plainInteraction?: dsc.ChatInputCommandInteraction;
     plainMessage?: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>;

@@ -1,8 +1,8 @@
-import { Command, CommandAPI, CommandArgumentWithUserMentionValue } from '../../bot/command.js';
+import { Command, CommandAPI, CommandArgumentWithUserMentionValue } from '@/bot/command.js';
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import { dbGet, dbRun, getRandomInt } from '../../bot/shared.js';
-import { replyError } from '../../util/log.js';
+import { PredefinedColors } from '@/util/color.js';
+import { dbGet, dbRun, getRandomInt } from '@/bot/shared.js';
+import { replyError } from '@/util/log.js';
 
 const COOLDOWN_MS = 5 * 60 * 1000;
 const ROB_PERCENTAGE = 0.5;

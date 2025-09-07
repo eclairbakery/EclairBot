@@ -1,8 +1,8 @@
-import { db } from '../../bot/db.js';
-import * as log from '../../util/log.js';
+import { db } from '@/bot/db.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import { Command, CommandAPI } from '../../bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { Command, CommandAPI } from '@/bot/command.js';
 import actionsManager, { OnForceReloadTemplates } from '../../events/templatesEvents.js';
 
 export const forceReloadTemplatesCmd: Command = {

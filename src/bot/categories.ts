@@ -1,4 +1,4 @@
-import { Color, PredefinedColors } from '../util/color.js';
+import { Color, PredefinedColors } from '@/util/color.js';
 
 export class Category {
     public emoji: string;

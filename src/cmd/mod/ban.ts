@@ -1,9 +1,9 @@
-import { Command, CommandAPI } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
+import { Command, CommandAPI } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import * as log from '../../util/log.js';
-import ban from '../../bot/apis/bans.js';
+import { PredefinedColors } from '@/util/color.js';
+import * as log from '@/util/log.js';
+import ban from '@/bot/apis/bans.js';
 
 const cmdCfg = cfg.mod.commands.ban;
 

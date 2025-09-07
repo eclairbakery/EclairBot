@@ -1,5 +1,5 @@
-import { cfg } from "../../bot/cfg.js";
-import { addExperiencePoints } from "../../bot/level.js";
+import { cfg } from "@/bot/cfg.js";
+import { addExperiencePoints } from "@/bot/level.js";
 import { client } from "../../client.js";
 import { Action, MessageEventCtx, PredefinedActionEventTypes } from "../actions.js";
 

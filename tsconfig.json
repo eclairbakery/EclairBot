@@ -13,7 +13,12 @@
             {
                 "transform": "typia/lib/transform"
             }
-        ]
+        ],
+
+        "baseUrl": "src",
+        "paths": {
+            "@/*": ["*"]
+        }
     },
     "ts-node": {
         "transpileOnly": true,

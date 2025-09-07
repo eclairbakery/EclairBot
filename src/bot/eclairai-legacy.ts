@@ -1,37 +1,37 @@
 /**
  * DO NOT REMOVE THIS CREDIT OR THE FOLLOWING DISCLAIMER
- * 
+ *
  * This is a fan edition of EclairAI and has nothing to do
  * with the original one. This version does not contain any
  * of the LDLS models' source code.
- * 
+ *
  * This source code does not contain the trained copy of
  * EclairAI Fan Edition.
- * 
+ *
  * Original EclairAI:
  *  (c) 2024-2025 Eklerka25
- * 
+ *
  * EclairAI fan edition:
  *  (c) 2025 EclairBakery contributors
  */
 
 import { cfg } from "./cfg.js";
 import * as dsc from 'discord.js';
-import * as log from '../util/log.js'
+import * as log from '@/util/log.js'
 import { Snowflake } from "../defs.js";
 import * as fs from 'node:fs';
 
 export class EclairAiFirstEdition {
-    private config: typeof cfg.ai;
-    private model: {
-        tokenLimitsCounter: Record<string, number>,
-        model: Record<string, Record<string, number>>,
-        memory: object,
-        embeddings: {}
+    private config!: typeof cfg.ai;
+    private model!: {
+        tokenLimitsCounter: Record<string, number>;
+        model: Record<string, Record<string, number>>;
+        memory: Record<string, string[]>;
+        embeddings: Record<string, number[]>;
     };
     private shouldReply: boolean = true;
     private msg: dsc.Message;
-    
+
     constructor(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
         this.msg = msg;
         this.loadConfig();
@@ -171,7 +171,7 @@ export class EclairAiFirstEdition {
         return vec;
     }
 
-    private generate(seed: string, maxWords: number = null, userId?: string): string {
+    private generate(seed: string, maxWords: number | null = null, userId?: string): string {
         if (userId && this.model.memory[userId]) {
             const context = this.model.memory[userId].slice(-3).join(" ");
             seed = `${context} ${seed}`;
@@ -241,7 +241,7 @@ export class EclairAiFirstEdition {
         } else {
             if (
                 this.model.tokenLimitsCounter[entry] > this.config.aiTokensLimit &&
-                !this.msg.member.roles.cache.hasAny(...this.config.unlimitedAiRole)
+                !(this.msg.member != null && this.msg.member.roles.cache.hasAny(...this.config.unlimitedAiRole))
             ) {
                 log.replyError(
                     this.msg,

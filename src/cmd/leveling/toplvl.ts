@@ -1,10 +1,10 @@
-import { cfg } from '../../bot/cfg.js';
-import { lvlRoles } from '../../bot/level.js';
-import { db } from '../../bot/db.js';
+import { cfg } from '@/bot/cfg.js';
+import { lvlRoles } from '@/bot/level.js';
+import { db } from '@/bot/db.js';
 
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import { Command, CommandAPI } from '../../bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { Command, CommandAPI } from '@/bot/command.js';
 
 function calculateLevel(xp: number, levelDivider: number): number {
     return Math.floor(
