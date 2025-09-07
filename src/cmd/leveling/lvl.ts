@@ -1,9 +1,9 @@
-import { cfg } from '../../bot/cfg.js';
-import { dbGet } from '../../bot/shared.js';
+import { cfg } from '@/bot/cfg.js';
+import { dbGet } from '@/bot/shared.js';
 
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { Command, CommandAPI } from '@/bot/command.js';
 
 function calculateLevel(xp: number, levelDivider: number): number {
     return Math.floor(
@@ -11,7 +11,7 @@ function calculateLevel(xp: number, levelDivider: number): number {
     );
 }
 
-export const lvlCmd: NextGenerationCommand = {
+export const lvlCmd: Command = {
     name: 'lvl',
     description: {
         main: 'Wyświetl swój level lub level wskazanego użytkownika.',
@@ -22,7 +22,7 @@ export const lvlCmd: NextGenerationCommand = {
         allowedRoles: null,
         allowedUsers: [],
     },
-    args: [
+    expectedArgs: [
         {
             type: 'user-mention',
             optional: true,
@@ -32,7 +32,7 @@ export const lvlCmd: NextGenerationCommand = {
     ],
     aliases: [],
 
-    async execute(api: NextGenerationCommandAPI) {
+    async execute(api: CommandAPI) {
         const userArg = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | null;
         const who = userArg?.user ?? api.msg.author.plainUser;
 

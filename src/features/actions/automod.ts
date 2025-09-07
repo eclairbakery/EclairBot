@@ -4,10 +4,10 @@ import { PredefinedActionCallbacks, PredefinedActionConstraints } from '../actio
 
 import { mkAutoreplyAction } from './autoreply.js';
 
-import { cfg } from '../../bot/cfg.js'
+import { cfg } from '@/bot/cfg.js'
 
 import * as dsc from 'discord.js';
-import * as log from '../../util/log.js';
+import * as log from '@/util/log.js';
 
 export default class AutoModRules {
     static readonly msgAuthorIsNotImmuneToAutomod = (msg: MessageEventCtx) => {

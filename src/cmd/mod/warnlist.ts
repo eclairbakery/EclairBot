@@ -1,30 +1,47 @@
-import { Command } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
-import { db } from '../../bot/db.js';
+import { Command } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
+import { db } from '@/bot/db.js';
 
-import * as log from '../../util/log.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
+import { PredefinedColors } from '@/util/color.js';
 
 export const warnlistCmd: Command = {
     name: 'warnlist',
-    longDesc: 'Lubisz warnować? No to przeczytaj log tych warnów...',
-    shortDesc: 'Pokazuje liste warnów',
+    description: {
+        main: 'Lubisz warnować? No to przeczytaj log tych warnów...',
+        short: 'Pokazuje liste warnów',
+    },
     expectedArgs: [],
 
-    aliases: ['warnlista'],
-    allowedRoles: cfg.mod.commands.warn.allowedRoles,
-    allowedUsers: [],
+    aliases: ['warn-list', 'warnlista'],
+    permissions: {
+        allowedRoles: cfg.mod.commands.warn.allowedRoles,
+        allowedUsers: [],
+        discordPerms: [],
+    },
 
-    execute(msg, args) {
+    execute(api) {
+        let client: dsc.Client;
+        let guild: dsc.Guild;
+        if (api.plainInteraction) {
+            client = api.plainInteraction.client;
+            guild = api.plainInteraction.guild;
+        } else if (api.plainMessage) {
+            client = api.plainMessage.client;
+            guild = api.plainMessage.guild;
+        } else {
+            return log.replyError(api.msg, 'Błąd', 'Nie mogę znaleźć klienta bota...');
+        }
+
         db.all('SELECT * FROM warns ORDER BY id DESC', [], async (err, rows: any[]) => {
             if (err) {
                 console.error(err);
-                return log.replyError(msg, 'Błąd pobierania warnów', 'Pytaj twórców biblioteki sqlite3...');
+                return log.replyError(api.msg, 'Błąd pobierania warnów', 'Pytaj twórców biblioteki sqlite3...');
             }
 
             if (!rows.length) {
-                return log.replyError(msg, 'Zero warnów', 'Nie ma żadnego w bazie warna...');
+                return log.replyError(api.msg, 'Zero warnów', 'Nie ma żadnego w bazie warna...');
             }
 
             const fields: dsc.APIEmbedField[] = [];
@@ -34,19 +51,19 @@ export const warnlistCmd: Command = {
                 i++;
                 if (i > 25) break;
 
-                const user = await msg.client.users.fetch(row.user_id).catch(() => null);
+                const user = await client.users.fetch(row.user_id).catch(() => null);
                 const moderator = row.moderator_id
-                    ? await msg.client.users.fetch(row.moderator_id).catch(() => null)
+                    ? await guild.members.fetch(row.moderator_id).catch(() => null)
                     : null;
 
                 let value = `\`${row.reason_string}\` (punktów: ${row.points}, id: ${row.id})`;
 
                 if (moderator) {
-                    value += `\nModerator: <@${moderator.id}>`;
+                    value += `\n**Moderator**: <@${moderator.id}>`;
                 }
 
                 if (row.expires_at) {
-                    value += `\nWygasa: <t:${row.expires_at}:R>`;
+                    value += `\n**Wygasa:** <t:${row.expires_at}:R>`;
                 }
 
                 fields.push({
@@ -55,7 +72,7 @@ export const warnlistCmd: Command = {
                 });
             }
 
-            return msg.reply({
+            return api.msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setTitle(':loudspeaker: Ostatnie warny')

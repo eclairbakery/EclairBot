@@ -1,7 +1,7 @@
-import { NextGenerationCommand, NextGenerationCommandAPI, NextGenerationCommandArgumentWithStringValue } from '../../bot/command.js';
+import { Command, CommandAPI, CommandArgumentWithStringValue } from '@/bot/command.js';
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import { dbGet, dbRun, getRandomInt } from '../../bot/shared.js';
+import { PredefinedColors } from '@/util/color.js';
+import { dbGet, dbRun, getRandomInt } from '@/bot/shared.js';
 
 const COOLDOWN_MS = 15 * 60 * 1000;
 const WORK_AMOUNT_MIN = 2500;
@@ -41,7 +41,7 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
     return { ok: true };
 }
 
-export const crimeCmd: NextGenerationCommand = {
+export const crimeCmd: Command = {
     name: 'crime',
     description: {
         main: 'Ohohohoho! Mamy na serwerze przestępców. Możesz popełnić przestępstwo i wygrać albo przegrać kasę!',
@@ -52,9 +52,9 @@ export const crimeCmd: NextGenerationCommand = {
         allowedUsers: null,
         discordPerms: []
     },
-    args: [],
+    expectedArgs: [],
     aliases: [],
-    execute: async (api: NextGenerationCommandAPI) => {
+    execute: async (api: CommandAPI) => {
         const msg = api.msg;
         try {
             const amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);

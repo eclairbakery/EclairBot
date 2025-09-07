@@ -1,5 +1,5 @@
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
+import { Command, CommandAPI } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 
 let interval1: NodeJS.Timeout;
@@ -7,7 +7,7 @@ let eclairPing = true;
 
 let interval2: NodeJS.Timeout;
 
-export const notifyCmd: NextGenerationCommand = {
+export const notifyCmd: Command = {
     name: 'notify',
     description: {
         main: 'Siema... Chcesz pingować? No ok, to komenda dla ciebie.',
@@ -18,7 +18,7 @@ export const notifyCmd: NextGenerationCommand = {
         allowedUsers: [],
         discordPerms: []
     },
-    args: [
+    expectedArgs: [
         {
             name: 'type',
             type: 'string',
@@ -27,7 +27,7 @@ export const notifyCmd: NextGenerationCommand = {
         }
     ],
     aliases: ['mention-ping'],
-    execute: async (api: NextGenerationCommandAPI) => {
+    execute: async (api: CommandAPI) => {
         const msg = api.msg;
         const typeArg = api.getArg('type')?.value as string;
 
@@ -56,7 +56,7 @@ export const notifyCmd: NextGenerationCommand = {
     }
 };
 
-import { Action, MessageEventCtx, PredefinedActionEventTypes } from '../../features/actions.js';
+import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions.js';
 
 export const actionPing: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreate,

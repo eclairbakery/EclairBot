@@ -1,12 +1,12 @@
-import { Command, NextGenerationCommand } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js'
-import { db, sqlite } from '../../bot/db.js';
+import { Command } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js'
+import { db, sqlite } from '@/bot/db.js';
 
-import * as log from '../../util/log.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
-import { PredefinedColors } from '../../util/color.js';
-import { dbGet } from '../../bot/shared.js';
+import { PredefinedColors } from '@/util/color.js';
+import { dbGet } from '@/bot/shared.js';
 
 async function getGIF(searchTerm: string): Promise<string> {
     const apiKey = process.env.TENOR_API;
@@ -27,13 +27,13 @@ async function getGIF(searchTerm: string): Promise<string> {
     }
 }
 
-export const catCmd: NextGenerationCommand = {
+export const catCmd: Command = {
     name: 'cat',
     description: {
         main: 'Lubisz koty? Jakże pięknie się składa. Możemy Ci pokazać losowego kota.',
         short: 'Pokazuje losowego kota',
     },
-    args: [],
+    expectedArgs: [],
 
     aliases: ['kot'],
     permissions: {
@@ -47,13 +47,13 @@ export const catCmd: NextGenerationCommand = {
     }
 };
 
-export const dogCmd: NextGenerationCommand = {
+export const dogCmd: Command = {
     name: 'dog',
     description: {
         main: 'Ohhh... dasz mi karmę? Chcesz zobaczyć moją słodką mordkę? To ja, piesek.',
         short: 'Pokazuje losowego psa',
     },
-    args: [],
+    expectedArgs: [],
 
     aliases: ['kot'],
 
@@ -68,13 +68,13 @@ export const dogCmd: NextGenerationCommand = {
     }
 };
 
-export const animalCmd: NextGenerationCommand = {
+export const animalCmd: Command = {
     name: 'animal',
     description: {
         main: 'Chcesz do ZOO? Mamy ZOO w domu. ZOO w domu: [wpisz jakiego gifa chcesz]',
         short: 'Pokazuje losowego zwierza',
     },
-    args: [],
+    expectedArgs: [],
 
     aliases: ['zwierz', 'zwierzęcie'],
     permissions: {
@@ -89,13 +89,13 @@ export const animalCmd: NextGenerationCommand = {
     }
 };
 
-export const parrotCmd: NextGenerationCommand = {
+export const parrotCmd: Command = {
     name: 'parrot',
     description: {
         main: 'Pokazuje losową papugę czy coś!',
         short: 'Pokazuje losową papugę!',
     },
-    args: [],
+    expectedArgs: [],
 
     aliases: [],
     permissions: {

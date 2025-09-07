@@ -1,21 +1,20 @@
-import clamp from '../../util/clamp.js';
-import parseTimestamp from '../../util/parseTimestamp.js';
+import clamp from '@/util/clamp.js';
+import parseTimestamp from '@/util/parseTimestamp.js';
 
-import { NextGenerationCommand } from '../../bot/command.js';
-import { PredefinedColors } from '../../util/color.js';
-import { cfg } from '../../bot/cfg.js';
+import { Command } from '@/bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { cfg } from '@/bot/cfg.js';
 
-import * as log from '../../util/log.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
-import warn from '../../bot/apis/warns.js';
 
-export const shitwarnCmd: NextGenerationCommand = {
+export const shitwarnCmd: Command = {
     name: 'warn',
     description: {
         main: 'Lubisz warnować? Świetnie! Ta komenda daje fake-warny!',
         short: 'Ta komenda daje fake-warny!'
     },
-    args: [
+    expectedArgs: [
         {
             name: 'user',
             type: 'user-mention',

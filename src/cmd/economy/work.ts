@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import { dbGet, dbRun, getRandomInt } from '../../bot/shared.js';
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { dbGet, dbRun, getRandomInt } from '@/bot/shared.js';
+import { Command, CommandAPI } from '@/bot/command.js';
 
 const COOLDOWN_MS = 30 * 1000;
 const WORK_AMOUNT_MIN = 50;
@@ -40,7 +40,7 @@ async function tryWork(userId: string, amount: number): Promise<{ ok: boolean; w
     return { ok: true };
 }
 
-export const workCmd: NextGenerationCommand = {
+export const workCmd: Command = {
     name: 'work',
     description: {
         main: 'Pr\\*ca dla pana, pr\\*ca za darmo! Niewolnikiem naszym bądź... dobra, nie mam talentu do wierszy. Po prostu ekonomia.',
@@ -51,10 +51,10 @@ export const workCmd: NextGenerationCommand = {
         allowedRoles: null,
         allowedUsers: null,
     },
-    args: [],
+    expectedArgs: [],
     aliases: [],
 
-    async execute(api: NextGenerationCommandAPI) {
+    async execute(api: CommandAPI) {
         try {
             const amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
             const result = await tryWork(api.msg.author.id, amount);

@@ -1,6 +1,6 @@
-import { cfg } from "../../bot/cfg.js";
+import { cfg } from "@/bot/cfg.js";
 import { client } from "../../client.js";
-import { PredefinedColors } from "../../util/color.js";
+import { PredefinedColors } from "@/util/color.js";
 import * as dsc from 'discord.js';
 
 client.on('channelCreate', async (chan) => {

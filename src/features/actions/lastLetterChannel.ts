@@ -1,11 +1,11 @@
-import sleep from '../../util/sleep.js';
+import sleep from '@/util/sleep.js';
 
 import actionsManager, { Action, PredefinedActionEventTypes, PredefinedActionConstraints, PredefinedActionCallbacks, MessageEventCtx } from '../actions.js';
 export default actionsManager;
 
 import * as dsc from 'discord.js';
 
-import { cfg } from '../../bot/cfg.js';
+import { cfg } from '@/bot/cfg.js';
 
 export const lastLetterChannelAction: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,

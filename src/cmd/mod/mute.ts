@@ -1,19 +1,19 @@
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
+import { Command, CommandAPI } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
-import * as log from '../../util/log.js';
-import { PredefinedColors } from '../../util/color.js';
-import mute from '../../bot/apis/muting.js';
+import * as log from '@/util/log.js';
+import { PredefinedColors } from '@/util/color.js';
+import mute from '@/bot/apis/muting.js';
 
 const cmdCfg = cfg.mod.commands.mute;
 
-export const muteCmd: NextGenerationCommand = {
+export const muteCmd: Command = {
     name: 'mute',
     description: {
         main: 'Zamykam Ci buzię na czacie, żebyś mógł w ciszy przemyśleć swoje wybory życiowe. Jak chcesz pogadać, to poczekaj, aż Cię ktoś wypuści z izolatki.',
         short: 'Zamyka morde podanemu użytkownikowi'
     },
-    args: [
+    expectedArgs: [
         { name: 'user', type: 'user-mention', optional: false, description: 'Komu mute chcesz dać?' },
         { name: 'reason', type: 'string', optional: !cmdCfg.reasonRequired, description: 'Powód wyciszenia użytkownika' }
     ],
@@ -23,10 +23,11 @@ export const muteCmd: NextGenerationCommand = {
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers
     },
-    execute: async (api: NextGenerationCommandAPI) => {
+    execute: async (api: CommandAPI) => {
         const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
         let reason = api.getTypedArg('reason', 'string').value as string || null;
 
+        // TODO: wtf? targetUser type is just dsc.GuildMember, not nullable...
         if (!targetUser) {
             return log.replyError(api.msg, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyślę komu ty chcesz dać tego timeouta? Użycie: odpowiedzi na wiadomość lub !mute <@user> <powód>');
         }
@@ -42,13 +43,13 @@ export const muteCmd: NextGenerationCommand = {
         }
 
         try {
-            await mute(targetUser, { reason, duration: 24 * 60 * 60 });
+            mute(targetUser, { reason, duration: 24 * 60 * 60 });
 
-            const role = api.msg.guild.roles.cache.find(r => r.name.toLowerCase().includes("zamknij ryj"));
-            if (role) await targetUser.roles.add(role, reason);
+            const role = api.msg.guild?.roles.cache.find(r => r.name.toLowerCase().includes("zamknij ryj"));
+            if (role != undefined) await targetUser.roles.add(role, reason);
 
             const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
-            if (logChannel?.isSendable()) {
+            if (logChannel != null && logChannel.isSendable()) {
                 logChannel.send({
                     embeds: [
                         new dsc.EmbedBuilder()
@@ -69,8 +70,9 @@ export const muteCmd: NextGenerationCommand = {
                         .addFields(
                             { name: 'Moderator', value: `<@${api.msg.author.id}>`, inline: true },
                             { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
+
                             { name: 'Powód', value: reason, inline: false },
-                            { name: 'Czas', value: '24 godziny', inline: true }
+                            { name: 'Czas', value: '24 godziny', inline: true },
                         )
                         .setColor(PredefinedColors.Orange)
                 ]

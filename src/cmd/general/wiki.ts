@@ -1,6 +1,9 @@
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import { Command, CommandAPI } from '@/bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+
+import { cfg } from '@/bot/cfg.js';
+
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
 
 interface WikiSummaryResponse {
     type: string;
@@ -34,24 +37,24 @@ async function getDisambiguationTitles(title: string): Promise<string[]> {
     return data.parse.links.filter((l: any) => l.ns === 0).map((l: any) => l['*']);
 }
 
-async function downloadFromWikipedia(language_versions: string[], args: string[]) {
+async function downloadFromWikipedia(languageVersions: string[], args: string[]) {
     let fetched: Response;
-    for (const lang of language_versions) {
+    for (const lang of languageVersions) {
         const url = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(args.join('_'))}`;
         fetched = await fetch(url);
         if (!fetched.ok) continue;
         break;
     }
-    return fetched;
+    return fetched!;
 }
 
-export const wikiCmd: NextGenerationCommand = {
+export const wikiCmd: Command = {
     name: 'wiki',
     description: {
         main: 'Generalnie pobiera artykuł z Wikipedii. Super użyteczne!',
         short: 'Pobiera rzecz z Wikipedii!'
     },
-    args: [
+    expectedArgs: [
         {
             name: 'query',
             type: 'string',
@@ -65,7 +68,7 @@ export const wikiCmd: NextGenerationCommand = {
         allowedUsers: null,
         discordPerms: []
     },
-    execute: async (api: NextGenerationCommandAPI) => {
+    execute: async (api: CommandAPI) => {
         const msg = api.msg;
         const query = api.getArg('query')?.value as string;
 
@@ -77,7 +80,7 @@ export const wikiCmd: NextGenerationCommand = {
                 embeds: [{
                     author: { name: 'EclairBOT' },
                     title: 'Ta komenda nie jest do tego!',
-                    description: 'Rzeczy takie jak `eklerka`, `aurorOS`, `piekarnia eklerki`, `gorciu`, `maqix`, itd. nie są na wikipedii... Ale **są na fandomie**, więc możesz użyć komendy fandom!',
+                    description: 'Rzeczy takie jak `eklerka`, `aurorOS`, `piekarnia eklerki`, `gorciu`, `maqix`, itd. nie są na wikipedii... Ale **są na fandomie**, więc możesz użyć komendy' + `${cfg.general.prefix}fandom!`,
                     color: PredefinedColors.Blurple
                 }]
             });

@@ -1,14 +1,14 @@
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
-import { db } from '../../bot/db.js';
-import * as log from '../../util/log.js';
+import { Command, CommandAPI } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
+import { db } from '@/bot/db.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
 let ecoRoles = [
     "1235548306550161451"
 ];
 
-export const topecoCmd: NextGenerationCommand = {
+export const topecoCmd: Command = {
     name: 'topeco',
     description: {
         main: 'Janusze biznesu z Allegro.',
@@ -19,9 +19,9 @@ export const topecoCmd: NextGenerationCommand = {
         allowedRoles: null,
         allowedUsers: []
     },
-    args: [],
+    expectedArgs: [],
     aliases: ['topmoney'],
-    execute: async (api: NextGenerationCommandAPI) => {
+    execute: async (api: CommandAPI) => {
         const msg = api.msg;
 
         db.all('SELECT * FROM economy ORDER BY money DESC LIMIT 12', [], async (err, rows: any[]) => {

@@ -1,11 +1,11 @@
-import { cfg } from '../../bot/cfg.js';
-import { db } from '../../bot/db.js';
+import { cfg } from '@/bot/cfg.js';
+import { db } from '@/bot/db.js';
 
 import * as dsc from 'discord.js';
-import * as log from '../../util/log.js';
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import * as log from '@/util/log.js';
+import { Command, CommandAPI } from '@/bot/command.js';
 
-export const xpCmd: NextGenerationCommand = {
+export const xpCmd: Command = {
     name: 'xp',
     description: {
         main: 'Dodaj komuś levela... Jak nadużyjesz, no to, chyba nie wiesz z jaką siłą igrasz! Pospólstwo jak pomyśli, że sobie za darmoszkę doda poziomów, no to nie! Do widzenia.',
@@ -16,7 +16,7 @@ export const xpCmd: NextGenerationCommand = {
         allowedRoles: cfg.general.leveling.canChangeXP,
         allowedUsers: [],
     },
-    args: [
+    expectedArgs: [
         {
             type: 'user-mention',
             optional: false,
@@ -44,7 +44,7 @@ export const xpCmd: NextGenerationCommand = {
     ],
     aliases: [],
 
-    async execute(api: NextGenerationCommandAPI) {
+    async execute(api: CommandAPI) {
         const toWho = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member.plainMember;
         const action = api.getTypedArg('action', 'string')?.value as string;
         let amount = api.getTypedArg('amount', 'number')?.value as number;

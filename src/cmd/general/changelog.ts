@@ -1,14 +1,14 @@
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
-import { NextGenerationCommand } from '../../bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { Command } from '@/bot/command.js';
 
-export const changelogCmd: NextGenerationCommand = {
+export const changelogCmd: Command = {
     name: 'changelog',
     description: {
         main: 'Ogólnie mówiąc bardzo długi changelog, gdzie tłumaczę w sposób niezrozumiały dla Ciebie, co się u mnie zmieniło ostatnio.',
         short: 'Wyświetl changelog.',
     },
-    args: [
+    expectedArgs: [
         { name: 'version', type: 'string', description: 'Wersja changeloga (opcjonalnie).', optional: true },
     ],
     aliases: [],

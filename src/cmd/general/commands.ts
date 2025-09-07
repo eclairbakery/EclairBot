@@ -1,20 +1,20 @@
-import { Category, Command, NextGenerationCommand } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
+import { Category, Command } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
 
-import { PredefinedColors } from '../../util/color.js';
-import capitalizeFirst from '../../util/capitalizeFirst.js';
-import canExecuteCmd, { canExecuteNewCmd } from '../../util/canExecuteCmd.js';
+import { PredefinedColors } from '@/util/color.js';
+import capitalizeFirst from '@/util/capitalizeFirst.js';
+import canExecuteCmd from '@/util/canExecuteCmd.js';
 
-import * as log from '../../util/log.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
-export const commandsCmd: NextGenerationCommand = {
+export const commandsCmd: Command = {
     name: 'commands',
     description: {
         main: 'Pokazuje pełną listę dostępnych komend bota.',
         short: 'Lista komend',
     },
-    args: [
+    expectedArgs: [
         {
             name: 'category',
             description: 'Kategoria komend, którą chcesz zobaczyć. Jeśli nie podasz, pokaże wszystkie. Oddziel je przecinkiem, a potem spacją!',
@@ -49,7 +49,7 @@ export const commandsCmd: NextGenerationCommand = {
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
-                if (!canExecuteNewCmd(cmd, api.msg.member.plainMember)) blockedCmds.push(cmd.name);
+                if (!canExecuteCmd(cmd, api.msg.member.plainMember)) blockedCmds.push(cmd.name);
             }
         }
 
@@ -70,7 +70,7 @@ export const commandsCmd: NextGenerationCommand = {
                     formattedName += ` *(a.k.a. \`${cfg.general.prefix}${cmd.aliases[0]}\`)*`;
                 }
 
-                if (canExecuteNewCmd(cmd, api.msg.member.plainMember)) {
+                if (canExecuteCmd(cmd, api.msg.member.plainMember)) {
                     formattedName = `**${formattedName}**`;
                 }
 

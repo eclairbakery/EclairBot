@@ -1,18 +1,18 @@
-import { NextGenerationCommand } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
-import * as log from '../../util/log.js';
+import { Command } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '../../util/color.js';
+import { PredefinedColors } from '@/util/color.js';
 
 const cmdCfg = cfg.mod.commands.mute;
 
-export const unmuteCmd: NextGenerationCommand = {
+export const unmuteCmd: Command = {
     name: 'unmute',
     description: {
         main: 'Oddaję Ci prawo głosu. Nie marnuj go na pisanie "xd" i emoji bakłażana.',
         short: 'Po prostu unmute',
     },
-    args: [
+    expectedArgs: [
         { name: 'user', type: 'string', description: 'Komu unmute chcesz dać?', optional: false },
         {
             name: 'reason',

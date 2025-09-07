@@ -1,10 +1,10 @@
-import { cfg } from '../../bot/cfg.js';
-import { db } from '../../bot/db.js';
+import { cfg } from '@/bot/cfg.js';
+import { db } from '@/bot/db.js';
 import * as dsc from 'discord.js';
-import * as log from '../../util/log.js';
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
+import * as log from '@/util/log.js';
+import { Command, CommandAPI } from '@/bot/command.js';
 
-export const balCmd: NextGenerationCommand = {
+export const balCmd: Command = {
     name: 'bal',
     description: {
         main: 'Wyświetl swój balans zadłużenia (raczej jesteś mało warty, w sensie konto, nie pozywaj za zniesławienie).',
@@ -15,7 +15,7 @@ export const balCmd: NextGenerationCommand = {
         allowedRoles: null,
         allowedUsers: [],
     },
-    args: [
+    expectedArgs: [
         {
             type: 'user-mention',
             optional: true,
@@ -25,7 +25,7 @@ export const balCmd: NextGenerationCommand = {
     ],
     aliases: ['balance'],
 
-    async execute(api: NextGenerationCommandAPI) {
+    async execute(api: CommandAPI) {
         const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member.plainMember;
 
         try {

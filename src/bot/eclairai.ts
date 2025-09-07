@@ -1,16 +1,16 @@
 /**
  * DO NOT REMOVE THIS CREDIT OR THE FOLLOWING DISCLAIMER
- * 
+ *
  * This is a fan edition of EclairAI and has nothing to do
  * with the original one. This version does not contain any
  * of the LDLS models' source code.
- * 
+ *
  * This source code does not contain the trained copy of
  * EclairAI Fan Edition.
- * 
+ *
  * Original EclairAI:
  *  (c) 2024-2025 Eklerka25
- * 
+ *
  * EclairAI fan edition:
  *  (c) 2025 EclairBakery contributors
  */
@@ -176,7 +176,7 @@ export class EclairAI {
             hiddenSize: this.hiddenSize,
             embeddingSize: this.embeddingSize
         };
-        fs.writeFileSync('./bot/eclairai-model.json', JSON.stringify(data));
+        fs.writeFileSync('@/bot/eclairai-model.json', JSON.stringify(data));
     }
 
     private trainAI() {
@@ -193,8 +193,8 @@ export class EclairAI {
     }
 
     private loadModel() {
-        if (fs.existsSync('./bot/eclairai-model.json')) {
-            const data = JSON.parse(fs.readFileSync('./bot/eclairai-model.json', 'utf-8'));
+        if (fs.existsSync('@/bot/eclairai-model.json')) {
+            const data = JSON.parse(fs.readFileSync('@/bot/eclairai-model.json', 'utf-8'));
             this.vocab = data.vocab;
             this.embeddings = data.embeddings;
             this.hiddenWeights = data.hiddenWeights;

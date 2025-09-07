@@ -1,6 +1,6 @@
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
-import { PredefinedColors } from '../../util/color.js';
-import * as log from '../../util/log.js';
+import { Command, CommandAPI } from '@/bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
 async function getFandomSummary(title: string) {
@@ -51,7 +51,7 @@ async function getFandomSummary(title: string) {
     };
 }
 
-export const fandomCmd: NextGenerationCommand = {
+export const fandomCmd: Command = {
     name: 'fandom',
     description: {
         main: 'Generalnie pobiera artykuł z Fandomu. Super użyteczne!',
@@ -62,7 +62,7 @@ export const fandomCmd: NextGenerationCommand = {
         allowedRoles: null,
         allowedUsers: []
     },
-    args: [
+    expectedArgs: [
         {
             name: 'query',
             type: 'string',
@@ -71,7 +71,7 @@ export const fandomCmd: NextGenerationCommand = {
         }
     ],
     aliases: [],
-    execute: async (api: NextGenerationCommandAPI) => {
+    execute: async (api: CommandAPI) => {
         const queryArg = api.getTypedArg('query', 'string');
         const searchQuery = queryArg.value as string || 'Wikipedia';
         const fandom = await getFandomSummary(searchQuery.replace(/ /g, '_'));

@@ -1,14 +1,14 @@
-import { Category, NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
+import { Category, Command, CommandAPI } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
 
-import { PredefinedColors } from '../../util/color.js';
-import capitalizeFirst from '../../util/capitalizeFirst.js';
-import canExecuteCmd, { canExecuteNewCmd } from '../../util/canExecuteCmd.js';
+import { PredefinedColors } from '@/util/color.js';
+import capitalizeFirst from '@/util/capitalizeFirst.js';
+import canExecuteCmd from '@/util/canExecuteCmd.js';
 
-import * as log from '../../util/log.js';
+import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
-function buildSelectMenu(commands: Map<Category, NextGenerationCommand[]>): dsc.StringSelectMenuBuilder {
+function buildSelectMenu(commands: Map<Category, Command[]>): dsc.StringSelectMenuBuilder {
     return new dsc.StringSelectMenuBuilder()
         .setCustomId('help_select')
         .setPlaceholder('⚡ Wybierz kategorię...')
@@ -22,7 +22,7 @@ function buildSelectMenu(commands: Map<Category, NextGenerationCommand[]>): dsc.
         );
 }
 
-function buildCategoryEmbed(category: Category, cmds: NextGenerationCommand[], blockedCmds: string[] = []): dsc.EmbedBuilder {
+function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: string[] = []): dsc.EmbedBuilder {
     const embed = new dsc.EmbedBuilder()
         .setTitle(`${category.emoji} ${category.name}`)
         .setDescription(category.longDesc)
@@ -48,7 +48,7 @@ function buildCategoryEmbed(category: Category, cmds: NextGenerationCommand[], b
     return embed;
 }
 
-export const quickHelpCmd: NextGenerationCommand = {
+export const quickHelpCmd: Command = {
     name: 'help',
     description: {
         main: 'Pokazuje losowe komendy z bota wraz z krótkimi opisami, by w końcu nauczyć Twojego zapyziałego mózgu jego używania.',
@@ -59,7 +59,7 @@ export const quickHelpCmd: NextGenerationCommand = {
         allowedRoles: null,
         allowedUsers: [],
     },
-    args: [
+    expectedArgs: [
         {
             type: 'string',
             optional: true,
@@ -69,7 +69,7 @@ export const quickHelpCmd: NextGenerationCommand = {
     ],
     aliases: ['quick-help'],
 
-    async execute(api: NextGenerationCommandAPI) {
+    async execute(api: CommandAPI) {
         const { msg, commands } = api;
 
         const sendInteractiveMenu = async () => {
@@ -143,7 +143,7 @@ export const quickHelpCmd: NextGenerationCommand = {
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
-                if (!canExecuteNewCmd(cmd, msg.member.plainMember)) blockedCmds.push(cmd.name);
+                if (!canExecuteCmd(cmd, msg.member.plainMember)) blockedCmds.push(cmd.name);
             }
         }
 

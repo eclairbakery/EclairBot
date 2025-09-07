@@ -1,19 +1,19 @@
-import { NextGenerationCommand, NextGenerationCommandAPI } from '../../bot/command.js';
-import { cfg } from '../../bot/cfg.js';
+import { Command, CommandAPI } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
-import * as log from '../../util/log.js';
-import { PredefinedColors } from '../../util/color.js';
-import kick from '../../bot/apis/kicks.js';
+import * as log from '@/util/log.js';
+import { PredefinedColors } from '@/util/color.js';
+import kick from '@/bot/apis/kicks.js';
 
 const cmdCfg = cfg.mod.commands.kick;
 
-export const kickCmd: NextGenerationCommand = {
+export const kickCmd: Command = {
     name: 'kick',
     description: {
         main: 'Ta komenda istnieje po to by pozbyć się z serwera lekko wkurzających ludzi, tak żeby im nie dawać bana, a oni żeby myśleli że mają bana. A pospólstwo to ręce z daleka od moderacji!',
         short: 'Wywala danego użytkownika z serwera'
     },
-    args: [
+    expectedArgs: [
         { name: 'user', type: 'user-mention', optional: false, description: 'W tej chwili dawaj użytkownika do skopniakowania!' },
         { name: 'reason', type: 'string', optional: !cmdCfg.reasonRequired, description: 'Powód wywalenia użytkownika' }
     ],
@@ -23,7 +23,7 @@ export const kickCmd: NextGenerationCommand = {
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers
     },
-    execute: async (api: NextGenerationCommandAPI) => {
+    execute: async (api: CommandAPI) => {
         const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
         let reason = api.getTypedArg('reason', 'string').value as string || null;
 
