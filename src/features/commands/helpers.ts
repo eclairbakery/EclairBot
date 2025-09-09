@@ -10,6 +10,37 @@ import {
 import * as dsc from 'discord.js';
 import parseTimestamp from "@/util/parseTimestamp.js";
 
+function parseMentionsFromStrings(args: string[], guild: dsc.Guild) {
+    const users = new dsc.Collection<string, dsc.User>();
+    const roles = new dsc.Collection<string, dsc.Role>();
+    const members = new dsc.Collection<string, dsc.GuildMember>();
+    const channels = new dsc.Collection<string, dsc.GuildChannel>();
+    const userRegex = /^<@!?(\d+)>$/;
+    const roleRegex = /^<@&(\d+)>$/;
+    const channelRegex = /^<#(\d+)>$/;
+    for (const arg of args) {
+        let match: RegExpExecArray | null = null;
+        if ((match = userRegex.exec(arg))) {
+            const id = match[1];
+            const user = guild.client.users.cache.get(id);
+            if (user) users.set(id, user);
+            const member = guild.members.cache.get(id);
+            if (member) members.set(id, member);
+        } else if ((match = roleRegex.exec(arg))) {
+            const id = match[1];
+            const role = guild.roles.cache.get(id);
+            if (role) roles.set(id, role);
+        } else if ((match = channelRegex.exec(arg))) {
+            const id = match[1];
+            const channel = guild.channels.cache.get(id);
+            if (channel && channel.type !== dsc.ChannelType.PublicThread && channel.type !== dsc.ChannelType.PrivateThread) {
+                channels.set(id, channel as dsc.GuildChannel);
+            }
+        }
+    }
+    return { users, roles, members, channels };
+}
+
 export async function parseArgs(
     rawArgs: string[],
     declaredArgs: CommandArgument[],
@@ -47,20 +78,15 @@ export async function parseArgs(
 
             case 'user-mention': {
                 let user: dsc.GuildMember | undefined;
+                console.log(raw);
                 if (context?.interaction) {
-                    // slash command
-                    const member = (context.interaction as dsc.ChatInputCommandInteraction).options.getMember(decl.name);
-                    // @ts-ignore
-                    if (member?.guild) user = member as dsc.GuildMember;
+                    const member = (context.interaction as dsc.ChatInputCommandInteraction).options.getString(decl.name);
+                    console.log(member);
+                    user = parseMentionsFromStrings([member], context.interaction.guild).members.first();
+                    if (!user) throw new Error('You need to mention the user.');
                 } else if (raw) {
-                    const match = raw.match(/^<@!?(\d+)>$/);
-                    const userId = match?.[1];
-                    if (userId && context?.guild) {
-                        user = context.msg?.mentions.members?.get(userId) ?? context.guild.members.cache.get(userId);
-                        if (!user) {
-                            try { user = await context.guild.members.fetch(userId); } catch {}
-                        }
-                    }
+                    user = parseMentionsFromStrings([raw], context.msg.guild).members.first();
+                    if (!user) throw new Error('You need to mention the user.');
                 }
 
                 if (!user && !decl.optional) throw new Error(`Argument ${decl.name} must be a user mention`);

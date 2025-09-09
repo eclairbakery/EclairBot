@@ -9,10 +9,9 @@ import canExecuteCmd from "@/util/canExecuteCmd.js";
 
 client.on('interactionCreate', async (int: Interaction) => {
     if (!int.isChatInputCommand()) return;
-    await int.deferReply({ ephemeral: true });
 
     const cmdObj = findCommand(int.commandName, commands)?.command;
-    if (!cmdObj) return int.editReply({ content: 'Nie znam takiej komendy' });
+    if (!cmdObj) return int.reply({ content: 'Nie znam takiej komendy' });
 
     if (!int.guild && !cfg.general.worksInDM.includes(int.commandName)) {
         int.reply('Niektóre komendy są tak jakby safe tylko na serwerze więc... możesz mieć problem jak tu odpalisz. Dlatego ci nie pozwalam.');
@@ -24,9 +23,11 @@ client.on('interactionCreate', async (int: Interaction) => {
         return;
     }
 
+    await int.deferReply({ ephemeral: (cfg.general.blockedChannels.includes(int.channelId) && !cfg.general.commandsExcludedFromBlockedChannels.includes(int.commandName)) });
+
     try {
         const argsRaw = cmdObj.expectedArgs.map(arg => int.options.getString(arg.name) ?? undefined);
-        const parsedArgs = await parseArgs(argsRaw as string[], cmdObj.expectedArgs);
+        const parsedArgs = await parseArgs(argsRaw as string[], cmdObj.expectedArgs, {interaction: int});
 
         const api: CommandAPI = {
             args: parsedArgs,

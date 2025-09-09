@@ -94,7 +94,7 @@ async function main() {
                         break;
 
                     case 'user-mention':
-                        scb.addUserOption(option =>
+                        scb.addStringOption(option =>
                             option
                                 .setName(arg.name)
                                 .setDescription('Wskaż użytkownika')
