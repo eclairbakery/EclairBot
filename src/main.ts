@@ -44,11 +44,10 @@ client.once('ready', () => {
     initExpiredWarnsDeleter();
     slashCommands.init();
     legacyCommands.init();
+    main();
 });
 
 async function main() {
-    await client.login(process.env.TOKEN);
-
     const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
 
     actionsManager.addActions(
@@ -72,6 +71,8 @@ async function main() {
             const scb = new dsc.SlashCommandBuilder()
                 .setName(cmd.name)
                 .setDescription(cmd.description.main.length > 90 ? (cmd.description.short.length > 90 ? 'Domyśl się, bo discord.js nie pozwala dużo znaków.' : cmd.description.short) : cmd.description.main);
+            
+            console.log('Registering command: ' + cmd.name);
 
             for (const arg of cmd.expectedArgs) {
                 switch (arg.type) {
@@ -140,8 +141,14 @@ async function main() {
             dsc.Routes.applicationCommands(client.application.id),
             { body: commandsArray }
         );
+        await rest.put(
+            dsc.Routes.applicationGuildCommands(client.application.id, '1235534146722463844'),
+            { body: commandsArray }
+        );
         console.log('Slash commands registered ✅');
-    } catch {}
+    } catch (e) {
+        console.log('Slash commands error: ' + e);
+    }
 }
 
-main();
+(async function () { await client.login(process.env.TOKEN); })();

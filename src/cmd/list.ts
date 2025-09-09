@@ -34,6 +34,7 @@ import { fandomCmd } from '../cmd/general/fandom.js';
 import { evalCmd } from '../cmd/dev/eval.js';
 import { actionPing, notifyCmd } from '../cmd/mod/ping.js';
 import { Category, Command } from '@/bot/command.js';
+import { izolatkaCmd } from './mod/izolatka.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -45,7 +46,7 @@ export const commands: Map<Category, Command[]> = new Map([
     [
         Category.Mod,
         [
-            forceReloadTemplatesCmd, clearCmd, warnCmd, warnClearCmd, unmuteCmd, shitwarnCmd, banCmd, muteCmd, kickCmd, notifyCmd
+            forceReloadTemplatesCmd, clearCmd, warnCmd, warnClearCmd, unmuteCmd, shitwarnCmd, banCmd, muteCmd, kickCmd, notifyCmd, izolatkaCmd
         ]
     ],
     [

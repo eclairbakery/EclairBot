@@ -9,7 +9,7 @@ import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
 export const shitwarnCmd: Command = {
-    name: 'warn',
+    name: 'shitwarn',
     description: {
         main: 'Lubisz warnować? Świetnie! Ta komenda daje fake-warny!',
         short: 'Ta komenda daje fake-warny!'
