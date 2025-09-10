@@ -2,6 +2,7 @@ import * as dsc from 'discord.js';
 
 import { Category } from './categories.js';
 import { Snowflake } from '../defs.js';
+import { Timestamp } from '@/util/parseTimestamp.js';
 export { Category };
 
 export type CommandPermissionResolvable = 'administrator' | 'mute' | 'kick' | 'ban';
@@ -9,10 +10,10 @@ export type CommandPermissionResolvable = 'administrator' | 'mute' | 'kick' | 'b
 export type CommandArgType = 'string' | 'trailing-string' | 'user-mention' | 'channel-mention' | 'role-mention' | 'timestamp' | 'number';
 
 export interface CommandArgument {
-    type: CommandArgType;
-    optional: boolean;
     name: string;
     description: string;
+    type: CommandArgType;
+    optional: boolean;
 };
 
 export interface CommandArgumentWithStringValue extends CommandArgument {
@@ -32,7 +33,7 @@ export interface CommandArgumentWithRoleMentionValue extends CommandArgument {
 
 export interface CommandArgumentWithTimestampValue extends CommandArgument {
     type: 'timestamp';
-    value?: number;
+    value?: Timestamp;
 };
 
 export interface CommandArgumentWithNumberValue extends CommandArgument {

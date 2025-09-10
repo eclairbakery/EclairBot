@@ -1,8 +1,11 @@
-import { Command, CommandAPI } from '@/bot/command.js';
-import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
+
+import { Command, CommandAPI } from '@/bot/command.js';
+import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
+import { Hour, Timestamp } from '@/util/parseTimestamp.js';
+
 import mute from '@/bot/apis/muting.js';
 
 const cmdCfg = cfg.mod.commands.mute;
@@ -10,12 +13,28 @@ const cmdCfg = cfg.mod.commands.mute;
 export const muteCmd: Command = {
     name: 'mute',
     description: {
-        main: 'Zamykam Ci buzię na czacie, żebyś mógł w ciszy przemyśleć swoje wybory życiowe. Jak chcesz pogadać, to poczekaj, aż Cię ktoś wypuści z izolatki.',
+        main: 'Zamykam Ci buzię na czacie, żebyś mógł w ciszy przemyśleć swoje wybory życiowe. Jak chcesz pogadać, to poczekaj, aż Cię ktoś od muteuje.',
         short: 'Zamyka morde podanemu użytkownikowi'
     },
     expectedArgs: [
-        { name: 'user', type: 'user-mention', optional: false, description: 'Komu mute chcesz dać?' },
-        { name: 'reason', type: 'trailing-string', optional: !cmdCfg.reasonRequired, description: 'Powód wyciszenia użytkownika' }
+        {
+            name: 'user',
+            description: 'No ten, tu podaj użytkownika którego chcesz zmuteowac',
+            type: 'user-mention',
+            optional: false,
+        },
+        {
+            name: 'duration',
+            description: 'Długość mute, domyślnie 24h',
+            type: 'timestamp',
+            optional: true,
+        },
+        {
+            name: 'reason',
+            description: 'Powód wyciszenia użytkownika',
+            type: 'trailing-string',
+            optional: !cmdCfg.reasonRequired,
+        },
     ],
     aliases: cmdCfg.aliases,
     permissions: {
@@ -26,6 +45,8 @@ export const muteCmd: Command = {
     execute: async (api: CommandAPI) => {
         const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember;
         let reason = api.getTypedArg('reason', 'trailing-string')?.value as string;
+        const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null ?? 24 * Hour;
+        let expiresAt = duration != null ? Math.floor(Date.now() / 1000) + duration : null;
 
         // TODO: wtf? targetUser type is just dsc.GuildMember, not nullable...
         if (!targetUser) {
@@ -43,24 +64,24 @@ export const muteCmd: Command = {
         }
 
         try {
-            mute(targetUser, { reason, duration: 24 * 60 * 60 });
+            mute(targetUser, { reason, duration: duration });
 
             const role = api.msg.guild?.roles.cache.find(r => r.name.toLowerCase().includes("zamknij ryj"));
             if (role != undefined) await targetUser.roles.add(role, reason);
 
-            const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
-            if (logChannel != null && logChannel.isSendable()) {
-                logChannel.send({
-                    embeds: [
-                        new dsc.EmbedBuilder()
-                            .setAuthor({ name: 'EclairBOT' })
-                            .setColor(PredefinedColors.Purple)
-                            .setTitle('Nałożono kłódkę na buzię')
-                            .setDescription(`Użytkownik <@${targetUser.id}> został wyciszony na 24 godziny przez <@${api.msg.author.id}>.`)
-                            .addFields([{ name: 'Powód', value: reason }])
-                    ]
-                });
-            }
+            // const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
+            // if (logChannel != null && logChannel.isSendable()) {
+            //     logChannel.send({
+            //         embeds: [
+            //             new dsc.EmbedBuilder()
+            //                 .setAuthor({ name: 'EclairBOT' })
+            //                 .setColor(PredefinedColors.Purple)
+            //                 .setTitle('Nałożono kłódkę na buzię')
+            //                 .setDescription(`Użytkownik <@${targetUser.id}> został wyciszony na 24 godziny przez <@${api.msg.author.id}>.`)
+            //                 .addFields([{ name: 'Powód', value: reason }])
+            //         ]
+            //     });
+            // }
 
             return api.msg.reply({
                 embeds: [
@@ -72,7 +93,7 @@ export const muteCmd: Command = {
                             { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
 
                             { name: 'Powód', value: reason, inline: false },
-                            { name: 'Czas', value: '24 godziny', inline: true },
+                            { name: 'Czas', value:`<t:${expiresAt}:R>`, inline: true },
                         )
                         .setColor(PredefinedColors.Orange)
                 ]

@@ -5,7 +5,7 @@ import { cfg } from '@/bot/cfg.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import warn from '@/bot/apis/warns.js';
-import parseTimestamp from '@/util/parseTimestamp.js';
+import parseTimestamp, { Timestamp } from '@/util/parseTimestamp.js';
 import clamp from '@/util/clamp.js';
 
 export const warnCmd: Command = {
@@ -17,22 +17,28 @@ export const warnCmd: Command = {
     expectedArgs: [
         {
             name: 'user',
-            type: 'user-mention',
             description: 'No ten, tu podaj użytkownika którego chcesz zwarnować',
+            type: 'user-mention',
             optional: false,
         },
         {
             name: 'points',
-            type: 'number',
             description: `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cfg.mod.commands.warn.maxPoints}`,
+            type: 'number',
+            optional: true,
+        },
+        {
+            name: 'duration',
+            description: 'Czas po jakim warn wygaśnie',
+            type: 'timestamp',
             optional: true,
         },
         {
             name: 'reason',
-            type: 'trailing-string',
             description: cfg.mod.commands.warn.reasonRequired
                 ? 'Po prostu powód warna'
                 : 'Po prostu powód warna. Możesz go pominąć ale nie polecam',
+            type: 'trailing-string',
             optional: !cfg.mod.commands.warn.reasonRequired,
         }
     ],
@@ -48,8 +54,8 @@ export const warnCmd: Command = {
         const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | undefined;
         let points = api.getTypedArg('points', 'number')?.value as number ?? 1;
         let reason = api.getTypedArg('reason', 'trailing-string')?.value as string ?? '';
-        let duration: number | null = null;
-        let expiresAt: number | null = null;
+        const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null;
+        let expiresAt = duration != null ? Math.floor(Date.now() / 1000) + duration : null;
 
         console.log('Warn command args:', { targetUser, points, reason });
 
@@ -65,18 +71,6 @@ export const warnCmd: Command = {
             return log.replyError(api.msg, 'Chronimy go!', 'Użytkownik poprosił o ochronę i ją dostał!');
         }
 
-        if (reason) {
-            const split = reason.split(/\s+/);
-            const possibleTime = split[0];
-            const parsed = parseTimestamp(possibleTime);
-
-            if (parsed != null) {
-                duration = parsed;
-                expiresAt = Math.floor(Date.now() / 1000) + duration;
-                reason = split.slice(1).join(' ').trim();
-            }
-        }
-
         if (!reason) {
             if (cfg.mod.commands.warn.reasonRequired) {
                 return log.replyError(api.msg, 'Nie podano powodu', 'Ale za co ten warn? proszę o doprecyzowanie!');
@@ -90,7 +84,7 @@ export const warnCmd: Command = {
             return log.replyError(
                 api.msg,
                 'Bro co ty odpierdalasz',
-                'Co ty chcesz sobie dać warna :sob:? Co jest z tobą nie tak? Potrzebujesz pomocy?'
+                'Co ty chcesz sobie dać warna :sob:? Co jest z tobą nie tak? Potrzebujesz pomocy?',
             );
         }
 

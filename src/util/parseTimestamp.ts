@@ -1,4 +1,10 @@
 export type Timestamp = number; // seconds
+export const Second = 1;
+export const Minute = 60 * Second;
+export const Hour = 60 * Minute;
+export const Day = 24 * Hour;
+export const Week = 7 * Day;
+export const Month = 30 * Day;
 
 export interface TimestampFormat {
     aliases: string[];
@@ -37,19 +43,36 @@ for (const unit in timeUnits) {
 }
 
 export default function parseTimestamp(timestampStr: string): Timestamp | null {
-    const str = timestampStr.trim().toLowerCase().trim();
+    const str = timestampStr.trim().toLowerCase();
 
-    for (const unit of Object.values(timeUnits)) {
-        for (const alias of unit.aliases) {
-            if (str.endsWith(alias)) {
-                const numPart = str.slice(0, -alias.length).trim();
-                const num = numPart == '' ? 1 : parseFloat(numPart);
-                if (!isNaN(num)) return num * unit.multiplier;
+    const regex = /(\d+(?:\.\d+)?)([a-ząćęłńóśźż]+)/gi;
+    let match: RegExpExecArray | null;
+    let total = 0;
+    let found = false;
+
+    while ((match = regex.exec(str)) !== null) {
+        const value = parseFloat(match[1]);
+        const unitStr = match[2];
+
+        let matched = false;
+        for (const unit of Object.values(timeUnits)) {
+            for (const alias of unit.aliases) {
+                if (unitStr === alias) {
+                    total += value * unit.multiplier;
+                    matched = true;
+                    found = true;
+                    break;
+                }
             }
+            if (matched) break;
         }
     }
 
-    const num = parseFloat(str);
-    if (!isNaN(num)) return num;
-    else return null;
+    if (!found) {
+        const num = parseFloat(str);
+        if (!isNaN(num)) return num;
+        else return null;
+    }
+
+    return total;
 }
