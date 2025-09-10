@@ -21,11 +21,11 @@ export const muteCmd: Command = {
     permissions: {
         discordPerms: null,
         allowedRoles: cmdCfg.allowedRoles,
-        allowedUsers: cmdCfg.allowedUsers
+        allowedUsers: cmdCfg.allowedUsers,
     },
     execute: async (api: CommandAPI) => {
-        const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
-        let reason = api.getTypedArg('reason', 'string').value as string || null;
+        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember;
+        let reason = api.getTypedArg('reason', 'trailing-string')?.value as string;
 
         // TODO: wtf? targetUser type is just dsc.GuildMember, not nullable...
         if (!targetUser) {
@@ -78,7 +78,7 @@ export const muteCmd: Command = {
                 ]
             });
         } catch (e) {
-            console.error(e);
+            console.log(e);
             return log.replyError(api.msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że mutujesz admina...');
         }
     }

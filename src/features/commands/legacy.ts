@@ -49,11 +49,17 @@ client.on('messageCreate', async (msg) => {
     }
 
     try {
-        const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs);
+        const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, { msg: msg, guild: msg.guild });
         const api: CommandAPI = {
             args: parsedArgs,
-            getArg: (name) => parsedArgs.find(a => a.name === name)!,
-            getTypedArg: (name, type) => { const x = parsedArgs.find(a => a.name === name && a.type === type)!; console.log(x); return x; },
+            getArg(name) {
+                return parsedArgs.find(a => a.name === name)!
+            },
+            getTypedArg(name, type) {
+                const x = parsedArgs.find(a => a.name === name && a.type === type)!;
+                console.log(`Getting typed arg ${name} of type ${type}:`, x);
+                return x;
+            },
             msg: {
                 content: msg.content,
                 author: { id: msg.author.id, plainUser: msg.author },
@@ -90,6 +96,7 @@ client.on('messageCreate', async (msg) => {
 
     } catch (err: any) {
         log.replyError(msg, 'Błąd w argumentach', err.message);
+        throw err;
     }
 });
 

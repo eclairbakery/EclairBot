@@ -41,7 +41,7 @@ export const banCmd: Command = {
         }
 
         try {
-            await ban(targetUser, { reason, expiresAt: null });
+            ban(targetUser, { reason, expiresAt: null });
 
             const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
             if (logChannel?.isSendable()) {

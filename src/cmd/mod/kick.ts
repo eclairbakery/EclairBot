@@ -23,9 +23,9 @@ export const kickCmd: Command = {
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers
     },
-    execute: async (api: CommandAPI) => {
+    async execute(api) {
         const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
-        let reason = api.getTypedArg('reason', 'string').value as string || null;
+        let reason = api.getTypedArg('reason', 'trailing-string').value as string || null;
 
         if (!targetUser) {
             return log.replyError(api.msg, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyślę komu ty chcesz dać kopniaka? Użycie: odpowiedzi na wiadomość lub !kick <@user> <powód>');
@@ -42,7 +42,7 @@ export const kickCmd: Command = {
         }
 
         try {
-            await kick(targetUser, { reason });
+            kick(targetUser, { reason });
 
             const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
             if (logChannel?.isSendable()) {

@@ -1,6 +1,3 @@
-import clamp from '@/util/clamp.js';
-import parseTimestamp from '@/util/parseTimestamp.js';
-
 import { Command } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
@@ -8,6 +5,8 @@ import { cfg } from '@/bot/cfg.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import warn from '@/bot/apis/warns.js';
+import parseTimestamp from '@/util/parseTimestamp.js';
+import clamp from '@/util/clamp.js';
 
 export const warnCmd: Command = {
     name: 'warn',
@@ -20,21 +19,21 @@ export const warnCmd: Command = {
             name: 'user',
             type: 'user-mention',
             description: 'No ten, tu podaj użytkownika którego chcesz zwarnować',
-            optional: false
+            optional: false,
         },
         {
             name: 'points',
             type: 'number',
             description: `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cfg.mod.commands.warn.maxPoints}`,
-            optional: true
+            optional: true,
         },
         {
             name: 'reason',
-            type: 'string',
+            type: 'trailing-string',
             description: cfg.mod.commands.warn.reasonRequired
                 ? 'Po prostu powód warna'
                 : 'Po prostu powód warna. Możesz go pominąć ale nie polecam',
-            optional: !cfg.mod.commands.warn.reasonRequired
+            optional: !cfg.mod.commands.warn.reasonRequired,
         }
     ],
 
@@ -48,9 +47,11 @@ export const warnCmd: Command = {
     async execute(api) {
         const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | undefined;
         let points = api.getTypedArg('points', 'number')?.value as number ?? 1;
-        let reason = api.getTypedArg('reason', 'string')?.value as string ?? '';
+        let reason = api.getTypedArg('reason', 'trailing-string')?.value as string ?? '';
         let duration: number | null = null;
         let expiresAt: number | null = null;
+
+        console.log('Warn command args:', { targetUser, points, reason });
 
         if (!targetUser) {
             return log.replyError(
@@ -122,8 +123,8 @@ export const warnCmd: Command = {
             .addFields(
                 { name: 'Moderator', value: `<@${api.msg.author.id}>`, inline: true },
                 { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
-                { name: 'Powód', value: reason, inline: true },
-                { name: 'Punkty', value: points.toString(), inline: true }
+                { name: 'Powód', value: reason, inline: false },
+                { name: 'Punkty', value: points.toString(), inline: true },
             )
             .setColor(PredefinedColors.Orange);
 
