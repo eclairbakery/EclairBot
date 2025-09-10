@@ -61,10 +61,10 @@ export const quickHelpCmd: Command = {
     },
     expectedArgs: [
         {
-            type: 'string',
-            optional: true,
             name: 'category',
             description: 'Kategoria lub "all" aby zobaczyć wszystkie',
+            type: 'string',
+            optional: true,
         }
     ],
     aliases: ['quick-help'],

@@ -9,7 +9,12 @@ export const changelogCmd: Command = {
         short: 'Wyświetl changelog.',
     },
     expectedArgs: [
-        { name: 'version', type: 'string', description: 'Wersja changeloga (opcjonalnie).', optional: true },
+        {
+            name: 'version',
+            description: 'Wersja changeloga (opcjonalnie).',
+            type: 'string',
+            optional: true
+        },
     ],
     aliases: [],
     permissions: {
