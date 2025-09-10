@@ -1,6 +1,6 @@
-export default function debugLog(...message: any[]) {
+export default function debugLog(...values: any[]) {
     console.log('DEBUG: ');
-    for (const m of message) {
-        console.log(m);
+    for (const v of values) {
+        console.log(v);
     }
 }
