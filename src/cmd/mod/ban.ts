@@ -15,7 +15,7 @@ export const banCmd: Command = {
     },
     expectedArgs: [
         { name: 'user', type: 'user-mention', optional: false, description: 'Osoba, która jest nieznośna idzie do tego pola...' },
-        { name: 'reason', type: 'string', optional: !cmdCfg.reasonRequired, description: 'Powód bana' }
+        { name: 'reason', type: 'trailing-string', optional: !cmdCfg.reasonRequired, description: 'Powód bana' }
     ],
     aliases: cmdCfg.aliases,
     permissions: {
@@ -25,7 +25,7 @@ export const banCmd: Command = {
     },
     execute: async (api: CommandAPI) => {
         const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
-        const reasonArg = api.getTypedArg('reason', 'string').value as string;
+        const reasonArg = api.getTypedArg('reason', 'trailing-string').value as string;
         const reason = reasonArg?.trim() || (cmdCfg.reasonRequired ? null : 'Moderator nie podał powodu.');
 
         if (!targetUser) {

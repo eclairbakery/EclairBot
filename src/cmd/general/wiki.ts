@@ -70,7 +70,11 @@ export const wikiCmd: Command = {
     },
     execute: async (api: CommandAPI) => {
         const msg = api.msg;
-        const query = api.getArg('query')?.value as string;
+        const rawQuery = api.getArg('query')?.value as string;
+
+        const query =
+            rawQuery == 'hubix' ? 'pedał'
+            : rawQuery
 
         if (!query) return msg.reply('Musisz podać, czego szukasz na Wikipedii!');
 

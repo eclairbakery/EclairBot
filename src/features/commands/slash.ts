@@ -27,7 +27,7 @@ client.on('interactionCreate', async (int: Interaction) => {
 
     try {
         const argsRaw = cmdObj.expectedArgs.map(arg => int.options.getString(arg.name) ?? undefined);
-        const parsedArgs = await parseArgs(argsRaw as string[], cmdObj.expectedArgs, {interaction: int});
+        const parsedArgs = await parseArgs(argsRaw as string[], cmdObj.expectedArgs, { interaction: int });
 
         const api: CommandAPI = {
             args: parsedArgs,

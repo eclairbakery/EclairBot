@@ -15,7 +15,7 @@ export const muteCmd: Command = {
     },
     expectedArgs: [
         { name: 'user', type: 'user-mention', optional: false, description: 'Komu mute chcesz dać?' },
-        { name: 'reason', type: 'string', optional: !cmdCfg.reasonRequired, description: 'Powód wyciszenia użytkownika' }
+        { name: 'reason', type: 'trailing-string', optional: !cmdCfg.reasonRequired, description: 'Powód wyciszenia użytkownika' }
     ],
     aliases: cmdCfg.aliases,
     permissions: {

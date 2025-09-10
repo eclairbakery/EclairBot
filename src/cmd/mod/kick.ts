@@ -15,7 +15,7 @@ export const kickCmd: Command = {
     },
     expectedArgs: [
         { name: 'user', type: 'user-mention', optional: false, description: 'W tej chwili dawaj użytkownika do skopniakowania!' },
-        { name: 'reason', type: 'string', optional: !cmdCfg.reasonRequired, description: 'Powód wywalenia użytkownika' }
+        { name: 'reason', type: 'trailing-string', optional: !cmdCfg.reasonRequired, description: 'Powód wywalenia użytkownika' }
     ],
     aliases: cmdCfg.aliases,
     permissions: {

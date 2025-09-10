@@ -17,7 +17,7 @@ export const commandsCmd: Command = {
     expectedArgs: [
         {
             name: 'category',
-            description: 'Kategoria komend, którą chcesz zobaczyć. Jeśli nie podasz, pokaże wszystkie. Oddziel je przecinkiem, a potem spacją!',
+            description: 'Kategoria komend, którą chcesz zobaczyć. Jeśli nie podasz, pokaże wszystkie. Oddziel je przecinkiem!',
             optional: true,
             type: 'string'
         }
@@ -35,7 +35,8 @@ export const commandsCmd: Command = {
         if (api.args.length == 0 || !api.args[0]!.value || (api.args[0]?.value as string).includes('all')) {
             categoriesToShow = new Set([...commands.keys()]);
         } else {
-            for (const arg of (api.args[0]!.value as string).split(', ')) {
+            const categoriesList = (api.args[0]!.value as string).split(',').map(s => s.trim().toLowerCase());
+            for (const arg of categoriesList) {
                 const category = Category.fromString(arg);
                 if (!category) {
                     log.replyError(api.msg, 'Nieznana kategoria', `Nie znam kategori ${arg}. Czy możesz powtórzyć?`);

@@ -4,9 +4,9 @@ import { Category } from './categories.js';
 import { Snowflake } from '../defs.js';
 export { Category };
 
-export type CommandPermissionResorvable = 'administrator' | 'mute' | 'kick' | 'ban';
+export type CommandPermissionResolvable = 'administrator' | 'mute' | 'kick' | 'ban';
 
-export type CommandArgType = 'string' | 'user-mention' | 'channel-mention' | 'role-mention' | 'timestamp' | 'number';
+export type CommandArgType = 'string' | 'trailing-string' | 'user-mention' | 'channel-mention' | 'role-mention' | 'timestamp' | 'number';
 
 export interface CommandArgument {
     type: CommandArgType;
@@ -45,11 +45,11 @@ export type CommandValuableArgument = CommandArgumentWithNumberValue | CommandAr
 export interface CommandMessageAPI {
     content: string;
     author: {
-        id: Snowflake;
+        id: dsc.Snowflake;
         plainUser: dsc.User;
     };
     member?: {
-        id: Snowflake;
+        id: dsc.Snowflake;
         moderation: {
             warn: (data: { reason: string; expiresAt: number; points: number; }) => Promise<any>;
             mute: (data: { reason: string; duration: number; }) => Promise<any>;
@@ -63,10 +63,10 @@ export interface CommandMessageAPI {
         => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;
 
     mentions: {
-        members: dsc.Collection<Snowflake, dsc.GuildMember>;
-        roles: dsc.Collection<Snowflake, dsc.Role>;
+        members: dsc.Collection<dsc.Snowflake, dsc.GuildMember>;
+        roles: dsc.Collection<dsc.Snowflake, dsc.Role>;
         channels: dsc.Collection<string, dsc.Channel>;
-        users: dsc.Collection<Snowflake, dsc.User>;
+        users: dsc.Collection<dsc.Snowflake, dsc.User>;
     };
     guild?: dsc.Guild;
     channel: dsc.Channel | dsc.GuildChannel
@@ -77,7 +77,7 @@ export interface CommandAPI {
     getArg: (name: string) => CommandValuableArgument;
     getTypedArg: (name: string, type: CommandArgType) => CommandValuableArgument;
     msg: CommandMessageAPI;
-    referenceMessage?: CommandAPI['msg'];
+    referenceMessage?: CommandMessageAPI;
     plainInteraction?: dsc.ChatInputCommandInteraction;
     plainMessage?: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>;
     commands: Map<Category, Command[]>;
@@ -94,11 +94,11 @@ export interface Command {
     /** WARNING: SETTING ANY VALUE TO NULL WILL MAKE EVERYONE POSSIBLE TO USE THIS COMMAND, if you want to skip something and don't let them use the command, use the empty array */
     permissions: {
         /** the first thing that grants you permissions to use this command, here specify the discord permission; global perm not for the channel */
-        discordPerms: CommandPermissionResorvable[] | null;
+        discordPerms: CommandPermissionResolvable[] | null;
         /** the second thing in order, here you specify the snowflakes of the roles you'll use to grant permissions */
-        allowedRoles: Snowflake[] | null,
+        allowedRoles: dsc.Snowflake[] | null,
         /** the last thing, allowed users */
-        allowedUsers: Snowflake[] | null
+        allowedUsers: dsc.Snowflake[] | null
     };
     /** A better argument system */
     expectedArgs: CommandArgument[];

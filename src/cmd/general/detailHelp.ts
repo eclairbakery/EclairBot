@@ -70,7 +70,7 @@ export const detailHelpCmd: Command = {
     aliases: [],
 
     async execute(api: CommandAPI) {
-        const { args, msg, commands } = api;
+        const { msg, commands } = api;
 
         const sendInteractiveMenu = async () => {
             const selectMenu = buildSelectMenu(commands);

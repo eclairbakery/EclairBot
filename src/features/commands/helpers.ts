@@ -48,6 +48,7 @@ export async function parseArgs(
 ): Promise<CommandValuableArgument[]> {
     const parsedArgs: CommandValuableArgument[] = [];
 
+loop:
     for (let i = 0; i < declaredArgs.length; i++) {
         const decl = declaredArgs[i];
         const raw = rawArgs[i];
@@ -58,10 +59,19 @@ export async function parseArgs(
             continue;
         }
 
+        if (decl.type === 'trailing-string' && context?.interaction) {
+            decl.type = 'string';
+        }
+
         switch (decl.type) {
             case 'string':
                 parsedArgs.push({ ...decl, value: raw } as CommandArgumentWithStringValue);
                 break;
+
+            case 'trailing-string':
+                const trailingValue = rawArgs.slice(i).join(' ');
+                parsedArgs.push({ ...decl, value: trailingValue } as CommandArgumentWithStringValue);
+                break loop;
 
             case 'number':
                 const num = Number(raw);
@@ -77,7 +87,7 @@ export async function parseArgs(
             }
 
             case 'user-mention': {
-                let user: dsc.GuildMember | undefined;
+                let user: dsc.GuildMember | null = null;
                 console.log(raw);
                 if (context?.interaction) {
                     const member = (context.interaction as dsc.ChatInputCommandInteraction).options.getString(decl.name);
@@ -89,7 +99,7 @@ export async function parseArgs(
                     if (!user) throw new Error('You need to mention the user.');
                 }
 
-                if (!user && !decl.optional) throw new Error(`Argument ${decl.name} must be a user mention`);
+                if (user == null && !decl.optional) throw new Error(`Argument ${decl.name} must be a user mention`);
                 parsedArgs.push({ ...decl, value: user } as CommandArgumentWithUserMentionValue);
                 break;
             }
@@ -97,13 +107,13 @@ export async function parseArgs(
             case 'role-mention': {
                 const match = raw.match(/^<@&(\d+)>$/);
                 const roleId = match?.[1];
-                let role: dsc.Role | undefined;
+                let role: dsc.Role | null = null;
 
                 if (roleId && context?.guild) {
                     role = context.msg?.mentions.roles?.get(roleId) ?? context.guild.roles.cache.get(roleId);
                 }
 
-                if (!role && !decl.optional) throw new Error(`Argument ${decl.name} must be a role mention`);
+                if (role == null && !decl.optional) throw new Error(`Argument ${decl.name} must be a role mention`);
                 parsedArgs.push({ ...decl, value: role } as CommandArgumentWithRoleMentionValue);
                 break;
             }
@@ -111,15 +121,16 @@ export async function parseArgs(
             case 'channel-mention': {
                 const match = raw.match(/^<#(\d+)>$/);
                 const channelId = match?.[1];
-                let channel: dsc.GuildChannel | undefined;
+                let channel: dsc.GuildChannel | null = null;
 
                 if (channelId && context?.guild) {
-                    // tajpskrypt cicho
-                    // @ts-expect-error
-                    channel = context.msg?.mentions.channels?.get(channelId) ?? context.guild.channels.cache.get(channelId);
+                    const foundChannel = context.msg?.mentions.channels?.get(channelId) ?? context.guild.channels.cache.get(channelId);
+                    if (foundChannel && foundChannel instanceof dsc.GuildChannel) {
+                        channel = foundChannel;
+                    }
                 }
 
-                if (!channel && !decl.optional) throw new Error(`Argument ${decl.name} must be a channel mention`);
+                if (channel == null && !decl.optional) throw new Error(`Argument ${decl.name} must be a channel mention`);
                 parsedArgs.push({ ...decl, value: channel } as any);
                 break;
             }
