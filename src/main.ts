@@ -89,6 +89,7 @@ async function main() {
 
             for (const arg of cmd.expectedArgs) {
                 switch (arg.type) {
+                    case 'trailing-string':
                     case 'string':
                         scb.addStringOption(option =>
                             option
