@@ -5,10 +5,22 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI } from '@/bot/command.js';
 
-function calculateLevel(xp: number, levelDivider: number): number {
+function xpToLevel(xp: number, levelDivider: number): number {
     return Math.floor(
         (1 + Math.sqrt(1 + 8 * xp / levelDivider)) / 2
     );
+}
+
+function levelToXp(level: number, levelDivider: number): number {
+    return Math.floor((level * (level - 1) / 2) * levelDivider);
+}
+
+function mkProgressBar(xp: number, xpForNextLevel: number, length: number = 10): string {
+    const progress = Math.min(xp / xpForNextLevel, 1);
+    const filledLength = Math.floor(length * progress);
+    const emptyLength = length - filledLength;
+
+    return `${'█'.repeat(filledLength)}${'░'.repeat(emptyLength)} ${xp}/${xpForNextLevel}xp`;
 }
 
 export const lvlCmd: Command = {
@@ -53,7 +65,14 @@ export const lvlCmd: Command = {
                 .setColor(PredefinedColors.Blue)
                 .setTitle(`📊 Poziom użytkownika`)
                 .setDescription(
-                    `**${who.tag}** ma poziom **${calculateLevel(row.xp, cfg.general.leveling.levelDivider)}** (XP: ${row.xp}).`
+                    `**${who.tag}** ma poziom **${xpToLevel(row.xp, cfg.general.leveling.levelDivider)}** (XP: ${row.xp}).`
+                    + `\n${mkProgressBar(
+                        row.xp,
+                        levelToXp(
+                            xpToLevel(row.xp, cfg.general.leveling.levelDivider) + 1,
+                            cfg.general.leveling.levelDivider,
+                        )
+                    )}`,
                 )
                 .setThumbnail(who.displayAvatarURL({ size: 128 }));
 
