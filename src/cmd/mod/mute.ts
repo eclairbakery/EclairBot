@@ -64,7 +64,7 @@ export const muteCmd: Command = {
         }
 
         try {
-            mute(targetUser, { reason, duration: duration });
+            await mute(targetUser, { reason, duration });
 
             const role = api.msg.guild?.roles.cache.find(r => r.name.toLowerCase().includes("zamknij ryj"));
             if (role != undefined) await targetUser.roles.add(role, reason);
@@ -98,8 +98,8 @@ export const muteCmd: Command = {
                         .setColor(PredefinedColors.Orange)
                 ]
             });
-        } catch (e) {
-            console.log(e);
+        } catch (err) {
+            console.log(err);
             return log.replyError(api.msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że mutujesz admina...');
         }
     }

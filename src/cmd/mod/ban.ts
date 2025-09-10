@@ -41,23 +41,20 @@ export const banCmd: Command = {
         }
 
         try {
-            ban(targetUser, { reason, expiresAt: null });
-
-            const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
-            if (logChannel?.isSendable()) {
-                logChannel.send({
+            try {
+                await targetUser.send({
                     embeds: [
                         new dsc.EmbedBuilder()
-                            .setAuthor({ name: 'EclairBOT' })
-                            .setColor(PredefinedColors.DarkGrey)
-                            .setTitle('Zbanowano członka')
-                            .setDescription(`Użytkownik <@${targetUser.id}> (${targetUser.user.username}) został zbanowany z serwera przez <@${api.msg.author.id}>!`)
-                            .addFields([{ name: 'Powód', value: reason }])
+                            .setTitle('📢 Zostałeś zbanowany z serwera Piekarnia eklerki!')
+                            .setDescription(`To straszne wiem. Powód bana brzmi: ${reason}`)
+                            .setColor(PredefinedColors.Orange)
                     ]
                 });
-            }
+            } catch {}
 
-            return api.msg.reply({
+            await ban(targetUser, { reason });
+
+            await api.msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setTitle(`📢 ${targetUser.user.username} został zbanowany!`)
@@ -70,6 +67,20 @@ export const banCmd: Command = {
                         .setColor(PredefinedColors.Orange)
                 ]
             });
+
+            const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
+            if (logChannel?.isSendable()) {
+                return logChannel.send({
+                    embeds: [
+                        new dsc.EmbedBuilder()
+                            .setAuthor({ name: 'EclairBOT' })
+                            .setColor(PredefinedColors.DarkGrey)
+                            .setTitle('Zbanowano członka')
+                            .setDescription(`Użytkownik <@${targetUser.id}> (${targetUser.user.username}) został zbanowany z serwera przez <@${api.msg.author.id}>!`)
+                            .addFields([{ name: 'Powód', value: reason }])
+                    ]
+                });
+            }
         } catch (e) {
             console.error(e);
             return log.replyError(api.msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że banujesz admina...');

@@ -42,7 +42,32 @@ export const kickCmd: Command = {
         }
 
         try {
-            kick(targetUser, { reason });
+            try {
+                await targetUser.send({
+                    embeds: [
+                        new dsc.EmbedBuilder()
+                            .setTitle('📢 Zostałeś wywalony z serwera Piekarnia eklerki!')
+                            .setDescription(`To straszne wiem. Powód kicka brzmi: ${reason}`)
+                            .setColor(PredefinedColors.Orange)
+                    ]
+                });
+            } catch {}
+
+            await kick(targetUser, { reason });
+
+            await api.msg.reply({
+                embeds: [
+                    new dsc.EmbedBuilder()
+                        .setTitle(`📢 ${targetUser.user.username} został wywalony!`)
+                        .setDescription(`Ukróciłem jego zagrania! Miejmy nadzieję, że nie wbije znowu...`)
+                        .addFields(
+                            { name: 'Moderator', value: `<@${api.msg.author.id}>`, inline: true },
+                            { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
+                            { name: 'Powód', value: reason, inline: false }
+                        )
+                        .setColor(PredefinedColors.Orange)
+                ]
+            });
 
             const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
             if (logChannel?.isSendable()) {
@@ -57,23 +82,8 @@ export const kickCmd: Command = {
                     ]
                 });
             }
-
-            return api.msg.reply({
-                embeds: [
-                    new dsc.EmbedBuilder()
-                        .setTitle(`📢 ${targetUser.user.username} został wywalony!`)
-                        .setDescription(`Ukróciłem jego zagrania! Miejmy nadzieję, że nie wbije znowu...`)
-                        .addFields(
-                            { name: 'Moderator', value: `<@${api.msg.author.id}>`, inline: true },
-                            { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
-                            { name: 'Powód', value: reason, inline: false }
-                        )
-                        .setColor(PredefinedColors.Orange)
-                ]
-            });
-
-        } catch (e) {
-            console.error(e);
+        } catch (err) {
+            console.error(err);
             return log.replyError(api.msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że kickujesz admina...');
         }
     }

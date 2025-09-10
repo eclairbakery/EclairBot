@@ -6,7 +6,7 @@ import { scheduleWarnDeletion } from '@/features/deleteExpiredWarns.js';
 
 export default function ban(
     member: dsc.GuildMember,
-    data: { reason: string; expiresAt: number | null; }
+    data: { reason: string; }
 ): Promise<dsc.GuildMember> {
     return member.ban({ reason: data.reason });
 }
