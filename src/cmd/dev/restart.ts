@@ -23,9 +23,6 @@ export const restartCmd: Command = {
     },
 
     async execute(api) {
-        if (api.msg.author.id !== '990959984005222410') {
-            return api.msg.reply('nuh uh');
-        }
         if (!canRestart) {
             return api.msg.reply('operacja unsafe w tym momencie');
         }
