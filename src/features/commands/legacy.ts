@@ -14,7 +14,7 @@ import * as dsc from 'discord.js';
 
 client.on('messageCreate', async (msg) => {
     if (!(msg instanceof dsc.Message)) return;
-    if (!msg.content.startsWith(cfg.general.prefix)) return;
+    if (!msg.content.toLowerCase().startsWith(cfg.general.prefix.toLowerCase())) return;
 
     const argsRaw = msg.content.slice(cfg.general.prefix.length).trim().split(/\s+/);
     const cmdName = argsRaw.shift()?.toLowerCase() ?? '';

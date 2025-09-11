@@ -12,6 +12,16 @@ export interface Config {
         allowedUsers: dsc.Snowflake[];
     };
 
+    roles: {
+        eclair25: dsc.Snowflake,
+        secondLevelOwner: dsc.Snowflake,
+        headAdmin: dsc.Snowflake,
+        admin: dsc.Snowflake,
+        headMod: dsc.Snowflake,
+        mod: dsc.Snowflake,
+        helper: dsc.Snowflake
+    };
+
     general: {
         /* General configuration for the bot */
         prefix: string;
@@ -167,6 +177,16 @@ export interface Config {
     };
 }
 
+const rolesCfg: Config['roles'] = {
+    eclair25: '1368171061585117224',
+    secondLevelOwner: '1280884378586845216',
+    headAdmin: '1415710955022843904',
+    admin: '1415710969732005980',
+    headMod: '1415710973288910919',
+    mod: '1415710976644349972',
+    helper: '1415710980612034771'
+};
+
 export const cfg: Config = {
     enabled: true,
 
@@ -175,13 +195,15 @@ export const cfg: Config = {
         allowedUsers: ['1274610053843783768', '985053803151753316', '1368171061585117224'],
     },
 
+    roles: rolesCfg,
+
     general: {
         prefix: 'sudo ',
         leveling: {
             xpPerMessage: 4,
             levelDivider: 100,
             excludedChannels: [],
-            canChangeXP: ['1280884378586845216', '1280081773019140096', '1404392144441180221'],
+            canChangeXP: ['1404392144441180221', rolesCfg.eclair25, rolesCfg.secondLevelOwner],
             milestoneRoles: {
                 3: '1297559525989158912',
                 5: '1235550102563852348',
@@ -200,7 +222,7 @@ export const cfg: Config = {
 
         hallOfFame: '1392128976574484592',
         hallOfFameEligibleChannels: ['1397628186795311246', '1264971505662689311', '1342793182265741394', '1392567715407073402'],
-        blockedChannels: ['1264971505662689311', '1392567715407073402'],
+        blockedChannels: (['1264971505662689311', '1392567715407073402'] as any) == false ? (true as any) : [],
         commandsExcludedFromBlockedChannels: ['ban', 'mute', 'unmute', 'warn', 'kick', 'warnlist', 'warn-clear', 'cat', 'dog', 'parrot', 'animal', 'xp', 'shitwarn', 'clear', 'wiki', 'fandom', 'restart', 'notify'],
         welcomer: {
             channelId: "1235560269871190056",
@@ -208,7 +230,7 @@ export const cfg: Config = {
             general: '1264971505662689311',
         },
 
-        moderationProtectedRoles: ['1280884378586845216', '1280081773019140096'],
+        moderationProtectedRoles: [],
         forFun: {
             media: [
                 {
@@ -238,7 +260,7 @@ export const cfg: Config = {
     },
 
     unfilteredRelated: {
-        eligibleToRemoveGifBan: ["1280081773019140096", "1280884378586845216"],
+        eligibleToRemoveGifBan: [rolesCfg.eclair25, rolesCfg.secondLevelOwner],
         gifBan: "1406369089634435204",
         unfilteredChannel: '1397628186795311246',
         makeNeocities: [],
@@ -264,35 +286,35 @@ export const cfg: Config = {
             ban: {
                 enabled: true,
                 aliases: [],
-                allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096', '1403684128485806182'],
+                allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod],
                 allowedUsers: [],
                 reasonRequired: false,
             },
             kick: {
                 enabled: true,
                 aliases: [],
-                allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096', '1403684128485806182'],
+                allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod],
                 allowedUsers: [],
                 reasonRequired: false,
             },
             mute: {
                 enabled: true,
                 aliases: [],
-                allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096', '1403684128485806182'],
+                allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
                 allowedUsers: [],
                 reasonRequired: false,
             },
             warn: {
                 enabled: true,
                 aliases: [],
-                allowedRoles: ['1235546046562697278', '1271533062156713994', '1274478730697510997', '1280884378586845216', '1280081773019140096', '1403684128485806182'],
+                allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
                 allowedUsers: [],
                 reasonRequired: false,
                 maxPoints: 30,
                 minPoints: 1,
             },
             ping: {
-                allowedRoles: ['1368301367655141446', '1274478730697510997', '1280884378586845216', '1368171061585117224', '1403684128485806182'],
+                allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin],
                 deathChatRenewInterval: 2 * 60 * 60 * 1000,
                 eclairNewsRenewInterval: 6 * 60 * 60 * 1000,
             }
