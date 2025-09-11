@@ -42,6 +42,7 @@ import * as slashCommands from '@/features/commands/slash.js';
 import * as legacyCommands from '@/features/commands/legacy.js';
 import { registerTemplateChannels } from '@/features/actions/registerTemplateChannels.js';
 import registerLogging from './features/actions/logging.js';
+import { cfg } from './bot/cfg.js';
 
 client.once('ready', () => {
     console.log(`Logged in.`);
@@ -164,6 +165,50 @@ async function main() {
     } catch (e) {
         console.log('Slash commands error: ' + e);
     }
+
+    let alreadyInHallOfFame: dsc.Snowflake[] = [];
+
+    client.on('messageReactionAdd', async (reaction) => {
+        if (reaction.partial) {
+            try {
+                await reaction.fetch();
+            } catch (err) {
+                console.error(err);
+                return;
+            }
+        }
+
+        const msg = reaction.message;
+        const count = reaction.count;
+        const emoji = reaction.emoji.name;
+
+        if ((emoji === "⭐" || emoji === "💎" || emoji === "🔥") && count === 3 && cfg.general.hallOfFameEligibleChannels.includes(msg.channelId)) {
+            const channel = await msg.guild.channels.fetch(cfg.general.hallOfFame);
+            if (!channel) return;
+            if (!channel.isTextBased()) return;
+            if (alreadyInHallOfFame.includes(msg.id)) return;
+            alreadyInHallOfFame.push(msg.id);
+            channel.send({
+                embeds: [
+                    new dsc.EmbedBuilder()
+                        .setAuthor({name: 'EclairBOT'})
+                        .setColor(`#${Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, "0")}`)
+                        .setTitle(`:gem: ${msg.author.username} dostał się na Hall of Fame!`)
+                        .setDescription(`Super ważna informacja, wiem. Link: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`)
+                        .setFields([
+                            {
+                                name: 'Wiadomość',
+                                value: `\`\`\`${msg.content}\`\`\``
+                            },
+                            {
+                                name: 'Informacja o Hall of Fame',
+                                value: 'Aby dostać się na Hall of Fame, musisz zdobyć co najmniej trzy emotki ⭐, 🔥 lub 💎. Więcej informacji [tutaj](<https://canary.discord.com/channels/1235534146722463844/1392128976574484592/1392129983714955425>).'
+                            }
+                        ])
+                ]
+            });
+        }
+    });
 }
 
 (async function () { await client.login(process.env.TOKEN); })();
