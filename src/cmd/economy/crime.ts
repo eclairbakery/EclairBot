@@ -1,7 +1,10 @@
-import { Command, CommandAPI, CommandArgumentWithStringValue } from '@/bot/command.js';
 import * as dsc from 'discord.js';
+
+import { dbGet, dbRun } from '@/util/db-utils.js';
+import { getRandomInt } from '@/util/rand.js';
+
+import { Command } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
-import { dbGet, dbRun, getRandomInt } from '@/bot/shared.js';
 
 const COOLDOWN_MS = 15 * 60 * 1000;
 const WORK_AMOUNT_MIN = 2500;
@@ -54,7 +57,8 @@ export const crimeCmd: Command = {
     },
     expectedArgs: [],
     aliases: [],
-    execute: async (api: CommandAPI) => {
+
+    async execute(api) {
         const msg = api.msg;
         try {
             const amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);

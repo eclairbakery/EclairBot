@@ -10,18 +10,20 @@ let ecoRoles = [
 
 export const topecoCmd: Command = {
     name: 'topeco',
+    aliases: ['topmoney'],
     description: {
         main: 'Janusze biznesu z Allegro.',
         short: 'Janusze biznesu z Allegro.'
     },
+
     permissions: {
         discordPerms: null,
         allowedRoles: null,
         allowedUsers: []
     },
     expectedArgs: [],
-    aliases: ['topmoney'],
-    execute: async (api: CommandAPI) => {
+
+    async execute(api) {
         const msg = api.msg;
 
         db.all('SELECT * FROM economy ORDER BY money DESC LIMIT 12', [], async (err, rows: any[]) => {

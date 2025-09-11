@@ -45,6 +45,11 @@ export class Category {
         case 'dev':
             return Category.DevelopersOnly;
 
+        case '4fun':
+        case 'forfun':
+        case 'for-fun':
+            return Category.ForFun;
+
         default:
             return null;
         }
@@ -80,5 +85,10 @@ export class Category {
         '🎬', 'Gify', 'Poprostu pokazują ci losowe gify... co tu więcej mówić',
         'Poprostu pokazują ci losowe gify... co tu więcej mówić',
         PredefinedColors.Cyan,
+    );
+    static readonly ForFun = new Category(
+        '🔥', '4fun', 'opis dam potem',
+        'opis dam potem',
+        PredefinedColors.Blurple,
     );
 };

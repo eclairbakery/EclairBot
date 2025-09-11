@@ -6,10 +6,12 @@ import { Command, CommandAPI } from '@/bot/command.js';
 
 export const balCmd: Command = {
     name: 'bal',
+    aliases: ['balance'],
     description: {
         main: 'Wyświetl swój balans zadłużenia (raczej jesteś mało warty, w sensie konto, nie pozywaj za zniesławienie).',
         short: 'Wyświetl swój balans konta.',
     },
+
     permissions: {
         discordPerms: null,
         allowedRoles: null,
@@ -23,7 +25,6 @@ export const balCmd: Command = {
             description: 'Użytkownik, którego balans chcesz zobaczyć (domyślnie Ty).',
         }
     ],
-    aliases: ['balance'],
 
     async execute(api: CommandAPI) {
         const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member.plainMember;

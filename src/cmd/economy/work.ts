@@ -1,6 +1,9 @@
 import * as dsc from 'discord.js';
+
+import { dbGet, dbRun } from '@/util/db-utils.js';
+import { getRandomInt } from '@/util/rand.js';
+
 import { PredefinedColors } from '@/util/color.js';
-import { dbGet, dbRun, getRandomInt } from '@/bot/shared.js';
 import { Command, CommandAPI } from '@/bot/command.js';
 
 const COOLDOWN_MS = 30 * 1000;
@@ -42,17 +45,18 @@ async function tryWork(userId: string, amount: number): Promise<{ ok: boolean; w
 
 export const workCmd: Command = {
     name: 'work',
+    aliases: [],
     description: {
         main: 'Pr\\*ca dla pana, pr\\*ca za darmo! Niewolnikiem naszym bądź... dobra, nie mam talentu do wierszy. Po prostu ekonomia.',
         short: 'Pr\\*ca dla pana, pr\\*ca za darmo!',
     },
+
     permissions: {
         discordPerms: null,
         allowedRoles: null,
         allowedUsers: null,
     },
     expectedArgs: [],
-    aliases: [],
 
     async execute(api: CommandAPI) {
         try {

@@ -1,6 +1,6 @@
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
-import { dbGet, dbRun } from '@/bot/shared.js';
+import { dbGet, dbRun } from '@/util/db-utils.js';
 import { Command, CommandAPI } from '@/bot/command.js';
 
 interface Card {
@@ -30,13 +30,14 @@ function handToString(hand: Card[]): string {
 
 export const blackjackCmd: Command = {
     name: 'blackjack',
+    aliases: ['bj'],
     description: {
         main: 'Gra w blackjacka za określoną kwotę. Jak chcesz, możesz przewalić w kasynie kasę!',
         short: 'Gra w blackjacka za określoną kwotę',
     },
+
     permissions: { discordPerms: null, allowedRoles: null, allowedUsers: null },
     expectedArgs: [{ name: 'amount', description: 'O ile gramy?', optional: false, type: 'number' }],
-    aliases: ['bj'],
 
     async execute(api: CommandAPI) {
         const betArg = api.getTypedArg('amount', 'number');

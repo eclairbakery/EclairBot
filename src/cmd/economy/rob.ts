@@ -1,8 +1,11 @@
-import { Command, CommandAPI, CommandArgumentWithUserMentionValue } from '@/bot/command.js';
 import * as dsc from 'discord.js';
+import * as log from '@/util/log.js';
+
+import { dbGet, dbRun } from '@/util/db-utils.js';
+import { getRandomInt } from '@/util/rand.js';
+
+import { Command, CommandArgumentWithUserMentionValue } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
-import { dbGet, dbRun, getRandomInt } from '@/bot/shared.js';
-import { replyError } from '@/util/log.js';
 
 const COOLDOWN_MS = 5 * 60 * 1000;
 const ROB_PERCENTAGE = 0.5;
@@ -12,7 +15,7 @@ const ROB_AMOUNT_MAX = 1200;
 async function canRob(userId: string): Promise<{ can: boolean; wait?: number }> {
     const row = await dbGet('SELECT last_robbed FROM economy WHERE user_id = ?', [userId]);
     const now = Date.now();
-    if (!row) return { can: true };
+    if (!row || row.last_robbed == null) return { can: true };
     const timeSinceLastRob = now - row.last_robbed;
     if (timeSinceLastRob < COOLDOWN_MS) return { can: false, wait: COOLDOWN_MS - timeSinceLastRob };
     return { can: true };
@@ -56,13 +59,13 @@ export const robCmd: Command = {
     expectedArgs: [
         {
             name: 'user',
-            type: 'user-mention',
+            type: 'user-mention-or-reference-msg-author',
             optional: false,
             description: 'No daj tego użytkownika, proszę...'
         }
     ],
     aliases: [],
-    execute: async (api: CommandAPI) => {
+    execute: async (api) => {
         const msg = api.msg;
         const targetArg = api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue;
 
@@ -98,7 +101,7 @@ export const robCmd: Command = {
             return msg.reply({ embeds: [embed] });
         } catch (error) {
             console.error(error);
-            return replyError(msg, 'Coś się odwaliło...', 'Proszę, pytaj sqlite3 a nie mnie obwiniasz.');
+            return log.replyError(msg, 'Coś się odwaliło...', 'Proszę, pytaj sqlite3 a nie mnie obwiniasz.');
         }
     }
 };

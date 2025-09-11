@@ -6,22 +6,23 @@ export const db = new sqlite.Database('bot.db');
 function addColumnIfNotExists(table: string, column: string, type: string, defaultValue: string | number = 0) {
     db.all(`PRAGMA table_info(${table});`, (err, rows) => {
         if (err) {
-            console.error(`Błąd przy sprawdzaniu tabeli ${table}:`, err);
-            return;
+            throw err;
         }
 
         const exists = rows.some((col: any) => col.name === column);
         if (!exists) {
             const sql = `ALTER TABLE ${table} ADD COLUMN ${column} ${type} DEFAULT ${defaultValue};`;
-            db.run(sql, (err) => {
-                if (err) {
-                    console.error(`Błąd przy dodawaniu kolumny ${column} do ${table}:`, err);
-                } else {
-                    console.log(`Dodano kolumnę ${column} do tabeli ${table}.`);
-                }
-            });
+            db.run(sql);
         }
     });
+}
+
+/**
+ * Deletes a table from the database.
+ * @param table The name of the table to delete.
+ */
+function delTable(table: string) {
+    db.run(`DROP TABLE IF EXISTS ${table};`);
 }
 
 db.exec(`
@@ -57,24 +58,34 @@ db.exec(`
 
 
 db.exec(`
-  CREATE TABLE IF NOT EXISTS assets (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL UNIQUE,
-    price REAL NOT NULL,
-    last_update TEXT DEFAULT CURRENT_TIMESTAMP
-  );
+    CREATE TABLE IF NOT EXISTS economyAssets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        price REAL NOT NULL,
+        lastUpdate TEXT DEFAULT CURRENT_TIMESTAMP
+    );
 
-  CREATE TABLE IF NOT EXISTS investments (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id TEXT NOT NULL,
-    asset_id INTEGER NOT NULL,
-    amount REAL NOT NULL,
-    buy_price REAL NOT NULL,
-    FOREIGN KEY(asset_id) REFERENCES assets(id)
-  );
+    CREATE TABLE IF NOT EXISTS investments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userID TEXT NOT NULL,
+        assetID INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        buyPrice REAL NOT NULL,
+        FOREIGN KEY(assetID) REFERENCES assets(id)
+    );
 `);
 
+db.exec(`
+    CREATE TABLE IF NOT EXISTS reps (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userID TEXT NOT NULL,
+        targetUserID TEXT NOT NULL,
 
-addColumnIfNotExists("warns", "moderator_id", "TEXT", "NULL");
+        comment TEXT,
+        type TEXT NOT NULL CHECK(type IN ('+rep', '-rep')),
+
+        UNIQUE(userID, targetUserID)
+    );
+`);
 
 export { sqlite };

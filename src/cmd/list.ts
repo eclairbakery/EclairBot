@@ -1,3 +1,5 @@
+import { Category, Command } from '@/bot/command.js';
+
 import { detailHelpCmd } from '@/cmd/general/detailHelp.js';
 import { quickHelpCmd } from '@/cmd/general/help.js';
 import { commandsCmd } from '@/cmd/general/commands.js';
@@ -13,6 +15,7 @@ import { kickCmd } from '@/cmd/mod/kick.js';
 import { banCmd } from '@/cmd/mod/ban.js';
 import { warnlistCmd } from '@/cmd/mod/warnlist.js';
 import { izolatkaCmd } from '@/cmd/mod/izolatka.js';
+import { shitwarnCmd } from '@/cmd/mod/shitwarn.js';
 
 import { workCmd } from '@/cmd/economy/work.js';
 import { slutCmd } from '@/cmd/economy/slut.js';
@@ -25,12 +28,15 @@ import { xpCmd } from '@/cmd/leveling/xp.js';
 import { lvlCmd } from '@/cmd/leveling/lvl.js';
 import { toplvlCmd } from '@/cmd/leveling/toplvl.js';
 
+import { plusRepCmd } from '@/cmd/4fun/+rep.js';
+import { subRepCmd } from '@/cmd/4fun/-rep.js';
+import { reputationCmd } from '@/cmd/4fun/reputation.js';
+
 import { warnClearCmd } from '@/cmd/mod/warn-clear.js';
 import { animalCmd, catCmd, dogCmd, parrotCmd } from '@/cmd/gif/gifs.js';
 import { muteCmd } from '@/cmd/mod/mute.js';
 import { unmuteCmd } from '@/cmd/mod/unmute.js';
 import { robCmd } from '@/cmd/economy/rob.js';
-import { shitwarnCmd } from '@/cmd/mod/shitwarn.js';
 import { forceReloadTemplatesCmd } from '@/cmd/mod/force-reload-templates.js';
 import { clearCmd } from '@/cmd/mod/clear.js';
 import { restartCmd } from '@/cmd/dev/restart.js';
@@ -38,7 +44,6 @@ import { wikiCmd } from '@/cmd/general/wiki.js';
 import { fandomCmd } from '@/cmd/general/fandom.js';
 import { evalCmd } from '@/cmd/dev/eval.js';
 import { notifyCmd } from '@/cmd/mod/ping.js';
-import { Category, Command } from '@/bot/command.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -83,6 +88,12 @@ export const commands: Map<Category, Command[]> = new Map([
         Category.DevelopersOnly,
         [
             evalCmd, restartCmd
+        ],
+    ],
+    [
+        Category.ForFun,
+        [
+            plusRepCmd, subRepCmd, reputationCmd,
         ],
     ]
 ]);

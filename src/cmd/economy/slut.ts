@@ -1,7 +1,10 @@
-import { Command } from '@/bot/command.js';
 import * as dsc from 'discord.js';
+
+import { dbGet, dbRun } from '@/util/db-utils.js';
+import { getRandomInt } from '@/util/rand.js';
+
+import { Command } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
-import { dbGet, dbRun, getRandomInt } from '@/bot/shared.js';
 
 const COOLDOWN_MS = 2 * 60 * 1000;
 const WORK_AMOUNT_MIN = 500;
@@ -43,12 +46,13 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
 
 export const slutCmd: Command = {
     name: 'slut',
+    aliases: [],
     description: {
         main: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
         short: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
     },
+
     expectedArgs: [],
-    aliases: [],
     permissions: {
         discordPerms: null,
         allowedRoles: null,

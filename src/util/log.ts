@@ -73,7 +73,6 @@ export function replyTip(msg: dsc.Message | CommandAPI['msg'], title: string, de
     msg.reply(getTipEmbed(title, desc));
 }
 
-
 export function sendError(channel: SendableChannel, title: string, desc: string) {
     channel.send(getErrorEmbed(title, desc));
 }

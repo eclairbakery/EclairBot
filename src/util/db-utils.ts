@@ -1,8 +1,13 @@
-import { db } from './db.js';
+import { db } from '@/bot/db.js';
 
-export function dbRun(sql: string, params: any[] = []): Promise<{ lastID: number | null; changes: number | null; }> {
+export interface DBRunResult {
+    lastID: number | null;
+    changes: number | null;
+};
+
+export function dbRun(sql: string, params: any[] = []): Promise<DBRunResult> {
     return new Promise((resolve, reject) => {
-        db.run(sql, params, function (this: { lastID: number | null; changes: number | null; }, err: Error | null) {
+        db.run(sql, params, function (this: DBRunResult, err: Error | null) {
             if (err) reject(err);
             else resolve({ lastID: this.lastID, changes: this.changes });
         });
@@ -25,14 +30,4 @@ export function dbAll<T = any>(sql: string, params: any[] = []): Promise<T[]> {
       else resolve(rows as T[]);
     });
   });
-}
-
-export function getRandomInt(min: number, max: number) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-export function getRandomFloat(min: number, max: number) {
-    return Math.random() * (max - min) + min;
 }
