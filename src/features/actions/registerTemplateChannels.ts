@@ -42,7 +42,7 @@ export async function registerTemplateChannels(client: dsc.Client) {
             PredefinedActionEventTypes.OnUserQuit,
             OnForceReloadTemplates,
         ],
-        format: (ctx) => `🎯・Cel: ${getNextGoal(templateChannelTarget.guild.memberCount)} osób`,
+        format: (ctx) => `🎯・Cel: ${getNextGoal(templateChannelTarget.guild.memberCount)} pieczywa`,
     });
 
     const bansTemplateChannel = await getChannel('1235591871020011540', client) as dsc.GuildChannel;
@@ -56,7 +56,7 @@ export async function registerTemplateChannels(client: dsc.Client) {
         format: async (ctx) => {
             const guild = bansTemplateChannel.guild;
             const bans = await guild.bans.fetch();
-            return `🚫・Bany: ${bans.size}`;
+            return `🚫・Bany: ${bans.size} ludzi`;
         },
     });
 
