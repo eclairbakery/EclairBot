@@ -69,8 +69,8 @@ export function replySuccess(msg: dsc.Message | CommandAPI['msg'], title: string
     msg.reply(getSuccessEmbed(title, desc));
 }
 
-export function replyTip(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
-    msg.reply(getTipEmbed(title, desc));
+export async function replyTip(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
+    await msg.reply(getTipEmbed(title, desc));
 }
 
 export function sendError(channel: SendableChannel, title: string, desc: string) {

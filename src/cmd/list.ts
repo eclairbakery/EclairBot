@@ -42,7 +42,7 @@ import { clearCmd } from '@/cmd/mod/clear.js';
 import { restartCmd } from '@/cmd/dev/restart.js';
 import { wikiCmd } from '@/cmd/general/wiki.js';
 import { fandomCmd } from '@/cmd/general/fandom.js';
-import { evalCmd } from '@/cmd/dev/eval.js';
+import { evalCmd, execCmd } from '@/cmd/dev/eval.js';
 import { notifyCmd } from '@/cmd/mod/ping.js';
 
 export const commands: Map<Category, Command[]> = new Map([
@@ -87,7 +87,7 @@ export const commands: Map<Category, Command[]> = new Map([
     [
         Category.DevelopersOnly,
         [
-            evalCmd, restartCmd
+            evalCmd, restartCmd, execCmd
         ],
     ],
     [

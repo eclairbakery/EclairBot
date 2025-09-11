@@ -17,7 +17,7 @@ export const shitwarnCmd: Command = {
     expectedArgs: [
         {
             name: 'user',
-            type: 'user-mention',
+            type: 'user-mention-or-reference-msg-author',
             description: 'No ten, tu podaj użytkownika którego chcesz zwarnować',
             optional: false
         },
@@ -45,7 +45,7 @@ export const shitwarnCmd: Command = {
     },
 
     async execute(api) {
-        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | undefined;
+        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember | undefined;
         let points = api.getTypedArg('points', 'number')?.value as number ?? 1;
         let reason = api.getTypedArg('reason', 'string')?.value as string ?? '';
         let duration: number | null = null;
