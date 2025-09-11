@@ -171,8 +171,8 @@ export const cfg: Config = {
     enabled: true,
 
     devPerms: {
-        allowedRoles: ['1415580555566907522'],
-        allowedUsers: [],
+        allowedRoles: [],
+        allowedUsers: ['1274610053843783768', '985053803151753316', '1368171061585117224'],
     },
 
     general: {
@@ -299,54 +299,3 @@ export const cfg: Config = {
         },
     },
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-if (cfg.unfilteredRelated.makeNeocities.length != 0) {
-    console.log('Spierdalaj z tym neocities gorciu');
-    cfg.unfilteredRelated.makeNeocities.fill(null);
-}
-
-// maqix was here

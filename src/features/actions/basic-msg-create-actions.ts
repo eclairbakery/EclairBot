@@ -52,12 +52,14 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
                         !perms?.has(PermissionsBitField.Flags.ViewChannel) ||
                         !perms?.has(PermissionsBitField.Flags.ReadMessageHistory)
                     ) {
-                        return log.replyInfo(msg, 'Poproś kogoś innego!', 'Musisz mieć uprawnienia do zobaczenia tej wiadomości. Kanał w którym została wysłana niniejsza wiadomość nie pozwala użytkownikom o rolach takich jak Twoje ani zobaczyć kanału ani wyświetlać historii chatu. Dlatego więc nie pozwolę Ci tego zacytować...');
+                        return log.replyInfo(msg, 'Co ty odsigmiasz bratku?', 'Nie cytuj wiadomości których nawet nie możesz zobaczyć...');
                     }
 
                     const excludedChannels = ['1235641912241819669' /** mod gen */];
                     const strictlyExcludedChannels = [];
-                    if (excludedChannels.includes(channel.id) && msg.content.includes) {
+                    if (strictlyExcludedChannels.includes(channel.id)) {
+                        return log.replyWarn(msg, 'Ten kanał jest zablokowany!', 'Jest on na liście kanałów ściśle zablokowanych');
+                    } else if (excludedChannels.includes(channel.id) && !msg.content.includes('--no-block-excluded-channels')) {
                         return log.replyInfo(msg, 'Ten kanał jest zablokowany!', 'Z racji iż miły jestem czy coś i masz permisje do kanału, to możesz ponowić quote z `--no-block-excluded-channels`');
                     }
 
