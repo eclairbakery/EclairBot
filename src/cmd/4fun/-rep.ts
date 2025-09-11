@@ -34,6 +34,7 @@ export const subRepCmd: Command = {
     },
 
     async execute(api) {
+        return api.msg.reply('nie skończone');
         const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
         const comment = api.getTypedArg('comment', 'trailing-string').value as string | null;
 
