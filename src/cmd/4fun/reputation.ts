@@ -7,7 +7,7 @@ import { getUserReputation } from '@/bot/apis/rep/rep.js';
 
 export const reputationCmd: Command = {
     name: 'reputation',
-    aliases: [],
+    aliases: ['rep'],
     description: {
         main: 'To polecenie wyświetla ci reputacje danego użytkownika oraz kilka najnowszych opinii!',
         short: 'Wyświetla reputacje użytkownika',

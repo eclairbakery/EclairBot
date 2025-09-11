@@ -76,16 +76,13 @@ db.exec(`
 `);
 
 db.exec(`
-    CREATE TABLE IF NOT EXISTS reps (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userID TEXT NOT NULL,
-        targetUserID TEXT NOT NULL,
-
-        comment TEXT,
-        type TEXT NOT NULL CHECK(type IN ('+rep', '-rep')),
-
-        UNIQUE(userID, targetUserID)
+    CREATE TABLE IF NOT EXISTS reputation (
+        userID TEXT PRIMARY KEY,
+        points INTEGER NOT NULL DEFAULT 0
     );
+
 `);
+
+addColumnIfNotExists("reputation", "expiresAt", "INTEGER", 0);
 
 export { sqlite };

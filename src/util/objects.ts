@@ -1,4 +1,4 @@
-import util from 'util';
+import util from 'node:util';
 
 export function deepMerge<T>(base: T, override: Partial<T>): T {
     const result: any = { ...base };
