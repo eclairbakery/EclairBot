@@ -53,73 +53,129 @@ export async function parseArgs(
 
 loop:
     for (let declIndex = 0; declIndex < declaredArgs.length; ++declIndex) {
-        const decl = declaredArgs[declIndex];
-        const raw = rawArgs[argIndex];
+        const decl: CommandArgument = declaredArgs[declIndex];
+        const raw: string | undefined = rawArgs[argIndex];
 
-        if (!raw) {
+        let declType: string = decl.type;
+        if (!context?.msg) {
+            if (decl.type == 'trailing-string') {
+                declType = 'string';
+            } else if (decl.type == 'user-mention-or-reference-msg-author') {
+                declType = 'user-mention';
+            }
+        }
+
+        if (!raw && declType != 'user-mention-or-reference-msg-author') {
             if (!decl.optional) throw new Error(`Missing required argument: ${decl.name}`);
             parsedArgs.push({ ...decl } as any);
             continue;
         }
 
-        if (decl.type === 'trailing-string' && context?.interaction) {
-            decl.type = 'string';
+        switch (declType) {
+        case 'string': {
+            parsedArgs.push({ ...decl, value: raw } as CommandArgumentWithStringValue);
+            break;
         }
 
-        switch (decl.type) {
-            case 'string':
-                parsedArgs.push({ ...decl, value: raw } as CommandArgumentWithStringValue);
-                break;
+        case 'trailing-string': {
+            const trailingValue = rawArgs.slice(argIndex).join(' ');
+            parsedArgs.push({ ...decl, value: trailingValue } as CommandArgumentWithStringValue);
+            console.log(`Parsed trailing-string argument ${decl.name}:`, trailingValue);
+            break loop;
+        }
 
-            case 'trailing-string':
-                const trailingValue = rawArgs.slice(argIndex).join(' ');
-                parsedArgs.push({ ...decl, value: trailingValue } as CommandArgumentWithStringValue);
-                console.log(`Parsed trailing-string argument ${decl.name}:`, trailingValue);
-                break loop;
+        case 'number': {
+            const num = Number(raw);
+            if (isNaN(num)) {
+                if (decl.optional) continue;
+                else throw new Error(`Argument ${decl.name} must be a number`);
+            }
+            parsedArgs.push({ ...decl, value: isNaN(num) ? undefined : num } as CommandArgumentWithNumberValue);
+            break;
+        }
 
-            case 'number':
-                const num = Number(raw);
-                if (isNaN(num)) {
-                    if (decl.optional) continue;
-                    else throw new Error(`Argument ${decl.name} must be a number`);
+        case 'timestamp': {
+            const ts = parseTimestamp(raw);
+            if (ts == null) {
+                if (decl.optional) continue;
+                else throw new Error(`Argument ${decl.name} must be a valid timestamp`);
+            }
+            parsedArgs.push({ ...decl, value: ts } as CommandArgumentWithTimestampValue);
+            break;
+        }
+
+        case 'user-mention': {
+            let user: dsc.GuildMember | null = null;
+            if (context?.interaction) {
+                const member = (context.interaction as dsc.ChatInputCommandInteraction).options.getString(decl.name);
+                user = parseMentionsFromStrings([member], context.interaction.guild).members.first();
+                if (!user) {
+                    user = await context.interaction.guild.members.fetch(member);
                 }
-                parsedArgs.push({ ...decl, value: isNaN(num) ? undefined : num } as CommandArgumentWithNumberValue);
-                break;
-
-            case 'timestamp': {
-                const ts = parseTimestamp(raw);
-                if (ts == null) {
-                    if (decl.optional) continue;
-                    else throw new Error(`Argument ${decl.name} must be a valid timestamp`);
+            } else if (context?.msg) {
+                user = parseMentionsFromStrings([raw], context.msg.guild).members.first();
+                if (!user) {
+                    const match = raw.match(/^<@!?(\d+)>$/);
+                    const id = match?.[1] ?? raw;
+                    user = await context.msg.guild.members.fetch(id);
                 }
-                parsedArgs.push({ ...decl, value: ts } as CommandArgumentWithTimestampValue);
-                break;
             }
 
-            case 'user-mention': {
-                let user: dsc.GuildMember | null = null;
-                if (context?.interaction) {
-                    const member = (context.interaction as dsc.ChatInputCommandInteraction).options.getString(decl.name);
-                    user = parseMentionsFromStrings([member], context.interaction.guild).members.first();
-                    if (!user) {
-                        user = await context.interaction.guild.members.fetch(member);
+            if (user == null) {
+                if (decl.optional) continue;
+                else throw new Error(`Argument ${decl.name} must be a user mention or ID`);
+            }
+            parsedArgs.push({ ...decl, value: user } as CommandArgumentWithUserMentionValue);
+            break;
+        }
+
+        case 'user-mention-or-reference-msg-author': {
+            let user: dsc.GuildMember | null = null;
+            if (raw) {
+                try {
+                    if (context?.interaction) {
+                        const member = (context.interaction as dsc.ChatInputCommandInteraction).options.getString(decl.name);
+                        user = parseMentionsFromStrings([member], context.interaction.guild).members.first();
+                        if (!user) {
+                            user = await context.interaction.guild.members.fetch(member);
+                        }
+                    } else if (context?.msg) {
+                        user = parseMentionsFromStrings([raw], context.msg.guild).members.first();
+                        if (!user) {
+                            const match = raw.match(/^<@!?(\d+)>$/);
+                            const id = match?.[1] ?? raw;
+                            user = await context.msg.guild.members.fetch(id);
+                        }
                     }
-                } else if (context?.msg) {
-                    user = parseMentionsFromStrings([raw], context.msg.guild).members.first();
-                    if (!user) {
-                        const match = raw.match(/^<@!?(\d+)>$/);
-                        const id = match?.[1] ?? raw;
-                        user = await context.msg.guild.members.fetch(id);
+                } catch {}
+            }
+
+            if (user == null) {
+                if (context?.msg && context?.msg?.reference) {
+                    const refMessageId = context.msg.reference.messageId;
+                    const refChannelId = context.msg.reference.channelId;
+
+                    const channel = await context.msg.guild.channels.fetch(refChannelId);
+                    if (channel && channel.isTextBased && channel.isTextBased()) {
+                        const refMessage = await channel.messages.fetch({ message: refMessageId, force: false });
+                        const member = await context.msg.guild.members.fetch(refMessage.author.id);
+
+                        if (member) {
+                            parsedArgs.push({ ...decl, value: member } as CommandArgumentWithUserMentionValue);
+                            continue loop;
+                        }
                     }
                 }
 
-                if (user == null) {
-                    if (decl.optional) continue;
-                    else throw new Error(`Argument ${decl.name} must be a user mention or ID`);
-                }
-                parsedArgs.push({ ...decl, value: user } as CommandArgumentWithUserMentionValue);
-                break;
+                if (!raw) throw new Error(`Missing required argument: ${decl.name}`);
+
+                if (decl.optional) continue;
+                else throw new Error(`Argument ${decl.name} must be a user mention or ID`);
             }
+
+            parsedArgs.push({ ...decl, value: user } as CommandArgumentWithUserMentionValue);
+            break;
+        }
 
         case 'role-mention': {
             const match = raw.match(/^<@&(\d+)>$/);
@@ -140,11 +196,11 @@ loop:
 
         case 'channel-mention': {
             const match = raw.match(/^<#(\d+)>$/);
-            const channelId = match?.[1];
+            const channelID = match?.[1];
             let channel: dsc.GuildChannel | null = null;
 
-            if (channelId && context?.guild) {
-                const foundChannel = context.msg?.mentions.channels?.get(channelId) ?? context.guild.channels.cache.get(channelId);
+            if (channelID && context?.guild) {
+                const foundChannel = context.msg?.mentions.channels?.get(channelID) ?? context.guild.channels.cache.get(channelID);
                 if (foundChannel && foundChannel instanceof dsc.GuildChannel) {
                     channel = foundChannel;
                 }

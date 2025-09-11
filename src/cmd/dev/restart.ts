@@ -1,3 +1,4 @@
+import { cfg } from '@/bot/cfg.js';
 import { Command } from '@/bot/command.js';
 import * as dsc from 'discord.js';
 
@@ -16,9 +17,9 @@ export const restartCmd: Command = {
     expectedArgs: [],
     aliases: [],
     permissions: {
-        discordPerms: null,
-        allowedRoles: null,
-        allowedUsers: [],
+        discordPerms: [],
+        allowedRoles: cfg.devPerms.allowedRoles,
+        allowedUsers: cfg.devPerms.allowedUsers,
     },
 
     async execute(api) {

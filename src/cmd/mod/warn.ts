@@ -4,7 +4,7 @@ import { cfg } from '@/bot/cfg.js';
 
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
-import warn from '@/bot/apis/warns.js';
+import warn from '@/bot/apis/mod/warns.js';
 import parseTimestamp, { Timestamp } from '@/util/parseTimestamp.js';
 import clamp from '@/util/clamp.js';
 
@@ -18,7 +18,7 @@ export const warnCmd: Command = {
         {
             name: 'user',
             description: 'No ten, tu podaj użytkownika którego chcesz zwarnować',
-            type: 'user-mention',
+            type: 'user-mention-or-reference-msg-author',
             optional: false,
         },
         {
@@ -51,7 +51,7 @@ export const warnCmd: Command = {
     },
 
     async execute(api) {
-        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | undefined;
+        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember | undefined;
         let points = api.getTypedArg('points', 'number')?.value as number ?? 1;
         let reason = api.getTypedArg('reason', 'trailing-string')?.value as string ?? '';
         const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null;

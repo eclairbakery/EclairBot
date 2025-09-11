@@ -9,7 +9,7 @@ function calculateLevel(xp: number, levelDivider: number): number {
     );
 }
 
-export const lvlRoles = Object.values(cfg.general.leveling.milestone_roles);
+export const lvlRoles = Object.values(cfg.general.leveling.milestoneRoles);
 
 export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     // check if eligible
@@ -48,7 +48,7 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
             // Check for level up
             if (newLevel > prevLevel) {
                 // Check for milestone roles
-                const milestones = cfg.general.leveling.milestone_roles || {};
+                const milestones = cfg.general.leveling.milestoneRoles || {};
                 const milestoneRoleId = milestones[newLevel];
                 if (milestoneRoleId && msg.guild) {
                     const member = msg.guild.members.cache.get(msg.author.id);

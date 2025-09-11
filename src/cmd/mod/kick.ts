@@ -3,7 +3,7 @@ import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 import { PredefinedColors } from '@/util/color.js';
-import kick from '@/bot/apis/kicks.js';
+import kick from '@/bot/apis/mod/kicks.js';
 
 const cmdCfg = cfg.mod.commands.kick;
 
@@ -14,8 +14,18 @@ export const kickCmd: Command = {
         short: 'Wywala danego użytkownika z serwera'
     },
     expectedArgs: [
-        { name: 'user', type: 'user-mention', optional: false, description: 'W tej chwili dawaj użytkownika do skopniakowania!' },
-        { name: 'reason', type: 'trailing-string', optional: !cmdCfg.reasonRequired, description: 'Powód wywalenia użytkownika' }
+        {
+            name: 'user',
+            description: 'W tej chwili dawaj użytkownika do skopniakowania!',
+            type: 'user-mention-or-reference-msg-author',
+            optional: false,
+        },
+        {
+            name: 'reason',
+            description: 'Powód wywalenia użytkownika',
+            type: 'trailing-string',
+            optional: !cmdCfg.reasonRequired,
+        }
     ],
     aliases: cmdCfg.aliases,
     permissions: {
@@ -24,7 +34,7 @@ export const kickCmd: Command = {
         allowedUsers: cmdCfg.allowedUsers
     },
     async execute(api) {
-        const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
+        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
         let reason = api.getTypedArg('reason', 'trailing-string').value as string || null;
 
         if (!targetUser) {

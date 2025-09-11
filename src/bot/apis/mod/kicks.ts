@@ -1,12 +1,12 @@
 import * as dsc from 'discord.js';
-import { db } from '../db.js';
-import { cfg } from '../cfg.js';
+import { db } from '@/bot/db.js';
+import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { scheduleWarnDeletion } from '@/features/deleteExpiredWarns.js';
 
-export default function mute(
+export default function kick(
     member: dsc.GuildMember,
-    data: { reason: string; duration?: number; }
+    data: { reason: string; }
 ): Promise<dsc.GuildMember> {
-    return member.timeout(data.duration ?? null);
+    return member.kick(data.reason);
 }

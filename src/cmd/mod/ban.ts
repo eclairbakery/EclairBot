@@ -3,7 +3,7 @@ import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import * as log from '@/util/log.js';
-import ban from '@/bot/apis/bans.js';
+import ban from '@/bot/apis/mod/bans.js';
 
 const cmdCfg = cfg.mod.commands.ban;
 
@@ -14,8 +14,18 @@ export const banCmd: Command = {
         short: 'Banuje danego użytkownika z serwera'
     },
     expectedArgs: [
-        { name: 'user', type: 'user-mention', optional: false, description: 'Osoba, która jest nieznośna idzie do tego pola...' },
-        { name: 'reason', type: 'trailing-string', optional: !cmdCfg.reasonRequired, description: 'Powód bana' }
+        {
+            name: 'user',
+            description: 'Osoba, która jest nieznośna idzie do tego pola...',
+            type: 'user-mention-or-reference-msg-author',
+            optional: false,
+        },
+        {
+            name: 'reason',
+            description: 'Powód bana',
+            type: 'trailing-string',
+            optional: !cmdCfg.reasonRequired,
+        }
     ],
     aliases: cmdCfg.aliases,
     permissions: {
@@ -24,7 +34,7 @@ export const banCmd: Command = {
         allowedUsers: cmdCfg.allowedUsers
     },
     execute: async (api: CommandAPI) => {
-        const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
+        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
         const reasonArg = api.getTypedArg('reason', 'trailing-string').value as string;
         const reason = reasonArg?.trim() || (cmdCfg.reasonRequired ? null : 'Moderator nie podał powodu.');
 

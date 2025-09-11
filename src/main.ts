@@ -108,6 +108,7 @@ async function main() {
                         );
                         break;
 
+                    case 'user-mention-or-reference-msg-author':
                     case 'user-mention':
                         scb.addStringOption(option =>
                             option

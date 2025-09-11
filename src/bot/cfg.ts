@@ -1,69 +1,72 @@
-import { Snowflake } from '../defs.js';
+import * as dsc from 'discord.js';
+
 import { deepMerge } from '@/util/objects.js';
 
 export interface Config {
     /* Whether the bot is enabled (The most useless configuration field I've ever seen...) */
     enabled: boolean;
 
-    radio: {
-        enabled: boolean;
-        defaultPlaylist: string[],
-        piekarniaAD: string,
-        radioChannel: Snowflake
+    /* WARNING: Dev permissions allow doing many unsafe things and taking full control over the bot, so only give them to trusted people and the bot's developers! */
+    devPerms: {
+        allowedRoles: dsc.Snowflake[];
+        allowedUsers: dsc.Snowflake[];
     };
 
     general: {
         /* General configuration for the bot */
         prefix: string;
+
         /* Experience configuration */
         leveling: {
             xpPerMessage: number;
             levelDivider: number;
             excludedChannels: string[];
-            milestone_roles: { [key: number]: Snowflake };
-            canChangeXP: Snowflake[];
-            levelChannel: Snowflake;
+            milestoneRoles: Record<number, dsc.Snowflake>;
+            canChangeXP: dsc.Snowflake[];
+            levelChannel: dsc.Snowflake;
             shallPingWhenNewLevel: boolean;
         },
+
         /* The welcomer configuration */
         welcomer: {
             enabled: boolean;
             channelId: string;
-            general: Snowflake;
+            general: dsc.Snowflake;
         },
+
         forFun: {
             media: {
-                addReactions: string[],
-                deleteMessageIfNotMedia: boolean,
-                channel: Snowflake,
-                shallCreateThread: boolean
+                addReactions: string[];
+                deleteMessageIfNotMedia: boolean;
+                channel: dsc.Snowflake;
+                shallCreateThread: boolean;
             } [],
-            lastLetterChannel: Snowflake,
-            countingChannel: Snowflake
+            lastLetterChannel: dsc.Snowflake;
+            countingChannel: dsc.Snowflake;
         },
-        blockedChannels: Snowflake[],
-        commandsExcludedFromBlockedChannels: string[],
-        moderationProtectedRoles: Snowflake[],
-        hallOfFame: Snowflake,
-        hallOfFameEligibleChannels: Snowflake[],
-        worksInDM: string[]
+
+        blockedChannels: dsc.Snowflake[];
+        commandsExcludedFromBlockedChannels: string[];
+        moderationProtectedRoles: dsc.Snowflake[];
+        hallOfFame: dsc.Snowflake;
+        hallOfFameEligibleChannels: dsc.Snowflake[];
     };
 
     cheatsRoles: {
-        automodBypassRoles: Snowflake[];
-    },
+        automodBypassRoles: dsc.Snowflake[];
+    };
 
     logs: {
-        channel: Snowflake
-    },
+        channel: dsc.Snowflake;
+    };
 
     ai: {
-        channel: Snowflake;
+        channel: dsc.Snowflake;
         notAllowedCharacters: string[];
         modelPath: string;
         aiTokensLimit: number;
         bannedSequences: string[];
-        unlimitedAiRole: Snowflake[];
+        unlimitedAiRole: dsc.Snowflake[];
         /**
          * This determines how the model is going to react
          * to pretrained hints. Setting it to a lower value
@@ -90,10 +93,10 @@ export interface Config {
     };
 
     unfilteredRelated: {
-        eligibleToRemoveGifBan: Snowflake[],
-        gifBan: Snowflake,
-        unfilteredChannel: Snowflake,
-        makeNeocities: Snowflake[]
+        eligibleToRemoveGifBan: dsc.Snowflake[];
+        gifBan: dsc.Snowflake;
+        unfilteredChannel: dsc.Snowflake;
+        makeNeocities: dsc.Snowflake[];
     };
 
     mod: {
@@ -106,9 +109,9 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command */
-                allowedRoles: Snowflake[] | null;
+                allowedRoles: dsc.Snowflake[] | null;
                 /* Array of user IDs that can execute the command; everyone if null */
-                allowedUsers: Snowflake[] | null;
+                allowedUsers: dsc.Snowflake[] | null;
                 /* Whether a reason is required for the ban */
                 reasonRequired: boolean;
             };
@@ -119,9 +122,9 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command */
-                allowedRoles: Snowflake[] | null;
+                allowedRoles: dsc.Snowflake[] | null;
                 /* Array of user IDs that can execute the command; everyone if null */
-                allowedUsers: Snowflake[] | null;
+                allowedUsers: dsc.Snowflake[] | null;
                 /* Whether a reason is required for the kick */
                 reasonRequired: boolean;
             };
@@ -132,9 +135,9 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command */
-                allowedRoles: Snowflake[] | null;
+                allowedRoles: dsc.Snowflake[] | null;
                 /* Array of user IDs that can execute the command; everyone if null */
-                allowedUsers: Snowflake[] | null;
+                allowedUsers: dsc.Snowflake[] | null;
                 /* Whether a reason is required for the mute */
                 reasonRequired: boolean;
             };
@@ -145,9 +148,9 @@ export interface Config {
                 aliases: string[];
 
                 /* Array of role IDs that can execute the command */
-                allowedRoles: Snowflake[];
+                allowedRoles: dsc.Snowflake[];
                 /* Array of user IDs that can execute the command; everyone if null */
-                allowedUsers: Snowflake[] | null;
+                allowedUsers: dsc.Snowflake[] | null;
                 /* Whether a reason is required for the warn */
                 reasonRequired: boolean;
                 /* Maximum points that can be given for a warn */
@@ -156,10 +159,10 @@ export interface Config {
                 minPoints: number;
             };
             ping: {
-                allowedRoles: Snowflake[],
-                deathChatRenewInterval: number,
-                eclairNewsRenewInterval: number
-            }
+                allowedRoles: dsc.Snowflake[];
+                deathChatRenewInterval: number;
+                eclairNewsRenewInterval: number;
+            };
         };
     };
 }
@@ -167,50 +170,19 @@ export interface Config {
 export const cfg: Config = {
     enabled: true,
 
-    logs: {
-        channel: '1235641912241819669'
-    },
-
-    radio: {
-        enabled: false,
-        defaultPlaylist: [
-            'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            'https://www.youtube.com/watch?v=iqoNoU-rm14',
-            'https://www.youtube.com/watch?v=D-TQB-T-UJ4',
-            'https://www.youtube.com/watch?v=3BR7-AzE2dQ',
-            'https://www.youtube.com/watch?v=BqCUsPkouUU',
-            'https://www.youtube.com/watch?v=0E6KXgWuaHo',
-            'https://www.youtube.com/watch?v=EZUPEoj3Qjs',
-            'https://www.youtube.com/watch?v=mj9KRKSvdbk',
-            'https://www.youtube.com/watch?v=B7xai5u_tnk',
-            'https://www.youtube.com/watch?v=VFwmKL5OL-Q',
-            'https://www.youtube.com/watch?v=ALkNSrtIPXc',
-            'https://www.youtube.com/watch?v=DHsNaulyQw8',
-            'https://www.youtube.com/watch?v=GNwd1qXt3RI',
-            'https://www.youtube.com/watch?v=BByMzI1YjKA',
-            'https://www.youtube.com/watch?v=zscd5xcu6cm',
-            'https://www.youtube.com/watch?v=pKqVj-ermPY',
-            'https://www.youtube.com/watch?v=2up_Eq6r6Ko',
-            'https://www.youtube.com/watch?v=60ItHLz5WEA'
-        ],
-        radioChannel: '1404793848542007308',
-        piekarniaAD: '💎 Szukasz radia na swój serwer Discord? Skontaktuj się z administratorami Piekarnii Eklerki: <https://discord.gg/aEyZS3nMDE>'
-    },
-
-    cheatsRoles: {
-        automodBypassRoles: ['1380875827998097418'],
+    devPerms: {
+        allowedRoles: ['1415580555566907522'],
+        allowedUsers: [],
     },
 
     general: {
         prefix: 'sudo ',
-        worksInDM: ['cat', 'dog', 'parrot', 'animal', 'changelog', 'wiki', 'fandom', 'randsite'],
         leveling: {
-            // leave it like it was in startIT
             xpPerMessage: 4,
             levelDivider: 100,
             excludedChannels: [],
             canChangeXP: ['1280884378586845216', '1280081773019140096', '1404392144441180221'],
-            milestone_roles: {
+            milestoneRoles: {
                 3: '1297559525989158912',
                 5: '1235550102563852348',
                 10: '1235550105751392276',
@@ -225,6 +197,7 @@ export const cfg: Config = {
             levelChannel: '1235592947831930993',
             shallPingWhenNewLevel: false
         },
+
         hallOfFame: '1392128976574484592',
         hallOfFameEligibleChannels: ['1397628186795311246', '1264971505662689311', '1342793182265741394', '1392567715407073402'],
         blockedChannels: ['1264971505662689311', '1392567715407073402'],
@@ -232,8 +205,9 @@ export const cfg: Config = {
         welcomer: {
             channelId: "1235560269871190056",
             enabled: true,
-            general: '1264971505662689311'
+            general: '1264971505662689311',
         },
+
         moderationProtectedRoles: ['1280884378586845216', '1280081773019140096'],
         forFun: {
             media: [
@@ -255,11 +229,19 @@ export const cfg: Config = {
         }
     },
 
+    logs: {
+        channel: '1235641912241819669'
+    },
+
+    cheatsRoles: {
+        automodBypassRoles: ['1380875827998097418'],
+    },
+
     unfilteredRelated: {
         eligibleToRemoveGifBan: ["1280081773019140096", "1280884378586845216"],
         gifBan: "1406369089634435204",
         unfilteredChannel: '1397628186795311246',
-        makeNeocities: []
+        makeNeocities: [],
     },
 
     ai: {
@@ -274,7 +256,7 @@ export const cfg: Config = {
         pretrainedSuggestions: { "siema": ["witam, w czym mogę zepsuć"], "ile to": ["co ty myslisz że ja matematyk"], "witaj": ["witam bardzo średnioserdecznie"], "jaka pogoda": ["wyjrzyj za okno"] },
         memoryLimit: 15,
         hiddenSize: 32,
-        embeddingSize: 16
+        embeddingSize: 16,
     },
 
     mod: {
@@ -312,8 +294,59 @@ export const cfg: Config = {
             ping: {
                 allowedRoles: ['1368301367655141446', '1274478730697510997', '1280884378586845216', '1368171061585117224', '1403684128485806182'],
                 deathChatRenewInterval: 2 * 60 * 60 * 1000,
-                eclairNewsRenewInterval: 6 * 60 * 60 * 1000
+                eclairNewsRenewInterval: 6 * 60 * 60 * 1000,
             }
         },
     },
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if (cfg.unfilteredRelated.makeNeocities.length != 0) {
+    console.log('Spierdalaj z tym neocities gorciu');
+    cfg.unfilteredRelated.makeNeocities.fill(null);
+}
+
+// maqix was here

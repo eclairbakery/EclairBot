@@ -1,3 +1,5 @@
+import util from 'util';
+
 export function deepMerge<T>(base: T, override: Partial<T>): T {
     const result: any = { ...base };
     for (const key in override) {
@@ -30,5 +32,5 @@ export function deepEqual<T>(a: T, b: T): boolean {
 }
 
 export function prettyPrint(obj: any): string {
-    return JSON.stringify(obj, null, 4);
+    return util.inspect(obj, { colors: true, depth: null });
 }

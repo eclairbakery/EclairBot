@@ -3,7 +3,7 @@ import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 import { PredefinedColors } from '@/util/color.js';
-import kick from '@/bot/apis/kicks.js';
+import kick from '@/bot/apis/mod/kicks.js';
 
 export const izolatkaCmd: Command = {
     name: 'izolatka',

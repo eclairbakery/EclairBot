@@ -15,10 +15,11 @@
  *  (c) 2025 EclairBakery contributors
  */
 
-import { cfg } from "./cfg.js";
+import { cfg } from "@/bot/cfg.js";
+import { Snowflake } from "@/defs.js";
+
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js'
-import { Snowflake } from "../defs.js";
 import * as fs from 'node:fs';
 
 export class EclairAiFirstEdition {

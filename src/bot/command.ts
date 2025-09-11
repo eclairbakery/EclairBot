@@ -7,7 +7,13 @@ export { Category };
 
 export type CommandPermissionResolvable = 'administrator' | 'mute' | 'kick' | 'ban';
 
-export type CommandArgType = 'string' | 'trailing-string' | 'user-mention' | 'channel-mention' | 'role-mention' | 'timestamp' | 'number';
+export type CommandArgType =
+    | 'string' | 'trailing-string'
+    | 'user-mention' | 'user-mention-or-reference-msg-author'
+    | 'channel-mention'
+    | 'role-mention'
+    | 'timestamp'
+    | 'number';
 
 export interface CommandArgument {
     name: string;
@@ -92,14 +98,18 @@ export interface Command {
         /** shorter version which will try to handle discord.js internal limits */
         short: string;
     };
+
     /** WARNING: SETTING ANY VALUE TO NULL WILL MAKE EVERYONE POSSIBLE TO USE THIS COMMAND, if you want to skip something and don't let them use the command, use the empty array */
     permissions: {
         /** the first thing that grants you permissions to use this command, here specify the discord permission; global perm not for the channel */
         discordPerms: CommandPermissionResolvable[] | null;
         /** the second thing in order, here you specify the snowflakes of the roles you'll use to grant permissions */
-        allowedRoles: dsc.Snowflake[] | null,
+        allowedRoles: dsc.Snowflake[] | null;
         /** the last thing, allowed users */
-        allowedUsers: dsc.Snowflake[] | null
+        allowedUsers: dsc.Snowflake[] | null;
+
+        /* Whether the command works in DM channels */
+        worksInDM?: boolean;
     };
     /** A better argument system */
     expectedArgs: CommandArgument[];

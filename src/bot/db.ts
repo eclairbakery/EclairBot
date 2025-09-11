@@ -55,6 +55,26 @@ db.exec(`
     );
 `);
 
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS assets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    price REAL NOT NULL,
+    last_update TEXT DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS investments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    asset_id INTEGER NOT NULL,
+    amount REAL NOT NULL,
+    buy_price REAL NOT NULL,
+    FOREIGN KEY(asset_id) REFERENCES assets(id)
+  );
+`);
+
+
 addColumnIfNotExists("warns", "moderator_id", "TEXT", "NULL");
 
 export { sqlite };

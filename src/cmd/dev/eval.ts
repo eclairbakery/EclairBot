@@ -1,3 +1,4 @@
+import { cfg } from '@/bot/cfg.js';
 import { Command } from '@/bot/command.js';
 import * as dsc from 'discord.js';
 
@@ -8,24 +9,20 @@ export const evalCmd: Command = {
         short: 'Wykonuje kod JavaScript, więc jest bardzo unsafe.',
     },
     expectedArgs: [
-        { name: 'code', type: 'string', description: 'Kod JS do wykonania', optional: false },
+        { name: 'code', type: 'trailing-string', description: 'Kod JS do wykonania', optional: false },
     ],
     aliases: [],
     permissions: {
-        discordPerms: null,
-        allowedRoles: null,
-        allowedUsers: [],
+        discordPerms: [],
+        allowedRoles: cfg.devPerms.allowedRoles,
+        allowedUsers: cfg.devPerms.allowedUsers,
     },
 
     async execute(api) {
-        if (api.msg.author.id !== '990959984005222410') {
-            return api.msg.reply('nuh uh');
-        }
-
-        const code = api.getArg('code')?.value as string;
+        const code = api.getTypedArg('code', 'trailing-string')?.value as string;
         try {
             const result = (0, eval)(code);
-            return api.msg.reply(`wynik twojej super komendy:\n\`\`\`${result}\`\`\``);
+            return api.msg.reply(`wynik twojej super komendy:\n\`\`\`${result.replace('`', '\`')}\`\`\``);
         } catch (err) {
             return api.msg.reply(`❌ Błąd podczas evala:\n\`\`\`${err}\`\`\``);
         }

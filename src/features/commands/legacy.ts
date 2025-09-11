@@ -1,7 +1,7 @@
-import ban from "@/bot/apis/bans.js";
-import kick from "@/bot/apis/kicks.js";
-import mute from "@/bot/apis/muting.js";
-import warn from "@/bot/apis/warns.js";
+import ban from "@/bot/apis/mod/bans.js";
+import kick from "@/bot/apis/mod/kicks.js";
+import mute from "@/bot/apis/mod/muting.js";
+import warn from "@/bot/apis/mod/warns.js";
 import { cfg } from "@/bot/cfg.js";
 import { CommandAPI } from "@/bot/command.js";
 import { client } from "@/client.js";
@@ -39,24 +39,24 @@ client.on('messageCreate', async (msg) => {
         return;
     }
 
-    if (!msg.inGuild() && !cfg.general.worksInDM.includes(cmdName)) {
-        log.replyError(
-            msg,
-            'Ta komenda nie jest przeznaczona do tego trybu gadania!',
-            `Taka komenda jak \`${cmdName.replace('`', '')}\` może być wykonana tylko na serwerach no sorki no!`
-        );
-        return;
-    }
+    // if (!msg.inGuild() && !cfg.general.worksInDM.includes(cmdName)) {
+    //     log.replyError(
+    //         msg,
+    //         'Ta komenda nie jest przeznaczona do tego trybu gadania!',
+    //         `Taka komenda jak \`${cmdName.replace('`', '')}\` może być wykonana tylko na serwerach no sorki no!`
+    //     );
+    //     return;
+    // }
 
     try {
         const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, { msg: msg, guild: msg.guild });
         const api: CommandAPI = {
             args: parsedArgs,
             getArg(name) {
-                return parsedArgs.find(a => a.name === name)!
+                return parsedArgs.find(a => a.name == name)!
             },
             getTypedArg(name, type) {
-                const x = parsedArgs.find(a => a.name === name && a.type === type)!;
+                const x = parsedArgs.find(a => a.name == name && a.type == type)!;
                 console.log(`Getting typed arg ${name} of type ${type}:`, x);
                 return x;
             },
@@ -93,8 +93,7 @@ client.on('messageCreate', async (msg) => {
         };
 
         await commandObj.execute(api);
-
-    } catch (err: any) {
+    } catch (err) {
         log.replyError(msg, 'Błąd w argumentach', err.message);
         throw err;
     }

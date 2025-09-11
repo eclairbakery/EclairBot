@@ -6,7 +6,7 @@ import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Hour, Timestamp } from '@/util/parseTimestamp.js';
 
-import mute from '@/bot/apis/muting.js';
+import mute from '@/bot/apis/mod/muting.js';
 
 const cmdCfg = cfg.mod.commands.mute;
 
@@ -20,7 +20,7 @@ export const muteCmd: Command = {
         {
             name: 'user',
             description: 'No ten, tu podaj użytkownika którego chcesz zmuteowac',
-            type: 'user-mention',
+            type: 'user-mention-or-reference-msg-author',
             optional: false,
         },
         {
@@ -43,7 +43,7 @@ export const muteCmd: Command = {
         allowedUsers: cmdCfg.allowedUsers,
     },
     execute: async (api: CommandAPI) => {
-        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember;
+        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember;
         let reason = api.getTypedArg('reason', 'trailing-string')?.value as string;
         const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null ?? 24 * Hour;
         let expiresAt = duration != null ? Math.floor(Date.now() / 1000) + duration : null;
@@ -69,19 +69,19 @@ export const muteCmd: Command = {
             const role = api.msg.guild?.roles.cache.find(r => r.name.toLowerCase().includes("zamknij ryj"));
             if (role != undefined) await targetUser.roles.add(role, reason);
 
-            // const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
-            // if (logChannel != null && logChannel.isSendable()) {
-            //     logChannel.send({
-            //         embeds: [
-            //             new dsc.EmbedBuilder()
-            //                 .setAuthor({ name: 'EclairBOT' })
-            //                 .setColor(PredefinedColors.Purple)
-            //                 .setTitle('Nałożono kłódkę na buzię')
-            //                 .setDescription(`Użytkownik <@${targetUser.id}> został wyciszony na 24 godziny przez <@${api.msg.author.id}>.`)
-            //                 .addFields([{ name: 'Powód', value: reason }])
-            //         ]
-            //     });
-            // }
+            const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
+            if (logChannel != null && logChannel.isSendable()) {
+                logChannel.send({
+                    embeds: [
+                        new dsc.EmbedBuilder()
+                            .setAuthor({ name: 'EclairBOT' })
+                            .setColor(PredefinedColors.Purple)
+                            .setTitle('Nałożono kłódkę na buzię')
+                            .setDescription(`Użytkownik <@${targetUser.id}> został wyciszony na 24 godziny przez <@${api.msg.author.id}>.`)
+                            .addFields([{ name: 'Powód', value: reason }])
+                    ]
+                });
+            }
 
             return api.msg.reply({
                 embeds: [
