@@ -17,6 +17,10 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
                 // now goes leveling
                 if (!msg.author.bot) await addExperiencePoints(msg);
 
+                if (msg.content.trim().length > 1000) {
+                    return msg.reply('dobra fajnie chłopie nikt cie nie czyta nie rób dwudziestogodzinnych wideoesei na tematy które kazdy ma gdzies');
+                }
+
                 // easter egg
                 if (msg.content === 'obserwuję was' && msg.author.id == WatchdogID) {
                     return msg.reply('ja cb też');

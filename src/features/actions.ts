@@ -195,6 +195,7 @@ class ActionManager {
 
             if (eventName == 'messageCreate') {
                 if (!(ctx as MessageEventCtx).inGuild()) return;
+                if (!(ctx as MessageEventCtx).member) return;
             }
 
             let skipAll = false;
