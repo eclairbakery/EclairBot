@@ -1,3 +1,4 @@
+import { existsSync, writeFileSync } from 'node:fs';
 import sqlite from 'sqlite3';
 
 export const db = new sqlite.Database('bot.db');
@@ -73,6 +74,11 @@ db.exec(`
         FOREIGN KEY(assetID) REFERENCES assets(id)
     );
 `);
+
+if (!existsSync('bot/lock-rep.txt')) {
+    writeFileSync('bot/lock-rep.txt', 'locked');
+    db.exec('DROP TABLE reputation;');
+}
 
 db.exec(`
     CREATE TABLE IF NOT EXISTS reputation (
