@@ -51,7 +51,7 @@ export const warnCmd: Command = {
     },
 
     async execute(api) {
-        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember | undefined;
+        let targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember | undefined;
         let points = api.getTypedArg('points', 'number')?.value as number ?? 1;
         let reason = api.getTypedArg('reason', 'trailing-string')?.value as string ?? '';
         const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null;
@@ -93,11 +93,13 @@ export const warnCmd: Command = {
         if (targetUser.id === api.msg.author.plainUser.client.user?.id) {
             points = 2;
             reason = 'nie warnuje się istoty wyższej panie';
+            targetUser = api.msg.member.plainMember;
         }
 
         if (targetUser.id === '1409902422108934226') {
             points = 2;
             reason = 'co prawda watchdog istotą wyższą nie jest ale się lubimy więc daje ci warna. nice try';
+            targetUser = api.msg.member.plainMember;
         }
 
         try {
