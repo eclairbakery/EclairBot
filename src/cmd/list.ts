@@ -28,8 +28,8 @@ import { xpCmd } from '@/cmd/leveling/xp.js';
 import { lvlCmd } from '@/cmd/leveling/lvl.js';
 import { toplvlCmd } from '@/cmd/leveling/toplvl.js';
 
-import { plusRepCmd } from '@/cmd/4fun/+rep.js';
-import { subRepCmd } from '@/cmd/4fun/-rep.js';
+import { plusRepCmd } from '@/cmd/4fun/like.js';
+import { subRepCmd } from '@/cmd/4fun/dislike.js';
 import { reputationCmd } from '@/cmd/4fun/reputation.js';
 
 import { warnClearCmd } from '@/cmd/mod/warn-clear.js';

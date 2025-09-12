@@ -21,15 +21,11 @@ function getEmbed(type: LogType, title: string, desc: string) {
         [LogType.Error]:   { emoji: '💔', color: PredefinedColors.Red    }
     };
 
-    return {
-        embeds: [
-            new dsc.EmbedBuilder()
-                .setTitle(`${settings[type].emoji} ${title}`)
-                .setColor(settings[type].color)
-                .setAuthor({ name: 'EclairBOT' })
-                .setDescription(desc)
-        ]
-    };
+    return new dsc.EmbedBuilder()
+            .setTitle(`${settings[type].emoji} ${title}`)
+            .setColor(settings[type].color)
+            .setAuthor({ name: 'EclairBOT' })
+            .setDescription(desc)
 }
 
 export function getErrorEmbed(title: string, desc: string) {
@@ -54,41 +50,41 @@ export function getTipEmbed(title: string, desc: string) {
 
 
 export function replyError(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
-    msg.reply(getErrorEmbed(title, desc));
+    msg.reply({ embeds: [getErrorEmbed(title, desc)] });
 }
 
 export function replyWarn(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
-    msg.reply(getWarnEmbed(title, desc));
+    msg.reply({ embeds: [getWarnEmbed(title, desc)] });
 }
 
 export function replyInfo(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
-    msg.reply(getInfoEmbed(title, desc));
+    msg.reply({ embeds: [getInfoEmbed(title, desc)] });
 }
 
 export function replySuccess(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
-    msg.reply(getSuccessEmbed(title, desc));
+    msg.reply({ embeds: [getSuccessEmbed(title, desc)] });
 }
 
 export async function replyTip(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
-    await msg.reply(getTipEmbed(title, desc));
+    await msg.reply({ embeds: [getTipEmbed(title, desc)] });
 }
 
 export function sendError(channel: SendableChannel, title: string, desc: string) {
-    channel.send(getErrorEmbed(title, desc));
+    channel.send({ embeds: [getErrorEmbed(title, desc)] });
 }
 
 export function sendWarn(channel: SendableChannel, title: string, desc: string) {
-    channel.send(getWarnEmbed(title, desc));
+    channel.send({ embeds: [getWarnEmbed(title, desc)] });
 }
 
 export function sendInfo(channel: SendableChannel, title: string, desc: string) {
-    channel.send(getInfoEmbed(title, desc));
+    channel.send({ embeds: [getInfoEmbed(title, desc)] });
 }
 
 export function sendSuccess(channel: SendableChannel, title: string, desc: string) {
-    channel.send(getSuccessEmbed(title, desc));
+    channel.send({ embeds: [getSuccessEmbed(title, desc)] });
 }
 
 export function sendTip(channel: SendableChannel, title: string, desc: string) {
-    channel.send(getTipEmbed(title, desc));
+    channel.send({ embeds: [getTipEmbed(title, desc)] });
 }
