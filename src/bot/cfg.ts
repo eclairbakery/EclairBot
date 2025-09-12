@@ -1,6 +1,8 @@
 import * as dsc from 'discord.js';
+import JSON5 from 'json5';
 
 import { deepMerge } from '@/util/objects.js';
+import { readFileSync } from 'node:fs';
 
 export interface Config {
     /* Whether the bot is enabled (The most useless configuration field I've ever seen...) */
@@ -187,7 +189,7 @@ const rolesCfg: Config['roles'] = {
     helper: '1415710980612034771'
 };
 
-export const cfg: Config = {
+const defaultCfg: Config = {
     enabled: true,
 
     devPerms: {
@@ -321,3 +323,12 @@ export const cfg: Config = {
         },
     },
 };
+
+const makeConfig: () => Config = () => {
+    let file = readFileSync('bot/config.js', 'utf-8');
+    while (file.startsWith('(')) file = file.slice(1);
+    while (file.endsWith(')')) file = file.slice(0, -1);
+    return deepMerge(defaultCfg, JSON5.parse(file));
+};
+
+export const cfg = makeConfig();

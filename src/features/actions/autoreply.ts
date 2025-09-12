@@ -15,7 +15,7 @@ export type AutoReplyGetMessageCallback = (msg: dsc.Message) => (string | dsc.Me
 
 export interface AutoReplyOptions {
     activationOptions: AutoReplyActivationOption[];
-    reply: (string | dsc.MessagePayload | dsc.MessageReplyOptions) | AutoReplyGetMessageCallback;
+    reply: (string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.EmbedBuilder) | AutoReplyGetMessageCallback;
     additionalConstraints?: ConstraintCallback<MessageEventCtx>[];
     additionalCallbacks?: ActionCallback<MessageEventCtx>[];
     shallEndActionsLoop?: boolean

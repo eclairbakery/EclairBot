@@ -9,5 +9,6 @@ bundle.js*
 bot/eclairai-db.json
 bot/eclairai-model.json
 bot/lock-*.txt
+bot/config*
 .prettierrc
 .idea/
