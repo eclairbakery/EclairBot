@@ -8,3 +8,5 @@ package-lock.json
 bundle.js*
 bot/eclairai-db.json
 bot/eclairai-model.json
+.prettierrc
+.idea/
