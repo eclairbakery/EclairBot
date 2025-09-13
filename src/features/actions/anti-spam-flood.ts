@@ -74,8 +74,8 @@ export const antiSpamAndAntiFlood: Action<MessageEventCtx> = {
         async (msg) => {
             // antispam
             const antispamNow = Date.now();
-            const antispamTimeframe = 10000;
-            const antispamLimit = 5;
+            const antispamTimeframe = 4_0_0_0;
+            const antispamLimit = 3;
             if (!userMessagesAntiSpamMap.has(msg.author.id)) {
                 userMessagesAntiSpamMap.set(msg.author.id, []);
             }
@@ -98,7 +98,7 @@ export const antiSpamAndAntiFlood: Action<MessageEventCtx> = {
                 try {
                     const messages = await msg.channel.messages.fetch({ limit: 25 });
                     const sameContent = messages.filter(m =>
-                        m.author.id === msg.author.id && m.content === msg.content
+                        m.author.id === msg.author.id && m.content.toLowerCase() === msg.content.toLowerCase()
                     );
                     const toDelete = sameContent.first(10);
                     for (const m of toDelete) {
