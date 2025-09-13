@@ -1,16 +1,20 @@
+import * as log from '@/util/log.js';
+import * as dsc from 'discord.js';
+
 import ban from "@/bot/apis/mod/bans.js";
 import kick from "@/bot/apis/mod/kicks.js";
 import mute from "@/bot/apis/mod/muting.js";
 import warn from "@/bot/apis/mod/warns.js";
+
 import { cfg } from "@/bot/cfg.js";
 import { CommandAPI } from "@/bot/command.js";
 import { client } from "@/client.js";
 import { commands } from "@/cmd/list.js";
+
 import canExecuteCmd from "@/util/canExecuteCmd.js";
 import findCommand from "@/util/findCommand.js";
-import * as log from '@/util/log.js';
-import { parseArgs } from "./helpers.js";
-import * as dsc from 'discord.js';
+
+import { parseArgs, handleError } from "./helpers.js";
 
 client.on('messageCreate', async (msg) => {
     if (!(msg instanceof dsc.Message)) return;
@@ -94,8 +98,7 @@ client.on('messageCreate', async (msg) => {
 
         await commandObj.execute(api);
     } catch (err) {
-        log.replyError(msg, 'Błąd w argumentach', err.message);
-        throw err;
+        handleError(err, msg);
     }
 });
 

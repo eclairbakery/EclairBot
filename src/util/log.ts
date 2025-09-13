@@ -4,6 +4,12 @@ import { SendableChannel } from '../defs.js';
 import * as dsc from 'discord.js';
 import { Command, CommandAPI } from '@/bot/command.js';
 
+export interface Replyable {
+    reply:
+        (options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions)
+        => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>
+};
+
 enum LogType {
     Success,
     Info,
@@ -49,23 +55,23 @@ export function getTipEmbed(title: string, desc: string) {
 }
 
 
-export function replyError(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
+export function replyError(msg: Replyable, title: string, desc: string) {
     msg.reply({ embeds: [getErrorEmbed(title, desc)] });
 }
 
-export function replyWarn(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
+export function replyWarn(msg: Replyable, title: string, desc: string) {
     msg.reply({ embeds: [getWarnEmbed(title, desc)] });
 }
 
-export function replyInfo(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
+export function replyInfo(msg: Replyable, title: string, desc: string) {
     msg.reply({ embeds: [getInfoEmbed(title, desc)] });
 }
 
-export function replySuccess(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
+export function replySuccess(msg: Replyable, title: string, desc: string) {
     msg.reply({ embeds: [getSuccessEmbed(title, desc)] });
 }
 
-export async function replyTip(msg: dsc.Message | CommandAPI['msg'], title: string, desc: string) {
+export async function replyTip(msg: Replyable, title: string, desc: string) {
     await msg.reply({ embeds: [getTipEmbed(title, desc)] });
 }
 

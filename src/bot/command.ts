@@ -37,6 +37,11 @@ export interface CommandArgumentWithRoleMentionValue extends CommandArgument {
     value?: dsc.Role;
 };
 
+export interface CommandArgumentWithChannelMentionValue extends CommandArgument {
+    type: 'channel-mention';
+    value?: dsc.GuildChannel;
+};
+
 export interface CommandArgumentWithTimestampValue extends CommandArgument {
     type: 'timestamp';
     value?: Timestamp;
@@ -47,7 +52,14 @@ export interface CommandArgumentWithNumberValue extends CommandArgument {
     value?: number;
 };
 
-export type CommandValuableArgument = CommandArgumentWithNumberValue | CommandArgumentWithRoleMentionValue | CommandArgumentWithStringValue | CommandArgumentWithTimestampValue | CommandArgumentWithUserMentionValue;
+export type CommandValuableArgument =
+    | CommandArgumentWithNumberValue
+    | CommandArgumentWithRoleMentionValue
+    | CommandArgumentWithChannelMentionValue
+    | CommandArgumentWithStringValue
+    | CommandArgumentWithTimestampValue
+    | CommandArgumentWithUserMentionValue
+    ;;
 
 export interface CommandMessageAPI {
     content: string;

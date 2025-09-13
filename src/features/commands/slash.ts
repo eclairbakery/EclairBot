@@ -4,7 +4,7 @@ import { CommandAPI } from "@/bot/command.js";
 import { client } from "../../client.js";
 import { commands } from "../../cmd/list.js";
 import findCommand from "@/util/findCommand.js";
-import { parseArgs } from "./helpers.js";
+import { handleError, parseArgs } from "./helpers.js";
 import canExecuteCmd from "@/util/canExecuteCmd.js";
 
 client.on('interactionCreate', async (int: Interaction) => {
@@ -48,8 +48,8 @@ client.on('interactionCreate', async (int: Interaction) => {
 
         await cmdObj.execute(api);
 
-    } catch (err: any) {
-        await int.editReply({ content: `Błąd:\n\`\`\`${err.message}\`\`\`` });
+    } catch (err) {
+        handleError(err, { reply: (options) => int.editReply(options as any); });
     }
 });
 

@@ -1,3 +1,5 @@
+import * as log from '@/util/log.js';
+
 import {
     CommandArgument,
     CommandValuableArgument,
@@ -5,11 +7,27 @@ import {
     CommandArgumentWithNumberValue,
     CommandArgumentWithTimestampValue,
     CommandArgumentWithUserMentionValue,
-    CommandArgumentWithRoleMentionValue
+    CommandArgumentWithRoleMentionValue,
+    CommandArgumentWithChannelMentionValue,
+    CommandArgType,
+    CommandMessageAPI
 } from "@/bot/command.js";
 import * as dsc from 'discord.js';
 import parseTimestamp from "@/util/parseTimestamp.js";
-import debugLog from "@/util/debugLog.js";
+
+export class ArgParseError extends Error {};
+
+export class MissingRequiredArgError extends ArgParseError {
+    public argName: string;
+    public argType: CommandArgType;
+    constructor(argName: string, argType: CommandArgType) { super(); this.argName = argName; this.argType = argType };
+}
+
+export class ArgMustBeSomeTypeError extends ArgParseError {
+    public argName: string;
+    public argType: CommandArgType;
+    constructor(argName: string, argType: CommandArgType) { super(); this.argName = argName;  this.argType = argType; };
+};
 
 function parseMentionsFromStrings(args: string[], guild: dsc.Guild) {
     const users = new dsc.Collection<string, dsc.User>();
@@ -56,7 +74,7 @@ loop:
         const decl: CommandArgument = declaredArgs[declIndex];
         const raw: string | undefined = rawArgs[argIndex];
 
-        let declType: string = decl.type;
+        let declType: CommandArgType = decl.type;
         if (!context?.msg) {
             if (decl.type == 'trailing-string') {
                 declType = 'string';
@@ -66,7 +84,7 @@ loop:
         }
 
         if (!raw && declType != 'user-mention-or-reference-msg-author') {
-            if (!decl.optional) throw new Error(`Missing required argument: ${decl.name}`);
+            if (!decl.optional) throw new MissingRequiredArgError(decl.name, declType);
             parsedArgs.push({ ...decl } as any);
             continue;
         }
@@ -80,7 +98,6 @@ loop:
         case 'trailing-string': {
             const trailingValue = rawArgs.slice(argIndex).join(' ');
             parsedArgs.push({ ...decl, value: trailingValue } as CommandArgumentWithStringValue);
-            console.log(`Parsed trailing-string argument ${decl.name}:`, trailingValue);
             break loop;
         }
 
@@ -88,7 +105,7 @@ loop:
             const num = Number(raw);
             if (isNaN(num)) {
                 if (decl.optional) continue;
-                else throw new Error(`Argument ${decl.name} must be a number`);
+                throw new ArgMustBeSomeTypeError(decl.name, 'number');
             }
             parsedArgs.push({ ...decl, value: isNaN(num) ? undefined : num } as CommandArgumentWithNumberValue);
             break;
@@ -98,7 +115,7 @@ loop:
             const ts = parseTimestamp(raw);
             if (ts == null) {
                 if (decl.optional) continue;
-                else throw new Error(`Argument ${decl.name} must be a valid timestamp`);
+                throw new ArgMustBeSomeTypeError(decl.name, 'timestamp');
             }
             parsedArgs.push({ ...decl, value: ts } as CommandArgumentWithTimestampValue);
             break;
@@ -123,7 +140,7 @@ loop:
 
             if (user == null) {
                 if (decl.optional) continue;
-                else throw new Error(`Argument ${decl.name} must be a user mention or ID`);
+                throw new ArgMustBeSomeTypeError(decl.name, 'user-mention');
             }
             parsedArgs.push({ ...decl, value: user } as CommandArgumentWithUserMentionValue);
             break;
@@ -167,10 +184,10 @@ loop:
                     }
                 }
 
-                if (!raw) throw new Error(`Missing required argument: ${decl.name}`);
+                if (!raw) throw new MissingRequiredArgError(decl.name, declType);
 
                 if (decl.optional) continue;
-                else throw new Error(`Argument ${decl.name} must be a user mention or ID`);
+                throw new ArgMustBeSomeTypeError(decl.name, 'user-mention-or-reference-msg-author');
             }
 
             parsedArgs.push({ ...decl, value: user } as CommandArgumentWithUserMentionValue);
@@ -188,7 +205,7 @@ loop:
 
             if (role == null) {
                 if (decl.optional) continue;
-                else throw new Error(`Argument ${decl.name} must be a role mention`);
+                throw new ArgMustBeSomeTypeError(decl.name, 'role-mention');
             }
             parsedArgs.push({ ...decl, value: role } as CommandArgumentWithRoleMentionValue);
             break;
@@ -208,9 +225,9 @@ loop:
 
             if (channel == null) {
                 if (decl.optional) continue;
-                else throw new Error(`Argument ${decl.name} must be a channel mention`);
+                throw new ArgMustBeSomeTypeError(decl.name, 'channel-mention');
             }
-            parsedArgs.push({ ...decl, value: channel } as any);
+            parsedArgs.push({ ...decl, value: channel } as CommandArgumentWithChannelMentionValue);
             break;
         }
 
@@ -223,4 +240,52 @@ loop:
     }
 
     return parsedArgs;
+}
+
+function formatArgType(argType: CommandArgType) {
+    switch (argType) {
+    case 'string':
+    case 'trailing-string':
+        return 'tekstem';
+
+    case 'number':
+        return 'liczbą';
+
+    case 'timestamp':
+        return 'znacznikiem czasu';
+
+    case 'user-mention':
+    case 'user-mention-or-reference-msg-author':
+        return 'wzmianką użytkownika';
+
+    case 'role-mention':
+        return 'wzmianką roli';
+
+    case 'channel-mention':
+        return 'wzmianką kanału';
+    }
+}
+
+export function handleError(err: any, msg: log.Replyable) {
+    if (err instanceof ArgParseError) {
+        if (err instanceof MissingRequiredArgError) {
+            return log.replyError(
+                msg, 'Błąd!',
+                `No ten, jest problem! Ta komenda **oczekiwała argumentu ${err.argName}** który powinien być ${formatArgType(err.argType)}`
+                    + `ale jesteś zbyt głupi i go **nie podałeś!**`,
+            );
+        } else if (err instanceof ArgMustBeSomeTypeError) {
+            return log.replyError(
+                msg, 'Błąd!',
+                `No ten, jest problem! Ta komenda **oczekiwała argumentu ${err.argName}** który powinien być ${formatArgType(err.argType)}`
+                    + `ale oczywście jesteś pacanem i **nie podałeś oczekiwanego formatu!** Nic tylko gratulować.`,
+            );
+        }
+    } else {
+        return log.replyError(
+            msg, 'Błąd!',
+            `Wystąpił błąd podczas wykonywania komendy: \`${String(err).replace('`', '\`')}\`.`
+                + `To nie powinno się stać! Proszę o powiadomienie o tym właścicieli bota... a jak nie... ||To nic się nie stanie 🤗||`
+        );
+    }
 }
