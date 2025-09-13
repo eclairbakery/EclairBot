@@ -4,25 +4,14 @@ import JSON5 from 'json5';
 import { deepMerge } from '@/util/objects.js';
 import { existsSync, readFileSync } from 'node:fs';
 
+export interface Emoji {
+    name: string;
+    id: dsc.Snowflake;
+};
+
 export interface Config {
     /* Whether the bot is enabled (The most useless configuration field I've ever seen...) */
     enabled: boolean;
-
-    /* WARNING: Dev permissions allow doing many unsafe things and taking full control over the bot, so only give them to trusted people and the bot's developers! */
-    devPerms: {
-        allowedRoles: dsc.Snowflake[];
-        allowedUsers: dsc.Snowflake[];
-    };
-
-    roles: {
-        eclair25: dsc.Snowflake,
-        secondLevelOwner: dsc.Snowflake,
-        headAdmin: dsc.Snowflake,
-        admin: dsc.Snowflake,
-        headMod: dsc.Snowflake,
-        mod: dsc.Snowflake,
-        helper: dsc.Snowflake
-    };
 
     general: {
         /* General configuration for the bot */
@@ -63,6 +52,37 @@ export interface Config {
         hallOfFame: dsc.Snowflake;
         hallOfFameEligibleChannels: dsc.Snowflake[];
     };
+
+    /* WARNING: Dev permissions allow doing many unsafe things and taking full control over the bot, so only give them to trusted people and the bot's developers! */
+    devPerms: {
+        allowedRoles: dsc.Snowflake[];
+        allowedUsers: dsc.Snowflake[];
+    };
+
+    roles: {
+        eclair25: dsc.Snowflake,
+        secondLevelOwner: dsc.Snowflake,
+        headAdmin: dsc.Snowflake,
+        admin: dsc.Snowflake,
+        headMod: dsc.Snowflake,
+        mod: dsc.Snowflake,
+        helper: dsc.Snowflake
+    };
+
+    emoji: {
+        darkRedBlock: Emoji;
+        lightRedBlock: Emoji;
+        darkGreenBlock: Emoji;
+        lightGreenBlock: Emoji;
+
+        circleProgressBar: {
+            '0/4': Emoji;
+            '1/4': Emoji;
+            '2/4': Emoji;
+            '3/4': Emoji;
+        };
+    };
+
 
     cheatsRoles: {
         automodBypassRoles: dsc.Snowflake[];
@@ -192,13 +212,6 @@ const rolesCfg: Config['roles'] = {
 const defaultCfg: Config = {
     enabled: true,
 
-    devPerms: {
-        allowedRoles: [],
-        allowedUsers: ['1368171061585117224', '990959984005222410', '985053803151753316', '1274610053843783768'],
-    },
-
-    roles: rolesCfg,
-
     general: {
         prefix: 'sudo ',
         leveling: {
@@ -252,6 +265,27 @@ const defaultCfg: Config = {
             lastLetterChannel: '1235566646324887562'
         }
     },
+
+    emoji: {
+        darkRedBlock:      { name: 'dark_red_block',    id: '1416021203331715082' },
+        lightRedBlock:     { name: 'light_red_block',   id: '1416021243379056700' },
+        darkGreenBlock:    { name: 'dark_green_block',  id: '1416021182964043856' },
+        lightGreenBlock:   { name: 'light_green_block', id: '1416021218485600357' },
+
+        circleProgressBar: {
+            '0/4': { name: 'circle_progress_bar_04', id: '1416021170750492775' },
+            '1/4': { name: 'circle_progress_bar_14', id: '1416021158779945020' },
+            '2/4': { name: 'circle_progress_bar_24', id: '1416021143315546162' },
+            '3/4': { name: 'circle_progress_bar_34', id: '1416021126890655894' },
+        },
+    },
+
+    devPerms: {
+        allowedRoles: [],
+        allowedUsers: ['1368171061585117224', '990959984005222410', '985053803151753316', '1274610053843783768'],
+    },
+
+    roles: rolesCfg,
 
     logs: {
         channel: '1235641912241819669'
@@ -324,9 +358,10 @@ const defaultCfg: Config = {
     },
 };
 
-const makeConfig: () => Config = () => {
+function makeConfig(): Config {
     if (!existsSync('bot/config.js')) return defaultCfg;
     let file = readFileSync('bot/config.js', 'utf-8');
+    file = file.trim();
     while (file.startsWith('(')) file = file.slice(1);
     while (file.endsWith(')')) file = file.slice(0, -1);
     return deepMerge(defaultCfg, JSON5.parse(file));

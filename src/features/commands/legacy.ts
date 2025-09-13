@@ -57,7 +57,7 @@ client.on('messageCreate', async (msg) => {
             },
             getTypedArg(name, type) {
                 const x = parsedArgs.find(a => a.name == name && a.type == type)!;
-                console.log(`Getting typed arg ${name} of type ${type}:`, x);
+                // console.log(`Getting typed arg ${name} of type ${type}:`, x);
                 return x;
             },
             msg: {

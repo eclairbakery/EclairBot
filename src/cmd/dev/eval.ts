@@ -7,7 +7,7 @@ import { deepMerge } from '@/util/objects.js';
 let canEval = false;
 
 setTimeout(() => {
-    canEval = true; 
+    canEval = true;
 }, 61 * 1000);
 
 export const evalCmd: Command = {
@@ -41,7 +41,7 @@ export const evalCmd: Command = {
         if (code.includes('console.log') || code.includes('console.error')) {
             warns.push('`console.log` spowoduje iż gorciu dostanie dm z wynikiem, ale może się on nie pojawić w wyniku komendy. evaluje sie funkcja wiec po prostu uzyj return by cos napisac. mozesz ten zrobic zmienna z buforem wyjscia i zwracac ja na koncu. z kolei `console.error` w ogóle nie da wyniku...');
         }
-        if (code.includes('return') && !code.includes('(function')) { 
+        if (code.includes('return') && !code.includes('(function')) {
             warns.push('używasz return, ale nie komendy exec, więc coś się zepsuje...');
         }
         if (!canEval) {
@@ -51,7 +51,7 @@ export const evalCmd: Command = {
             await log.replyTip(api.msg, 'Ten kod może nie zadziałać!', warn);
         }
         try {
-            const result = (0, eval)(`${canEval ? code : 'false'}`);
+            const result = eval(`${canEval ? code : 'false'}`);
             return api.msg.reply(`wynik twojej super komendy:\n\`\`\`${String(result).replace('`', '\`')}\`\`\``);
         } catch (err) {
             return api.msg.reply(`❌ niepowodzenie:\n\`\`\`${err}\`\`\``);

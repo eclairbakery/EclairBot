@@ -1,6 +1,5 @@
 import * as dsc from 'discord.js';
 import { dbRun, dbAll, DBRunResult, dbGet } from '@/util/db-utils.js';
-import debugLog from '@/util/debugLog.js';
 
 export interface Rep {
     id: number;
@@ -77,7 +76,7 @@ export function computeReputationScores(reps: Rep[], opts?: { maxIter?: number; 
     }
 
     const reputations: Map<dsc.Snowflake, number> = new Map();
-    for (const u of users) reputations.set(u, 5);
+    for (const u of users) reputations.set(u, 0);
 
     for (let iter = 0; iter < maxIter; iter++) {
         let maxDelta = 0;
@@ -104,7 +103,7 @@ export function computeReputationScores(reps: Rep[], opts?: { maxIter?: number; 
             const score = avg + Math.log1p(incoming.length) * 0.5;
             next.set(u, score);
 
-            maxDelta = Math.max(maxDelta, Math.abs(score - (reputations.get(u) ?? 5)));
+            maxDelta = Math.max(maxDelta, Math.abs(score - (reputations.get(u) ?? 0)));
         }
 
         reputations.clear();
@@ -117,8 +116,12 @@ export function computeReputationScores(reps: Rep[], opts?: { maxIter?: number; 
 }
 
 function scaleTwoNumbers(a: number, b: number, newMax: number, threshold: number): { a: number, b: number } {
-    if (a == b) {
-        return a >= threshold ? { a: newMax, b: newMax } : { a: newMax-1, b: newMax-1 };
+    if (a == 0 && b == 0) {
+        return { a: 0, b: 0 };
+    }
+
+    if (a == b && a >= threshold) {
+        return { a: newMax, b: newMax };
     }
 
     const bigger = a > b ? a : b;
@@ -128,11 +131,13 @@ function scaleTwoNumbers(a: number, b: number, newMax: number, threshold: number
             a: a == bigger ? newMax : a * newMax / bigger,
             b: b == bigger ? newMax : b * newMax / bigger,
         };
-    } else {
+    } else if (bigger > newMax) {
         return {
             a: a * newMax / bigger,
             b: b * newMax / bigger,
         };
+    } else {
+        return { a, b };
     }
 }
 
@@ -145,43 +150,47 @@ async function deleteExpiredReps() {
 
 export type Reputation = { repScore: number; repScale: number; repProportion: RepProportion };
 
-export async function getUserReputation(userID: dsc.Snowflake): Promise<Reputation> {
-    await deleteExpiredReps();
-
-    const reps = await getAllRepsList();
-
-    const reputations = computeReputationScores(reps);
-    if (!reputations.has(userID)) {
-        return { repScore: 0, repScale: 0, repProportion: { plus: 0, sub: 0 } };
-    }
-
-    const values = Array.from(reputations.values());
-    if (values.length == 0) {
-        return { repScore: 0, repScale: 0, repProportion: { plus: 0, sub: 0 } };
-    }
-
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-
-    if (min == max) {
-        return { repScore: reputations.get(userID)!, repScale: 0, repProportion: { plus: 0, sub: 0 } };
-    }
-
-    const repScore = reputations.get(userID)!;
-    const repScale = ((repScore - min) / (max - min)) * 10;
-
-    const repProportion = await getUserReputationProportion(userID);
-
-    return { repScore, repScale, repProportion };
-}
-
-
 export async function getUserReputationProportion(userID: dsc.Snowflake): Promise<RepProportion> {
     const userReps = await getUserReps(userID);
-    debugLog(userReps);
+    // debugLog(userReps);
     const userPlusRepsCount = userReps.reduce((acc, rep) => acc + (rep.type === '+rep' ? 1 : 0), 0);
     const userSubRepsCount =  userReps.reduce((acc, rep) => acc + (rep.type === '-rep' ? 1 : 0), 0);
 
     const { a: userPlusRepsCountScaled, b: userSubRepsCountScaled } = scaleTwoNumbers(userPlusRepsCount, userSubRepsCount, 5, 5);
     return { plus: userPlusRepsCountScaled, sub: userSubRepsCountScaled };
+}
+
+function computeRepScaleSmooth(repScores: Map<string, number>, userID: string): number {
+    const values = Array.from(repScores.values());
+    const repScore = repScores.get(userID) ?? 0;
+
+    // linear interpolation around min/max with small smoothing factor
+    const min = Math.min(...values, 0);
+    const max = Math.max(...values);
+
+    // avoid divide by almost-zero
+    const range = max - min;
+    if (range < 1e-6) return 0; // assign middle scale if almost equal
+
+    // map proportionally but keep small deltas visible
+    const repScale = ((repScore - min) / range) * 10;
+
+    return Math.max(0, Math.min(10, repScale));
+}
+
+export async function getUserReputation(userID: dsc.Snowflake): Promise<Reputation> {
+    await deleteExpiredReps();
+
+    const reps = await getAllRepsList();
+
+    const repScores = computeReputationScores(reps);
+    if (!repScores.has(userID)) {
+        return { repScore: 0, repScale: 0, repProportion: { plus: 0, sub: 0 } };
+    }
+
+    const repScore = repScores.get(userID)!;
+    const repScale = computeRepScaleSmooth(repScores, userID);
+    const repProportion = await getUserReputationProportion(userID);
+
+    return { repScore, repScale, repProportion };
 }

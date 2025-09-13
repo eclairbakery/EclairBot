@@ -58,7 +58,7 @@ export const subRepCmd: Command = {
         }
 
         const oldRepProportion = await getUserReputationProportion(targetUser.id);
-        await addRep(api.msg.author.id, targetUser.id, comment, '+rep');
+        await addRep(api.msg.author.id, targetUser.id, comment, '-rep');
         const newRepProportion = await getUserReputationProportion(targetUser.id);
 
         const embed = log.getSuccessEmbed(
@@ -69,7 +69,7 @@ export const subRepCmd: Command = {
             embed
                 .addFields(
                     {
-                        name: `Zmniejszyłeś poziom reputacji <@${targetUser.id}> o ${newRepProportion.sub - oldRepProportion.sub} 👍`,
+                        name: `Zmniejszyłeś poziom reputacji ${targetUser.displayName} o ${newRepProportion.sub - oldRepProportion.sub} 👎`,
                         value: mkDualProgressBar(newRepProportion.sub, newRepProportion.plus),
                         inline: false,
                     }

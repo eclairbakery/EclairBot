@@ -79,9 +79,10 @@ export const reputationCmd: Command = {
         const user = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
 
         const userReputation = await getUserReputation(user.user.id);
+        console.log(userReputation);
         const embed = new dsc.EmbedBuilder()
             .setAuthor({ name: user.nickname, iconURL: user.displayAvatarURL({ size: 128 }) })
-            .setTitle(`Reputacja użytkownika <@${user.id}>`)
+            .setTitle(`Reputacja użytkownika ${user.displayName}`)
             .setDescription(getReputationDescription(user, userReputation))
             .addFields(
                 {

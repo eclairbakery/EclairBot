@@ -69,7 +69,7 @@ export const plusRepCmd: Command = {
             embed
                 .addFields(
                     {
-                        name: `Podwyższyłeś poziom reputacji <@${targetUser.id}> o ${newRepProportion.plus - oldRepProportion.plus} 👍`,
+                        name: `Podwyższyłeś poziom reputacji ${targetUser.displayName} o ${newRepProportion.plus - oldRepProportion.plus} 👍`,
                         value: mkDualProgressBar(newRepProportion.sub, newRepProportion.plus),
                         inline: false,
                     }
