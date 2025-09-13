@@ -65,15 +65,15 @@ export const fandomCmd: Command = {
     expectedArgs: [
         {
             name: 'query',
-            type: 'string',
+            type: 'trailing-string',
             optional: true,
             description: 'Fraza do wyszukania na Fandomie'
         }
     ],
     aliases: [],
     execute: async (api: CommandAPI) => {
-        const queryArg = api.getTypedArg('query', 'string');
-        const searchQuery = queryArg.value as string || 'Wikipedia';
+        const queryArg = api.getTypedArg('query', 'trailing-string');
+        const searchQuery = queryArg.value as string || 'Eklerka25';
         const fandom = await getFandomSummary(searchQuery.replace(/ /g, '_'));
 
         const msg = api.msg;

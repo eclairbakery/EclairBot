@@ -29,7 +29,7 @@ export const shitwarnCmd: Command = {
         },
         {
             name: 'reason',
-            type: 'string',
+            type: 'trailing-string',
             description: cfg.mod.commands.warn.reasonRequired
                 ? 'Po prostu powód warna'
                 : 'Po prostu powód warna. Możesz go pominąć ale nie polecam',
@@ -47,7 +47,7 @@ export const shitwarnCmd: Command = {
     async execute(api) {
         const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember | undefined;
         let points = api.getTypedArg('points', 'number')?.value as number ?? 1;
-        let reason = api.getTypedArg('reason', 'string')?.value as string ?? '';
+        let reason = api.getTypedArg('reason', 'trailing-string')?.value as string ?? '';
         let duration: number | null = null;
         let expiresAt: number | null = null;
 
