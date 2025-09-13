@@ -45,6 +45,7 @@ import { fandomCmd } from '@/cmd/general/fandom.js';
 import { evalCmd, execCmd } from '@/cmd/dev/eval.js';
 import { notifyCmd } from '@/cmd/mod/ping.js';
 import { toprepCmd } from './4fun/toprep.js';
+import { replistCmd } from './4fun/replist.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -95,7 +96,7 @@ export const commands: Map<Category, Command[]> = new Map([
         Category.ForFun,
         [
             plusRepCmd, subRepCmd, reputationCmd,
-            toprepCmd,
+            toprepCmd, replistCmd,
         ],
     ]
 ]);
