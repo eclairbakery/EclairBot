@@ -7,8 +7,6 @@ import { Command } from "@/bot/command.js";
 import { getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
 
-
-
 function getReputationDescription(user: dsc.GuildMember, reputation: Reputation): string {
     let firstSentence: string, secondSentence: string, thirdSentence: string;
 

@@ -53,7 +53,7 @@ export async function getAllRepsList(): Promise<Rep[]> {
 }
 
 function buildRepsMap(reps: Rep[]): Map<dsc.Snowflake, Rep[]> {
-    const map = new Map<dsc.Snowflake, Rep[]>();
+    const map: Map<dsc.Snowflake, Rep[]> = new Map();
     for (const r of reps) {
         if (!map.has(r.targetUserID)) {
             map.set(r.targetUserID, []);
@@ -176,6 +176,31 @@ function computeRepScaleSmooth(repScores: Map<string, number>, userID: string): 
     const repScale = ((repScore - min) / range) * 10;
 
     return Math.max(0, Math.min(10, repScale));
+}
+
+export function computeReputationScales(repScores: Map<dsc.Snowflake, number>): Map<dsc.Snowflake, number> {
+    const values = Array.from(repScores.values());
+
+    if (values.length === 0) {
+        return new Map();
+    }
+
+    const min = Math.min(...values, 0);
+    const max = Math.max(...values);
+    const range = max - min;
+
+    const scales: Map<dsc.Snowflake, number> = new Map();
+
+    for (const [userID, repScore] of repScores) {
+        if (range < 1e-6) {
+            scales.set(userID, 0);
+        } else {
+            const repScale = ((repScore - min) / range) * 10;
+            scales.set(userID, Math.max(0, Math.min(10, repScale)));
+        }
+    }
+
+    return scales;
 }
 
 export async function getUserReputation(userID: dsc.Snowflake): Promise<Reputation> {
