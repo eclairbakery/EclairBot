@@ -49,7 +49,7 @@ client.on('interactionCreate', async (int: Interaction) => {
         await cmdObj.execute(api);
 
     } catch (err) {
-        handleError(err, { reply: (options) => int.editReply(options as any); });
+        handleError(err, { reply: (options) => int.editReply(options as any), });
     }
 });
 
