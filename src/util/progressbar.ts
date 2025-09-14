@@ -1,13 +1,11 @@
 import assert from "node:assert";
 import fmtEmoji from "./fmtEmoji.js";
 import { cfg } from "@/bot/cfg.js";
-import debugLog from "./debugLog.js";
 
 export function mkDualProgressBar(red: number, green: number, totalLength: number = 10) {
     const maxHalf = totalLength / 2;
     red = Math.min(red, maxHalf);
     green = Math.min(green, maxHalf);
-    debugLog({ red, green });
 
     return fmtEmoji(cfg.emoji.darkRedBlock).repeat(maxHalf - red)
         + fmtEmoji(cfg.emoji.lightRedBlock).repeat(red)

@@ -4,6 +4,8 @@ import { db } from '@/bot/db.js';
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 import { Command, CommandAPI } from '@/bot/command.js';
+import { levelToXp, OnSetXpEvent } from '@/bot/level.js';
+import actionsManager from '@/features/actions.js';
 
 export const xpCmd: Command = {
     name: 'xp',
@@ -45,47 +47,35 @@ export const xpCmd: Command = {
     aliases: [],
 
     async execute(api: CommandAPI) {
-        const toWho = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member.plainMember;
-        const action = api.getTypedArg('action', 'string')?.value as string;
+        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member.plainMember;
+        const actionStr = api.getTypedArg('action', 'string')?.value as string;
         let amount = api.getTypedArg('amount', 'number')?.value as number;
         const affect = api.getTypedArg('affect', 'string')?.value as string ?? 'levels';
 
-        if (!toWho || !action || amount === undefined) {
+        if (!targetUser || !actionStr || amount === undefined) {
             return log.replyError(api.msg, 'Niepoprawne argumenty', 'Sprawdź składnię komendy i spróbuj ponownie.');
         }
 
         let shouldLeveler = affect === 'levels';
         if (shouldLeveler) {
-            amount = cfg.general.leveling.levelDivider * (amount * (amount - 1) / 2);
+            amount = levelToXp(amount, cfg.general.leveling.levelDivider);
         }
 
-        try {
-            if (action === 'add') {
-                db.run(
-                    `INSERT INTO leveling (user_id, xp)
-                     VALUES (?, ?)
-                     ON CONFLICT(user_id) DO UPDATE SET xp = xp + excluded.xp`,
-                    [toWho.id, amount]
-                );
-            } else if (action === 'set') {
-                db.run(
-                    `INSERT INTO leveling (user_id, xp)
-                     VALUES (?, ?)
-                     ON CONFLICT(user_id) DO UPDATE SET xp = excluded.xp`,
-                    [toWho.id, amount]
-                );
-            } else if (action === 'delete') {
-                db.run(
-                    `UPDATE leveling
-                     SET xp = CASE WHEN xp >= ? THEN xp - ? ELSE 0 END
-                     WHERE user_id = ?`,
-                    [amount, amount, toWho.id]
-                );
-            } else {
-                return log.replyError(api.msg, 'Niepoprawna akcja', 'Akcja musi być `add`, `set` lub `delete`.');
-            }
+        if (actionStr != 'set' && actionStr != 'add' && actionStr != 'delete') {
+            return log.replyError(api.msg, 'Nie poprawna akcja', 'Argument `action` powinien być `set`, `add` lub `delete`!');
+        }
+        const action = actionStr as 'set' | 'add' | 'delete';
 
-            log.replySuccess(api.msg, 'Udało się!', `Wykonałem akcję na użytkowniku **${toWho.user.tag}**`);
+        try {
+            await actionsManager.emit(OnSetXpEvent, {
+                userID: targetUser.id,
+                user: targetUser,
+                guild: api.msg?.guild,
+                action: action,
+                amount: amount,
+            });
+
+            log.replySuccess(api.msg, 'Udało się!', `Wykonałem akcję na użytkowniku **${targetUser.user.tag}**`);
         } catch (err) {
             console.error(err);
             log.replyError(api.msg, 'Błąd wykonania', 'Coś poszło nie tak podczas modyfikacji XP/levela.');

@@ -4,21 +4,7 @@ import { dbGet } from '@/util/db-utils.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI } from '@/bot/command.js';
-import { mkProgressBar } from '@/util/progressbar.js';
-
-function xpToLevel(xp: number, levelDivider: number): number {
-    return Math.floor(
-        (1 + Math.sqrt(1 + 8 * xp / levelDivider)) / 2
-    );
-}
-
-function levelToXp(level: number, levelDivider: number): number {
-    return Math.floor((level * (level - 1) / 2) * levelDivider);
-}
-
-function mkLvlProgressBar(xp: number, xpForNextLevel: number, totalLength: number = 10): string {
-    return `${mkProgressBar(xp, xpForNextLevel, totalLength)} ${xp}/${xpForNextLevel}xp`;
-}
+import { xpToLevel, levelToXp, mkLvlProgressBar } from '@/bot/level.js';
 
 export const lvlCmd: Command = {
     name: 'lvl',

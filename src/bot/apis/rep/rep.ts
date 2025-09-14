@@ -152,7 +152,7 @@ export type Reputation = { repScore: number; repScale: number; repProportion: Re
 
 export async function getUserReputationProportion(userID: dsc.Snowflake): Promise<RepProportion> {
     const userReps = await getUserReps(userID);
-    // debugLog(userReps);
+
     const userPlusRepsCount = userReps.reduce((acc, rep) => acc + (rep.type === '+rep' ? 1 : 0), 0);
     const userSubRepsCount =  userReps.reduce((acc, rep) => acc + (rep.type === '-rep' ? 1 : 0), 0);
 

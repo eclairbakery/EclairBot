@@ -215,9 +215,9 @@ const defaultCfg: Config = {
     general: {
         prefix: 'sudo ',
         leveling: {
-            xpPerMessage: 4,
-            levelDivider: 100,
-            excludedChannels: [],
+        xpPerMessage: 4,
+        levelDivider: 100,
+        excludedChannels: [],
             canChangeXP: ['1404392144441180221', rolesCfg.eclair25, rolesCfg.secondLevelOwner],
             milestoneRoles: {
                 3: '1297559525989158912',
