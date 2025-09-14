@@ -84,7 +84,8 @@ export default class AutoModRules {
         {
             activationOptions: [
                 { type: 'contains', keyword: 'inwidua' },
-                { type: 'contains', keyword: 'underflow' }
+                { type: 'contains', keyword: 'underflow' },
+                { type: 'contains', keyword: 'jakyb' }
             ],
             reply: '*zdrajca piekarni'
         }
