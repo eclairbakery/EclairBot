@@ -138,28 +138,28 @@ export class PredefinedActionConstraints {
 
     static msgContains(text: string): ConstraintCallback<MessageEventCtx> {
         return (msg) => {
-            if (msg.content.includes(text)) return Ok;
+            if (msg.content.toLowerCase().includes(text.toLowerCase())) return Ok;
             return Skip;
         };
     }
 
     static msgIsEqualTo(text: string): ConstraintCallback<MessageEventCtx> {
         return (msg) => {
-            if (msg.content == text) return Ok;
+            if (msg.content.toLowerCase() == text.toLowerCase()) return Ok;
             return Skip;
         };
     }
 
     static msgStartsWith(prefix: string): ConstraintCallback<MessageEventCtx> {
         return (msg) => {
-            if (msg.content.startsWith(prefix)) return Ok;
+            if (msg.content.toLowerCase().startsWith(prefix.toLowerCase())) return Ok;
             return Skip;
         }
     }
 
     static msgEndsWith(suffix: string): ConstraintCallback<MessageEventCtx> {
         return (msg) => {
-            if (msg.content.endsWith(suffix)) return Ok;
+            if (msg.content.toLowerCase().endsWith(suffix.toLowerCase())) return Ok;
             return Skip;
         }
     }
