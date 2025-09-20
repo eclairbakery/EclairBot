@@ -8,6 +8,7 @@ import { siemaCmd } from '@/cmd/general/siema.js';
 import { changelogCmd } from '@/cmd/general/changelog.js';
 import { randsiteCmd } from '@/cmd/general/randsite.js';
 import { pfpCmd } from '@/cmd/general/pfp.js';
+import { fandomCmd } from '@/cmd/general/fandom.js';
 import { bannerCmd } from '@/cmd/general/banner.js';
 
 import { warnCmd } from '@/cmd/mod/warn.js';
@@ -16,6 +17,12 @@ import { banCmd } from '@/cmd/mod/ban.js';
 import { warnlistCmd } from '@/cmd/mod/warnlist.js';
 import { izolatkaCmd } from '@/cmd/mod/izolatka.js';
 import { shitwarnCmd } from '@/cmd/mod/shitwarn.js';
+import { muteCmd } from '@/cmd/mod/mute.js';
+import { unmuteCmd } from '@/cmd/mod/unmute.js';
+import { clearCmd } from '@/cmd/mod/clear.js';
+import { forceReloadTemplatesCmd } from '@/cmd/mod/force-reload-templates.js';
+import { notifyCmd } from '@/cmd/mod/ping.js';
+import { warnClearCmd } from '@/cmd/mod/warn-clear.js';
 
 import { workCmd } from '@/cmd/economy/work.js';
 import { slutCmd } from '@/cmd/economy/slut.js';
@@ -23,6 +30,7 @@ import { crimeCmd } from '@/cmd/economy/crime.js';
 import { topecoCmd } from '@/cmd/economy/topeco.js';
 import { balCmd } from '@/cmd/economy/bal.js';
 import { blackjackCmd } from '@/cmd/economy/blackjack.js';
+import { robCmd } from '@/cmd/economy/rob.js';
 
 import { xpCmd } from '@/cmd/leveling/xp.js';
 import { lvlCmd } from '@/cmd/leveling/lvl.js';
@@ -32,20 +40,15 @@ import { plusRepCmd } from '@/cmd/4fun/like.js';
 import { subRepCmd } from '@/cmd/4fun/dislike.js';
 import { reputationCmd } from '@/cmd/4fun/reputation.js';
 
-import { warnClearCmd } from '@/cmd/mod/warn-clear.js';
 import { animalCmd, catCmd, dogCmd, parrotCmd } from '@/cmd/gif/gifs.js';
-import { muteCmd } from '@/cmd/mod/mute.js';
-import { unmuteCmd } from '@/cmd/mod/unmute.js';
-import { robCmd } from '@/cmd/economy/rob.js';
-import { forceReloadTemplatesCmd } from '@/cmd/mod/force-reload-templates.js';
-import { clearCmd } from '@/cmd/mod/clear.js';
-import { restartCmd } from '@/cmd/dev/restart.js';
+
 import { wikiCmd } from '@/cmd/general/wiki.js';
-import { fandomCmd } from '@/cmd/general/fandom.js';
+import { toprepCmd } from '@/cmd/4fun/toprep.js';
+import { replistCmd } from '@/cmd/4fun/replist.js';
+import { figletCmd } from '@/cmd/4fun/figlet.js';
+
+import { restartCmd } from '@/cmd/dev/restart.js';
 import { evalCmd, execCmd } from '@/cmd/dev/eval.js';
-import { notifyCmd } from '@/cmd/mod/ping.js';
-import { toprepCmd } from './4fun/toprep.js';
-import { replistCmd } from './4fun/replist.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -97,6 +100,7 @@ export const commands: Map<Category, Command[]> = new Map([
         [
             plusRepCmd, subRepCmd, reputationCmd,
             toprepCmd, replistCmd,
+            figletCmd,
         ],
     ]
 ]);

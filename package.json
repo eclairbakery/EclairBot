@@ -23,6 +23,7 @@
         "start": "tsc && tsc-alias && node dist/main.js"
     },
     "devDependencies": {
+        "@types/figlet": "^1.7.0",
         "@types/node": "^24.2.1",
         "@types/ws": "^8.18.1",
         "discord.js": "^14.21.0",
@@ -37,6 +38,7 @@
     },
     "dependencies": {
         "dotenv": "^17.2.1",
+        "figlet": "^1.9.3",
         "json5": "^2.2.3",
         "sqlite3": "^5.1.7",
         "toml": "^3.0.0"

@@ -272,20 +272,20 @@ export function handleError(err: any, msg: log.Replyable) {
             return log.replyError(
                 msg, 'Błąd!',
                 `No ten, jest problem! Ta komenda **oczekiwała argumentu ${err.argName}** który powinien być ${formatArgType(err.argType)}`
-                    + `ale jesteś zbyt głupi i go **nie podałeś!**`,
+                    + ` ale jesteś zbyt głupi i go **nie podałeś!**`,
             );
         } else if (err instanceof ArgMustBeSomeTypeError) {
             return log.replyError(
                 msg, 'Błąd!',
                 `No ten, jest problem! Ta komenda **oczekiwała argumentu ${err.argName}** który powinien być ${formatArgType(err.argType)}`
-                    + `ale oczywście jesteś pacanem i **nie podałeś oczekiwanego formatu!** Nic tylko gratulować.`,
+                    + ` ale oczywście jesteś pacanem i **nie podałeś oczekiwanego formatu!** Nic tylko gratulować.`,
             );
         }
     } else {
         return log.replyError(
             msg, 'Błąd!',
             `Wystąpił błąd podczas wykonywania komendy: \`${String(err).replace('`', '\`')}\`.`
-                + `To nie powinno się stać! Proszę o powiadomienie o tym właścicieli bota... a jak nie... ||To nic się nie stanie 🤗||`
+                + ` To nie powinno się stać! Proszę o powiadomienie o tym właścicieli bota... a jak nie... ||To nic się nie stanie 🤗||`
         );
     }
 }
