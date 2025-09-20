@@ -44,8 +44,12 @@ function getReputationDescription(user: dsc.GuildMember, reputation: Reputation)
     }
 
     const { repScale } = reputation;
-    if (repScale <= 3) {
+    if (repScale < 4) {
         thirdSentence = `Niestety przez to jest on bardzo nisko w rankingu reputacji.`;
+    } else if (repScale >= 4 && repScale <= 7) {
+        thirdSentence = `To klasywikuje go na całkiem dobrej pozycji w rankingu reputacji!`;
+    } else if (repScale >= 8) {
+        thirdSentence = `Dzięki temu jest on bardzo wysoko w rankingu reputacji!`;
     }
 
     return `${firstSentence} ${secondSentence}\n${thirdSentence}`;
