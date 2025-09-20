@@ -17,7 +17,8 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
                 // now goes leveling
                 if (!msg.author.bot) await addExperiencePoints(msg);
 
-                if (msg.content.trim().length > 1000) {
+                // f*ck you
+                if (msg.content.trim().length > 1000 && !msg.content.startsWith('```') && !msg.content.startsWith('```')) {
                     return msg.reply('dobra fajnie chłopie nikt cie nie czyta nie rób dwudziestogodzinnych wideoesei na tematy które kazdy ma gdzies');
                 }
 
