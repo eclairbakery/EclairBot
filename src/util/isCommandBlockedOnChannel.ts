@@ -4,9 +4,11 @@ import { Command, CommandFlags } from "@/bot/command.js";
 import { BlockCommandsRules, cfg } from '@/bot/cfg.js';
 
 function isBlockedByRules(id: dsc.Snowflake, rules: BlockCommandsRules): boolean {
-    if (rules.deny?.includes(id)) return true;
-    if (rules.allow?.includes(id)) return false;
-    return rules.default == 'block';
+    if (rules.default == 'allow') {
+        return rules.deny?.includes(id) ?? false;
+    } else if (rules.default == 'block') {
+        return !(rules.allow?.includes(id) ?? false);
+    }
 }
 
 export default function isCommandBlockedOnChannel(command: Command, channelID: dsc.Snowflake) {

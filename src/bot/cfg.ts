@@ -4,10 +4,12 @@ import JSON5 from 'json5';
 import { deepMerge } from '@/util/objects.js';
 import { existsSync, readFileSync } from 'node:fs';
 
-export interface BlockCommandsRules {
-    default: 'block' | 'ok';
-    allow?: dsc.Snowflake[];
-    deny?: dsc.Snowflake[];
+export type BlockCommandsRules = {
+    default: 'block';
+    allow: dsc.Snowflake[];
+} | {
+    default: 'allow';
+    deny: dsc.Snowflake[];
 };
 
 export interface Emoji {
@@ -381,19 +383,20 @@ const defaultCfg: Config = {
 
     blockCommands: {
         full: {
-            default: 'ok',
+            default: 'allow',
+            deny: [],
         },
         fullExceptImportant: {
-            default: 'ok',
+            default: 'allow',
             deny: [...Object.values(channelsCfg.forfun), channelsCfg.general.media],
         },
         spammy: {
             default: 'block',
-            allow: [channelsCfg.general.commands, channelsCfg.forfun.unfiltred],
+            allow: [channelsCfg.general.commands, channelsCfg.mod.modCommands, channelsCfg.mod.modGeneral, channelsCfg.forfun.unfiltred],
         },
         economy: {
             default: 'block',
-            allow: [channelsCfg.other.economy],
+            allow: [channelsCfg.other.economy, channelsCfg.mod.modCommands],
         },
     },
 
