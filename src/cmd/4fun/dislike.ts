@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 
-import { Command } from "@/bot/command.js";
+import { Command, CommandFlags } from "@/bot/command.js";
 
 import { addRep, getLastRepGivenByUser, getUserReputationProportion, } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar } from '@/util/progressbar.js';
@@ -13,6 +13,7 @@ export const subRepCmd: Command = {
         main: 'Tym poleceniem możesz pokazać danej osobie że jej nie lubisz, jest wkurwiająca, lub uprzykrza życie innym, odejmując jej punkty reputacji!',
         short: 'Dodaje punkty reputacji danej osobie',
     },
+    flags: CommandFlags.None,
 
     expectedArgs: [
         {

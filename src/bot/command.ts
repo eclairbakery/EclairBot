@@ -1,9 +1,15 @@
 import * as dsc from 'discord.js';
 
-import { Category } from './categories.js';
-import { Snowflake } from '../defs.js';
+import { Category } from '@/bot/categories.js';
 import { Timestamp } from '@/util/parseTimestamp.js';
 export { Category };
+
+export enum CommandFlags {
+    None = 0,
+    Spammy = 1 << 0,
+    Important = 1 << 1,
+    Economy = 1 << 2,
+};
 
 export type CommandPermissionResolvable = 'administrator' | 'mute' | 'kick' | 'ban';
 
@@ -104,13 +110,18 @@ export interface CommandAPI {
 
 export interface Command {
     name: string;
+    /** Aliases for a command */
+    aliases: string[];
     description: {
         /** the long description of the command */
         main: string;
         /** shorter version which will try to handle discord.js internal limits */
         short: string;
     };
+    flags: CommandFlags;
 
+    /** A better argument system */
+    expectedArgs: CommandArgument[];
     /** WARNING: SETTING ANY VALUE TO NULL WILL MAKE EVERYONE POSSIBLE TO USE THIS COMMAND, if you want to skip something and don't let them use the command, use the empty array */
     permissions: {
         /** the first thing that grants you permissions to use this command, here specify the discord permission; global perm not for the channel */
@@ -123,10 +134,6 @@ export interface Command {
         /* Whether the command works in DM channels */
         worksInDM?: boolean;
     };
-    /** A better argument system */
-    expectedArgs: CommandArgument[];
-    /** Aliases for a command */
-    aliases: string[];
     /** The execute function */
     execute: (api: CommandAPI) => any | PromiseLike<any>;
 }

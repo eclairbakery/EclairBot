@@ -2,7 +2,7 @@ import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import * as chars from '@/util/chars.js';
 
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 
 import figlet from 'figlet';
 import debugLog from '@/util/debugLog.js';
@@ -133,6 +133,7 @@ export const figletCmd: Command = {
         main: 'Ta komenda renderuje ci taki fajny ascii text, podobnie do terminalowej komendy `figlet`.',
         short: 'Renderuje tekst jako ascii art',
     },
+    flags: CommandFlags.Spammy,
 
     expectedArgs: [
         //{

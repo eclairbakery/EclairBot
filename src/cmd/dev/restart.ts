@@ -1,5 +1,5 @@
 import { cfg } from '@/bot/cfg.js';
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import * as dsc from 'discord.js';
 
 export const restartCmd: Command = {
@@ -8,6 +8,7 @@ export const restartCmd: Command = {
         main: 'Restartuje bota... Nie tykaj!',
         short: 'Szybki restart bota!',
     },
+    flags: CommandFlags.Important,
     expectedArgs: [],
     aliases: [],
     permissions: {

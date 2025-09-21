@@ -1,4 +1,4 @@
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
@@ -9,10 +9,13 @@ const cmdCfg = cfg.mod.commands.ban;
 
 export const banCmd: Command = {
     name: 'ban',
+    aliases: cmdCfg.aliases,
     description: {
         main: 'Jak masz uprawnienia, no to banuj ludzi. Taka praca... A jak nie, to nawet nie próbuj tego tykać!',
         short: 'Banuje danego użytkownika z serwera'
     },
+    flags: CommandFlags.Important,
+
     expectedArgs: [
         {
             name: 'user',
@@ -27,7 +30,6 @@ export const banCmd: Command = {
             optional: !cmdCfg.reasonRequired,
         }
     ],
-    aliases: cmdCfg.aliases,
     permissions: {
         discordPerms: null,
         allowedRoles: cmdCfg.allowedRoles,

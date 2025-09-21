@@ -4,6 +4,11 @@ import JSON5 from 'json5';
 import { deepMerge } from '@/util/objects.js';
 import { existsSync, readFileSync } from 'node:fs';
 
+export interface BlockCommandsRules {
+    include?: dsc.Snowflake[];
+    exclude?: dsc.Snowflake[];
+};
+
 export interface Emoji {
     name: string;
     id: dsc.Snowflake;
@@ -20,20 +25,19 @@ export interface Config {
         /* Experience configuration */
         leveling: {
             xpPerMessage: number;
-            levelDivider: number;
-            excludedChannels: string[];
+            levelDivider: number; excludedChannels: string[];
             milestoneRoles: Record<number, dsc.Snowflake>;
             canChangeXP: dsc.Snowflake[];
             levelChannel: dsc.Snowflake;
             shallPingWhenNewLevel: boolean;
-        },
+        };
 
         /* The welcomer configuration */
         welcomer: {
             enabled: boolean;
             channelId: string;
             general: dsc.Snowflake;
-        },
+        };
 
         forFun: {
             media: {
@@ -44,10 +48,8 @@ export interface Config {
             } [],
             lastLetterChannel: dsc.Snowflake;
             countingChannel: dsc.Snowflake;
-        },
+        };
 
-        blockedChannels: dsc.Snowflake[];
-        commandsExcludedFromBlockedChannels: string[];
         moderationProtectedRoles: dsc.Snowflake[];
         hallOfFame: dsc.Snowflake;
         hallOfFameEligibleChannels: dsc.Snowflake[];
@@ -60,13 +62,60 @@ export interface Config {
     };
 
     roles: {
-        eclair25: dsc.Snowflake,
-        secondLevelOwner: dsc.Snowflake,
-        headAdmin: dsc.Snowflake,
-        admin: dsc.Snowflake,
-        headMod: dsc.Snowflake,
-        mod: dsc.Snowflake,
-        helper: dsc.Snowflake
+        eclair25: dsc.Snowflake;
+        secondLevelOwner: dsc.Snowflake;
+        headAdmin: dsc.Snowflake;
+        admin: dsc.Snowflake;
+        headMod: dsc.Snowflake;
+        mod: dsc.Snowflake;
+        helper: dsc.Snowflake;
+    };
+
+    channels: {
+        mod: {
+            modGeneral: dsc.Snowflake;
+            logs: dsc.Snowflake;
+            warnings: dsc.Snowflake;
+            hallOfShame: dsc.Snowflake;
+            modCommands: dsc.Snowflake;
+            info: dsc.Snowflake;
+            assets: dsc.Snowflake;
+        };
+        important: {
+            lobby: dsc.Snowflake;
+            rules: dsc.Snowflake;
+            announcements: dsc.Snowflake;
+            boosts: dsc.Snowflake;
+        };
+        general: {
+            general: dsc.Snowflake;
+            offtopic: dsc.Snowflake;
+            commands: dsc.Snowflake;
+            media: dsc.Snowflake;
+        };
+        other: {
+            communityPolls: dsc.Snowflake;
+            desktopPorn: dsc.Snowflake;
+            minecraft: dsc.Snowflake;
+            economy: dsc.Snowflake;
+        };
+        forfun: {
+            counting: dsc.Snowflake;
+            lastLetter: dsc.Snowflake;
+            finishSentence: dsc.Snowflake;
+            wordAssociation: dsc.Snowflake;
+            unfiltred: dsc.Snowflake;
+        };
+        isolation: {
+            isolationCell: dsc.Snowflake;
+        };
+    };
+
+    blockCommands: {
+        full: BlockCommandsRules;
+        fullExceptImportant: BlockCommandsRules;
+        spammy: BlockCommandsRules;
+        economy: BlockCommandsRules;
     };
 
     emoji: {
@@ -207,10 +256,53 @@ const rolesCfg: Config['roles'] = {
     headMod: '1415710973288910919',
     mod: '1415710976644349972',
     helper: '1415710980612034771'
+};   
+     
+const channelsCfg: Config['channels'] = {
+    mod: {
+        modGeneral: '1235552454838456433',
+        logs: '1235641912241819669',
+        warnings: '1305591940821028884',
+        hallOfShame: '1290327060970995812',
+        modCommands: '1392787737962090596',
+        info: '1390389554623549641',
+        assets: '1404396223934369844',
+    },
+    important: {
+        lobby: '1235560269871190056',
+        rules: '1286058702214008935',
+        announcements: '1235560320596967516',
+        boosts: '1298706083556229222',
+    },
+    general: {
+        general: '1264971505662689311',
+        offtopic: '1392567715407073402',
+        commands: '1235604839078035537',
+        media: '1235567551753486407',
+    },
+    other: {
+        communityPolls: '1320035545543606282',
+        desktopPorn: '1279888407421648967',
+        minecraft: '1342793182265741394',
+        economy: '1235561759448895590',
+    },
+    forfun: {
+        counting: '1235566520310956184',
+        lastLetter: '1235566646324887562',
+        finishSentence: '1276861659587280896',
+        wordAssociation: '1235567493855187025',
+        unfiltred: '1397628186795311246',
+    },
+    isolation: {
+        isolationCell: '1415020477180674048',
+    },
 };
 
 const defaultCfg: Config = {
     enabled: true,
+
+    roles: rolesCfg,
+    channels: channelsCfg,
 
     general: {
         prefix: 'sudo ',
@@ -236,33 +328,32 @@ const defaultCfg: Config = {
         },
 
         hallOfFame: '1392128976574484592',
-        hallOfFameEligibleChannels: ['1397628186795311246', '1264971505662689311', '1342793182265741394', '1392567715407073402'],
-        blockedChannels: (['1264971505662689311', '1392567715407073402'] as any) == false ? (true as any) : [],
-        commandsExcludedFromBlockedChannels: ['ban', 'mute', 'unmute', 'warn', 'kick', 'warnlist', 'warn-clear', 'cat', 'dog', 'parrot', 'animal', 'xp', 'shitwarn', 'clear', 'wiki', 'fandom', 'restart', 'notify'],
+        hallOfFameEligibleChannels: [channelsCfg.general.general, channelsCfg.general.offtopic, channelsCfg.general.media, channelsCfg.mod.hallOfShame],
+        
         welcomer: {
             channelId: "1235560269871190056",
             enabled: true,
-            general: '1264971505662689311',
+            general: channelsCfg.general.general,
         },
 
         moderationProtectedRoles: [],
         forFun: {
             media: [
                 {
-                    channel: '1235567551753486407', // media channel
+                    channel: channelsCfg.general.media,
                     addReactions: ['👍', '👎', '😭', '🙏', '🤣', '<:joe_i_git:1376096877610799205>'],
                     deleteMessageIfNotMedia: true,
                     shallCreateThread: true
                 },
                 {
-                    channel: '1290327060970995812', // hall of shame
+                    channel: channelsCfg.mod.hallOfShame,
                     addReactions: ['🙏'],
                     deleteMessageIfNotMedia: false,
                     shallCreateThread: false
                 }
             ],
-            countingChannel: '1235566520310956184',
-            lastLetterChannel: '1235566646324887562'
+            countingChannel: channelsCfg.forfun.counting,
+            lastLetterChannel: channelsCfg.forfun.lastLetter,
         }
     },
 
@@ -285,11 +376,24 @@ const defaultCfg: Config = {
         allowedUsers: ['1368171061585117224', '990959984005222410', '985053803151753316', '1274610053843783768', '1401568817766862899'],
     },
 
-    roles: rolesCfg,
+
+    blockCommands: {
+        full: {},
+        fullExceptImportant: {
+            include: [...Object.values(channelsCfg.forfun), channelsCfg.general.media],
+        },
+        spammy: {
+            exclude: [channelsCfg.general.commands]
+        },
+        economy: {
+            exclude: [channelsCfg.other.economy],
+        },
+    },
 
     logs: {
-        channel: '1235641912241819669'
+        channel: channelsCfg.mod.logs,
     },
+
 
     cheatsRoles: {
         automodBypassRoles: ['1380875827998097418'],
@@ -298,7 +402,7 @@ const defaultCfg: Config = {
     unfilteredRelated: {
         eligibleToRemoveGifBan: [rolesCfg.eclair25, rolesCfg.secondLevelOwner],
         gifBan: "1406369089634435204",
-        unfilteredChannel: '1397628186795311246',
+        unfilteredChannel: channelsCfg.forfun.unfiltred,
         makeNeocities: [],
     },
 

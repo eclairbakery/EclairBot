@@ -1,4 +1,4 @@
-import { Category, Command, CommandAPI } from '@/bot/command.js';
+import { Category, Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 
 import { PredefinedColors } from '@/util/color.js';
@@ -54,6 +54,8 @@ export const detailHelpCmd: Command = {
         main: 'Pokazuje losowe komendy z bota wraz z dokładnymi opisami, by w końcu nauczyć Twojego zapyziałego mózgu jego używania.',
         short: 'Lista komend',
     },
+    flags: CommandFlags.Spammy,
+
     permissions: {
         discordPerms: null,
         allowedRoles: null,

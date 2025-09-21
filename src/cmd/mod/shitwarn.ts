@@ -1,7 +1,7 @@
 import clamp from '@/util/clamp.js';
 import parseTimestamp from '@/util/parseTimestamp.js';
 
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
 
@@ -10,10 +10,13 @@ import * as dsc from 'discord.js';
 
 export const shitwarnCmd: Command = {
     name: 'shitwarn',
+    aliases: cfg.mod.commands.warn.aliases,
     description: {
         main: 'Lubisz warnować? Świetnie! Ta komenda daje fake-warny!',
         short: 'Ta komenda daje fake-warny!'
     },
+    flags: CommandFlags.Important,
+
     expectedArgs: [
         {
             name: 'user',
@@ -37,7 +40,6 @@ export const shitwarnCmd: Command = {
         }
     ],
 
-    aliases: cfg.mod.commands.warn.aliases,
     permissions: {
         discordPerms: null,
         allowedRoles: cfg.mod.commands.warn.allowedRoles,

@@ -1,4 +1,4 @@
-import { Command, CommandArgumentWithUserMentionValue } from '@/bot/command.js';
+import { Command, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import { db, sqlite } from '@/bot/db.js';
 
@@ -10,10 +10,13 @@ import capitalizeFirst from '@/util/capitalizeFirst.js';
 
 export const pfpCmd: Command = {
     name: 'pfp',
+    aliases: ['profilowe', 'avatar', 'awatar'],
     description: {
         main: 'Któżby się spodziewał że komenda \'pfp\' wyświetli czyjeś pfp?',
         short: 'Wyświetla czyjeś pfp'
     },
+    flags: CommandFlags.None,
+
     expectedArgs: [
         {
             name: 'user',
@@ -22,7 +25,6 @@ export const pfpCmd: Command = {
             type: 'user-mention'
         }
     ],
-    aliases: ['profilowe', 'avatar', 'awatar'],
     permissions: {
         discordPerms: [],
         allowedRoles: null,

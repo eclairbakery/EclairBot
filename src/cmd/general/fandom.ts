@@ -1,4 +1,4 @@
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
@@ -57,6 +57,8 @@ export const fandomCmd: Command = {
         main: 'Generalnie pobiera artykuł z Fandomu. Super użyteczne!',
         short: 'Pobiera rzecz z Fandomu!'
     },
+    flags: CommandFlags.None,
+
     permissions: {
         discordPerms: null,
         allowedRoles: null,

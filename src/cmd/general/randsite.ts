@@ -1,4 +1,4 @@
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import { db, sqlite } from '@/bot/db.js';
 
@@ -39,6 +39,8 @@ export const randsiteCmd: Command = {
         main: 'Siema... Czujesz się fajnie? Chcesz eksploracji? Tą komendą wyświetlisz losową stronę na Internecie.',
         short: 'Tą komendą wyświetlisz losową stronę na Internecie.',
     },
+    flags: CommandFlags.None,
+
     expectedArgs: [
         {
             name: 'neocities-bypass',

@@ -4,7 +4,7 @@ import * as log from '@/util/log.js';
 import { dbGet, dbRun } from '@/util/db-utils.js';
 import { getRandomInt } from '@/util/rand.js';
 
-import { Command, CommandArgumentWithUserMentionValue } from '@/bot/command.js';
+import { Command, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 
 const COOLDOWN_MS = 5 * 60 * 1000;
@@ -51,6 +51,8 @@ export const robCmd: Command = {
         main: 'Spróbuj okraść innego gracza i zgarnąć trochę hajsu. Ale nie miej potem wyrzutów sumienia...',
         short: 'Okradnij kogoś!'
     },
+    flags: CommandFlags.Economy,
+
     permissions: {
         allowedRoles: null,
         allowedUsers: null,

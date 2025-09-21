@@ -1,4 +1,4 @@
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 
@@ -9,15 +9,13 @@ let interval2: NodeJS.Timeout;
 
 export const notifyCmd: Command = {
     name: 'notify',
+    aliases: ['mention-ping'],
     description: {
         main: 'Siema... Chcesz pingować? No ok, to komenda dla ciebie.',
         short: 'Pinguje jakiś ping.'
     },
-    permissions: {
-        allowedRoles: cfg.mod.commands.ping.allowedRoles,
-        allowedUsers: [],
-        discordPerms: []
-    },
+    flags: CommandFlags.Important,
+
     expectedArgs: [
         {
             name: 'type',
@@ -26,8 +24,13 @@ export const notifyCmd: Command = {
             description: 'No podaj ten typ tego pingu, błagam!'
         }
     ],
-    aliases: ['mention-ping'],
-    execute: async (api: CommandAPI) => {
+    permissions: {
+        allowedRoles: cfg.mod.commands.ping.allowedRoles,
+        allowedUsers: [],
+        discordPerms: []
+    },
+
+    async execute(api) {
         const msg = api.msg;
         const typeArg = api.getArg('type')?.value as string;
 

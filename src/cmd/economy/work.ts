@@ -4,7 +4,7 @@ import { dbGet, dbRun } from '@/util/db-utils.js';
 import { getRandomInt } from '@/util/rand.js';
 
 import { PredefinedColors } from '@/util/color.js';
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 
 const COOLDOWN_MS = 30 * 1000;
 const WORK_AMOUNT_MIN = 50;
@@ -50,6 +50,7 @@ export const workCmd: Command = {
         main: 'Pr\\*ca dla pana, pr\\*ca za darmo! Niewolnikiem naszym bądź... dobra, nie mam talentu do wierszy. Po prostu ekonomia.',
         short: 'Pr\\*ca dla pana, pr\\*ca za darmo!',
     },
+    flags: CommandFlags.Economy,
 
     permissions: {
         discordPerms: null,

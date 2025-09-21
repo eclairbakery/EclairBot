@@ -1,4 +1,4 @@
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import { db, sqlite } from '@/bot/db.js';
 
@@ -14,6 +14,8 @@ export const siemaCmd: Command = {
         main: 'Jakby to ująć... niespodzianka... Generalnie to taki jeden pan, nazywa się chlebek i serio jest chlebek, błagał 300000000 miliardów godzin, by to dodać, więc dodałem.',
         short: 'Mała niespodzianka dla każdego!'
     },
+    flags: CommandFlags.None,
+
     expectedArgs: [],
     aliases: [],
     permissions: {

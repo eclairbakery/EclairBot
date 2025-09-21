@@ -1,4 +1,4 @@
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
 
@@ -10,10 +10,13 @@ import clamp from '@/util/clamp.js';
 
 export const warnCmd: Command = {
     name: 'warn',
+    aliases: cfg.mod.commands.warn.aliases,
     description: {
         main: 'Daj komuś warna, by go onieśmielić, uciszyć, zamknąć mu morde i nadużyć władzy. Żart, ale nie nadużywaj bo to się źle skończy... Nie wiesz z czym zadzierasz przybyszu!',
         short: 'Warnuje podaną osobę'
     },
+    flags: CommandFlags.Important,
+
     expectedArgs: [
         {
             name: 'user',
@@ -43,7 +46,6 @@ export const warnCmd: Command = {
         }
     ],
 
-    aliases: cfg.mod.commands.warn.aliases,
     permissions: {
         discordPerms: null,
         allowedRoles: cfg.mod.commands.warn.allowedRoles,

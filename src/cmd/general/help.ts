@@ -1,4 +1,4 @@
-import { Category, Command, CommandAPI } from '@/bot/command.js';
+import { Category, Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 
 import { PredefinedColors } from '@/util/color.js';
@@ -50,10 +50,13 @@ function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: st
 
 export const quickHelpCmd: Command = {
     name: 'help',
+    aliases: ['quick-help'],
     description: {
         main: 'Pokazuje losowe komendy z bota wraz z krótkimi opisami, by w końcu nauczyć Twojego zapyziałego mózgu jego używania.',
         short: 'Lista komend',
     },
+    flags: CommandFlags.None,
+
     permissions: {
         discordPerms: null,
         allowedRoles: null,
@@ -67,7 +70,6 @@ export const quickHelpCmd: Command = {
             optional: true,
         }
     ],
-    aliases: ['quick-help'],
 
     async execute(api: CommandAPI) {
         const { msg, commands } = api;

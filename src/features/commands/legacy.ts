@@ -15,6 +15,7 @@ import canExecuteCmd from "@/util/canExecuteCmd.js";
 import findCommand from "@/util/findCommand.js";
 
 import { parseArgs, handleError } from "./helpers.js";
+import isCommandBlockedOnChannel from '@/util/isCommandBlockedOnChannel.js';
 
 client.on('messageCreate', async (msg) => {
     if (!(msg instanceof dsc.Message)) return;
@@ -23,16 +24,11 @@ client.on('messageCreate', async (msg) => {
     const argsRaw = msg.content.slice(cfg.general.prefix.length).trim().split(/\s+/);
     const cmdName = argsRaw.shift()?.toLowerCase() ?? '';
 
-    if (cfg.general.blockedChannels.includes(msg.channelId) &&
-        !cfg.general.commandsExcludedFromBlockedChannels.includes(cmdName)) {
-        await msg.react('❌');
-        return;
-    }
-
     const commandObj = findCommand(cmdName, commands)?.command;
     if (!commandObj) {
         return log.replyError(msg, 'Nie znam takiej komendy', `Komenda \`${cmdName}\` nie istnieje`);
     }
+
 
     if (!canExecuteCmd(commandObj, msg.member!)) {
         log.replyError(
@@ -43,26 +39,30 @@ client.on('messageCreate', async (msg) => {
         return;
     }
 
-    // if (!msg.inGuild() && !cfg.general.worksInDM.includes(cmdName)) {
-    //     log.replyError(
-    //         msg,
-    //         'Ta komenda nie jest przeznaczona do tego trybu gadania!',
-    //         `Taka komenda jak \`${cmdName.replace('`', '')}\` może być wykonana tylko na serwerach no sorki no!`
-    //     );
-    //     return;
-    // }
+    const isBlocked = isCommandBlockedOnChannel(commandObj, msg.channelId);
+    if (isBlocked) {
+        await msg.react('❌');
+        return;
+    }
+
+    if (!msg.inGuild() && (commandObj.permissions.worksInDM ?? false)) {
+        log.replyError(
+            msg,
+            'Ta komenda nie jest przeznaczona do tego trybu gadania!',
+            `Taka komenda jak \`${cmdName.replace('`', '')}\` może być wykonana tylko na serwerach no sorki no!`
+        );
+        return;
+    }
 
     try {
         const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, { msg: msg, guild: msg.guild });
         const api: CommandAPI = {
             args: parsedArgs,
             getArg(name) {
-                return parsedArgs.find(a => a.name == name)!
+                return parsedArgs.find(a => a.name == name)!;
             },
             getTypedArg(name, type) {
-                const x = parsedArgs.find(a => a.name == name && a.type == type)!;
-                // console.log(`Getting typed arg ${name} of type ${type}:`, x);
-                return x;
+                return parsedArgs.find(a => a.name == name && a.type == type)!;
             },
             msg: {
                 content: msg.content,

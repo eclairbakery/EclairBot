@@ -1,4 +1,4 @@
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
@@ -9,10 +9,13 @@ const cmdCfg = cfg.mod.commands.kick;
 
 export const kickCmd: Command = {
     name: 'kick',
+    aliases: cmdCfg.aliases,
     description: {
         main: 'Ta komenda istnieje po to by pozbyć się z serwera lekko wkurzających ludzi, tak żeby im nie dawać bana, a oni żeby myśleli że mają bana. A pospólstwo to ręce z daleka od moderacji!',
         short: 'Wywala danego użytkownika z serwera'
     },
+    flags: CommandFlags.Important,
+
     expectedArgs: [
         {
             name: 'user',
@@ -27,12 +30,12 @@ export const kickCmd: Command = {
             optional: !cmdCfg.reasonRequired,
         }
     ],
-    aliases: cmdCfg.aliases,
     permissions: {
         discordPerms: null,
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers
     },
+
     async execute(api) {
         const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
         let reason = api.getTypedArg('reason', 'trailing-string').value as string || null;

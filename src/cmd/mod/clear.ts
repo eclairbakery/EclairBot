@@ -2,21 +2,19 @@ import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 import { PredefinedColors } from '@/util/color.js';
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 
 const cmdCfg = cfg.mod.commands.warn;
 
 export const clearCmd: Command = {
     name: 'clear',
+    aliases: cmdCfg.aliases,
     description: {
         main: 'Ktoś spami? Ta komenda pomoże Ci ogarnąć usuwanie wiadomości!',
         short: 'Wywala wiadomości!',
     },
-    permissions: {
-        discordPerms: null,
-        allowedRoles: cmdCfg.allowedRoles,
-        allowedUsers: cmdCfg.allowedUsers,
-    },
+    flags: CommandFlags.Important,
+
     expectedArgs: [
         {
             type: 'number',
@@ -31,7 +29,11 @@ export const clearCmd: Command = {
             description: 'Opcjonalnie, usuń wiadomości tylko tego użytkownika',
         }
     ],
-    aliases: cmdCfg.aliases,
+    permissions: {
+        discordPerms: null,
+        allowedRoles: cmdCfg.allowedRoles,
+        allowedUsers: cmdCfg.allowedUsers,
+    },
 
     async execute(api: CommandAPI) {
         const amount = api.getTypedArg('amount', 'number')?.value as number;

@@ -4,7 +4,7 @@ import { db } from '@/bot/db.js';
 
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 
 function calculateLevel(xp: number, levelDivider: number): number {
     return Math.floor(
@@ -14,19 +14,21 @@ function calculateLevel(xp: number, levelDivider: number): number {
 
 export const toplvlCmd: Command = {
     name: 'toplvl',
+    aliases: ['topka', 'toplevel'],
     description: {
         main: 'Czas popatrzeć na najlepszych użytkowników serwera...',
         short: 'Czas popatrzeć na najlepszych użytkowników serwera...',
     },
+    flags: CommandFlags.None,
+
     permissions: {
         discordPerms: null,
         allowedRoles: null,
         allowedUsers: [],
     },
     expectedArgs: [],
-    aliases: ['topka', 'toplevel'],
 
-    async execute(api: CommandAPI) {
+    async execute(api) {
         const { msg } = api;
 
         try {

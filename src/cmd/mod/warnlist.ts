@@ -1,4 +1,4 @@
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import { db } from '@/bot/db.js';
 
@@ -8,13 +8,15 @@ import { PredefinedColors } from '@/util/color.js';
 
 export const warnlistCmd: Command = {
     name: 'warnlist',
+    aliases: ['warn-list', 'warnlista'],
     description: {
         main: 'Lubisz warnować? No to przeczytaj log tych warnów...',
         short: 'Pokazuje liste warnów',
     },
+    flags: CommandFlags.Important,
+
     expectedArgs: [],
 
-    aliases: ['warn-list', 'warnlista'],
     permissions: {
         allowedRoles: cfg.mod.commands.warn.allowedRoles,
         allowedUsers: [],

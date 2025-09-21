@@ -3,16 +3,19 @@ import { db } from '@/bot/db.js';
 
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { levelToXp, OnSetXpEvent } from '@/bot/level.js';
 import actionsManager from '@/features/actions.js';
 
 export const xpCmd: Command = {
     name: 'xp',
+    aliases: [],
     description: {
         main: 'Dodaj komuś levela... Jak nadużyjesz, no to, chyba nie wiesz z jaką siłą igrasz! Pospólstwo jak pomyśli, że sobie za darmoszkę doda poziomów, no to nie! Do widzenia.',
         short: 'Komenda dla adminów, by bawić się levelem...',
     },
+    flags: CommandFlags.None,
+
     permissions: {
         discordPerms: null,
         allowedRoles: cfg.general.leveling.canChangeXP,
@@ -44,7 +47,6 @@ export const xpCmd: Command = {
             description: 'Czy dotyczy `levels` czy `xp` (domyślnie levels)',
         }
     ],
-    aliases: [],
 
     async execute(api: CommandAPI) {
         const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member.plainMember;

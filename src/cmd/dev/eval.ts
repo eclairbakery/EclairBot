@@ -1,5 +1,5 @@
 import { cfg } from '@/bot/cfg.js';
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import * as dsc from 'discord.js';
 import * as log from '../../util/log.js';
 import { deepMerge } from '@/util/objects.js';
@@ -16,6 +16,8 @@ export const evalCmd: Command = {
         main: 'Wykonuje kod JavaScript. Jest naprawdę potencjalnie unsafe, dlatego to jest locknięte do granic możliwości.',
         short: 'Wykonuje kod JavaScript, więc jest bardzo unsafe.',
     },
+    flags: CommandFlags.Important,
+
     expectedArgs: [
         { name: 'code', type: 'trailing-string', description: 'Kod JS do wykonania', optional: false },
     ],
@@ -62,6 +64,7 @@ export const execCmd: Command = {
         main: 'Wykonuje kod JavaScript. Jest naprawdę potencjalnie unsafe, dlatego to jest locknięte do granic możliwości.',
         short: 'Wykonuje kod JavaScript, więc jest bardzo unsafe.',
     },
+    flags: CommandFlags.Important,
     expectedArgs: [
         { name: 'code', type: 'trailing-string', description: 'Kod JS do wykonania', optional: false },
     ],

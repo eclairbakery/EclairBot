@@ -3,7 +3,7 @@ import * as dsc from 'discord.js';
 import { dbGet, dbRun } from '@/util/db-utils.js';
 import { getRandomInt } from '@/util/rand.js';
 
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 
 const COOLDOWN_MS = 15 * 60 * 1000;
@@ -50,6 +50,8 @@ export const crimeCmd: Command = {
         main: 'Ohohohoho! Mamy na serwerze przestępców. Możesz popełnić przestępstwo i wygrać albo przegrać kasę!',
         short: 'Sprawdź swoje szczęście w kryminalnym świecie.'
     },
+    flags: CommandFlags.Economy,
+
     permissions: {
         allowedRoles: null,
         allowedUsers: null,

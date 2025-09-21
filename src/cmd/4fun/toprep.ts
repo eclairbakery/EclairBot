@@ -2,7 +2,7 @@ import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 import util from 'util';
 
-import { Command } from "@/bot/command.js";
+import { Command, CommandFlags } from "@/bot/command.js";
 
 import { getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
@@ -18,6 +18,7 @@ export const toprepCmd: Command = {
         main: 'Ogólnie to polecenie wyświetla topke reputacji',
         short: 'Wyświetla topke reputacji',
     },
+    flags: CommandFlags.None,
 
     expectedArgs: [
         {

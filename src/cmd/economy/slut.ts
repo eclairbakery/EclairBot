@@ -3,7 +3,7 @@ import * as dsc from 'discord.js';
 import { dbGet, dbRun } from '@/util/db-utils.js';
 import { getRandomInt } from '@/util/rand.js';
 
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 
 const COOLDOWN_MS = 2 * 60 * 1000;
@@ -51,6 +51,7 @@ export const slutCmd: Command = {
         main: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
         short: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
     },
+    flags: CommandFlags.Economy,
 
     expectedArgs: [],
     permissions: {

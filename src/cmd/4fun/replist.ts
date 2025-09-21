@@ -2,7 +2,7 @@ import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 import util from 'util';
 
-import { Command } from "@/bot/command.js";
+import { Command, CommandFlags } from "@/bot/command.js";
 
 import { getUserReps, getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
@@ -17,6 +17,7 @@ export const replistCmd: Command = {
         main: 'Pokazuje liste wystawionych opini o danym użytkowniku',
         short: 'Wyświetla opinie użytkownika',
     },
+    flags: CommandFlags.None,
 
     expectedArgs: [
         {

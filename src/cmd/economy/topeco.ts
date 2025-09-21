@@ -1,4 +1,4 @@
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import { db } from '@/bot/db.js';
 import * as log from '@/util/log.js';
@@ -15,6 +15,7 @@ export const topecoCmd: Command = {
         main: 'Janusze biznesu z Allegro.',
         short: 'Janusze biznesu z Allegro.'
     },
+    flags: CommandFlags.None,
 
     permissions: {
         discordPerms: null,

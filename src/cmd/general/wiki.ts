@@ -1,4 +1,4 @@
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 
 import { cfg } from '@/bot/cfg.js';
@@ -50,10 +50,13 @@ async function downloadFromWikipedia(languageVersions: string[], args: string[])
 
 export const wikiCmd: Command = {
     name: 'wiki',
+    aliases: [],
     description: {
         main: 'Generalnie pobiera artykuł z Wikipedii. Super użyteczne!',
         short: 'Pobiera rzecz z Wikipedii!'
     },
+    flags: CommandFlags.None,
+
     expectedArgs: [
         {
             name: 'query',
@@ -62,7 +65,6 @@ export const wikiCmd: Command = {
             description: 'No, podaj jaki jest ten twój artykuł do pobrania!'
         }
     ],
-    aliases: [],
     permissions: {
         allowedRoles: null,
         allowedUsers: null,

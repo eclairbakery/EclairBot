@@ -1,4 +1,4 @@
-import { Command, CommandArgumentWithUserMentionValue } from '@/bot/command.js';
+import { Command, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import { db, sqlite } from '@/bot/db.js';
 
@@ -14,6 +14,8 @@ export const bannerCmd: Command = {
         main: 'Dobra... Wyświetle Ci jełopa baner jak chcesz.',
         short: 'Wyświetla baner danego użytkownika'
     },
+    flags: CommandFlags.None,
+
     expectedArgs: [
         {
             name: 'user',

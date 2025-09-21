@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { dbGet, dbRun } from '@/util/db-utils.js';
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 
 interface Card {
     name: string;
@@ -35,6 +35,7 @@ export const blackjackCmd: Command = {
         main: 'Gra w blackjacka za określoną kwotę. Jak chcesz, możesz przewalić w kasynie kasę!',
         short: 'Gra w blackjacka za określoną kwotę',
     },
+    flags: CommandFlags.Economy,
 
     permissions: { discordPerms: null, allowedRoles: null, allowedUsers: null },
     expectedArgs: [{ name: 'amount', description: 'O ile gramy?', optional: false, type: 'number' }],

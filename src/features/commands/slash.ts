@@ -13,17 +13,19 @@ client.on('interactionCreate', async (int: Interaction) => {
     const cmdObj = findCommand(int.commandName, commands)?.command;
     if (!cmdObj) return int.reply({ content: 'Nie znam takiej komendy' });
 
-    // if (!int.guild && !cfg.general.worksInDM.includes(int.commandName)) {
-    //     int.reply('Niektóre komendy są tak jakby safe tylko na serwerze więc... możesz mieć problem jak tu odpalisz. Dlatego ci nie pozwalam.');
-    //     return;
-    // }
+    if (!int.guild && (cmdObj.permissions.worksInDM ?? false)) {
+        int.reply('Niektóre komendy są tak jakby safe tylko na serwerze więc... możesz mieć problem jak tu odpalisz. Dlatego ci nie pozwalam.');
+        return;
+    }
 
     if (!canExecuteCmd(cmdObj, int.member! as any)) {
         int.reply('Nie można tak!');
         return;
     }
 
-    await int.deferReply({ ephemeral: (cfg.general.blockedChannels.includes(int.channelId) && !cfg.general.commandsExcludedFromBlockedChannels.includes(int.commandName)) });
+    await int.deferReply({
+    //    ephemeral: (cfg.general.blockedChannels.includes(int.channelId) && !cfg.general.commandsExcludedFromBlockedChannels.includes(int.commandName))
+    });
 
     try {
         const argsRaw = cmdObj.expectedArgs.map(arg => int.options.getString(arg.name) ?? undefined);

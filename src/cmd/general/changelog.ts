@@ -1,6 +1,6 @@
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 
 export const changelogCmd: Command = {
     name: 'changelog',
@@ -8,6 +8,8 @@ export const changelogCmd: Command = {
         main: 'Ogólnie mówiąc bardzo długi changelog, gdzie tłumaczę w sposób niezrozumiały dla Ciebie, co się u mnie zmieniło ostatnio.',
         short: 'Wyświetl changelog.',
     },
+    flags: CommandFlags.None,
+
     expectedArgs: [
         {
             name: 'version',

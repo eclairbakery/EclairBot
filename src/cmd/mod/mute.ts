@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Hour, Timestamp } from '@/util/parseTimestamp.js';
@@ -12,10 +12,13 @@ const cmdCfg = cfg.mod.commands.mute;
 
 export const muteCmd: Command = {
     name: 'mute',
+    aliases: cmdCfg.aliases,
     description: {
         main: 'Zamykam Ci buzię na czacie, żebyś mógł w ciszy przemyśleć swoje wybory życiowe. Jak chcesz pogadać, to poczekaj, aż Cię ktoś od muteuje.',
         short: 'Zamyka morde podanemu użytkownikowi'
     },
+    flags: CommandFlags.Important,
+
     expectedArgs: [
         {
             name: 'user',
@@ -36,19 +39,18 @@ export const muteCmd: Command = {
             optional: !cmdCfg.reasonRequired,
         },
     ],
-    aliases: cmdCfg.aliases,
     permissions: {
         discordPerms: null,
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers,
     },
-    execute: async (api: CommandAPI) => {
+
+    async execute(api) {
         const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember;
         let reason = api.getTypedArg('reason', 'trailing-string')?.value as string;
         const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null ?? 24 * Hour;
         let expiresAt = duration != null ? Math.floor(Date.now() / 1000) + duration : null;
 
-        // TODO: wtf? targetUser type is just dsc.GuildMember, not nullable...
         if (!targetUser) {
             return log.replyError(api.msg, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyślę komu ty chcesz dać tego timeouta? Użycie: odpowiedzi na wiadomość lub !mute <@user> <powód>');
         }

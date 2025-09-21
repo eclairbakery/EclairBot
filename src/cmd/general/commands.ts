@@ -1,4 +1,4 @@
-import { Category, Command } from '@/bot/command.js';
+import { Category, Command, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 
 import { PredefinedColors } from '@/util/color.js';
@@ -14,6 +14,8 @@ export const commandsCmd: Command = {
         main: 'Pokazuje pełną listę dostępnych komend bota.',
         short: 'Lista komend',
     },
+    flags: CommandFlags.None,
+
     expectedArgs: [
         {
             name: 'category',

@@ -3,20 +3,18 @@ import { dbGet } from '@/util/db-utils.js';
 
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { xpToLevel, levelToXp, mkLvlProgressBar } from '@/bot/level.js';
 
 export const lvlCmd: Command = {
     name: 'lvl',
+    aliases: [],
     description: {
         main: 'Wyświetl swój level lub level wskazanego użytkownika.',
         short: 'Wyświetl swój/kogoś level.',
     },
-    permissions: {
-        discordPerms: null,
-        allowedRoles: null,
-        allowedUsers: [],
-    },
+    flags: CommandFlags.None,
+
     expectedArgs: [
         {
             type: 'user-mention',
@@ -25,7 +23,11 @@ export const lvlCmd: Command = {
             description: 'Opcjonalnie, użytkownik którego level chcesz sprawdzić.',
         }
     ],
-    aliases: [],
+    permissions: {
+        discordPerms: null,
+        allowedRoles: null,
+        allowedUsers: null,
+    },
 
     async execute(api: CommandAPI) {
         const userArg = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | null;

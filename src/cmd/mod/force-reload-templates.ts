@@ -2,22 +2,24 @@ import { db } from '@/bot/db.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import actionsManager, { OnForceReloadTemplates } from '../../events/templatesEvents.js';
 
 export const forceReloadTemplatesCmd: Command = {
     name: 'force-reload-templates',
+    aliases: [],
     description: {
         main: 'Jeśli uważasz że template channels się nie przeładowały i pokazują błędne dane to... mylisz się! eclair bot jest idealny. A tak serio to tą komendą możesz wymusić reload',
         short: 'Wymusza przeładowanie wszystkich template channels',
     },
+    flags: CommandFlags.Important,
+
+    expectedArgs: [],
     permissions: {
         discordPerms: null,
         allowedRoles: null,
         allowedUsers: null,
     },
-    expectedArgs: [],
-    aliases: [],
 
     async execute(api: CommandAPI) {
         actionsManager.emit(OnForceReloadTemplates, {});

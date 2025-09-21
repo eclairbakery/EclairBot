@@ -1,4 +1,4 @@
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js'
 import { db, sqlite } from '@/bot/db.js';
 
@@ -29,13 +29,15 @@ async function getGIF(searchTerm: string): Promise<string> {
 
 export const catCmd: Command = {
     name: 'cat',
+    aliases: ['kot'],
     description: {
         main: 'Lubisz koty? Jakże pięknie się składa. Możemy Ci pokazać losowego kota.',
         short: 'Pokazuje losowego kota',
     },
+    flags: CommandFlags.None,
+
     expectedArgs: [],
 
-    aliases: ['kot'],
     permissions: {
         discordPerms: [],
         allowedRoles: null,
@@ -53,6 +55,8 @@ export const dogCmd: Command = {
         main: 'Ohhh... dasz mi karmę? Chcesz zobaczyć moją słodką mordkę? To ja, piesek.',
         short: 'Pokazuje losowego psa',
     },
+    flags: CommandFlags.None,
+
     expectedArgs: [],
 
     aliases: ['kot'],
@@ -74,6 +78,8 @@ export const animalCmd: Command = {
         main: 'Chcesz do ZOO? Mamy ZOO w domu. ZOO w domu: [wpisz jakiego gifa chcesz]',
         short: 'Pokazuje losowego zwierza',
     },
+    flags: CommandFlags.None,
+
     expectedArgs: [],
 
     aliases: ['zwierz', 'zwierzęcie'],
@@ -95,6 +101,8 @@ export const parrotCmd: Command = {
         main: 'Pokazuje losową papugę czy coś!',
         short: 'Pokazuje losową papugę!',
     },
+    flags: CommandFlags.None,
+
     expectedArgs: [],
 
     aliases: [],

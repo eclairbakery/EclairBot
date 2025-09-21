@@ -1,4 +1,4 @@
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
 import { db, sqlite } from '@/bot/db.js';
@@ -15,6 +15,8 @@ export const manCmd: Command = {
         main: 'Dokładniejsza dokumentacja, pokazująca użycie komend, czy możesz ich użyć oraz dokładny opis.',
         short: 'Dokładniejsza dokumentacja danej komendy',
     },
+    flags: CommandFlags.None,
+
     expectedArgs: [
         {
             name: 'command',
@@ -42,6 +44,7 @@ export const manCmd: Command = {
                             short: ''
                         },
                         aliases: ['kobieta', 'żona', 'dziewczyna'],
+                        flags: CommandFlags.None,
                         expectedArgs: [
                             {
                                 name: 'odciąż mnie',

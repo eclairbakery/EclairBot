@@ -1,4 +1,4 @@
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { db } from '@/bot/db.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
@@ -9,10 +9,13 @@ const cmdCfg = cfg.mod.commands.warn;
 
 export const warnClearCmd: Command = {
     name: 'warn-clear',
+    aliases: ['clearwarn', 'warnusun'],
     description: {
         main: 'Usuwa warna o podanym ID. W dużym skrócie...',
         short: 'Usuwa warna'
     },
+    flags: CommandFlags.Important,
+
     expectedArgs: [
         {
             name: 'id',
@@ -21,7 +24,6 @@ export const warnClearCmd: Command = {
             optional: false
         }
     ],
-    aliases: ['clearwarn', 'warnusun'],
     permissions: {
         discordPerms: null,
         allowedRoles: cmdCfg.allowedRoles,

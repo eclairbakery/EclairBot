@@ -1,4 +1,4 @@
-import { Command } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
@@ -8,10 +8,13 @@ const cmdCfg = cfg.mod.commands.mute;
 
 export const unmuteCmd: Command = {
     name: 'unmute',
+    aliases: cmdCfg.aliases,
     description: {
         main: 'Oddaję Ci prawo głosu. Nie marnuj go na pisanie "xd" i emoji bakłażana.',
         short: 'Po prostu unmute',
     },
+    flags: CommandFlags.Important,
+
     expectedArgs: [
         { name: 'user', type: 'string', description: 'Komu unmute chcesz dać?', optional: false },
         {
@@ -23,7 +26,6 @@ export const unmuteCmd: Command = {
             optional: !cmdCfg.reasonRequired
         },
     ],
-    aliases: cmdCfg.aliases,
     permissions: {
         discordPerms: null,
         allowedRoles: cmdCfg.allowedRoles,

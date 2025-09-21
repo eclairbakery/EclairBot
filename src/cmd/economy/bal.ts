@@ -2,7 +2,7 @@ import { cfg } from '@/bot/cfg.js';
 import { db } from '@/bot/db.js';
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
-import { Command, CommandAPI } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 
 export const balCmd: Command = {
     name: 'bal',
@@ -11,6 +11,7 @@ export const balCmd: Command = {
         main: 'Wyświetl swój balans zadłużenia (raczej jesteś mało warty, w sensie konto, nie pozywaj za zniesławienie).',
         short: 'Wyświetl swój balans konta.',
     },
+    flags: CommandFlags.Economy,
 
     permissions: {
         discordPerms: null,
