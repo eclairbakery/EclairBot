@@ -6,6 +6,7 @@ import { Command, CommandFlags } from '@/bot/command.js';
 
 import figlet from 'figlet';
 import debugLog from '@/util/debugLog.js';
+import { text } from 'node:stream/consumers';
 
 function tokenize(input: string): string[] {
     let result: string[] = [];
@@ -158,7 +159,14 @@ export const figletCmd: Command = {
 
     async execute(api) {
         const font = /*api.getArg('font').value as string ??*/ 'Standard';
-        const text = api.getArg('text').value as string;
+        const textArg = api.getArg('text').value as string;
+
+        const text
+            = textArg == 'hubix'
+            ? 'pedał'
+            : textArg == 'eclair bot'
+            ? 'istota wyższa'
+            : textArg;
 
         const availableFonts = await figletFonts();
         if (!availableFonts.includes(font)) {
