@@ -6,6 +6,7 @@ import { commands } from "../../cmd/list.js";
 import findCommand from "@/util/findCommand.js";
 import { handleError, parseArgs } from "./helpers.js";
 import canExecuteCmd from "@/util/canExecuteCmd.js";
+import isCommandBlockedOnChannel from "@/util/isCommandBlockedOnChannel.js";
 
 client.on('interactionCreate', async (int: Interaction) => {
     if (!int.isChatInputCommand()) return;
@@ -23,8 +24,9 @@ client.on('interactionCreate', async (int: Interaction) => {
         return;
     }
 
+    const isBlocked = isCommandBlockedOnChannel(cmdObj, int.channelId);
     await int.deferReply({
-    //    ephemeral: (cfg.general.blockedChannels.includes(int.channelId) && !cfg.general.commandsExcludedFromBlockedChannels.includes(int.commandName))
+        ephemeral: isBlocked
     });
 
     try {
