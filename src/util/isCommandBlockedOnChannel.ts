@@ -6,7 +6,7 @@ import { BlockCommandsRules, cfg } from '@/bot/cfg.js';
 function isBlockedByRules(id: dsc.Snowflake, rules: BlockCommandsRules): boolean {
     if (rules.exclude?.includes(id)) return true;
     if (rules.include?.includes(id)) return false;
-    return false;
+    return rules.default == 'block';
 }
 
 export default function isCommandBlockedOnChannel(command: Command, channelID: dsc.Snowflake) {

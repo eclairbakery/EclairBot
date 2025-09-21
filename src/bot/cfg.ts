@@ -7,6 +7,7 @@ import { existsSync, readFileSync } from 'node:fs';
 export interface BlockCommandsRules {
     include?: dsc.Snowflake[];
     exclude?: dsc.Snowflake[];
+    default?: 'block' | 'ok';
 };
 
 export interface Emoji {
@@ -378,14 +379,19 @@ const defaultCfg: Config = {
 
 
     blockCommands: {
-        full: {},
+        full: {
+            default: 'ok',
+        },
         fullExceptImportant: {
-            include: [...Object.values(channelsCfg.forfun), channelsCfg.general.media],
+            default: 'ok',
+            exclude: [...Object.values(channelsCfg.forfun), channelsCfg.general.media],
         },
         spammy: {
-            exclude: [channelsCfg.general.commands]
+            default: 'block',
+            include: [channelsCfg.general.commands, channelsCfg.forfun.unfiltred],
         },
         economy: {
+            default: 'block',
             exclude: [channelsCfg.other.economy],
         },
     },
