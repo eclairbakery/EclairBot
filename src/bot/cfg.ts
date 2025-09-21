@@ -5,9 +5,9 @@ import { deepMerge } from '@/util/objects.js';
 import { existsSync, readFileSync } from 'node:fs';
 
 export interface BlockCommandsRules {
-    include?: dsc.Snowflake[];
-    exclude?: dsc.Snowflake[];
-    default?: 'block' | 'ok';
+    default: 'block' | 'ok';
+    allow?: dsc.Snowflake[];
+    deny?: dsc.Snowflake[];
 };
 
 export interface Emoji {
@@ -26,7 +26,8 @@ export interface Config {
         /* Experience configuration */
         leveling: {
             xpPerMessage: number;
-            levelDivider: number; excludedChannels: string[];
+            levelDivider: number;
+            excludedChannels: string[];
             milestoneRoles: Record<number, dsc.Snowflake>;
             canChangeXP: dsc.Snowflake[];
             levelChannel: dsc.Snowflake;
@@ -384,15 +385,15 @@ const defaultCfg: Config = {
         },
         fullExceptImportant: {
             default: 'ok',
-            exclude: [...Object.values(channelsCfg.forfun), channelsCfg.general.media],
+            deny: [...Object.values(channelsCfg.forfun), channelsCfg.general.media],
         },
         spammy: {
             default: 'block',
-            include: [channelsCfg.general.commands, channelsCfg.forfun.unfiltred],
+            allow: [channelsCfg.general.commands, channelsCfg.forfun.unfiltred],
         },
         economy: {
             default: 'block',
-            exclude: [channelsCfg.other.economy],
+            allow: [channelsCfg.other.economy],
         },
     },
 
