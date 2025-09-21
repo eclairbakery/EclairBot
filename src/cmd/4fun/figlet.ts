@@ -58,7 +58,7 @@ function concatAsciiLine(lineA: string[], lineB: string[]): string[] {
     const maxLen = Math.max(lineA.length, lineB.length);
     const a = [...lineA, ...Array(maxLen - lineA.length).fill('')];
     const b = [...lineB, ...Array(maxLen - lineB.length).fill('')];
-    return a.map((row, i) => row + ' ' + b[i]);
+    return a.map((row, i) => row + b[i]);
 }
 
 function asciiWidth(asciiBlock: string[]) {
@@ -122,7 +122,7 @@ function renderFigletWrapped(words: string[], font: string, maxWidth: number = 4
 }
 
 function renderFigletWrappedString(words: string[], font: string = 'Standard', maxWidth: number = 40): string {
-    const blocks = renderFigletWrapped(words, font, maxWidth);
+    const blocks: string[][] = renderFigletWrapped(words, font, maxWidth);
     return blocks.map((block) => block.join('\n')).join('\n\n');
 }
 
