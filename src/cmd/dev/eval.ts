@@ -4,7 +4,7 @@ import * as dsc from 'discord.js';
 import * as log from '../../util/log.js';
 import { deepMerge } from '@/util/objects.js';
 
-let canEval = false;
+export let canEval = false;
 
 setTimeout(() => {
     canEval = true;
