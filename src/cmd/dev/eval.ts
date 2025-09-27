@@ -50,7 +50,7 @@ export const evalCmd: Command = {
             await log.replyTip(api.msg, 'Ten kod może nie zadziałać!', warn);
         }
         try {
-            const result = await eval(`${canEval ? code : 'false'}`);
+            const result = await (0, eval)(`${canEval ? code : 'false'}`);
             return api.msg.reply(`wynik twojej super komendy:\n\`\`\`${String(result).replace('`', '\`')}\`\`\``);
         } catch (err) {
             return api.msg.reply(`❌ niepowodzenie:\n\`\`\`${err}\`\`\``);

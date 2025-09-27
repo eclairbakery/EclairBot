@@ -32,7 +32,7 @@ async function main() {
             entryPoints: [ENTRY],
             bundle: true,
             platform: 'node',
-            external: ['discord.js', '@discordjs/voice', '@distube/ytdl-core'],
+            external: ['discord.js', '@discordjs/voice', '@distube/ytdl-core', 'figlet'],
             outfile: path.join(OUTDIR, 'app.js'),
             alias: {
                 '@': path.resolve(__dirname, 'src'),
