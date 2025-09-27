@@ -4,6 +4,8 @@ import { cfg } from '@/bot/cfg.js';
 
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
+import * as debug from '@/util/debug.js';
+
 import warn from '@/bot/apis/mod/warns.js';
 import parseTimestamp, { Timestamp } from '@/util/parseTimestamp.js';
 import clamp from '@/util/clamp.js';
@@ -111,7 +113,7 @@ export const warnCmd: Command = {
                 points
             });
         } catch (err) {
-            console.error(err);
+            debug.err(err);
             return log.replyError(api.msg, 'Błąd bazy danych', 'Nie udało się zapisać warna');
         }
 

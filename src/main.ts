@@ -1,27 +1,24 @@
-process.on('uncaughtException', async (e) => {
-    console.error(e);
-    try {
-        const user = await client.users.fetch('990959984005222410');
-        await user.send(`siema hiouston jest problem:\n\`\`\`${e}\`\`\``);
-    } catch {}
-});
-
-const oldWrite = process.stdout.write;
-
-process.stdout.write = function (
-    chunk: any,
-    encoding?: BufferEncoding | ((err?: Error) => void),
-    callback?: (err?: Error) => void
-): boolean {
-    client.users.fetch('990959984005222410').then((user) => user.send(`hiouston\n\`\`\`${chunk}\`\`\``).catch(() => null)).catch(() => null);
-    return oldWrite.call(process.stdout, chunk, encoding as any, callback);
-};
+// const oldWrite = process.stdout.write;
+// 
+// process.stdout.write = function (
+//     chunk: any,
+//     encoding?: BufferEncoding | ((err?: Error) => void),
+//     callback?: (err?: Error) => void
+// ): boolean {
+//     client.users.fetch('990959984005222410').then((user) => user.send(`hiouston\n\`\`\`${chunk}\`\`\``).catch(() => null)).catch(() => null);
+//     return oldWrite.call(process.stdout, chunk, encoding as any, callback);
+// };
 
 import AutoModRules from '@/features/actions/automod.js';
 
 import { initExpiredWarnsDeleter } from '@/features/deleteExpiredWarns.js';
 import * as dotenv from 'dotenv';
+import * as dsclog from '@/bot/dsclog.js';
+import * as debug from '@/util/debug.js';
 import * as dsc from 'discord.js';
+import * as slashCommands from '@/features/commands/slash.js';
+import * as legacyCommands from '@/features/commands/legacy.js';
+import util from 'util';
 
 dotenv.config({ quiet: true });
 
@@ -38,14 +35,25 @@ import { lastLetterChannelAction } from '@/features/actions/lastLetterChannel.js
 import { mediaChannelAction } from '@/features/actions/mediaChannelAction.js';
 import { antiSpamAndAntiFlood } from '@/features/actions/anti-spam-flood.js';
 import { basicMsgCreateActions } from '@/features/actions/basic-msg-create-actions.js';
-import * as slashCommands from '@/features/commands/slash.js';
-import * as legacyCommands from '@/features/commands/legacy.js';
 import { registerTemplateChannels } from '@/features/actions/registerTemplateChannels.js';
 import registerLogging from './features/actions/logging.js';
 import { cfg } from './bot/cfg.js';
+import mkDscLogger from './util/mkDscLogger.js';
 
-client.once('ready', () => {
-    console.log(`Logged in.`);
+process.on('uncaughtException', async (e) => {
+    process.stderr.write(util.format(e) + '\n');
+    try {
+        const user = await client.users.fetch('990959984005222410');
+        await user.send(`siema hiouston jest problem:\n\`\`\`${e}\`\`\``);
+    } catch {}
+});
+
+client.once('ready', async () => {
+    dsclog.setStdoutLogFn(await mkDscLogger(process.stdout.write.bind(process.stdout), cfg.logs.stdout));
+    dsclog.setStderrLogFn(await mkDscLogger(process.stderr.write.bind(process.stderr), cfg.logs.stderr));
+    debug.init();
+
+    debug.log('Logged in.');
     initExpiredWarnsDeleter();
     slashCommands.init();
     legacyCommands.init();
@@ -129,8 +137,6 @@ async function main() {
                         : cmd.description.main
                 );
 
-            console.log('Registering command: ' + cmd.name);
-
             for (const arg of cmd.expectedArgs) {
                 switch (arg.type) {
                     case 'trailing-string':
@@ -204,9 +210,9 @@ async function main() {
             dsc.Routes.applicationGuildCommands(client.application.id, '1235534146722463844'),
             { body: commandsArray }
         );
-        console.log('Slash commands registered ✅');
-    } catch (e) {
-        console.log('Slash commands error: ' + e);
+        debug.log('Slash commands registered ✅');
+    } catch (err) {
+        debug.err('Slash commands error: ' + err);
     }
 }
 

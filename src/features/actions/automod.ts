@@ -93,13 +93,13 @@ export default class AutoModRules {
 
     static all(): AnyAction[] {
         const rules = [
-            AutoModRules.EveryoneAutoreply,
-            AutoModRules.Ecliar25VideoQuestion,
+            //AutoModRules.EveryoneAutoreply,
+            //AutoModRules.Ecliar25VideoQuestion,
             AutoModRules.GitHubAutoreply,
             AutoModRules.BlockInvites,
             AutoModRules.BlockNWords,
-            AutoModRules.BlockAnime,
-            AutoModRules.InwiduaUnderflowAutoReply
+            //AutoModRules.BlockAnime,
+            //AutoModRules.InwiduaUnderflowAutoReply,
         ];
         return rules;
     }

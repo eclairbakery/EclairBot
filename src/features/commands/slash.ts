@@ -1,3 +1,5 @@
+import * as debug from '@/util/debug.js';
+
 import { Interaction } from "discord.js";
 import { cfg } from "@/bot/cfg.js";
 import { CommandAPI } from "@/bot/command.js";
@@ -58,5 +60,5 @@ client.on('interactionCreate', async (int: Interaction) => {
 });
 
 export function init() {
-    console.log('Slash commands registered');
+    debug.log('Slash commands registered');
 }

@@ -1,5 +1,6 @@
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
+import * as debug from '@/util/debug.js';
 
 import ban from "@/bot/apis/mod/bans.js";
 import kick from "@/bot/apis/mod/kicks.js";
@@ -103,5 +104,5 @@ client.on('messageCreate', async (msg) => {
 });
 
 export function init() {
-    console.log('Legacy commands registered');
+    debug.log('Legacy commands registered');
 }

@@ -113,6 +113,10 @@ export interface Config {
         isolation: {
             isolationCell: dsc.Snowflake;
         };
+        eclairbot: {
+            stdout: dsc.Snowflake;
+            stderr: dsc.Snowflake;
+        };
     };
 
     blockCommands: {
@@ -143,6 +147,8 @@ export interface Config {
 
     logs: {
         channel: dsc.Snowflake;
+        stdout: dsc.Snowflake;
+        stderr: dsc.Snowflake;
     };
 
     ai: {
@@ -300,6 +306,10 @@ const channelsCfg: Config['channels'] = {
     isolation: {
         isolationCell: '1415020477180674048',
     },
+    eclairbot: {
+        stdout: '1419323394440167555',
+        stderr: '1419323609419092019',
+    },
 };
 
 const defaultCfg: Config = {
@@ -402,6 +412,8 @@ const defaultCfg: Config = {
 
     logs: {
         channel: channelsCfg.mod.logs,
+        stdout: channelsCfg.eclairbot.stdout,
+        stderr: channelsCfg.eclairbot.stderr,
     },
 
 

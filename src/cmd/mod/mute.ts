@@ -1,5 +1,6 @@
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
+import * as debug from '@/util/debug.js';
 
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
@@ -101,7 +102,7 @@ export const muteCmd: Command = {
                 ]
             });
         } catch (err) {
-            console.log(err);
+            debug.err(err);
             return log.replyError(api.msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że mutujesz admina...');
         }
     }
