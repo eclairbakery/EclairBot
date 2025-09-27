@@ -11,9 +11,10 @@ import * as log from '@/util/log.js';
 
 export default class AutoModRules {
     static readonly msgAuthorIsNotImmuneToAutomod = (msg: MessageEventCtx) => {
-        for (const role of cfg.cheatsRoles.automodBypassRoles) {
+        for (const role of [...cfg.cheatsRoles.automodBypassRoles, cfg.roles.eclair25, cfg.roles.secondLevelOwner, cfg.roles.headAdmin]) {
             if (PredefinedActionConstraints.userHasRole(role)(msg.member) == Ok) return Skip;
         }
+
         return Ok;
     };
 
@@ -26,6 +27,7 @@ export default class AutoModRules {
         ],
         reply: (msg) => `Upomnienie dla <@${msg.author.id}> za próbe pingu everyone!!11!1@!!`,
         additionalConstraints: [ AutoModRules.msgAuthorIsNotImmuneToAutomod ],
+        additionalCallbacks: [ PredefinedActionCallbacks.deleteMsg ]
     });
 
     static readonly BlockInvites: Action<MessageEventCtx> = mkAutoreplyAction({
@@ -95,11 +97,15 @@ export default class AutoModRules {
         const rules = [
             //AutoModRules.EveryoneAutoreply,
             //AutoModRules.Ecliar25VideoQuestion,
+            AutoModRules.EveryoneAutoreply,
+            /** AutoModRules.Ecliar25VideoQuestion, */
             AutoModRules.GitHubAutoreply,
             AutoModRules.BlockInvites,
             AutoModRules.BlockNWords,
             //AutoModRules.BlockAnime,
             //AutoModRules.InwiduaUnderflowAutoReply,
+            /** AutoModRules.BlockAnime, */
+            /** AutoModRules.InwiduaUnderflowAutoReply */
         ];
         return rules;
     }
