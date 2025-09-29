@@ -61,6 +61,10 @@ client.once('ready', async () => {
 });
 
 async function main() {
+    try {
+        client.user.setActivity({ type: dsc.ActivityType.Watching, name: 'was 😈', state: '(tak jak watchdog kiedyś)' });
+    } catch {}
+
     let alreadyInHallOfFame: dsc.Snowflake[] = [];
     client.on('messageReactionAdd', async (reaction) => {
         if (reaction.partial) {

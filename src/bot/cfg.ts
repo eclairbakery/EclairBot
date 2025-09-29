@@ -270,6 +270,18 @@ export interface Config {
             }
         };
     };
+
+    masterSecurity: {
+        /** if true, watchNewMember will always return true (trustworthy) */
+        trustNewMembers: boolean;
+        /** if enabled, bot will kick out every new member */
+        fuckNewMembers: boolean;
+        /** minimum account age in days, can be set to 0 to disable this check */
+        minimumAccountAge: number;
+        massJoinWindow: number;
+        massJoinThreshold: number;
+        similarityThreshold: number;
+    }
 }
 
 const rolesCfg: Config['roles'] = {
@@ -504,10 +516,19 @@ const defaultCfg: Config = {
                 eclairNewsRenewInterval: 6 * 60 * 60 * 1000,
             },
             izolatka: {
-                enabledForNormalAdministrators: false
+                enabledForNormalAdministrators: true
             }
         },
     },
+
+    masterSecurity: {
+        trustNewMembers: false,
+        fuckNewMembers: false,
+        minimumAccountAge: 3,
+        massJoinWindow: 10 * 60 * 1000,
+        massJoinThreshold: 5,
+        similarityThreshold: 3
+    }
 };
 
 function makeConfig(): Config {

@@ -2,12 +2,13 @@ import { client } from '../../client.js';
 
 import sleep from '@/util/sleep.js';
 
-import actionsManager, { Action, UserEventCtx, PredefinedActionEventTypes, PredefinedActionConstraints, PredefinedActionCallbacks, Ok, Skip } from '../actions.js';
+import actionsManager, { Action, UserEventCtx, PredefinedActionEventTypes, PredefinedActionConstraints, PredefinedActionCallbacks, Ok, Skip, MagicSkipAllActions } from '../actions.js';
 export default actionsManager;
 
 import * as dsc from 'discord.js';
 
 import { cfg } from '@/bot/cfg.js';
+import { watchNewMember } from '@/bot/watchdog.js';
 
 const StartItId = '572906387382861835';
 
@@ -18,6 +19,8 @@ export const welcomeNewUserAction: Action<UserEventCtx> = {
     ],
     callbacks: [
         async (member) => {
+            if (await watchNewMember(member) == 'kicked') return MagicSkipAllActions;
+
             const welcomeChannel = await client.channels.fetch(cfg.general.welcomer.channelId);
             if (welcomeChannel == null || !welcomeChannel.isSendable()) return;
 
