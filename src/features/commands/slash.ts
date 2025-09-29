@@ -17,14 +17,14 @@ client.on('interactionCreate', async (int: Interaction) => {
     if (!cmdObj) return int.reply({ content: 'Nie znam takiej komendy' });
 
     if (!int.guild && (cmdObj.permissions.worksInDM ?? false)) {
-        int.reply('Niektóre komendy są tak jakby safe tylko na serwerze więc... możesz mieć problem jak tu odpalisz. Dlatego ci nie pozwalam.');
+        int.reply('Nie możesz tej komendy uruchomić w DMach.');
         return;
     }
 
     if (!canExecuteCmd(cmdObj, int.member! as any)) {
-        int.reply('Nie można tak!');
+        int.reply('Nie masz uprawnień.');
         return;
-    }
+    } 
 
     const isBlocked = isCommandBlockedOnChannel(cmdObj, int.channelId);
     await int.deferReply({
@@ -60,5 +60,5 @@ client.on('interactionCreate', async (int: Interaction) => {
 });
 
 export function init() {
-    debug.log('Slash commands registered');
+    debug.log('Slash commands event registered');
 }

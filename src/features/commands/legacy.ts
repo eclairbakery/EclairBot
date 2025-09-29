@@ -104,5 +104,5 @@ client.on('messageCreate', async (msg) => {
 });
 
 export function init() {
-    debug.log('Legacy commands registered');
+    debug.log('Legacy commands event registered');
 }
