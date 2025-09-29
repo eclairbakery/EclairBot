@@ -119,6 +119,17 @@ export interface Config {
         };
     };
 
+    channelsConfiguration: {
+        emojiPlacement: 'after-name' | 'before-name';
+        characters: {
+            beforeEmoji: string;
+            afterEmoji: string;
+        };
+        /** can be null if none (default: -) */
+        spaceReplacement: string | null;
+        channelNameWatchdog: { name: string, emoji: string }[];
+    };
+
     blockCommands: {
         full: BlockCommandsRules;
         fullExceptImportant: BlockCommandsRules;
@@ -254,12 +265,15 @@ export interface Config {
                 deathChatRenewInterval: number;
                 eclairNewsRenewInterval: number;
             };
+            izolatka: {
+                enabledForNormalAdministrators: boolean;
+            }
         };
     };
 }
 
 const rolesCfg: Config['roles'] = {
-    eclair25: '1368171061585117224',
+    eclair25: '1280081773019140096',
     secondLevelOwner: '1280884378586845216',
     headAdmin: '1415710955022843904',
     admin: '1415710969732005980',
@@ -317,6 +331,15 @@ const defaultCfg: Config = {
 
     roles: rolesCfg,
     channels: channelsCfg,
+    channelsConfiguration: {
+        channelNameWatchdog: [],
+        characters: {
+            beforeEmoji: '﹝',
+            afterEmoji: '﹞'
+        },
+        emojiPlacement: 'before-name',
+        spaceReplacement: null
+    },
 
     general: {
         prefix: 'sudo ',
@@ -479,6 +502,9 @@ const defaultCfg: Config = {
                 allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin],
                 deathChatRenewInterval: 2 * 60 * 60 * 1000,
                 eclairNewsRenewInterval: 6 * 60 * 60 * 1000,
+            },
+            izolatka: {
+                enabledForNormalAdministrators: false
             }
         },
     },

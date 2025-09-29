@@ -3,6 +3,7 @@ import { Snowflake } from '../../defs.js';
 import { PredefinedActionEventTypes } from '../actions.js';
 import { OnForceReloadTemplates } from '../../events/templatesEvents.js';
 import { addTemplateChannel } from './templateChannels.js';
+import { makeChannelName } from '@/util/makeChannelName.js';
 
 async function getChannel(id: Snowflake, client: dsc.Client): Promise<dsc.Channel> {
     let channel = client.channels.cache.get(id);
@@ -31,7 +32,7 @@ export async function registerTemplateChannels(client: dsc.Client) {
             PredefinedActionEventTypes.OnUserQuit,
             OnForceReloadTemplates,
         ],
-        format: (ctx) => `👥・Populacja: ${populationTemplateChannel.guild.memberCount} osób`,
+        format: (ctx) => makeChannelName({ emoji: '👥', name: `Populacja: ${populationTemplateChannel.guild.memberCount} osób` }),
     });
 
     const templateChannelTarget = await getChannel('1276862197099794514', client) as dsc.GuildChannel;
@@ -42,7 +43,7 @@ export async function registerTemplateChannels(client: dsc.Client) {
             PredefinedActionEventTypes.OnUserQuit,
             OnForceReloadTemplates,
         ],
-        format: (ctx) => `🎯・Cel: ${getNextGoal(templateChannelTarget.guild.memberCount)} pieczywa`,
+        format: (ctx) => makeChannelName({emoji: '🎯', name: `Cel: ${getNextGoal(templateChannelTarget.guild.memberCount)} pieczywa`}),
     });
 
     const bansTemplateChannel = await getChannel('1235591871020011540', client) as dsc.GuildChannel;
@@ -56,7 +57,7 @@ export async function registerTemplateChannels(client: dsc.Client) {
         format: async (ctx) => {
             const guild = bansTemplateChannel.guild;
             const bans = await guild.bans.fetch();
-            return `🚫・Bany: ${bans.size} ludzi`;
+            return makeChannelName({emoji: '🚫', name: `Bany: ${bans.size} ludzi`});
         },
     });
 
