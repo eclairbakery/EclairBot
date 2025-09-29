@@ -46,11 +46,11 @@ export default function registerLogging(client: dsc.Client) {
                     })
                     .setColor(PredefinedColors.Red)
                     .setTitle('W internecie nic nie ginie!')
-                    .setDescription(`Jakiś jełop zwany <@${msg.author.id}> usunął tą wiadomość: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`)
+                    .setDescription(`wiadomość https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}, użytkownika <@${msg.author.id}> została właśnie usunięta!`)
                     .setFields([
                         {
                             name: 'Treść',
-                            value: msg.content.slice(1, 1020)
+                            value: msg.content.slice(0, 1020)
                         }
                     ])
             ]
@@ -72,11 +72,11 @@ export default function registerLogging(client: dsc.Client) {
                     .setFields([
                         {
                             name: 'Stara wiadomość',
-                            value: oldMsg.content.slice(1, 1020)
+                            value: oldMsg.content.slice(0, 1020)
                         },
                         {
                             name: 'Nowa wiadomość',
-                            value: msg.content.slice(1, 1020)
+                            value: msg.content.slice(0, 1020)
                         }
                     ])
             ]
