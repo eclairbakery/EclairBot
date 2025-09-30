@@ -135,6 +135,7 @@ export const eclairAIAction: Action<MessageEventCtx> = {
 import { client } from "@/client.js";
 import { Action, MessageEventCtx, Ok, PredefinedActionEventTypes, Skip } from "../actions.js";
 import { cfg } from "@/bot/cfg.js";
+import sleep from "@/util/sleep.js";
 
 const eclairAIDatabase: { shallLowercase: boolean, activationKeywords: string[], replies: string[] }[] = [
     {
@@ -344,7 +345,23 @@ export const eclairAIAction: Action<MessageEventCtx> = {
     ],
     callbacks: [
         async (msg) => {
-            if (!msg.content.includes(`<@${client.user.id}>`) && !msg.content.includes(`<@!${client.user.id}>`) && msg.channelId !== cfg.ai.channel && (await msg.fetchReference()).author.id !== client.user.id) return;
+            const isMention = msg.mentions.has(client.user);
+            const isInAiChannel = msg.channelId === cfg.ai.channel;
+            const isReplyToBot = msg.reference 
+                && (await msg.fetchReference()).author.id === client.user.id;
+
+            if (!isMention || !isInAiChannel || !isReplyToBot) {
+                return;
+            }
+            if (msg.channelId == cfg.channels.general.general || msg.channelId == cfg.channels.general.offtopic) {
+                const response = await msg.reply(`eklerka kazał wyłączyć to na generalu/offtopic więc idk wywalaj na <#${cfg.channels.general.commands}>\n-# eclairAI-fe`);
+                await sleep(2000);
+                try {
+                    await response.delete();
+                } catch {}
+                await msg.react('❌');
+                return;
+            }
 
             const reaction = await msg.react('⏰');
 

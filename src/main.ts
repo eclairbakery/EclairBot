@@ -49,8 +49,8 @@ process.on('uncaughtException', async (e) => {
 });
 
 client.once('ready', async () => {
-    dsclog.setStdoutLogFn(await mkDscLogger(process.stdout.write.bind(process.stdout), cfg.logs.stdout));
-    dsclog.setStderrLogFn(await mkDscLogger(process.stderr.write.bind(process.stderr), cfg.logs.stderr));
+    dsclog.setStdoutLogFn(await mkDscLogger(process.stdout.write.bind(process.stdout), cfg.logs.stdout, 'stdout'));
+    dsclog.setStderrLogFn(await mkDscLogger(process.stderr.write.bind(process.stderr), cfg.logs.stderr, 'stderr'));
     debug.init();
 
     debug.log('Logged in.');

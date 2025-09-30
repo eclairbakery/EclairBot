@@ -17,6 +17,7 @@
 
 import { cfg } from "./cfg.js";
 import * as fs from 'node:fs';
+import * as debug from '@/util/debug.js';
 
 export class EclairAI {
     private vocab: string[] = [];
@@ -126,7 +127,7 @@ export class EclairAI {
                             this.hiddenWeights[j][k] += lr * hiddenDelta[j] * input[k];
                 }
             }
-            console.log(`Epoch ${epoch + 1}, Loss: ${totalLoss.toFixed(4)}`);
+            debug.log(`Epoch ${epoch + 1}, Loss: ${totalLoss.toFixed(4)}`);
         }
         this.saveModel();
     }

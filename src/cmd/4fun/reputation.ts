@@ -3,7 +3,7 @@ import * as log from '@/util/log.js';
 import util from 'util';
 
 import { Command, CommandFlags } from "@/bot/command.js";
-
+import * as debug from '@/util/debug.js';
 import { getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
 
@@ -82,7 +82,7 @@ export const reputationCmd: Command = {
         const user = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
 
         const userReputation = await getUserReputation(user.user.id);
-        console.log(userReputation);
+        debug.log(userReputation);
         const embed = new dsc.EmbedBuilder()
             .setAuthor({ name: user.nickname, iconURL: user.displayAvatarURL({ size: 128 }) })
             .setTitle(`Reputacja użytkownika ${user.displayName}`)
