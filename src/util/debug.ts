@@ -1,5 +1,5 @@
 import * as dsclog from '@/bot/dsclog.js';
-import util from 'util';
+import util from 'node:util';
 
 export function mkLog(func: typeof process.stdout.write): (rawtext: any, ...data: any[]) => boolean {
     return function (rawtext: Buffer | any, ...data: any[]): boolean {

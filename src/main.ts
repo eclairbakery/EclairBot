@@ -14,11 +14,11 @@ import AutoModRules from '@/features/actions/automod.js';
 import { initExpiredWarnsDeleter } from '@/features/deleteExpiredWarns.js';
 import * as dotenv from 'dotenv';
 import * as dsclog from '@/bot/dsclog.js';
-import * as debug from '@/util/debug.js';
+import {output as debug, ft} from '@/bot/logging.js';
 import * as dsc from 'discord.js';
 import * as slashCommands from '@/features/commands/slash.js';
 import * as legacyCommands from '@/features/commands/legacy.js';
-import util from 'util';
+import util from 'node:util';
 
 dotenv.config({ quiet: true });
 
@@ -38,22 +38,15 @@ import { basicMsgCreateActions } from '@/features/actions/basic-msg-create-actio
 import { registerTemplateChannels } from '@/features/actions/registerTemplateChannels.js';
 import registerLogging from './features/actions/logging.js';
 import { cfg } from './bot/cfg.js';
-import mkDscLogger from './util/mkDscLogger.js';
 
 process.on('uncaughtException', async (e) => {
-    process.stderr.write(util.format(e) + '\n');
-    try {
-        const user = await client.users.fetch('990959984005222410');
-        await user.send(`siema hiouston jest problem:\n\`\`\`${e}\`\`\``);
-    } catch {}
+    debug.warn('Uncaught exception/error: ' + e);
 });
 
 client.once('ready', async () => {
-    dsclog.setStdoutLogFn(await mkDscLogger(process.stdout.write.bind(process.stdout), cfg.logs.stdout, 'stdout'));
-    dsclog.setStderrLogFn(await mkDscLogger(process.stderr.write.bind(process.stderr), cfg.logs.stderr, 'stderr'));
-    debug.init();
+    await debug.init();
 
-    debug.log('Logged in.');
+    debug.log(`${ft.CYAN}Logged in.`);
     initExpiredWarnsDeleter();
     slashCommands.init();
     legacyCommands.init();
@@ -86,24 +79,35 @@ async function main() {
             if (!channel.isTextBased()) return;
             if (alreadyInHallOfFame.includes(msg.id)) return;
             alreadyInHallOfFame.push(msg.id);
+            const embed = new dsc.EmbedBuilder()
+                .setAuthor({name: 'EclairBOT'})
+                .setColor(`#${Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, "0")}`)
+                .setTitle(`:gem: ${msg.author.username} dostał się na Hall of Fame!`)
+                .setDescription(`Super ważna informacja, wiem. Link: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`)
+                .setFields([
+                    {
+                        name: 'Wiadomość',
+                        value: `${msg.content || 'brak treści'}`
+                    },
+                    {
+                        name: 'Informacja o Hall of Fame',
+                        value: 'Aby dostać się na Hall of Fame, musisz zdobyć co najmniej trzy emotki ⭐, 🔥 lub 💎. Więcej informacji [tutaj](<https://canary.discord.com/channels/1235534146722463844/1392128976574484592/1392129983714955425>).'
+                    }
+                ])
+                .setFooter({ text: `Wysłano w ${(msg.channel as any)?.name ?? 'Polsce'}` });
+            if (msg.attachments.size > 0) {
+                const first = msg.attachments.first();
+                if (first?.contentType?.startsWith("image/")) {
+                    embed.setImage(first.url);
+                } else {
+                    embed.addFields({
+                        name: "Załączniki",
+                        value: msg.attachments.map(a => `[${a.name}](${a.url})`).join("\n"),
+                    });
+                }
+            }
             channel.send({
-                embeds: [
-                    new dsc.EmbedBuilder()
-                        .setAuthor({name: 'EclairBOT'})
-                        .setColor(`#${Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, "0")}`)
-                        .setTitle(`:gem: ${msg.author.username} dostał się na Hall of Fame!`)
-                        .setDescription(`Super ważna informacja, wiem. Link: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`)
-                        .setFields([
-                            {
-                                name: 'Wiadomość',
-                                value: `\`\`\`${msg.content}\`\`\``
-                            },
-                            {
-                                name: 'Informacja o Hall of Fame',
-                                value: 'Aby dostać się na Hall of Fame, musisz zdobyć co najmniej trzy emotki ⭐, 🔥 lub 💎. Więcej informacji [tutaj](<https://canary.discord.com/channels/1235534146722463844/1392128976574484592/1392129983714955425>).'
-                            }
-                        ])
-                ]
+                embeds: [embed]
             });
         }
     });

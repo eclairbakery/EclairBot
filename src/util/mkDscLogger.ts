@@ -2,7 +2,7 @@ import { client } from '@/client.js';
 import { SendableChannel } from '@/defs.js';
 
 import * as dsc from 'discord.js';
-import util from 'util';
+import util from 'node:util';
 
 export default async function mkDscLogger(
     origWrite: typeof process.stdout.write,

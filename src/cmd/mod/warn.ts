@@ -4,7 +4,7 @@ import { cfg } from '@/bot/cfg.js';
 
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
-import * as debug from '@/util/debug.js';
+import {output as debug} from '@/bot/logging.js';
 
 import warn from '@/bot/apis/mod/warns.js';
 import parseTimestamp, { Timestamp } from '@/util/parseTimestamp.js';

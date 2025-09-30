@@ -1,4 +1,4 @@
-import * as debug from '@/util/debug.js';
+import {output as debug} from '@/bot/logging.js';
 
 import { Interaction } from "discord.js";
 import { cfg } from "@/bot/cfg.js";

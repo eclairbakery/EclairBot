@@ -1,9 +1,9 @@
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
-import util from 'util';
+import util from 'node:util';
 
 import { Command, CommandFlags } from "@/bot/command.js";
-import * as debug from '@/util/debug.js';
+import {output as debug} from '@/bot/logging.js';
 import { getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
 

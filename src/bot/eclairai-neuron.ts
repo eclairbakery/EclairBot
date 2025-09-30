@@ -17,7 +17,7 @@
 
 import { cfg } from "./cfg.js";
 import * as fs from 'node:fs';
-import * as debug from '@/util/debug.js';
+import {output as debug} from '@/bot/logging.js';
 
 export class EclairAI {
     private vocab: string[] = [];
