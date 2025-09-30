@@ -466,7 +466,7 @@ const defaultCfg: Config = {
     ai: {
         channel: '1276271917665484801',
         //channel: '1406643477210726550',
-        notAllowedCharacters: [':', '@', '#', '!', '&', '*'],
+        notAllowedCharacters: [':', '#', '!', '&', '*'],
         modelPath: '@/bot/eclairai-db.json',
         aiTokensLimit: 100, // believe me it's a lot, you won't get more if you're not flooding
         bannedSequences: ['@here', '@everyone', 'choler', 'chuj', 'debil', 'fiucie', 'fiut', 'fuck', 'gówn', 'hitler', 'ja pierdole', 'ja pierdolę', 'jeba', 'jebany', 'jebi', 'jprdl', 'kurwa', 'kutas', 'niger', 'nigger', 'penis', 'pierdol', 'porn', 'putin', 'rucha', 'skibidi', 'skibidi toilet', 'spierdalaj', 'toilet', 'wypierdalaj', 'zapierdalaj'],
