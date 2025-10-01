@@ -50,7 +50,7 @@ export default function registerLogging(client: dsc.Client) {
                     .setFields([
                         {
                             name: 'Treść',
-                            value: msg.content.slice(0, 1020)
+                            value: msg.content?.slice(0, 1020) ?? '*brak treści*'
                         }
                     ])
             ]
@@ -72,11 +72,11 @@ export default function registerLogging(client: dsc.Client) {
                     .setFields([
                         {
                             name: 'Stara wiadomość',
-                            value: oldMsg.content.slice(0, 1020)
+                            value: oldMsg.content?.slice(0, 1020) ?? '*brak treści*'
                         },
                         {
                             name: 'Nowa wiadomość',
-                            value: msg.content.slice(0, 1020)
+                            value: msg.content?.slice(0, 1020) ?? '*brak treści*'
                         }
                     ])
             ]
