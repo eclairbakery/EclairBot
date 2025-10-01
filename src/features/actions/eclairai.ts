@@ -350,10 +350,12 @@ export const eclairAIAction: Action<MessageEventCtx> = {
     ],
     callbacks: [
         async (msg) => {
+            const reference = msg.reference ? (await msg.fetchReference()) : null;
             const isMention = msg.mentions.has(client.user);
             const isInAiChannel = msg.channelId === cfg.ai.channel;
-            const isReplyToBot = msg.reference 
-                && (await msg.fetchReference()).author.id === client.user.id;
+            const isReplyToBot = reference
+                && reference.author.id === client.user.id
+                && reference.content?.includes('-# eclairAI-fe');
 
             if (!(isMention || isInAiChannel || isReplyToBot)) {
                 return;

@@ -3,6 +3,7 @@ import { cfg } from './cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { client } from '@/client.js';
 import {output as debug, ft} from '@/bot/logging.js';
+import { Action, MessageEventCtx, Ok, PredefinedActionEventTypes } from '@/features/actions.js';
 
 const recentJoins: { id: string; joinedAt: number; username: string }[] = [];
 
@@ -74,6 +75,10 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
         issues.push('Konto jest dziwnie młode.');
         trustScore -= 5;
     }
+    if (accountAge < 2) {
+        issues.push('Konto jest naprawdę świeżo.');
+        trustScore -= 1;
+    }
 
     if (!mem.user.avatar) {
         trustScore -= 1;
@@ -123,3 +128,84 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
 
     return true;
 }
+
+const roleHierarchy: dsc.Snowflake[] = [cfg.roles.secondLevelOwner, cfg.roles.headAdmin, cfg.roles.admin, cfg.roles.headMod, cfg.roles.mod, cfg.roles.helper];
+const userCounters = new Map<string, { creates: number; deletes: number; timeout?: NodeJS.Timeout }>();
+
+async function downgradeRole(member: dsc.GuildMember) {
+    const memberRoles = member.roles.cache;
+    const highestRoleId = roleHierarchy.find(rid => memberRoles.has(rid));
+    if (!highestRoleId) return;
+    const currentIndex = roleHierarchy.indexOf(highestRoleId);
+    if (currentIndex === roleHierarchy.length - 1) return; 
+    const newRoleId = roleHierarchy[currentIndex + 1];
+    await member.roles.remove(highestRoleId);
+    await member.roles.add(newRoleId);
+    debug.log(`watchdog: degraded ${member.user.username} from ${highestRoleId} to ${newRoleId}`);
+}
+
+function addAction(userId: string, type: "create" | "delete") {
+    let counter = userCounters.get(userId);
+    if (!counter) {
+        counter = { creates: 0, deletes: 0 };
+        counter.timeout = setTimeout(() => userCounters.delete(userId), 60_000);
+        userCounters.set(userId, counter);
+    }
+
+    if (type === "create") counter.creates++;
+    if (type === "delete") counter.deletes++;
+
+    return counter.creates > 10 || counter.deletes > 2;
+}
+
+const channelAddWatcher: Action<MessageEventCtx> = {
+    activationEventType: PredefinedActionEventTypes.OnChannelCreate,
+    constraints: [
+        () => {
+            return cfg.masterSecurity.shallAutoDegrade;
+        }
+    ],
+    callbacks: [
+        async (ctx) => {
+            debug.log(`watchdog: channel created`);
+
+            const logs = await ctx.guild.fetchAuditLogs({ type: dsc.AuditLogEvent.ChannelCreate, limit: 1 });
+            const entry = logs.entries.first();
+            if (!entry?.executor) return;
+
+            const member = await ctx.guild.members.fetch(entry.executor.id);
+            if (addAction(member.id, "create")) {
+                debug.log(`watchdog: about to downgrade role for ${member} [adding too many channels per minute]`);
+                await downgradeRole(member);
+            }
+            return;
+        }
+    ]
+};
+
+const channelDeleteWatcher: Action<MessageEventCtx> = {
+    activationEventType: PredefinedActionEventTypes.OnChannelDelete,
+    constraints: [
+        () => {
+            return cfg.masterSecurity.shallAutoDegrade;
+        }
+    ],
+    callbacks: [
+        async (ctx) => {
+            debug.log(`watchdog: channel deleted`);
+
+            const logs = await ctx.guild.fetchAuditLogs({ type: dsc.AuditLogEvent.ChannelDelete, limit: 1 });
+            const entry = logs.entries.first();
+            if (!entry?.executor) return;
+
+            const member = await ctx.guild.members.fetch(entry.executor.id);
+            if (addAction(member.id, "delete")) {
+                debug.log(`watchdog: about to downgrade role for ${member} [deleting too many channels per minute]`);
+                await downgradeRole(member);
+            }
+            return;
+        }
+    ]
+};
+
+export {channelAddWatcher, channelDeleteWatcher};

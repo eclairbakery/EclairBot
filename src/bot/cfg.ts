@@ -283,6 +283,7 @@ export interface Config {
         massJoinThreshold: number;
         similarityThreshold: number;
         allowNewBots: boolean;
+        shallAutoDegrade: boolean;
     }
 }
 
@@ -531,7 +532,8 @@ const defaultCfg: Config = {
         massJoinWindow: 10 * 60 * 1000,
         massJoinThreshold: 5,
         similarityThreshold: 3,
-        allowNewBots: false
+        allowNewBots: false,
+        shallAutoDegrade: true
     }
 };
 

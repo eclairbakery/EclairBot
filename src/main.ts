@@ -28,6 +28,7 @@ import { registerTemplateChannels } from '@/features/actions/registerTemplateCha
 import registerLogging from './features/actions/logging.js';
 import { cfg } from './bot/cfg.js';
 import sleep from './util/sleep.js';
+import { channelAddWatcher, channelDeleteWatcher } from './bot/watchdog.js';
 
 process.on('uncaughtException', async (e) => {
     debug.warn(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
@@ -40,21 +41,22 @@ client.once('ready', async () => {
     initExpiredWarnsDeleter();
     slashCommands.init();
     legacyCommands.init();
+
+    setInterval(() => {
+        if (!process.memoryUsage || !process.availableMemory) return;
+        if (process.memoryUsage().heapUsed > process.availableMemory() - 25000000) {
+            debug.warn('High on memory!');
+        }
+    }, 500);
+
     main();
-});
+}); 
 
 async function main() {
     client.user.setActivity({ type: dsc.ActivityType.Watching, name: 'was 😈', state: '(tak jak watchdog kiedyś)' });
 
     let alreadyInHallOfFame: dsc.Snowflake[] = [];
     client.on('messageReactionAdd', async (reaction) => {
-        if (!cfg.general.hallOfFameEnabled) {
-            const response = await reaction.message.reply('hall of fame jest wyłączony/zaarchiwizowany btw');
-            await sleep(1000);
-            response.delete();
-            return;
-        }
-
         if (reaction.partial) {
             try {
                 await reaction.fetch();
@@ -69,6 +71,13 @@ async function main() {
         const emoji = reaction.emoji.name;
 
         if ((emoji === "⭐" || emoji === "💎" || emoji === "🔥") && count === 3 && cfg.general.hallOfFameEligibleChannels.includes(msg.channelId)) {
+            if (!cfg.general.hallOfFameEnabled) {
+                const response = await reaction.message.reply('hall of fame jest wyłączony/zaarchiwizowany btw');
+                await sleep(1000);
+                response.delete();
+                return;
+            }
+
             const channel = await msg.guild.channels.fetch(cfg.general.hallOfFame);
             if (!channel) return;
             if (!channel.isTextBased()) return;
@@ -113,6 +122,8 @@ async function main() {
     registerLogging(client);
 
     actionsManager.addActions(
+        channelAddWatcher,
+        channelDeleteWatcher,
         welcomeNewUserAction,
         sayGoodbyeAction,
         ...AutoModRules.all(),
