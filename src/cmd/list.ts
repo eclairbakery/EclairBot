@@ -49,6 +49,7 @@ import { figletCmd } from '@/cmd/4fun/figlet.js';
 
 import { restartCmd } from '@/cmd/dev/restart.js';
 import { evalCmd, execCmd } from '@/cmd/dev/eval.js';
+import { configurationCommand } from './dev/configuration.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -92,7 +93,7 @@ export const commands: Map<Category, Command[]> = new Map([
     [
         Category.DevelopersOnly,
         [
-            evalCmd, restartCmd, execCmd
+            evalCmd, restartCmd, execCmd, configurationCommand
         ],
     ],
     [

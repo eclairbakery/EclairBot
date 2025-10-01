@@ -1,7 +1,7 @@
 import { cfg, Config } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 
-const configurationCommand: Command = {
+export const configurationCommand: Command = {
     name: 'configuration',
     description: {
         main: 'Zmień konfigurację bota, bo exec robi to źle!',
