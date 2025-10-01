@@ -57,6 +57,7 @@ export interface Config {
         moderationProtectedRoles: dsc.Snowflake[];
         hallOfFame: dsc.Snowflake;
         hallOfFameEligibleChannels: dsc.Snowflake[];
+        hallOfFameEnabled: boolean;
     };
 
     /* WARNING: Dev permissions allow doing many unsafe things and taking full control over the bot, so only give them to trusted people and the bot's developers! */
@@ -378,6 +379,7 @@ const defaultCfg: Config = {
 
         hallOfFame: '1392128976574484592',
         hallOfFameEligibleChannels: [channelsCfg.general.general, channelsCfg.general.offtopic, channelsCfg.general.media, channelsCfg.mod.hallOfShame],
+        hallOfFameEnabled: false,
         
         welcomer: {
             channelId: "1235560269871190056",

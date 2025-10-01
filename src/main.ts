@@ -27,6 +27,7 @@ import { basicMsgCreateActions } from '@/features/actions/basic-msg-create-actio
 import { registerTemplateChannels } from '@/features/actions/registerTemplateChannels.js';
 import registerLogging from './features/actions/logging.js';
 import { cfg } from './bot/cfg.js';
+import sleep from './util/sleep.js';
 
 process.on('uncaughtException', async (e) => {
     debug.warn(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
@@ -43,12 +44,17 @@ client.once('ready', async () => {
 });
 
 async function main() {
-    try {
-        client.user.setActivity({ type: dsc.ActivityType.Watching, name: 'was 😈', state: '(tak jak watchdog kiedyś)' });
-    } catch {}
+    client.user.setActivity({ type: dsc.ActivityType.Watching, name: 'was 😈', state: '(tak jak watchdog kiedyś)' });
 
     let alreadyInHallOfFame: dsc.Snowflake[] = [];
     client.on('messageReactionAdd', async (reaction) => {
+        if (!cfg.general.hallOfFameEnabled) {
+            const response = await reaction.message.reply('hall of fame jest wyłączony/zaarchiwizowany btw');
+            await sleep(1000);
+            response.delete();
+            return;
+        }
+
         if (reaction.partial) {
             try {
                 await reaction.fetch();
