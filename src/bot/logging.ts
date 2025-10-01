@@ -67,20 +67,32 @@ export namespace output {
     }
 
     export function warn(msg: string | object, args?: any[]) {
-        let data = formatter(typeof msg === 'object' ? JSON.stringify(msg) : msg, ...args ?? []);
-        console.warn(`${output.colors.RESET}[${output.colors.YELLOW} WARN ${output.colors.RESET}] ${data}${output.colors.RESET}`);
+        let data = formatter(typeof msg === 'object' ? JSON.stringify(msg) : msg, ...args ?? []).trim();
+        let prefixed = data
+            .split("\n")
+            .map(line => `${output.colors.RESET}[${output.colors.YELLOW} WARN ${output.colors.RESET}] ${line}${output.colors.RESET}`)
+            .join("\n");
+        console.warn(prefixed);
         logger('stdwarn', data);
     }
 
     export function err(msg: string | object, args?: any[]) {
-        let data = formatter(typeof msg === 'object' ? JSON.stringify(msg) : msg, ...args ?? []);
-        console.error(`${output.colors.RESET}[${output.colors.RED} ERR ${output.colors.RESET}] ${data}${output.colors.RESET}`);
+        let data = formatter(typeof msg === 'object' ? JSON.stringify(msg) : msg, ...args ?? []).trim();
+        let prefixed = data
+            .split("\n")
+            .map(line => `${output.colors.RESET}[${output.colors.RED} ERR ${output.colors.RESET}] ${line}${output.colors.RESET}`)
+            .join("\n");
+        console.error(prefixed);
         logger('stderr', data);
     }
 
     export function log(msg: string | object, args?: any[]) {
-        let data = formatter(typeof msg === 'object' ? JSON.stringify(msg) : msg, ...args ?? []);
-        console.error(`${output.colors.RESET}[${output.colors.CYAN} LOG ${output.colors.RESET}] ${data}${output.colors.RESET}`);
+        let data = formatter(typeof msg === 'object' ? JSON.stringify(msg) : msg, ...args ?? []).trim();
+        let prefixed = data
+            .split("\n")
+            .map(line => `${output.colors.RESET}[${output.colors.CYAN} LOG ${output.colors.RESET}] ${line}${output.colors.RESET}`)
+            .join("\n");
+        console.log(prefixed);
         logger('stdout', data);
     }
 }

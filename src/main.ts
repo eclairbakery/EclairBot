@@ -1,14 +1,3 @@
-// const oldWrite = process.stdout.write;
-// 
-// process.stdout.write = function (
-//     chunk: any,
-//     encoding?: BufferEncoding | ((err?: Error) => void),
-//     callback?: (err?: Error) => void
-// ): boolean {
-//     client.users.fetch('990959984005222410').then((user) => user.send(`hiouston\n\`\`\`${chunk}\`\`\``).catch(() => null)).catch(() => null);
-//     return oldWrite.call(process.stdout, chunk, encoding as any, callback);
-// };
-
 import AutoModRules from '@/features/actions/automod.js';
 
 import { initExpiredWarnsDeleter } from '@/features/deleteExpiredWarns.js';
@@ -40,7 +29,7 @@ import registerLogging from './features/actions/logging.js';
 import { cfg } from './bot/cfg.js';
 
 process.on('uncaughtException', async (e) => {
-    debug.warn('Uncaught exception/error: ' + e);
+    debug.warn(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
 });
 
 client.once('ready', async () => {

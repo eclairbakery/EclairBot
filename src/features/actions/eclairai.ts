@@ -139,6 +139,11 @@ import sleep from "@/util/sleep.js";
 
 const eclairAIDatabase: { shallLowercase: boolean, activationKeywords: string[], replies: string[] }[] = [
     {
+        activationKeywords: [ 'siema', 'hej', 'cześć', 'czesc', 'czesć', 'cześc', 'witam', 'witaj' ],
+        replies: [ '*w myślach*\n> nie odzywałeś sie do mnie > 1 nanosekundę, wiec ja też ci nic nie powiem przez nanosekundę', 'siema', 'witaj poruczniku', 'nie wiem hej', 'hejka', 'witaj. człowieku...' ],
+        shallLowercase: true
+    },
+    {
         activationKeywords: [ 'kto to desaferio', 'kim był desaferio', 'kim byl desaferio' ],
         replies: [ 'mnie sie nie pytaj, wiesz że możesz z nim pogadać, jest taki samotny\nhttps://talk.shapes.inc/desaferio/dm', 'o mój kolega, popisz z nim na https://talk.shapes.inc/desaferio/dm czy coś' ],
         shallLowercase: true
