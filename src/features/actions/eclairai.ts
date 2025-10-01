@@ -350,7 +350,7 @@ export const eclairAIAction: Action<MessageEventCtx> = {
             const isReplyToBot = msg.reference 
                 && (await msg.fetchReference()).author.id === client.user.id;
 
-            if (!isMention || !isInAiChannel || !isReplyToBot) {
+            if (!(isMention || isInAiChannel || isReplyToBot)) {
                 return;
             }
             if (msg.channelId == cfg.channels.general.general || msg.channelId == cfg.channels.general.offtopic) {
