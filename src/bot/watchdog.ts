@@ -2,6 +2,7 @@ import * as dsc from 'discord.js';
 import { cfg } from './cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { client } from '@/client.js';
+import {output as debug, ft} from '@/bot/logging.js';
 
 const recentJoins: { id: string; joinedAt: number; username: string }[] = [];
 
@@ -51,6 +52,18 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
     if (cfg.masterSecurity.trustNewMembers) return true;
     if (cfg.masterSecurity.fuckNewMembers) {
         await mem.kick();
+        return 'kicked';
+    }
+    if (!cfg.masterSecurity.allowNewBots && mem.user.bot) {
+        const notifyChan = await client.channels.fetch(cfg.channels.mod.modGeneral);
+        if (notifyChan && notifyChan.isSendable()) {
+            await notifyChan.send('dodawanie botów jest wyłączone w konfiguracji')
+            await notifyChan.send('aby dodać innego bota, włącz cfg.masterSecurity.allowNewBots');
+            if (mem.user.id == '572906387382861835') await notifyChan.send('a i btw to jest zacznijTO więc i tak bym go wywalił bo jest gejem');
+        } else {
+            debug.warn('New bot joined, but cannot find the channel to notify everyone about it.');
+        }
+        await mem.kick('zasada cfg.masterSecurity.allowNewBots nie pozwala na dodawanie nowych botów');
         return 'kicked';
     }
 

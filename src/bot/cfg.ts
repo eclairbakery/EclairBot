@@ -282,6 +282,7 @@ export interface Config {
         massJoinWindow: number;
         massJoinThreshold: number;
         similarityThreshold: number;
+        allowNewBots: boolean;
     }
 }
 
@@ -529,7 +530,8 @@ const defaultCfg: Config = {
         minimumAccountAge: 3,
         massJoinWindow: 10 * 60 * 1000,
         massJoinThreshold: 5,
-        similarityThreshold: 3
+        similarityThreshold: 3,
+        allowNewBots: false
     }
 };
 
