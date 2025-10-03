@@ -42,12 +42,15 @@ db.exec(`
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT NOT NULL UNIQUE,
         money INTEGER NOT NULL,
+        bank_money INTEGER NOT NULL,
         last_worked INTEGER NOT NULL DEFAULT 0,
         last_robbed INTEGER NOT NULL DEFAULT 0,
         last_slutted INTEGER NOT NULL DEFAULT 0,
         last_crimed INTEGER NOT NULL DEFAULT 0
     );
 `);
+
+addColumnIfNotExists('economy', 'bank_money', 'INTEGER NOT NULL');
 
 db.exec(`
     CREATE TABLE IF NOT EXISTS leveling (
@@ -75,6 +78,7 @@ db.exec(`
     );
 `);
 
+// who knows, knows
 if (!existsSync('bot/lock-rep.txt')) {
     writeFileSync('bot/lock-rep.txt', 'locked');
     db.exec('DROP TABLE reputation;');

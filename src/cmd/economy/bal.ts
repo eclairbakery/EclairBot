@@ -31,22 +31,21 @@ export const balCmd: Command = {
         const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member.plainMember;
 
         try {
-            const row: { money: number } | undefined = await new Promise((resolve, reject) => {
+            const row: { money: number, bank_money: number; } = (await new Promise((resolve, reject) => {
                 db.get('SELECT * FROM economy WHERE user_id = ?', [who.id], (err, row: any) => {
                     if (err) return reject(err);
                     resolve(row);
                 });
-            });
+            })) ?? { money: 0, bank_money: 0 };
 
-            if (!row) {
-                return log.replyError(api.msg, 'Zero pieniędzy', 'Nie ma żadnego w bazie takiego usera z hajsem :sob:');
-            }
+            row.money = row.money ?? 0;
+            row.bank_money = row.bank_money ?? 0;
 
             await api.msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setTitle('📊 Twoje pieniądze')
-                        .setDescription(`Konto jest ${row.money >= 0 ? 'warte' : 'zadłużone o'} ${Math.abs(row.money)}$.`)
+                        .setDescription(`Konto jest ${row.money >= 0 ? 'warte' : 'zadłużone o'} ${Math.abs(row.money + row.bank_money)}$.\n\n💳 Pieniądze w banku: ${row.bank_money}\n💷 Pieniądze w portfelu: ${row.money}`)
                         .setColor("#1ebfd5")
                 ]
             });

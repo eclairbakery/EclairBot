@@ -6,7 +6,7 @@ import { getRandomInt } from '@/util/rand.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 
-const COOLDOWN_MS = 30 * 1000;
+const COOLDOWN_MS = 10 * 1000;
 const WORK_AMOUNT_MIN = 50;
 const WORK_AMOUNT_MAX = 300;
 

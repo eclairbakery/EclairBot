@@ -62,6 +62,16 @@ export const crimeCmd: Command = {
 
     async execute(api) {
         const msg = api.msg;
+
+        const row = await dbGet('SELECT * FROM economy WHERE user_id = ?', [msg.author.id]);
+        if ((row?.money ?? 0) <= 100) {
+            const embed = new dsc.EmbedBuilder()
+                .setColor(PredefinedColors.DarkBlue)
+                .setTitle('Ta możliwość jest zablokowana!')
+                .setDescription(`Z racji, iż mógłbyś się zadłużyć i nie móc z tego wyjść potem bez resetu ekonomii, dokonywanie przestępstw jest dozwolone tylko, jeżeli masz więcej niż 100$.`);
+            return msg.reply({ embeds: [embed] });
+        }
+
         try {
             const amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
             const win = Math.random() < PERCENTAGE;

@@ -49,7 +49,7 @@ export const blackjackCmd: Command = {
 
         const userId = api.msg.author.id;
         const row = await dbGet('SELECT * FROM economy WHERE user_id = ?', [userId]);
-        if (row?.money ?? 0 < bet) return api.msg.reply('❌ Nie masz wystarczającej ilości pieniędzy.');
+        if ((row?.money ?? 0) < bet) return api.msg.reply('❌ Nie masz wystarczającej ilości pieniędzy.');
 
         let playerHand: Card[] = [drawCard(), drawCard()];
         let dealerHand: Card[] = [drawCard(), drawCard()];
