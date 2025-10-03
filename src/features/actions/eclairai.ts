@@ -351,7 +351,7 @@ export const eclairAIAction: Action<MessageEventCtx> = {
     callbacks: [
         async (msg) => {
             const reference = msg.reference ? (await msg.fetchReference()) : null;
-            const isMention = msg.mentions.has(client.user);
+            const isMention = msg.content.startsWith(`<@${client.user.id}>`) || msg.content.startsWith(`<@!${client.user.id}>`);
             const isInAiChannel = msg.channelId === cfg.ai.channel;
             const isReplyToBot = reference
                 && reference.author.id === client.user.id

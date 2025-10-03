@@ -26,7 +26,7 @@ import { antiSpamAndAntiFlood } from '@/features/actions/anti-spam-flood.js';
 import { basicMsgCreateActions } from '@/features/actions/basic-msg-create-actions.js';
 import { registerTemplateChannels } from '@/features/actions/registerTemplateChannels.js';
 import registerLogging from './features/actions/logging.js';
-import { cfg } from './bot/cfg.js';
+import { cfg, overrideCfg } from './bot/cfg.js';
 import sleep from './util/sleep.js';
 import { channelAddWatcher, channelDeleteWatcher } from './bot/watchdog.js';
 

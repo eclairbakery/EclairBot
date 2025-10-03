@@ -1,4 +1,4 @@
-import { cfg, Config } from "@/bot/cfg.js";
+import { cfg, overrideCfg, Config, saveConfigurationChanges } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 
 export const configurationCommand: Command = {
@@ -40,7 +40,8 @@ export const configurationCommand: Command = {
         }
 
         const keys = property.split(".");
-        let target: Config = cfg;
+        let target: any = cfg;
+        let targetOverride: any = overrideCfg;
 
         for (let i = 0; i < keys.length - 1; i++) {
             const key = keys[i];
@@ -48,6 +49,11 @@ export const configurationCommand: Command = {
                 return api.msg.reply(`❌ klucz "${key}" nie istnieje w konfiguracji (nie, nie możesz robić nowych).`);
             }
             target = target[key];
+
+            if (!(key in targetOverride)) {
+                targetOverride[key] = {};
+            }
+            targetOverride = targetOverride[key];
         }
 
         const lastKey = keys[keys.length - 1];
@@ -57,7 +63,16 @@ export const configurationCommand: Command = {
         }
 
         target[lastKey] = evaluatedValue;
+        targetOverride[lastKey] = evaluatedValue;
 
-        return api.msg.reply(`ustawiono \`${property}\` na \`${value}\`; proszę zauważyć, że niektóre zmiany mogą wymagać restartu bota, a ta komenda jeszcze nie zmienia bot/config.js (w przyszłości będzie to robić z automatu jak coś)`);
+        try {
+            saveConfigurationChanges();
+        } catch (e) {
+            return api.msg.reply(`⚠️ ustawiono \`${property}\`, ale nie udało się zapisać zmian w stałej konfiguracji`);
+        }
+
+        return api.msg.reply(
+            `✅ ustawiono \`${property}\` na \`${value}\`; polecam jeszcze odpalić \`${cfg.general.prefix}restart\`.`
+        );
     },
 };

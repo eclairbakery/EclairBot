@@ -7,6 +7,7 @@ import { dbGet, dbRun } from '@/util/db-utils.js';
 import { client } from '@/client.js';
 import { debug } from 'node:util';
 import { mkProgressBar } from '@/util/progressbar.js';
+import { output } from './logging.js';
 
 export const OnSetXpEvent = actionsManager.mkEvent('OnSetXpEvent');
 export interface XpEventCtx {
@@ -45,7 +46,14 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
     // amount
     let amount = cfg.general.leveling.xpPerMessage;
     if (msg.attachments.size > 0 && msg.content.length > 5) amount = Math.floor(amount * 1.5);
-    if (msg.content.length > 100) amount = Math.floor(amount);
+    if (msg.content.length > 100) amount = Math.floor(amount * 1.2);
+
+    // events
+    if (cfg.general.leveling.currentEvent.enabled && cfg.general.leveling.currentEvent.channels.includes(msg.channelId)) {
+        amount = Math.floor(amount * cfg.general.leveling.currentEvent.multiplier);
+    }
+
+    //output.log(`Receiving ${amount} XP, while multiplier ${cfg.general.leveling.currentEvent.multiplier}`);
 
     // checkpoints
     // Fetch current XP from the database

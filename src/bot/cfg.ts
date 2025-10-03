@@ -2,7 +2,9 @@ import * as dsc from 'discord.js';
 import JSON5 from 'json5';
 
 import { deepMerge } from '@/util/objects.js';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { output } from './logging.js';
+import { client } from '@/client.js';
 
 export type BlockCommandsRules = {
     default: 'block';
@@ -34,6 +36,11 @@ export interface Config {
             canChangeXP: dsc.Snowflake[];
             levelChannel: dsc.Snowflake;
             shallPingWhenNewLevel: boolean;
+            currentEvent: {
+                enabled: boolean;
+                channels: dsc.Snowflake[];
+                multiplier: number;
+            }
         };
 
         /* The welcomer configuration */
@@ -97,6 +104,9 @@ export interface Config {
             offtopic: dsc.Snowflake;
             commands: dsc.Snowflake;
             media: dsc.Snowflake;
+        };
+        dev: {
+            programming: dsc.Snowflake;
         };
         other: {
             communityPolls: dsc.Snowflake;
@@ -339,6 +349,9 @@ const channelsCfg: Config['channels'] = {
         stdout: '1419323394440167555',
         stderr: '1419323609419092019',
     },
+    dev: {
+        programming: '1422241324819550381'
+    }
 };
 
 const defaultCfg: Config = {
@@ -376,7 +389,12 @@ const defaultCfg: Config = {
                 100: '1390802440739356762'
             },
             levelChannel: '1235592947831930993',
-            shallPingWhenNewLevel: false
+            shallPingWhenNewLevel: false,
+            currentEvent: {
+                enabled: false,
+                channels: [ channelsCfg.dev.programming ],
+                multiplier: 2
+            }
         },
 
         hallOfFame: '1392128976574484592',
@@ -537,13 +555,24 @@ const defaultCfg: Config = {
     }
 };
 
-function makeConfig(): Config {
-    if (!existsSync('bot/config.js')) return defaultCfg;
+export let overrideCfg: Config = null;
+
+function readConfigurationChanges() {
+    if (!existsSync('bot/config.js')) return {};
     let file = readFileSync('bot/config.js', 'utf-8');
     file = file.trim();
     while (file.startsWith('(')) file = file.slice(1);
     while (file.endsWith(')')) file = file.slice(0, -1);
-    return deepMerge(defaultCfg, JSON5.parse(file));
+    return JSON5.parse(file);
+}
+
+export function saveConfigurationChanges() {
+    writeFileSync('bot/config.js', `(${JSON5.stringify(overrideCfg, null, 4)})`, 'utf-8');
+}
+
+function makeConfig(): Config {
+    overrideCfg = readConfigurationChanges();
+    return deepMerge(defaultCfg, overrideCfg);
 };
 
 export const cfg = makeConfig();
