@@ -6,6 +6,7 @@ import { getRandomInt } from '@/util/rand.js';
 
 import { Command, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
+import { output } from '@/bot/logging.js';
 
 const COOLDOWN_MS = 5 * 60 * 1000;
 const ROB_PERCENTAGE = 0.5;
@@ -102,7 +103,7 @@ export const robCmd: Command = {
 
             return msg.reply({ embeds: [embed] });
         } catch (error) {
-            console.error(error);
+            output.err(error);
             return log.replyError(msg, 'Coś się odwaliło...', 'Proszę, pytaj sqlite3 a nie mnie obwiniasz.');
         }
     }

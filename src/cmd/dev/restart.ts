@@ -2,6 +2,7 @@ import { cfg } from '@/bot/cfg.js';
 import { Command, CommandFlags } from '@/bot/command.js';
 import * as dsc from 'discord.js';
 import { canEval } from './eval.js';
+import { output } from '@/bot/logging.js';
 
 export const restartCmd: Command = {
     name: 'restart',
@@ -22,7 +23,7 @@ export const restartCmd: Command = {
         if (!canEval) {
             return api.msg.reply('cierpliwości');
         }
-        console.log('Issued restart. This will work due to the behaviour of Pterodactyl Daemon.');
+        output.log('Issued restart. This will work due to the behaviour of Pterodactyl Daemon.');
         await api.msg.reply('jusz siem restartujem plis łejt plis plis plis łejt');
         process.exit(1);
     },

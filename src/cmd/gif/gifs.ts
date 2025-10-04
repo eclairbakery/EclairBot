@@ -7,6 +7,7 @@ import * as dsc from 'discord.js';
 
 import { PredefinedColors } from '@/util/color.js';
 import { dbGet } from '@/util/db-utils.js';
+import { output } from '@/bot/logging.js';
 
 async function getGIF(searchTerm: string): Promise<string> {
     const apiKey = process.env.TENOR_API;
@@ -22,7 +23,7 @@ async function getGIF(searchTerm: string): Promise<string> {
             return 'Nie znaleziono!';
         }
     } catch (error) {
-        console.error('Błąd podczas pobierania GIFa:', error);
+        output.warn('Błąd podczas pobierania GIFa: ' + error);
         return 'Wystąpił błąd!';
     }
 }

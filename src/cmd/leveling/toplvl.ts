@@ -5,6 +5,7 @@ import { db } from '@/bot/db.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandFlags } from '@/bot/command.js';
+import { output } from '@/bot/logging.js';
 
 function calculateLevel(xp: number, levelDivider: number): number {
     return Math.floor(
@@ -60,7 +61,7 @@ export const toplvlCmd: Command = {
                         inline: true
                     });
                 } catch (e) {
-                    console.log(e);
+                    output.warn(e);
                     i--;
                     continue;
                 }

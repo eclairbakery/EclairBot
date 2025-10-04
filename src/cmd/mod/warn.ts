@@ -61,7 +61,7 @@ export const warnCmd: Command = {
         const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null;
         let expiresAt = duration != null ? Math.floor(Date.now() / 1000) + duration : null;
 
-        console.log('Warn command args:', { targetUser, points, reason });
+        debug.log('Warn command args:', { targetUser, points, reason });
 
         if (!targetUser) {
             return log.replyError(

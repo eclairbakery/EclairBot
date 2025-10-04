@@ -93,7 +93,7 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
                                     await member.roles.remove(roleId);
                                 }
                             } catch (err) {
-                                console.error(`Failed to remove role ${roleId}:`, err);
+                                output.log(`Failed to remove role ${roleId}:`, err);
                             }
                         }
                         try {

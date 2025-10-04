@@ -21,6 +21,7 @@ import { Snowflake } from "@/defs.js";
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js'
 import * as fs from 'node:fs';
+import { output } from "./logging.js";
 
 export class EclairAiFirstEdition {
     private config!: typeof cfg.ai;
@@ -82,7 +83,7 @@ export class EclairAiFirstEdition {
             }
         } catch (e) {
             this.shouldReply = false;
-            console.error(e);
+            output.err(e);
         }
     }
 

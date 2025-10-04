@@ -5,6 +5,7 @@ import { getRandomInt } from '@/util/rand.js';
 
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
+import { output } from '@/bot/logging.js';
 
 const COOLDOWN_MS = 10 * 1000;
 const WORK_AMOUNT_MIN = 50;
@@ -82,7 +83,7 @@ export const workCmd: Command = {
 
             return api.msg.reply({ embeds: [embed] });
         } catch (error) {
-            console.error(error);
+            output.err(error);
 
             const embed = new dsc.EmbedBuilder()
                 .setColor(PredefinedColors.Red)

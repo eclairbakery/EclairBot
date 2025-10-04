@@ -3,7 +3,7 @@ import AutoModRules from '@/features/actions/automod.js';
 import { initExpiredWarnsDeleter } from '@/features/deleteExpiredWarns.js';
 import * as dotenv from 'dotenv';
 import * as dsclog from '@/bot/dsclog.js';
-import {output as debug, ft} from '@/bot/logging.js';
+import {output as debug, ft, output} from '@/bot/logging.js';
 import * as dsc from 'discord.js';
 import * as slashCommands from '@/features/commands/slash.js';
 import * as legacyCommands from '@/features/commands/legacy.js';
@@ -61,7 +61,7 @@ async function main() {
             try {
                 await reaction.fetch();
             } catch (err) {
-                console.error(err);
+                output.err(err);
                 return;
             }
         }

@@ -3,6 +3,7 @@ import { cfg } from '@/bot/cfg.js';
 import { db } from '@/bot/db.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
+import { output } from '@/bot/logging.js';
 
 let ecoRoles = [
     "1235548306550161451"
@@ -29,7 +30,7 @@ export const topecoCmd: Command = {
 
         db.all('SELECT * FROM economy ORDER BY money DESC LIMIT 12', [], async (err, rows: any[]) => {
             if (err) {
-                console.error(err);
+                output.err(err);
                 return log.replyError(msg, 'Błąd pobierania topki', 'Pytaj twórców biblioteki sqlite3...');
             }
 

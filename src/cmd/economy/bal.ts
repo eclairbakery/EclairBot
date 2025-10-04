@@ -3,6 +3,7 @@ import { db } from '@/bot/db.js';
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
+import { output } from '@/bot/logging.js';
 
 export const balCmd: Command = {
     name: 'bal',
@@ -50,7 +51,7 @@ export const balCmd: Command = {
                 ]
             });
         } catch (err) {
-            console.error(err);
+            output.err(err);
             log.replyError(api.msg, 'Błąd pobierania balansu', 'Coś poszło nie tak z bazą danych.');
         }
     }

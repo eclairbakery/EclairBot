@@ -1,5 +1,6 @@
 import { getBalance, updateBalance } from "@/bot/apis/economy/apis.js";
 import { Command, CommandFlags, CommandAPI } from "@/bot/command.js";
+import { output } from "@/bot/logging.js";
 import * as log from '@/util/log.js';
 
 export const withdrawCmd: Command = {
@@ -43,7 +44,7 @@ export const withdrawCmd: Command = {
 
             await api.msg.reply(`✅ Wypłacono ${amount}$ z banku. Nowy stan: 💳 ${row.bank_money}$ w banku, 💷 ${row.money}$ w portfelu.`);
         } catch (err) {
-            console.error(err);
+            output.err(err);
             log.replyError(api.msg, 'Błąd wypłaty', 'Coś poszło nie tak z bazą danych.');
         }
     }

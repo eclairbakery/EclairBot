@@ -5,6 +5,7 @@ import { getRandomInt } from '@/util/rand.js';
 
 import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
+import { output } from '@/bot/logging.js';
 
 const COOLDOWN_MS = 15 * 60 * 1000;
 const WORK_AMOUNT_MIN = 2500;
@@ -98,7 +99,7 @@ export const crimeCmd: Command = {
             return msg.reply({ embeds: [embed] });
 
         } catch (error) {
-            console.error(error);
+            output.err(error);
             const embed = new dsc.EmbedBuilder()
                 .setColor(PredefinedColors.Red)
                 .setTitle('Błąd')
