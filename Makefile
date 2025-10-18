@@ -3,6 +3,8 @@ all:
 
 depconfig:
 	npm install
+	npm audit
+	npm audit fix
 
 dev:
 	npm start
