@@ -4,6 +4,7 @@ import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
+import { output } from '@/bot/logging.js';
 
 const cmdCfg = cfg.mod.commands.warn;
 
@@ -41,7 +42,7 @@ export const warnClearCmd: Command = {
 
         db.get('SELECT * FROM warns WHERE id = ?', [warnId], (err, row) => {
             if (err) {
-                console.error(err);
+                output.warn(err);
                 return log.replyError(api.msg, 'Błąd bazy danych', 'Spróbuj ponownie później.');
             }
 
@@ -55,7 +56,7 @@ export const warnClearCmd: Command = {
 
             db.run('DELETE FROM warns WHERE id = ?', [warnId], async (delErr) => {
                 if (delErr) {
-                    console.error(delErr);
+                    output.err(delErr);
                     return log.replyError(api.msg, 'Błąd podczas usuwania', 'Spróbuj ponownie później.');
                 }
 

@@ -3,6 +3,7 @@ import { cfg } from '@/bot/cfg.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
+import { output } from '@/bot/logging.js';
 
 const cmdCfg = cfg.mod.commands.mute;
 
@@ -100,7 +101,7 @@ export const unmuteCmd: Command = {
                 ],
             });
         } catch (err) {
-            console.error(err);
+            output.err(err);
             return log.replyError(api.msg, 'Błąd', 'Nie udało się odciszyć użytkownika. Sprawdź permisje.');
         }
     },

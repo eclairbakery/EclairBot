@@ -345,7 +345,7 @@ export const eclairAIAction: Action<MessageEventCtx> = {
         (ctx) => {
             if (ctx.author.bot) return Skip;
             if (!ctx.inGuild()) return Skip;
-            return Ok;
+            return cfg.ai.enabled ? Ok : Skip;
         }
     ],
     callbacks: [

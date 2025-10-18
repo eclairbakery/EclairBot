@@ -5,6 +5,7 @@ import { db } from '@/bot/db.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
+import { output } from '@/bot/logging.js';
 
 export const warnlistCmd: Command = {
     name: 'warnlist',
@@ -38,7 +39,7 @@ export const warnlistCmd: Command = {
 
         db.all('SELECT * FROM warns ORDER BY id DESC', [], async (err, rows: any[]) => {
             if (err) {
-                console.error(err);
+                output.warn(err);
                 return log.replyError(api.msg, 'Błąd pobierania warnów', 'Pytaj twórców biblioteki sqlite3...');
             }
 

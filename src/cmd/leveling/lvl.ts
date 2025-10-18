@@ -5,6 +5,7 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { xpToLevel, levelToXp, mkLvlProgressBar } from '@/bot/level.js';
+import { output } from '@/bot/logging.js';
 
 export const lvlCmd: Command = {
     name: 'lvl',
@@ -63,7 +64,7 @@ export const lvlCmd: Command = {
 
             await api.msg.reply({ embeds: [embed] });
         } catch (err) {
-            console.error(err);
+            output.err(err);
         }
     },
 };

@@ -78,7 +78,7 @@ export const toplvlCmd: Command = {
                 ]
             });
         } catch (err) {
-            console.error(err);
+            output.err(err);
             await msg.reply('❌ Wystąpił błąd podczas pobierania topu poziomów.');
         }
     },

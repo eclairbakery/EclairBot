@@ -6,6 +6,7 @@ import * as log from '@/util/log.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { levelToXp, OnSetXpEvent } from '@/bot/level.js';
 import actionsManager from '@/features/actions.js';
+import { output } from '@/bot/logging.js';
 
 export const xpCmd: Command = {
     name: 'xp',
@@ -79,7 +80,7 @@ export const xpCmd: Command = {
 
             log.replySuccess(api.msg, 'Udało się!', `Wykonałem akcję na użytkowniku **${targetUser.user.tag}**`);
         } catch (err) {
-            console.error(err);
+            output.err(err);
             log.replyError(api.msg, 'Błąd wykonania', 'Coś poszło nie tak podczas modyfikacji XP/levela.');
         }
     },

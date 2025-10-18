@@ -1,4 +1,5 @@
 import { db, sqlite } from '@/bot/db.js';
+import { output } from '@/bot/logging.js';
 
 const EXPIRED_WARNS_CHECK_INTERVAL = 10 * 60 * 1000; // 10m in ms
 const SHORT_TERM_THRESHOLD = 10 * 60; // 10m in seconds
@@ -24,7 +25,7 @@ export function initExpiredWarnsDeleter() {
 
         return interval;
     } catch (error) {
-        console.error( error);
+        output.err( error);
     }
 }
 
@@ -36,7 +37,7 @@ function checkLongTermWarns() {
         [now],
         function(err) {
             if (err) {
-                console.error(err);
+                output.err(err);
             }
         }
     );
@@ -53,7 +54,7 @@ export function scheduleWarnDeletion(warnId: number, expiresAt: number) {
                 [warnId],
                 function(err) {
                     if (err) {
-                        console.error(err);
+                        output.err(err);
                     }
                 }
             );
@@ -70,7 +71,7 @@ function restoreTimers() {
         [now, threshold],
         (err, rows) => {
             if (err) {
-                console.error(err);
+                output.err(err);
                 return;
             }
             rows.forEach(row => {

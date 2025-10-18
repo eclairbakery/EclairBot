@@ -174,6 +174,7 @@ export interface Config {
     };
 
     ai: {
+        enabled: boolean;
         channel: dsc.Snowflake;
         notAllowedCharacters: string[];
         modelPath: string;
@@ -486,6 +487,7 @@ const defaultCfg: Config = {
     },
 
     ai: {
+        enabled: false,
         channel: '1276271917665484801',
         //channel: '1406643477210726550',
         notAllowedCharacters: [':', '#', '!', '&', '*'],
