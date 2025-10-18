@@ -7,6 +7,22 @@ let eclairPing = true;
 
 let interval2: NodeJS.Timeout;
 
+let deathChatQuestions: string[] = [
+    'Masa pewnej gwiazdy to milion ton. Ile dzieci mają Ania i Bartek?',
+    'Czy liczba naturalna jest dodatnia? Jeżeli tak, to co z zerem?',
+    'Czy tylko mi, jak podzielę pisemnie zero przez zero, wychodzi nieskończonność na minusie?',
+    'Ile to 0 do 0-wej potęgi? Teoretycznie cokolwiek podniesione do 0-wej potęgi to jeden. Ale teoretycznie 0 do jakiejkolwiek potęgi to dalej 0.',
+    'Jaki film niedawno oglądałeś/-aś?',
+    'Co sądzisz o funkcji if() w CSS?',
+    'Czemu używasz akurat tego systemu operacyjnego, co używasz? Czemu nie NixOS albo Gentoo?',
+    'Masz bottleneck (jakaś część komputera ogranicza inną)?',
+    'Wolisz pisać w zwykłym html, css i js czy używać front-endowych frameworków jak react, next.js lub vue?',
+    'Piszesz zazwyczaj aplikacje terminalowe, gry, strony internetowe czy coś innego?',
+    'Lubisz rozmowy o polityce na generalu czy wolisz osobny kanał polityka?',
+    'Czy banie się śmierci nie jest baniem się przed utratą świadomości? W takim razie czemu takie osoby często nie boją się zasnąć?',
+    'Lubisz [Desaferio](<https://talk.shapes.inc/desaferio/dm>)?'
+];
+
 export const notifyCmd: Command = {
     name: 'notify',
     aliases: ['mention-ping'],
@@ -69,11 +85,16 @@ export const actionPing: Action<MessageEventCtx> = {
             clearTimeout(interval2);
             interval2 = setTimeout(() => {
                 const now = new Date();
-                const hour = now.getHours();
+                const options = {
+                    timeZone: 'Europe/Warsaw',
+                    hour: 'numeric',
+                    hour12: false
+                } satisfies Intl.DateTimeFormatOptions; // don't ask me what it does chatgpt wrote that satisfies
+                const hour = parseInt(new Intl.DateTimeFormat('pl-PL', options).format(now), 10);
 
                 if (hour >= 10 && hour < 20) {
                     if (msg.channel.isSendable()) {
-                        msg.channel.send('<@&1411646441511714827>');
+                        msg.channel.send(`<@&1411646441511714827> ${deathChatQuestions[Math.floor(Math.random() * deathChatQuestions.length)]}`);
                     }
                 }
             }, cfg.mod.commands.ping.deathChatRenewInterval);

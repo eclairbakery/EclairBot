@@ -29,31 +29,27 @@ export interface TemplateChannel {
     additionalCallbacks?: ActionCallback<ChannelEventCtx>[];
 }
 
-export function* mkTemplateChannelUpdateActions({ channel, updateOnEvents, format, additionalConstraints, additionalCallbacks }: TemplateChannel): Iterable<AnyAction> {
-    for (const event of updateOnEvents) {
-        yield {
-            activationEventType: event,
-            constraints: [
-                ...additionalConstraints || [],
-            ],
-            callbacks: [
-                async (ctx: AnyEventCtx) => {
-                    let newName: string | Promise<string> = format(ctx);
-                    if (newName instanceof Promise) {
-                        newName = await newName;
-                    }
-                    channel.setName(newName);
-                },
-                ...additionalCallbacks || [],
-            ],
-        };
+export function mkTemplateChannelUpdateAction({ channel, updateOnEvents, format, additionalConstraints, additionalCallbacks }: TemplateChannel): AnyAction {
+    return {
+        activationEventType: updateOnEvents,
+        constraints: [
+            ...additionalConstraints || [],
+        ],
+        callbacks: [
+            async (ctx: AnyEventCtx) => {
+                let newName: string | Promise<string> = format(ctx);
+                if (newName instanceof Promise) {
+                    newName = await newName;
+                }
+                channel.setName(newName);
+            },
+            ...additionalCallbacks || [],
+        ],
     }
 }
 
 export function addTemplateChannel(options: TemplateChannel) {
-    for (const action of mkTemplateChannelUpdateActions(options)) {
-        actionsManager.addAction(action);
-    }
+    actionsManager.addAction(mkTemplateChannelUpdateAction(options));
 }
 
 export async function makeNameGuard(channelId: string, channelName: ChannelName) {

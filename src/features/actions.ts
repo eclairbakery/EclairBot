@@ -78,7 +78,7 @@ export class PredefinedActionEventTypes {
 }
 
 export interface Action<CallbackCtxType> {
-    activationEventType: ActionEventType;
+    activationEventType: ActionEventType | ActionEventType[];
     constraints: ConstraintCallback<CallbackCtxType>[];
     callbacks: ActionCallback<CallbackCtxType>[];
 }
@@ -228,7 +228,11 @@ class ActionManager {
     addAction(action: AnyAction) {
         const eventTypes = action.activationEventType === PredefinedActionEventTypes.OnMessageCreateOrEdit
             ? [PredefinedActionEventTypes.OnMessageCreate, PredefinedActionEventTypes.OnMessageEdit]
-            : [action.activationEventType];
+            : (
+                typeof action.activationEventType == 'object'
+                    ? action.activationEventType
+                    : [ action.activationEventType ]
+            );
 
         for (const eventType of eventTypes) {
             if (!this.actions.has(eventType)) this.actions.set(eventType, []);
@@ -243,16 +247,40 @@ class ActionManager {
     }
 
     registerEvents(client: dsc.Client): void {
-        // ---- Message Events ----
-        this.handleEvent(client, 'messageCreate', PredefinedActionEventTypes.OnMessageCreate, (msg: dsc.Message) => msg,
-            action => [PredefinedActionEventTypes.OnMessageCreate, PredefinedActionEventTypes.OnMessageCreateOrEdit].includes(action.activationEventType)
+        this.handleEvent(
+            client,
+            'messageCreate',
+            PredefinedActionEventTypes.OnMessageCreate,
+            (msg: dsc.Message) => msg,
+            action => {
+                const types = [
+                    PredefinedActionEventTypes.OnMessageCreate,
+                    PredefinedActionEventTypes.OnMessageCreateOrEdit
+                ];
+                const a = action.activationEventType;
+                return Array.isArray(a)
+                    ? a.some(t => types.includes(t))
+                    : types.includes(a);
+            }
         );
         this.handleEvent(
-            client, 'messageUpdate', PredefinedActionEventTypes.OnMessageEdit,
+            client,
+            'messageUpdate',
+            PredefinedActionEventTypes.OnMessageEdit,
             (_old, newMsg: dsc.Message) => newMsg,
-            (action, oldMsg: dsc.Message, newMsg: dsc.Message) =>
-                [PredefinedActionEventTypes.OnMessageEdit, PredefinedActionEventTypes.OnMessageCreateOrEdit].includes(action.activationEventType)
-                && oldMsg.content !== newMsg.content,
+            (action, oldMsg: dsc.Message, newMsg: dsc.Message) => {
+                const types = [
+                    PredefinedActionEventTypes.OnMessageEdit,
+                    PredefinedActionEventTypes.OnMessageCreateOrEdit
+                ];
+                const a = action.activationEventType;
+                return (
+                    (Array.isArray(a)
+                        ? a.some(t => types.includes(t))
+                        : types.includes(a))
+                    && oldMsg.content !== newMsg.content
+                );
+            }
         );
         this.handleEvent(client, 'messageDelete', PredefinedActionEventTypes.OnMessageDelete, (msg: dsc.Message) => msg);
 

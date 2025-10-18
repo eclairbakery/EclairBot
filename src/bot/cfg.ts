@@ -128,6 +128,7 @@ export interface Config {
         eclairbot: {
             stdout: dsc.Snowflake;
             stderr: dsc.Snowflake;
+            dbBackups: dsc.Snowflake;
         };
     };
 
@@ -350,6 +351,7 @@ const channelsCfg: Config['channels'] = {
     eclairbot: {
         stdout: '1419323394440167555',
         stderr: '1419323609419092019',
+        dbBackups: '1429118062816137318'
     },
     dev: {
         programming: '1422241324819550381'
@@ -365,12 +367,20 @@ const defaultCfg: Config = {
         channelNameWatchdog: [
             {
                 name: {
-                    name: 'yapping',
+                    name: 'general',
                     emoji: '💬',
                     leaveSpaces: false
                 },
                 id: '1264971505662689311'
-            }
+            },
+            {
+                name: {
+                    name: 'offtopic',
+                    emoji: '👤',
+                    leaveSpaces: false
+                },
+                id: '1392567715407073402'
+            },
         ],
         characters: {
             beforeEmoji: '﹝',

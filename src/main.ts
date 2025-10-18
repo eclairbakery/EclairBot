@@ -29,6 +29,7 @@ import registerLogging from './features/actions/logging.js';
 import { cfg, overrideCfg } from './bot/cfg.js';
 import sleep from './util/sleep.js';
 import { channelAddWatcher, channelDeleteWatcher } from './bot/watchdog.js';
+import { getChannel } from './features/actions/templateChannels.js';
 
 process.on('uncaughtException', async (e) => {
     debug.warn(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
@@ -54,6 +55,31 @@ client.once('ready', async () => {
 
 async function main() {
     client.user.setActivity({ type: dsc.ActivityType.Watching, name: 'was 😈', state: '(tak jak watchdog kiedyś)' });
+
+    setInterval(async () => {
+        let dbBackUpsChannel: dsc.GuildTextBasedChannel;
+        try {
+            dbBackUpsChannel = await getChannel(cfg.channels.eclairbot.dbBackups, client) as dsc.GuildTextBasedChannel;
+        } catch {
+            debug.err('could not find the channel to send db backups');
+            return;
+        }
+        if (!dbBackUpsChannel.isSendable()) {
+            debug.err('the channel with db backups is not sendable');
+            return;
+        }
+        try {
+            const dbPath = './bot.db';
+            const backupName = `backup-${new Date().toISOString().replace(/[:.]/g, '-')}.db`;
+
+            await dbBackUpsChannel.send({
+                content: `🗄️ automatyczny backup masz tutaj (${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })})`,
+                files: [{ attachment: dbPath, name: backupName }]
+            });
+        } catch (e) {
+            debug.err('while sending db at bot.db: ' + e);
+        }
+    }, 30 * 60 * 1000);
 
     let alreadyInHallOfFame: dsc.Snowflake[] = [];
     client.on('messageReactionAdd', async (reaction) => {

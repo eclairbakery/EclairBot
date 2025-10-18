@@ -19,7 +19,7 @@ export const izolatkaCmd: Command = {
     ],
     permissions: {
         discordPerms: null,
-        allowedRoles: ['1274478730697510997', '1368301367655141446', '1280884378586845216', '1280081773019140096'],
+        allowedRoles: [cfg.roles.eclair25, cfg.roles.secondLevelOwner, cfg.roles.headAdmin, cfg.roles.admin, cfg.roles.headMod],
         allowedUsers: []
     },
     async execute(api) {

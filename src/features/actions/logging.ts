@@ -46,7 +46,7 @@ export default function registerLogging(client: dsc.Client) {
                     })
                     .setColor(PredefinedColors.Red)
                     .setTitle('W internecie nic nie ginie!')
-                    .setDescription(`wiadomość https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}, użytkownika <@${msg.author.id}> została właśnie usunięta!`)
+                    .setDescription(`wiadomość https://discord.com/channels/${msg.guildId??'unknown'}/${msg.channelId??'unknown'}/${msg.id??'unknown'}, użytkownika <@${msg.author.id}> została właśnie usunięta!`)
                     .setFields([
                         {
                             name: 'Treść',
@@ -68,7 +68,7 @@ export default function registerLogging(client: dsc.Client) {
                     })
                     .setColor(PredefinedColors.Blue)
                     .setTitle('Edycja wiadomości')
-                    .setDescription(`Tu masz autora co nie: <@${msg.author.id}>\nA tu masz link co nie: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`)
+                    .setDescription(`Tu masz autora co nie: <@${msg.author.id}>\nA tu masz link co nie: https://discord.com/channels/${msg.guildId??'unknown'}/${msg.channelId??'unknown'}/${msg.id??'unknown'}`)
                     .setFields([
                         {
                             name: 'Stara wiadomość',
