@@ -5,6 +5,7 @@ import { deepMerge } from '@/util/objects.js';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { output } from './logging.js';
 import { client } from '@/client.js';
+import { ChannelName } from '@/util/makeChannelName.js';
 
 export type BlockCommandsRules = {
     default: 'block';
@@ -138,7 +139,7 @@ export interface Config {
         };
         /** can be null if none (default: -) */
         spaceReplacement: string | null;
-        channelNameWatchdog: { name: string, emoji: string }[];
+        channelNameWatchdog: {name: ChannelName, id: dsc.Snowflake}[];
     };
 
     blockCommands: {
@@ -361,7 +362,16 @@ const defaultCfg: Config = {
     roles: rolesCfg,
     channels: channelsCfg,
     channelsConfiguration: {
-        channelNameWatchdog: [],
+        channelNameWatchdog: [
+            {
+                name: {
+                    name: 'yapping',
+                    emoji: '💬',
+                    leaveSpaces: false
+                },
+                id: '1264971505662689311'
+            }
+        ],
         characters: {
             beforeEmoji: '﹝',
             afterEmoji: '﹞'

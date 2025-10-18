@@ -2,17 +2,9 @@ import * as dsc from 'discord.js';
 import { Snowflake } from '../../defs.js';
 import { PredefinedActionEventTypes } from '../actions.js';
 import { OnForceReloadTemplates } from '../../events/templatesEvents.js';
-import { addTemplateChannel } from './templateChannels.js';
+import { addTemplateChannel, getChannel, makeNameGuard } from './templateChannels.js';
 import { makeChannelName } from '@/util/makeChannelName.js';
-
-async function getChannel(id: Snowflake, client: dsc.Client): Promise<dsc.Channel> {
-    let channel = client.channels.cache.get(id);
-    if (channel == null) {
-        channel = await client.channels.fetch(id);
-    }
-
-    return channel;
-}
+import { cfg } from '@/bot/cfg.js';
 
 function getNextGoal(memberCount: number): number {
     const base = Math.floor(memberCount / 50) * 50;
@@ -62,4 +54,7 @@ export async function registerTemplateChannels(client: dsc.Client) {
     });
 
 
+    cfg.channelsConfiguration.channelNameWatchdog.forEach((channelNameConfig) => {
+        makeNameGuard(channelNameConfig.id, channelNameConfig.name); 
+    });
 }

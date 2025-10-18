@@ -71,12 +71,12 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
     const created = mem.user.createdAt;
     const now = new Date();
     const accountAge = (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
-    if (accountAge < 7) {
-        issues.push('Konto jest dziwnie młode.');
+    if (accountAge < 30) {
+        issues.push('Konto jest dziwnie młode (młodsze niż miesiąc).');
         trustScore -= 5;
     }
-    if (accountAge < 2) {
-        issues.push('Konto jest naprawdę świeżo.');
+    if (accountAge < 7) {
+        issues.push('Konto jest naprawdę świeże (młodsze niż tydzień).');
         trustScore -= 1;
     }
 

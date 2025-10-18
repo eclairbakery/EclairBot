@@ -17,9 +17,9 @@ export const configurationCommand: Command = {
         },
         {
             name: 'value',
-            description: 'Wartość. Ostrzeżenie: Pod spodem uruchamia eval, więc jest unsafe.',
+            description: 'Wartość. Ostrzeżenie: Pod spodem uruchamia eval, więc jest unsafe. Możesz skipnąć i wtedy masz wartość ;)',
             type: 'trailing-string',
-            optional: false
+            optional: true
         }
     ],
     flags: CommandFlags.Important,
@@ -31,13 +31,7 @@ export const configurationCommand: Command = {
 
     async execute(api) {
         const property = api.getTypedArg('arg', 'string')?.value as string;
-        const value = api.getTypedArg('value', 'trailing-string')?.value as string;
-        let evaluatedValue: any;
-        try {
-            evaluatedValue = (0, eval)(value);
-        } catch (e) {
-            return api.msg.reply(`❌ nie udało się sparsować wartości: ${e}`);
-        }
+        const value = api.getTypedArg('value', 'trailing-string')?.value as string | undefined;
 
         const keys = property.split(".");
         let target: any = cfg;
@@ -62,6 +56,25 @@ export const configurationCommand: Command = {
             return api.msg.reply(`❌ klucz "${lastKey}" nie istnieje w konfiguracji (nie, nie możesz robić nowych).`);
         }
 
+        if (!value) {
+            const currentValue = target[lastKey];
+            return api.msg.reply(
+                `🔍 wartość \`${property}\` = \`\`\`${JSON.stringify(currentValue, null, 4)}\`\`\``
+            );
+        }
+
+        let sanitizedValue = value.trim();
+        if (sanitizedValue.startsWith("```") && sanitizedValue.endsWith("```")) {
+            sanitizedValue = sanitizedValue.slice(3, -3).trim();
+        }
+
+        let evaluatedValue: any;
+        try {
+            evaluatedValue = (0, eval)(sanitizedValue);
+        } catch (e) {
+            return api.msg.reply(`❌ nie udało się sparsować wartości: ${e}`);
+        }
+
         target[lastKey] = evaluatedValue;
         targetOverride[lastKey] = evaluatedValue;
 
@@ -72,7 +85,7 @@ export const configurationCommand: Command = {
         }
 
         return api.msg.reply(
-            `✅ ustawiono \`${property}\` na \`${value}\`; polecam jeszcze odpalić \`${cfg.general.prefix}restart\`.`
+            `✅ ustawiono \`${property}\` na \`${sanitizedValue}\`; polecam jeszcze odpalić \`${cfg.general.prefix}restart\`.`
         );
     },
 };
