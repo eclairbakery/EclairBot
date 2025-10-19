@@ -54,10 +54,7 @@ export const lvlCmd: Command = {
                     `**${who.tag}** ma poziom **${xpToLevel(row.xp, cfg.general.leveling.levelDivider)}** (XP: ${row.xp}).`
                     + `\n${mkLvlProgressBar(
                         row.xp,
-                        levelToXp(
-                            xpToLevel(row.xp, cfg.general.leveling.levelDivider) + 1,
-                            cfg.general.leveling.levelDivider,
-                        )
+                        cfg.general.leveling.levelDivider
                     )}`,
                 )
                 .setThumbnail(who.displayAvatarURL({ size: 128 }));

@@ -49,12 +49,14 @@ export const toprepCmd: Command = {
         for (const [userID, repScale] of top) {
             if (i > count) break;
 
-            const user = await api.msg.guild?.members.fetch(userID);
+            const user = await api.msg.guild?.members.fetch(userID).catch(() => null);
             if (user == null) continue;
+
+            const rep = await getUserReputation(userID);
 
             fields.push({
                 name: `${i} » ${user.user.username}`,
-                value: `**Reputacja:** ${repScale}/10\n${mkProgressBar(repScale, 10, 5)}`,
+                value: `**Reputacja:** ${Math.floor(repScale)}/10\n\`${mkProgressBar(repScale, 10, 20)}\`\n${mkDualProgressBar(rep.repProportion.sub ?? 0, rep.repProportion.plus ?? 0)}`,
                 inline: true,
             });
 
@@ -63,6 +65,9 @@ export const toprepCmd: Command = {
 
         return api.msg.reply({
             embeds: [
+                new dsc.EmbedBuilder()
+                    .setColor(PredefinedColors.Cyan)
+                    .setDescription('-# eklerka dalej nie zrobił obrazka na top reputacji'),
                 new dsc.EmbedBuilder()
                     .setColor(PredefinedColors.Cyan)
                     .setFields(fields)

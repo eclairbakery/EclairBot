@@ -100,7 +100,9 @@ export namespace output {
             case "stdwarn": target = stderrChannel; break;
         }
         if (target) {
-            await target.send(`at ${where}:\n\`\`\`ansi\n${msg.replaceAll("```", "`[second char]`")}\`\`\``);
+            try {
+                await target.send(`at ${where}:\n\`\`\`ansi\n${msg.replaceAll("```", "`[second char]`")}\`\`\``);
+            } catch {}
         }
     }
 

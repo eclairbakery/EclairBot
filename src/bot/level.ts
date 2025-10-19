@@ -34,8 +34,15 @@ function getMention(user: dsc.GuildMember, ping: boolean = cfg.general.leveling.
     return ping ? `<@${user.user.id}>` : `**${user.displayName.replace('**', '\*\*')}**`;
 }
 
-export function mkLvlProgressBar(xp: number, xpForNextLevel: number, totalLength: number = 10): string {
-    return `${mkProgressBar(xp, xpForNextLevel, totalLength)} ${xp}/${xpForNextLevel}xp`;
+export function mkLvlProgressBar(xp: number, levelDivider: number, totalLength: number = 10): string {
+    const level = xpToLevel(xp, levelDivider);
+    const xpCurrentLevel = levelToXp(level, levelDivider);
+    const xpNextLevel = levelToXp(level + 1, levelDivider);
+
+    const progressXp = xp - xpCurrentLevel;
+    const neededXp = xpNextLevel - xpCurrentLevel;
+
+    return `${mkProgressBar(progressXp, neededXp, totalLength)} ${progressXp}/${neededXp}xp`;
 }
 
 export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {

@@ -1,22 +1,21 @@
-import AutoModRules from '@/features/actions/automod.js';
-
-import { initExpiredWarnsDeleter } from '@/features/deleteExpiredWarns.js';
+// preparation & basic imports
+import { client } from '@/client.js';
+import { output as debug, ft } from '@/bot/logging.js';
 import * as dotenv from 'dotenv';
-import * as dsclog from '@/bot/dsclog.js';
-import {output as debug, ft, output} from '@/bot/logging.js';
-import * as dsc from 'discord.js';
-import * as slashCommands from '@/features/commands/slash.js';
-import * as legacyCommands from '@/features/commands/legacy.js';
-import util from 'node:util';
-
+process.on('uncaughtException', async (e) => {
+    debug.warn(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
+});
 dotenv.config({ quiet: true });
 
-import { client } from '@/client.js';
-import { actionPing } from '@/cmd/mod/ping.js';
-import { commands } from '@/cmd/list.js';
+// required libs
+import * as dsc from 'discord.js';
 
-import actionsManager from '@/features/actions.js';
+// configuration
+import { cfg } from './bot/cfg.js';
 
+// actions
+import AutoModRules from '@/features/actions/automod.js';
+import { initExpiredWarnsDeleter } from '@/features/deleteExpiredWarns.js';
 import { welcomeNewUserAction, sayGoodbyeAction } from '@/features/actions/welcomer.js';
 import { eclairAIAction } from '@/features/actions/eclairai.js';
 import { countingChannelAction } from '@/features/actions/countingChannel.js';
@@ -26,15 +25,20 @@ import { antiSpamAndAntiFlood } from '@/features/actions/anti-spam-flood.js';
 import { basicMsgCreateActions } from '@/features/actions/basic-msg-create-actions.js';
 import { registerTemplateChannels } from '@/features/actions/registerTemplateChannels.js';
 import registerLogging from './features/actions/logging.js';
-import { cfg, overrideCfg } from './bot/cfg.js';
-import sleep from './util/sleep.js';
 import { channelAddWatcher, channelDeleteWatcher } from './bot/watchdog.js';
+import { actionPing } from '@/cmd/mod/ping.js';
+import { hallOfFameAction } from './features/actions/hallOfFame.js';
+
+// commands
+import * as slashCommands from '@/features/commands/slash.js';
+import * as legacyCommands from '@/features/commands/legacy.js';
+import { commands } from '@/cmd/list.js';
+
+// misc
+import actionsManager from '@/features/actions.js';
 import { getChannel } from './features/actions/templateChannels.js';
 
-process.on('uncaughtException', async (e) => {
-    debug.warn(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
-});
-
+// --------------- INIT ---------------
 client.once('ready', async () => {
     await debug.init();
 
@@ -53,117 +57,10 @@ client.once('ready', async () => {
     main();
 }); 
 
-async function main() {
-    client.user.setActivity({ type: dsc.ActivityType.Watching, name: 'was 😈', state: '(tak jak watchdog kiedyś)' });
-
-    setInterval(async () => {
-        let dbBackUpsChannel: dsc.GuildTextBasedChannel;
-        try {
-            dbBackUpsChannel = await getChannel(cfg.channels.eclairbot.dbBackups, client) as dsc.GuildTextBasedChannel;
-        } catch {
-            debug.err('could not find the channel to send db backups');
-            return;
-        }
-        if (!dbBackUpsChannel.isSendable()) {
-            debug.err('the channel with db backups is not sendable');
-            return;
-        }
-        try {
-            const dbPath = './bot.db';
-            const backupName = `backup-${new Date().toISOString().replace(/[:.]/g, '-')}.db`;
-
-            await dbBackUpsChannel.send({
-                content: `🗄️ automatyczny backup masz tutaj (${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })})`,
-                files: [{ attachment: dbPath, name: backupName }]
-            });
-        } catch (e) {
-            debug.err('while sending db at bot.db: ' + e);
-        }
-    }, 30 * 60 * 1000);
-
-    let alreadyInHallOfFame: dsc.Snowflake[] = [];
-    client.on('messageReactionAdd', async (reaction) => {
-        if (reaction.partial) {
-            try {
-                await reaction.fetch();
-            } catch (err) {
-                output.err(err);
-                return;
-            }
-        }
-
-        const msg = reaction.message;
-        const count = reaction.count;
-        const emoji = reaction.emoji.name;
-
-        if ((emoji === "⭐" || emoji === "💎" || emoji === "🔥") && count === 3 && cfg.general.hallOfFameEligibleChannels.includes(msg.channelId)) {
-            if (!cfg.general.hallOfFameEnabled) {
-                const response = await reaction.message.reply('hall of fame jest wyłączony/zaarchiwizowany btw');
-                await sleep(1000);
-                response.delete();
-                return;
-            }
-
-            const channel = await msg.guild.channels.fetch(cfg.general.hallOfFame);
-            if (!channel) return;
-            if (!channel.isTextBased()) return;
-            if (alreadyInHallOfFame.includes(msg.id)) return;
-            alreadyInHallOfFame.push(msg.id);
-            const embed = new dsc.EmbedBuilder()
-                .setAuthor({name: 'EclairBOT'})
-                .setColor(`#${Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, "0")}`)
-                .setTitle(`:gem: ${msg.author.username} dostał się na Hall of Fame!`)
-                .setDescription(`Super ważna informacja, wiem. Link: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`)
-                .setFields([
-                    {
-                        name: 'Wiadomość',
-                        value: `${msg.content || 'brak treści'}`
-                    },
-                    {
-                        name: 'Informacja o Hall of Fame',
-                        value: 'Aby dostać się na Hall of Fame, musisz zdobyć co najmniej trzy emotki ⭐, 🔥 lub 💎. Więcej informacji [tutaj](<https://canary.discord.com/channels/1235534146722463844/1392128976574484592/1392129983714955425>).'
-                    }
-                ])
-                .setFooter({ text: `Wysłano w ${(msg.channel as any)?.name ?? 'Polsce'}` });
-            if (msg.attachments.size > 0) {
-                const first = msg.attachments.first();
-                if (first?.contentType?.startsWith("image/")) {
-                    embed.setImage(first.url);
-                } else {
-                    embed.addFields({
-                        name: "Załączniki",
-                        value: msg.attachments.map(a => `[${a.name}](${a.url})`).join("\n"),
-                    });
-                }
-            }
-            channel.send({
-                embeds: [embed]
-            });
-        }
-    });
-
-    const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
-
-    registerTemplateChannels(client);
-    registerLogging(client);
-
-    actionsManager.addActions(
-        channelAddWatcher,
-        channelDeleteWatcher,
-        welcomeNewUserAction,
-        sayGoodbyeAction,
-        ...AutoModRules.all(),
-        antiSpamAndAntiFlood,
-        basicMsgCreateActions,
-        mediaChannelAction,
-        countingChannelAction,
-        lastLetterChannelAction,
-        actionPing,
-        eclairAIAction,
-    );
-    actionsManager.registerEvents(client);
-
+// --------------- SETUP ---------------
+async function setUpCommands() {
     const commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
+    const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
 
     for (const [, cmds] of commands) {
         for (const cmd of cmds) {
@@ -254,6 +151,65 @@ async function main() {
     } catch (err) {
         debug.err('Slash commands error: ' + err);
     }
+}
+
+function setUpActions() {
+    actionsManager.addActions(
+        // hall of fame
+        hallOfFameAction,
+        // watchdog security features
+        channelAddWatcher,
+        channelDeleteWatcher,
+        // lobby & users watchdog
+        welcomeNewUserAction,
+        sayGoodbyeAction,
+        // automod & anti-spam with anti-flood
+        ...AutoModRules.all(),
+        antiSpamAndAntiFlood,
+        // msg-specific actions
+        basicMsgCreateActions,
+        mediaChannelAction,
+        countingChannelAction,
+        lastLetterChannelAction,
+        eclairAIAction,
+        // additional features
+        actionPing,
+    );
+    registerTemplateChannels(client);
+    registerLogging(client);
+    actionsManager.registerEvents(client);
+}
+
+// --------------- MAIN ---------------
+async function main() {
+    client.user.setActivity({ type: dsc.ActivityType.Watching, name: 'was 😈', state: '(tak jak watchdog kiedyś)' });
+    setUpCommands();
+    setUpActions();
+
+    setInterval(async () => {
+        let dbBackUpsChannel: dsc.GuildTextBasedChannel;
+        try {
+            dbBackUpsChannel = await getChannel(cfg.channels.eclairbot.dbBackups, client) as dsc.GuildTextBasedChannel;
+        } catch {
+            debug.err('could not find the channel to send db backups');
+            return;
+        }
+        if (!dbBackUpsChannel.isSendable()) {
+            debug.err('the channel with db backups is not sendable');
+            return;
+        }
+        try {
+            const dbPath = './bot.db';
+            const backupName = `backup-${new Date().toISOString().replace(/[:.]/g, '-')}.db`;
+
+            await dbBackUpsChannel.send({
+                content: `🗄️ automatyczny backup masz tutaj (${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })})`,
+                files: [{ attachment: dbPath, name: backupName }]
+            });
+        } catch (e) {
+            debug.err('while sending db at bot.db: ' + e);
+        }
+    }, 2 * 60 * 60 * 1000);
 }
 
 (async function () { await client.login(process.env.TOKEN); })();
