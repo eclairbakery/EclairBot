@@ -110,7 +110,8 @@ export const warnCmd: Command = {
             await warn(targetUser, {
                 reason,
                 expiresAt: expiresAt ?? null,
-                points
+                points,
+                mod: api.msg.author.id
             });
         } catch (err) {
             debug.err(err);

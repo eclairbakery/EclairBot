@@ -6,12 +6,12 @@ import { scheduleWarnDeletion } from '@/features/deleteExpiredWarns.js';
 
 export default function warn(
     member: dsc.GuildMember,
-    data: { reason: string; expiresAt: number | null; points: number }
+    data: { reason: string; expiresAt: number | null; points: number; mod?: dsc.Snowflake }
 ): Promise<{ id: number }> {
     return new Promise((resolve, reject) => {
         db.run(
             'INSERT INTO warns (user_id, moderator_id, reason_string, points, expires_at) VALUES (?, ?, ?, ?, ?)',
-            [member.id, null, data.reason, data.points, data.expiresAt],
+            [member.id, data.mod ?? null, data.reason, data.points, data.expiresAt],
             function (err) {
                 if (err) {
                     reject(err);

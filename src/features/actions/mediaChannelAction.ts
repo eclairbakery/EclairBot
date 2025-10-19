@@ -30,7 +30,7 @@ export const mediaChannelAction: Action<MessageEventCtx> = {
                     }
                 }
             }
-            if (/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}/.test(msg.content)) {
+            if (/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([\w-]{11})(?:[?&](?:list|index|t)=[^&]*)*/.test(msg.content)) {
                 check = true;
             }
             if (check) {
