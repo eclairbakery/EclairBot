@@ -3,7 +3,7 @@ import { addExperiencePoints } from "@/bot/level.js";
 import { client } from "@/client.js";
 import { Action, MessageEventCtx, PredefinedActionEventTypes } from "@/features/actions.js";
 import { PredefinedColors } from "@/util/color.js";
-import { EmbedBuilder, GuildTextBasedChannel, PermissionsBitField } from "discord.js";
+import { EmbedBuilder, GuildTextBasedChannel, PermissionsBitField, Snowflake } from "discord.js";
 import * as log from '@/util/log.js';
 
 const WatchdogID = '267624335459270784';
@@ -19,10 +19,10 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
             if (!msg.author.bot) await addExperiencePoints(msg);
 
             // f*ck you
-            if (msg.content.trim().length > 1000 && !msg.content.startsWith('```') && !msg.content.startsWith('```')) {
+            if (msg.content.trim().length > 1000 && !msg.content.startsWith('```')) {
                 return msg.reply('dobra fajnie chłopie nikt cie nie czyta nie rób dwudziestogodzinnych wideoesei na tematy które kazdy ma gdzies');
             }
-
+            
             // easter egg
             if (msg.content === 'obserwuję was' && msg.author.id == WatchdogID) {
                 return msg.reply('ja cb też');

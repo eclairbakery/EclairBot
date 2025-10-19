@@ -41,6 +41,11 @@ export interface Config {
                 enabled: boolean;
                 channels: dsc.Snowflake[];
                 multiplier: number;
+            },
+            generalLevelBoost: {
+                enabled: boolean,
+                boostTimeInMinutes: number,
+                generalActivityMeterRefreshInMinutes: number
             }
         };
 
@@ -415,6 +420,11 @@ const defaultCfg: Config = {
                 enabled: false,
                 channels: [ channelsCfg.dev.programming ],
                 multiplier: 2
+            },
+            generalLevelBoost: {
+                enabled: true,
+                boostTimeInMinutes: 2,
+                generalActivityMeterRefreshInMinutes: 5
             }
         },
 
