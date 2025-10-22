@@ -18,7 +18,7 @@ export const depositCmd: Command = {
     },
     expectedArgs: [
         {
-            type: 'string',
+            type: 'number',
             optional: false,
             name: 'amount',
             description: 'Kwota do wpłaty (liczba lub "all").',
@@ -28,7 +28,7 @@ export const depositCmd: Command = {
         const user = api.msg.member.plainMember;
         try {
             const row = await getBalance(user.id);
-            let amountArg = api.getTypedArg('amount', 'string')?.value as string;
+            let amountArg = api.getTypedArg('amount', 'number')?.value as string;
             let amount = amountArg.toLowerCase() === "all" ? row.money : parseInt(amountArg);
 
             if (isNaN(amount) || amount <= 0) {
@@ -42,7 +42,7 @@ export const depositCmd: Command = {
             row.bank_money += amount;
             await updateBalance(user.id, row.money, row.bank_money);
 
-            await api.msg.reply(`✅ Wpłacono ${amount}$ do banku. Nowy stan: 💳 ${row.bank_money}$ w banku, 💷 ${row.money}$ w portfelu.`);
+            await api.msg.reply(`✅ Wpłacono ${amount}$ do banku.\nNowy stan: 💳 ${row.bank_money}$ w banku, 💷 ${row.money}$ w portfelu.`);
         } catch (err) {
             output.err(err);
             log.replyError(api.msg, 'Błąd depozytu', 'Coś poszło nie tak z bazą danych.');

@@ -5,8 +5,76 @@ import { Action, MessageEventCtx, PredefinedActionEventTypes } from "@/features/
 import { PredefinedColors } from "@/util/color.js";
 import { EmbedBuilder, GuildTextBasedChannel, PermissionsBitField, Snowflake } from "discord.js";
 import * as log from '@/util/log.js';
+import * as dsc from 'discord.js';
+import sleep from "@/util/sleep.js";
 
 const WatchdogID = '267624335459270784';
+
+function shallSwitchToProgramming(msg: dsc.Message): boolean {
+    const  typescript_is_better_than_c_zero_out_of_ten_ragebait = msg.content.trim().toLowerCase();
+    return typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('eclairbot') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('eb-c') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('eb-rs') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('eb-ts') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('c++') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('g++') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('std') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('hyprland') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('nvim') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('neovim') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('vim') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('emacs') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('zed') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('vsc') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('visual studio code') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('visual studio') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('i tak zrobie inaczej') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('refactor') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('segfault') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('assembly') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('funkcj') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('metod') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('function') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('method') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('parser') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('lexer') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('ast') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('compiler') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('interpreter') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('oop') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('recursion') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('closure') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('lambda') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('generics') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('interface') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('trait') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('pattern') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('ref') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('pointer') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('stack') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('heap') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('python') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('javascript') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('typescript') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('nodejs') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('rust') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('golang') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('docker') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('kubernetes') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('git') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('clang') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('gcc') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('make') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('cmake') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('cmakefile') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('regex') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('deno') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('react') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('vue') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('angular') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('svelte') ||
+           typescript_is_better_than_c_zero_out_of_ten_ragebait.includes('update');
+}
 
 export const basicMsgCreateActions: Action<MessageEventCtx> = {
     constraints: [() => true],
@@ -19,8 +87,8 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
             if (!msg.author.bot) await addExperiencePoints(msg);
 
             // f*ck you
-            if (msg.content.trim().length > 1000 && !msg.content.startsWith('```')) {
-                return msg.reply('dobra fajnie chłopie nikt cie nie czyta nie rób dwudziestogodzinnych wideoesei na tematy które kazdy ma gdzies');
+            if (msg.content.trim().length > 1000 && !msg.content.startsWith('```') && !msg.author.bot) {
+                return msg.reply('dobra fajnie chłopie nikt cie nie czyta nie rób dwudziestogodzinnych wideoesei na tematy które kazdy ma gdzieś');
             }
             
             // easter egg
@@ -30,6 +98,17 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
                 return msg.reply('jestem istotą wyższą a jeśli to kwestionujesz lub sądzisz że wyższy jesteś to kłamiesz');
             } else if (msg.content === 'siema' && msg.author.id == WatchdogID) {
                 return msg.reply('siema watchdog, pogódźmy się\n-# (jak znowu zaczniesz mieć do mnie problemy to skończy się anti-spamem, uważaj podwładny)');
+            } else if (msg.author.id == WatchdogID) {
+                return msg.reply('pamiętaj że istotą niższą jesteś cn?');
+            }
+
+            // programming
+            if (shallSwitchToProgramming(msg) && msg.channelId == cfg.channels.general.general && Math.random() < cfg.general.switchToProgrammingChance) {
+                (async function () {
+                    msg.channel.sendTyping();
+                    await sleep(2000);
+                    if (msg.channel.isSendable()) msg.channel.send(`## <#${cfg.channels.dev.programming}> chłopy`);
+                })(); // run but not with await
             }
 
             // gifs ban

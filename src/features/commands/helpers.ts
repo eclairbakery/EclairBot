@@ -14,6 +14,7 @@ import {
 } from "@/bot/command.js";
 import * as dsc from 'discord.js';
 import parseTimestamp from "@/util/parseTimestamp.js";
+import { getBalance } from '@/bot/apis/economy/apis.js';
 
 export class ArgParseError extends Error {};
 
@@ -102,7 +103,13 @@ loop:
         }
 
         case 'number': {
-            const num = Number(raw);
+            if ((raw?.normalize('NFKC').trim().toLowerCase() ?? '') === 'all') {
+                let x = context.interaction?.user.id ?? context.msg?.author.id ?? "someone";
+                const balance = await getBalance(x);
+                parsedArgs.push({ ...decl, value: balance.money } as CommandArgumentWithNumberValue);
+                break;
+            }
+            const num = Number(raw?.replace(/[^\d.-]/g, '').trim() ?? '');
             if (isNaN(num)) {
                 if (decl.optional) continue;
                 throw new ArgMustBeSomeTypeError(decl.name, 'number');

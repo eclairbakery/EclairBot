@@ -70,9 +70,9 @@ export const robCmd: Command = {
     aliases: [],
     execute: async (api) => {
         const msg = api.msg;
-        const targetArg = api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue;
+        const targetArg = api.getTypedArg('user', 'user-mention-or-reference-msg-author') as CommandArgumentWithUserMentionValue;
 
-        if (!targetArg.value) return msg.reply('Musisz oznaczyć osobę, którą chcesz okraść!');
+        if (!targetArg?.value) return msg.reply('Musisz oznaczyć osobę, którą chcesz okraść!');
         const target = targetArg.value;
 
         if (target.id === msg.author.id) return msg.reply('Nie możesz okraść samego siebie!');

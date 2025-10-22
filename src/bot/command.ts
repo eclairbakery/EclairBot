@@ -100,7 +100,7 @@ export interface CommandMessageAPI {
 export interface CommandAPI {
     args: CommandValuableArgument[];
     getArg: (name: string) => CommandValuableArgument;
-    getTypedArg: (name: string, type: CommandArgType) => CommandValuableArgument;
+    getTypedArg(name: string, type: CommandArgType): CommandValuableArgument;
     msg: CommandMessageAPI;
     referenceMessage?: CommandMessageAPI;
     plainInteraction?: dsc.ChatInputCommandInteraction;

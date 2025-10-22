@@ -6,6 +6,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { output } from './logging.js';
 import { client } from '@/client.js';
 import { ChannelName } from '@/util/makeChannelName.js';
+import { Snowflake } from '@/defs.js';
 
 export type BlockCommandsRules = {
     default: 'block';
@@ -19,6 +20,13 @@ export interface Emoji {
     name: string;
     id: dsc.Snowflake;
 };
+
+interface ConfigEconomyShopItem {
+    name: string;
+    description: string;
+    price: number;
+    role: Snowflake;
+}
 
 export interface Config {
     /* Whether the bot is enabled (The most useless configuration field I've ever seen...) */
@@ -71,6 +79,7 @@ export interface Config {
         hallOfFame: dsc.Snowflake;
         hallOfFameEligibleChannels: dsc.Snowflake[];
         hallOfFameEnabled: boolean;
+        switchToProgrammingChance: number;
     };
 
     /* WARNING: Dev permissions allow doing many unsafe things and taking full control over the bot, so only give them to trusted people and the bot's developers! */
@@ -290,6 +299,10 @@ export interface Config {
         };
     };
 
+    economy: {
+        shop: ConfigEconomyShopItem[]
+    },
+
     masterSecurity: {
         /** if true, watchNewMember will always return true (trustworthy) */
         trustNewMembers: boolean;
@@ -359,7 +372,7 @@ const channelsCfg: Config['channels'] = {
         dbBackups: '1429118062816137318'
     },
     dev: {
-        programming: '1422241324819550381'
+        programming: '1426217543617740950'
     }
 };
 
@@ -456,7 +469,8 @@ const defaultCfg: Config = {
             ],
             countingChannel: channelsCfg.forfun.counting,
             lastLetterChannel: channelsCfg.forfun.lastLetter,
-        }
+        },
+        switchToProgrammingChance: 0.2
     },
 
     emoji: {
@@ -475,7 +489,7 @@ const defaultCfg: Config = {
 
     devPerms: {
         allowedRoles: [],
-        allowedUsers: ['1368171061585117224', '990959984005222410', '985053803151753316', '1274610053843783768', '1401568817766862899'],
+        allowedUsers: ['1368171061585117224', '990959984005222410', '985053803151753316', '1274610053843783768', '1401568817766862899']
     },
 
 
@@ -573,6 +587,29 @@ const defaultCfg: Config = {
                 enabledForNormalAdministrators: true
             }
         },
+    },
+
+    economy: {
+        shop: [
+            {
+                name: 'VIP',
+                description: 'Nie wiem poflexuj się rangą która jest na końcu listy, ale hej - dalej jesteś VIP\'em.',
+                price: 25_000,
+                role: '1235548993933541397'
+            },
+            {
+                name: 'miniVIP',
+                description: 'Taki VIP ale na sterydach. Nie możesz się poflexować, bo ma mini w nazwie i będą myśleli, że cię nie stać...',
+                price: 5_000,
+                role: '1235550013233303582'
+            },
+            {
+                name: 'SVIP',
+                description: 'Już lepszy VIP. Nie wiem co Ci daje to ciągłe upgradeowanie VIP\'ów, ale musi coś dawać, bo inaczej byś tego nie robił :wilted_rose:',
+                price: 100_000,
+                role: '1235550115998076948'
+            }
+        ]
     },
 
     masterSecurity: {
