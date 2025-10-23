@@ -8,7 +8,7 @@ import { getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
 
 function getReputationDescription(user: dsc.GuildMember, reputation: Reputation): string {
-    let firstSentence: string, secondSentence: string, thirdSentence: string;
+    let firstSentence: string = '', secondSentence: string = '', thirdSentence: string = '';
 
     const { repProportion } = reputation;
     if (repProportion.plus < 2) {
@@ -84,7 +84,7 @@ export const reputationCmd: Command = {
         const userReputation = await getUserReputation(user.user.id);
         debug.log(userReputation);
         const embed = new dsc.EmbedBuilder()
-            .setAuthor({ name: user.nickname, iconURL: user.displayAvatarURL({ size: 128 }) })
+            .setAuthor({ name: user.nickname ?? user.user.username, iconURL: user.displayAvatarURL({ size: 128 }) })
             .setTitle(`Reputacja użytkownika ${user.displayName}`)
             .setDescription(getReputationDescription(user, userReputation))
             .addFields(

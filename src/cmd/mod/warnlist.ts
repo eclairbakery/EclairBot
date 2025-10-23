@@ -36,10 +36,10 @@ export const warnlistCmd: Command = {
 
         if (api.plainInteraction) {
             client = api.plainInteraction.client;
-            guild = api.plainInteraction.guild;
+            guild = api.plainInteraction.guild!;
         } else if (api.plainMessage) {
             client = api.plainMessage.client;
-            guild = api.plainMessage.guild;
+            guild = api.plainMessage.guild!;
         } else {
             return log.replyError(api.msg, 'Błąd', 'Nie mogę znaleźć klienta bota...');
         }

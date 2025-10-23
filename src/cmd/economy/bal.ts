@@ -29,7 +29,7 @@ export const balCmd: Command = {
     ],
 
     async execute(api: CommandAPI) {
-        const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member.plainMember;
+        const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member!.plainMember;
 
         try {
             const row: { money: number, bank_money: number; } = (await new Promise((resolve, reject) => {

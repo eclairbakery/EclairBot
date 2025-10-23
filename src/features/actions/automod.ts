@@ -13,10 +13,10 @@ import { client } from '@/client.js';
 export default class AutoModRules {
     static readonly msgAuthorIsNotImmuneToAutomod = (msg: MessageEventCtx) => {
         for (const role of [...cfg.cheatsRoles.automodBypassRoles, cfg.roles.eclair25, cfg.roles.secondLevelOwner, cfg.roles.headAdmin]) {
-            if (PredefinedActionConstraints.userHasRole(role)(msg.member) == Ok) return Skip;
+            if (PredefinedActionConstraints.userHasRole(role)(msg.member!) == Ok) return Skip;
         }
 
-        if (msg.author.id == client.user.id) return Skip;
+        if (msg.author.id == client.user!.id) return Skip;
 
         return Ok;
     };

@@ -104,7 +104,7 @@ loop:
 
         case 'number': {
             if ((raw?.normalize('NFKC').trim().toLowerCase() ?? '') === 'all') {
-                let x = context.interaction?.user.id ?? context.msg?.author.id ?? "someone";
+                let x = context?.interaction?.user.id ?? context?.msg?.author.id ?? "someone";
                 const balance = await getBalance(x);
                 parsedArgs.push({ ...decl, value: balance.money } as CommandArgumentWithNumberValue);
                 break;
@@ -132,16 +132,16 @@ loop:
             let user: dsc.GuildMember | null = null;
             if (context?.interaction) {
                 const member = (context.interaction as dsc.ChatInputCommandInteraction).options.getString(decl.name);
-                user = parseMentionsFromStrings([member], context.interaction.guild).members.first();
+                user = parseMentionsFromStrings([member!], context.interaction.guild!).members.first() ?? null;
                 if (!user) {
-                    user = await context.interaction.guild.members.fetch(member);
+                    user = await context.interaction.guild!.members.fetch(member!);
                 }
             } else if (context?.msg) {
-                user = parseMentionsFromStrings([raw], context.msg.guild).members.first();
+                user = parseMentionsFromStrings([raw], context.msg.guild!).members.first() ?? null;
                 if (!user) {
                     const match = raw.match(/^<@!?(\d+)>$/);
                     const id = match?.[1] ?? raw;
-                    user = await context.msg.guild.members.fetch(id);
+                    user = await context.msg.guild!.members.fetch(id);
                 }
             }
 
@@ -159,16 +159,16 @@ loop:
                 try {
                     if (context?.interaction) {
                         const member = (context.interaction as dsc.ChatInputCommandInteraction).options.getString(decl.name);
-                        user = parseMentionsFromStrings([member], context.interaction.guild).members.first();
+                        user = parseMentionsFromStrings([member!], context.interaction.guild!).members.first() ?? null;
                         if (!user) {
-                            user = await context.interaction.guild.members.fetch(member);
+                            user = await context.interaction.guild!.members.fetch(member!);
                         }
                     } else if (context?.msg) {
-                        user = parseMentionsFromStrings([raw], context.msg.guild).members.first();
+                        user = parseMentionsFromStrings([raw], context.msg.guild!).members.first() ?? null;
                         if (!user) {
                             const match = raw.match(/^<@!?(\d+)>$/);
                             const id = match?.[1] ?? raw;
-                            user = await context.msg.guild.members.fetch(id);
+                            user = await context.msg.guild!.members.fetch(id);
                         }
                     }
                 } catch {}
@@ -179,10 +179,10 @@ loop:
                     const refMessageId = context.msg.reference.messageId;
                     const refChannelId = context.msg.reference.channelId;
 
-                    const channel = await context.msg.guild.channels.fetch(refChannelId);
+                    const channel = await context.msg.guild!.channels.fetch(refChannelId);
                     if (channel && channel.isTextBased && channel.isTextBased()) {
-                        const refMessage = await channel.messages.fetch({ message: refMessageId, force: false });
-                        const member = await context.msg.guild.members.fetch(refMessage.author.id);
+                        const refMessage = await channel.messages.fetch({ message: refMessageId ?? '', force: false });
+                        const member = await context.msg.guild!.members.fetch(refMessage.author.id);
 
                         if (member) {
                             parsedArgs.push({ ...decl, value: member } as CommandArgumentWithUserMentionValue);
@@ -207,7 +207,7 @@ loop:
             let role: dsc.Role | null = null;
 
             if (roleId && context?.guild) {
-                role = context.msg?.mentions.roles?.get(roleId) ?? context.guild.roles.cache.get(roleId);
+                role = context.msg?.mentions.roles?.get(roleId) ?? context.guild.roles.cache.get(roleId) ?? null;
             }
 
             if (role == null) {

@@ -141,7 +141,7 @@ export const detailHelpCmd: Command = {
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
-                if (!canExecuteCmd(cmd, msg.member.plainMember)) blockedCmds.push(cmd.name);
+                if (!canExecuteCmd(cmd, msg.member!.plainMember)) blockedCmds.push(cmd.name);
             }
         }
 

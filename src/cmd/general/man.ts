@@ -108,7 +108,7 @@ export const manCmd: Command = {
                     `${emoji} **Argumenty**: ${formattedArgs.length === 0 ? 'brak' : `\n> ${formattedArgs.join('\n> ')}`}`,
                     `${emoji} **Uprawnienia**: ${
                         command.permissions.allowedRoles != null &&
-                        !api.msg.member.plainMember.roles.cache.some((role: any) => command.permissions.allowedRoles!.includes(role.id))
+                        !api.msg.member!.plainMember.roles.cache.some((role: any) => command.permissions.allowedRoles!.includes(role.id))
                             ? ':thumbsdown: nie masz wymaganych uprawnień, by użyć tej komendy'
                             : ':thumbsup: możesz użyć tej komendy'
                     }; **dozwolone role**: ${formattedAllowedRoles.length === 0 ? 'brak' : formattedAllowedRoles.join(', ')}; **dozwoleni użytkownicy**: te ustawienie nie ma jeszcze efektu`,

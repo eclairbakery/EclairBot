@@ -8,7 +8,7 @@ import mute from "@/bot/apis/mod/muting.js";
 import warn from "@/bot/apis/mod/warns.js";
 
 import { cfg } from "@/bot/cfg.js";
-import { CommandAPI } from "@/bot/command.js";
+import { CommandAPI, CommandMessageAPI } from "@/bot/command.js";
 import { client } from "@/client.js";
 import { commands } from "@/cmd/list.js";
 
@@ -56,7 +56,7 @@ client.on('messageCreate', async (msg) => {
     }
 
     try {
-        const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, { msg: msg, guild: msg.guild });
+        const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, { msg: msg, guild: msg.guild ?? undefined });
         const api: CommandAPI = {
             args: parsedArgs,
             getArg(name) {
@@ -70,26 +70,26 @@ client.on('messageCreate', async (msg) => {
                 author: { id: msg.author.id, plainUser: msg.author },
                 member: msg.member
                     ? {
-                        id: msg.member.id,
+                        id: msg.member!.id,
                         moderation: {
                             warn(data) {
-                                return warn(msg.member, data);
+                                return warn(msg.member!, data);
                             },
                             mute(data) {
-                                return mute(msg.member, data);
+                                return mute(msg.member!, data);
                             },
                             kick(data) {
-                                return kick(msg.member, data);
+                                return kick(msg.member!, data);
                             },
                             ban(data) {
-                                return ban(msg.member, data);
+                                return ban(msg.member!, data);
                             },
                         },
                         plainMember: msg.member
                       }
                     : undefined,
                 reply: (options) => msg.reply(options as any),
-                mentions: msg.mentions,
+                mentions: (msg.mentions as any ?? { members: new dsc.Collection(), channels: new dsc.Collection(), roles: new dsc.Collection(), users: new dsc.Collection() }) satisfies CommandMessageAPI['mentions'],
                 guild: msg.guild != null ? msg.guild : undefined,
                 channel: msg.channel
             },

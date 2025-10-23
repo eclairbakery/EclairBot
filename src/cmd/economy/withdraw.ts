@@ -25,7 +25,7 @@ export const withdrawCmd: Command = {
         }
     ],
     async execute(api: CommandAPI) {
-        const user = api.msg.member.plainMember;
+        const user = api.msg.member!.plainMember;
         try {
             const row = await getBalance(user.id);
             let amountArg = api.getTypedArg('amount', 'string')?.value as string;

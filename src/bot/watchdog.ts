@@ -28,7 +28,7 @@ function levenshtein(a: string, b: string): number {
 
 async function logAlarming(description: string, fatal: boolean, mem: dsc.GuildMember, score: number) {
     const channel = await client.channels.fetch(cfg.channels.mod.modGeneral);
-    if (!channel.isSendable()) return;
+    if (!channel?.isSendable()) return;
     channel.send({
         embeds: [
             new dsc.EmbedBuilder()
@@ -169,11 +169,11 @@ const channelAddWatcher: Action<MessageEventCtx> = {
         async (ctx) => {
             debug.log(`watchdog: channel created`);
 
-            const logs = await ctx.guild.fetchAuditLogs({ type: dsc.AuditLogEvent.ChannelCreate, limit: 1 });
+            const logs = await ctx.guild!.fetchAuditLogs({ type: dsc.AuditLogEvent.ChannelCreate, limit: 1 });
             const entry = logs.entries.first();
             if (!entry?.executor) return;
 
-            const member = await ctx.guild.members.fetch(entry.executor.id);
+            const member = await ctx.guild!.members.fetch(entry.executor.id);
             if (addAction(member.id, "create")) {
                 debug.log(`watchdog: about to downgrade role for ${member} [adding too many channels per minute]`);
                 await downgradeRole(member);
@@ -194,11 +194,11 @@ const channelDeleteWatcher: Action<MessageEventCtx> = {
         async (ctx) => {
             debug.log(`watchdog: channel deleted`);
 
-            const logs = await ctx.guild.fetchAuditLogs({ type: dsc.AuditLogEvent.ChannelDelete, limit: 1 });
+            const logs = await ctx.guild!.fetchAuditLogs({ type: dsc.AuditLogEvent.ChannelDelete, limit: 1 });
             const entry = logs.entries.first();
             if (!entry?.executor) return;
 
-            const member = await ctx.guild.members.fetch(entry.executor.id);
+            const member = await ctx.guild!.members.fetch(entry.executor.id);
             if (addAction(member.id, "delete")) {
                 debug.log(`watchdog: about to downgrade role for ${member} [deleting too many channels per minute]`);
                 await downgradeRole(member);

@@ -351,10 +351,10 @@ export const eclairAIAction: Action<MessageEventCtx> = {
     callbacks: [
         async (msg) => {
             const reference = msg.reference ? (await msg.fetchReference()) : null;
-            const isMention = msg.content.startsWith(`<@${client.user.id}>`) || msg.content.startsWith(`<@!${client.user.id}>`);
+            const isMention = msg.content.startsWith(`<@${client.user!.id}>`) || msg.content.startsWith(`<@!${client.user!.id}>`);
             const isInAiChannel = msg.channelId === cfg.ai.channel;
             const isReplyToBot = reference
-                && reference.author.id === client.user.id
+                && reference.author.id === client.user!.id
                 && reference.content?.includes('-# eclairAI-fe');
 
             if (!(isMention || isInAiChannel || isReplyToBot)) {
@@ -384,7 +384,7 @@ export const eclairAIAction: Action<MessageEventCtx> = {
             if (fatal) return;
 
             const entry = eclairAIDatabase.find((e) => {
-                let searching = [];
+                let searching: string[] = [];
                 e.activationKeywords.forEach((activationKeyword) => {
                     searching.push(e.shallLowercase ? activationKeyword.toLowerCase() : activationKeyword);
                 });
@@ -401,7 +401,7 @@ export const eclairAIAction: Action<MessageEventCtx> = {
 
             if (!entry) {
                 reaction.remove();
-                if (msg.content.trim() == `<@${client.user.id}>` || msg.content.trim() == `<@!${client.user.id}>`) {
+                if (msg.content.trim() == `<@${client.user!.id}>` || msg.content.trim() == `<@!${client.user!.id}>`) {
                     return msg.reply('chłopie - tak na przyszłość: jak już pingujesz to powiedz o co chodzi\n-# eclairAI-fe');
                 }
                 return msg.reply('tak szczerze to nie mam pojęcia co ci na to odpowiedzieć\n-# eclairAI-fe');

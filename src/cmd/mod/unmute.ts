@@ -41,7 +41,7 @@ export const unmuteCmd: Command = {
         const reasonArg = api.args.find((a) => a.name === 'reason')?.value as string | undefined;
 
         if (api.referenceMessage) {
-            targetUser = api.referenceMessage.member.plainMember;
+            targetUser = api.referenceMessage.member!.plainMember;
             reason = reasonArg ?? '';
         } else if (userArg) {
             const mention = (userArg as string).match(/^<@!?(\d+)>$/);

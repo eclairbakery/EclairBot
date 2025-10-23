@@ -35,7 +35,7 @@ export const hallOfFameAction: Action<ReactionEventCtx> = {
                     return;
                 }
 
-                const channel = await msg.guild.channels.fetch(cfg.general.hallOfFame);
+                const channel = await msg.guild?.channels.fetch(cfg.general.hallOfFame);
                 if (!channel) return;
                 if (!channel.isTextBased()) return;
                 if (alreadyInHallOfFame.includes(msg.id)) return;
@@ -43,7 +43,7 @@ export const hallOfFameAction: Action<ReactionEventCtx> = {
                 const embed = new dsc.EmbedBuilder()
                     .setAuthor({name: 'EclairBOT'})
                     .setColor(`#${Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, "0")}`)
-                    .setTitle(`:gem: ${msg.author.username} dostał się na Hall of Fame!`)
+                    .setTitle(`:gem: ${msg.author?.username} dostał się na Hall of Fame!`)
                     .setDescription(`Super ważna informacja, wiem. Link: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`)
                     .setFields([
                         {

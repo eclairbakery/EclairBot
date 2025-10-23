@@ -50,7 +50,7 @@ export const xpCmd: Command = {
     ],
 
     async execute(api: CommandAPI) {
-        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member.plainMember;
+        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member!.plainMember;
         const actionStr = api.getTypedArg('action', 'string')?.value as string;
         let amount = api.getTypedArg('amount', 'number')?.value as number;
         const affect = api.getTypedArg('affect', 'string')?.value as string ?? 'levels';

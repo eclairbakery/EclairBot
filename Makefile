@@ -8,3 +8,7 @@ depconfig:
 
 dev:
 	npm start
+
+jsbuild:
+	npx tsc
+	npx tsc-alias

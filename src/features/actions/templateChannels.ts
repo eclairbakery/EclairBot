@@ -14,10 +14,10 @@ import { client } from '@/client.js';
 export async function getChannel(id: dsc.Snowflake, client: dsc.Client): Promise<dsc.Channel> {
     let channel = client.channels.cache.get(id);
     if (channel == null) {
-        channel = await client.channels.fetch(id);
+        channel = await client.channels.fetch(id) ?? undefined;
     }
 
-    return channel;
+    return channel!;
 }
 
 export interface TemplateChannel {

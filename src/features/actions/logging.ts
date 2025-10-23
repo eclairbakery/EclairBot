@@ -5,7 +5,7 @@ import * as dsc from 'discord.js';
 export default function registerLogging(client: dsc.Client) {
     client.on('channelCreate', async (chan) => {
         const channel = await client.channels.fetch(cfg.logs.channel);
-        if (!channel.isSendable()) return;
+        if (!channel?.isSendable()) return;
         channel.send({
             embeds: [
                 new dsc.EmbedBuilder()
@@ -21,7 +21,7 @@ export default function registerLogging(client: dsc.Client) {
 
     client.on('channelDelete', async (chan) => {
         const channel = await client.channels.fetch(cfg.logs.channel);
-        if (!channel.isSendable()) return;
+        if (!channel?.isSendable()) return;
         channel.send({
             embeds: [
                 new dsc.EmbedBuilder()
@@ -37,7 +37,7 @@ export default function registerLogging(client: dsc.Client) {
 
     client.on('messageDelete', async (msg) => {
         const channel = await client.channels.fetch(cfg.logs.channel);
-        if (!channel.isSendable()) return;
+        if (!channel?.isSendable()) return;
         channel.send({
             embeds: [
                 new dsc.EmbedBuilder()
@@ -46,7 +46,7 @@ export default function registerLogging(client: dsc.Client) {
                     })
                     .setColor(PredefinedColors.Red)
                     .setTitle('W internecie nic nie ginie!')
-                    .setDescription(`wiadomość https://discord.com/channels/${msg.guildId??'unknown'}/${msg.channelId??'unknown'}/${msg.id??'unknown'}, użytkownika <@${msg.author.id}> została właśnie usunięta!`)
+                    .setDescription(`wiadomość https://discord.com/channels/${msg.guildId??'unknown'}/${msg.channelId??'unknown'}/${msg.id??'unknown'}, użytkownika <@${msg.author?.id}> została właśnie usunięta!`)
                     .setFields([
                         {
                             name: 'Treść',
@@ -59,7 +59,7 @@ export default function registerLogging(client: dsc.Client) {
 
     client.on('messageUpdate', async (oldMsg, msg) => {
         const channel = await client.channels.fetch(cfg.logs.channel);
-        if (!channel.isSendable()) return;
+        if (!channel?.isSendable()) return;
         channel.send({
             embeds: [
                 new dsc.EmbedBuilder()
@@ -102,14 +102,14 @@ export default function registerLogging(client: dsc.Client) {
 
                 if (
                     logEntry &&
-                    logEntry.target.id === newMember.id &&
+                    logEntry.target!.id === newMember.id &&
                     logEntry.changes.some(change =>
                         change.key === "$remove" &&
-                        change.new.some(r => removedRoles.includes(r.id))
+                        change.new!.some(r => removedRoles.includes(r.id))
                     )
                 ) {
                     const executor = logEntry.executor;
-                    const memberExecutor = await newMember.guild.members.fetch(executor.id);
+                    const memberExecutor = await newMember.guild.members.fetch(executor!.id);
 
                     const hasAllowedRole = allowedRoleIds.some(id => memberExecutor.roles.cache.has(id));
 

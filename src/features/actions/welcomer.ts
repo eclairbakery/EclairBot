@@ -54,7 +54,7 @@ export const sayGoodbyeAction: Action<UserEventCtx> = {
     callbacks: [
         async (member) => {
             const channel = await client.channels.fetch(cfg.general.welcomer.channelId);
-            if (!channel.isSendable()) return;
+            if (!channel?.isSendable()) return;
 
             if (member.user.id == StartItId) {
                 await channel.send('I dobrze, i tak nikt cię nie lubił start it!');

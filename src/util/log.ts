@@ -6,7 +6,7 @@ import { Command, CommandAPI } from '@/bot/command.js';
 
 export interface Replyable {
     reply:
-        (options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions)
+        (options: any)
         => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>
 };
 

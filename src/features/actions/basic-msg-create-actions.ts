@@ -94,7 +94,7 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
             // easter egg
             if (msg.content === 'obserwuję was' && msg.author.id == WatchdogID) {
                 return msg.reply('ja cb też');
-            } else if (msg.author.id == WatchdogID && (await msg.fetchReference()).author.id == client.user.id) {
+            } else if (msg.author.id == WatchdogID && (await msg.fetchReference()).author.id == client.user!.id) {
                 return msg.reply('jestem istotą wyższą a jeśli to kwestionujesz lub sądzisz że wyższy jesteś to kłamiesz');
             } else if (msg.content === 'siema' && msg.author.id == WatchdogID) {
                 return msg.reply('siema watchdog, pogódźmy się\n-# (jak znowu zaczniesz mieć do mnie problemy to skończy się anti-spamem, uważaj podwładny)');

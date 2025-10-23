@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "strict": false,
+        "strict": true,
         "outDir": "dist",
         "module": "nodenext",
         "moduleResolution": "nodenext",
@@ -27,5 +27,5 @@
     },
     "include": [
         "src/**/*.ts"
-    ],
+    ]
 }

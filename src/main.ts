@@ -140,11 +140,11 @@ async function setUpCommands() {
 
     try {
         await rest.put(
-            dsc.Routes.applicationCommands(client.application.id),
+            dsc.Routes.applicationCommands(client.application!.id),
             { body: commandsArray }
         );
         await rest.put(
-            dsc.Routes.applicationGuildCommands(client.application.id, '1235534146722463844'),
+            dsc.Routes.applicationGuildCommands(client.application!.id, '1235534146722463844'),
             { body: commandsArray }
         );
         debug.log('Slash commands registered ✅');
@@ -182,7 +182,7 @@ function setUpActions() {
 
 // --------------- MAIN ---------------
 async function main() {
-    client.user.setActivity({ type: dsc.ActivityType.Watching, name: 'was 😈', state: '(tak jak watchdog kiedyś)' });
+    client.user!.setActivity({ type: dsc.ActivityType.Watching, name: 'was 😈', state: '(tak jak watchdog kiedyś)' });
     setUpCommands();
     setUpActions();
 

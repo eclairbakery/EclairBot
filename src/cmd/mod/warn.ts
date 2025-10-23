@@ -97,13 +97,13 @@ export const warnCmd: Command = {
         if (targetUser.id === api.msg.author.plainUser.client.user?.id) {
             points = 2;
             reason = 'nie warnuje się istoty wyższej panie';
-            targetUser = api.msg.member.plainMember;
+            targetUser = api.msg.member!.plainMember;
         }
 
         if (targetUser.id === '1409902422108934226') {
             points = 2;
             reason = 'co prawda watchdog istotą wyższą nie jest ale się lubimy więc daje ci warna. nice try';
-            targetUser = api.msg.member.plainMember;
+            targetUser = api.msg.member!.plainMember;
         }
 
         try {

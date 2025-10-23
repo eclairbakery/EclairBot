@@ -52,7 +52,7 @@ export const commandsCmd: Command = {
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
-                if (!canExecuteCmd(cmd, api.msg.member.plainMember)) blockedCmds.push(cmd.name);
+                if (!canExecuteCmd(cmd, api.msg.member!.plainMember)) blockedCmds.push(cmd.name);
             }
         }
 
@@ -73,7 +73,7 @@ export const commandsCmd: Command = {
                     formattedName += ` *(a.k.a. \`${cfg.general.prefix}${cmd.aliases[0]}\`)*`;
                 }
 
-                if (canExecuteCmd(cmd, api.msg.member.plainMember)) {
+                if (canExecuteCmd(cmd, api.msg.member!.plainMember)) {
                     formattedName = `**${formattedName}**`;
                 }
 

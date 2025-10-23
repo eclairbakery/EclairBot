@@ -624,7 +624,7 @@ const defaultCfg: Config = {
     }
 };
 
-export let overrideCfg: Config = null;
+export let overrideCfg: Partial<Config> = {};
 
 function readConfigurationChanges() {
     if (!existsSync('bot/config.js')) return {};

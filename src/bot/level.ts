@@ -157,7 +157,7 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
                         }
                         try {
                             await member.roles.add(milestoneRoleId);
-                        } catch (err) {
+                        } catch (err: any) {
                             log.replyError(msg, `Błąd`, err.message ?? err);
                         }
                     }
@@ -167,7 +167,7 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
                 const channelLvl = await msg.client.channels.fetch(cfg.general.leveling.levelChannel);
                 if (!channelLvl || !channelLvl.isSendable()) return;
 
-                let content = `${getMention(msg.member)} wbił poziom ${newLevel}! Wow co za osiągnięcie!`;
+                let content = `${getMention(msg.member!)} wbił poziom ${newLevel}! Wow co za osiągnięcie!`;
                 if (milestoneRoleId) content += 'I btw nową rolę zdobyłeś!';
                 channelLvl.send(content);
             }

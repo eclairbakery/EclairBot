@@ -9,6 +9,8 @@ function isBlockedByRules(id: dsc.Snowflake, rules: BlockCommandsRules): boolean
     } else if (rules.default == 'block') {
         return !(rules.allow?.includes(id) ?? false);
     }
+    // this should not happen
+    return false;
 }
 
 export default function isCommandBlockedOnChannel(command: Command, channelID: dsc.Snowflake) {

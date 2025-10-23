@@ -243,7 +243,7 @@ export class EclairAiFirstEdition {
         } else {
             if (
                 this.model.tokenLimitsCounter[entry] > this.config.aiTokensLimit &&
-                !(this.msg.member != null && this.msg.member.roles.cache.hasAny(...this.config.unlimitedAiRole))
+                !(this.msg.member != null && this.msg.member!.roles.cache.hasAny(...this.config.unlimitedAiRole))
             ) {
                 log.replyError(
                     this.msg,
