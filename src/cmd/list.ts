@@ -53,6 +53,7 @@ import { figletCmd } from '@/cmd/4fun/figlet.js';
 import { restartCmd } from '@/cmd/dev/restart.js';
 import { evalCmd, execCmd } from '@/cmd/dev/eval.js';
 import { configurationCommand } from './dev/configuration.js';
+import anonSaysCmd from './general/anonsays.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -62,7 +63,7 @@ export const commands: Map<Category, Command[]> = new Map([
             manCmd, changelogCmd,
             bannerCmd, pfpCmd,
             siemaCmd, randsiteCmd,
-            wikiCmd, fandomCmd,
+            wikiCmd, fandomCmd, anonSaysCmd
         ]
     ],
     [

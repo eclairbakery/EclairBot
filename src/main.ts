@@ -43,6 +43,14 @@ client.once('ready', async () => {
     await debug.init();
 
     debug.log(`${ft.CYAN}Logged in.`);
+
+    if (!process.env.ANON_SAYS_WEBHOOK) {
+        debug.warn('You should set the ANON_SAYS_WEBHOOK enviorment variable.\nOtherwise, the anonsays command will not work.\nThis webhook shall be in the general channel.');
+    }
+    if (!process.env.TENOR_API) {
+        debug.warn('You should set the TENOR_API enviorment variable to a Tenor API key.\nOtherwise, the Tenor API-based commands will not work.');
+    }
+
     initExpiredWarnsDeleter();
     slashCommands.init();
     legacyCommands.init();

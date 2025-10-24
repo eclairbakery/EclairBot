@@ -27,7 +27,7 @@ function levenshtein(a: string, b: string): number {
 }
 
 async function logAlarming(description: string, fatal: boolean, mem: dsc.GuildMember, score: number) {
-    const channel = await client.channels.fetch(cfg.channels.mod.modGeneral);
+    const channel = await client.channels.fetch(cfg.channels.mod.eclairBotAlerts);
     if (!channel?.isSendable()) return;
     channel.send({
         embeds: [

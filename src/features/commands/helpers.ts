@@ -15,6 +15,7 @@ import {
 import * as dsc from 'discord.js';
 import parseTimestamp from "@/util/parseTimestamp.js";
 import { getBalance } from '@/bot/apis/economy/apis.js';
+import { output } from '@/bot/logging.js';
 
 export class ArgParseError extends Error {};
 
@@ -289,6 +290,9 @@ export function handleError(err: any, msg: log.Replyable) {
             );
         }
     } else {
+        if (err instanceof Error) {
+            output.warn(err.stack ?? err.message);
+        }
         return log.replyError(
             msg, 'Błąd!',
             `Wystąpił błąd podczas wykonywania komendy: \`${String(err).replace('`', '\`')}\`.`

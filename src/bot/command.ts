@@ -119,6 +119,9 @@ export interface Command {
         short: string;
     };
     flags: CommandFlags;
+    slashCmdFlags?: {
+        ephemeral: boolean
+    };
 
     /** A better argument system */
     expectedArgs: CommandArgument[];

@@ -125,7 +125,9 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
             }
 
             // quote bot
-            await (async function () {const regex = /https?:\/\/(?:canary\.|ptb\.)?discord(?:app)?\.com\/channels\/(\d+)\/(\d+)\/(\d+)/;
+            await (async function () {
+                if (msg.author.bot) return;
+                const regex = /https?:\/\/(?:canary\.|ptb\.)?discord(?:app)?\.com\/channels\/(\d+)\/(\d+)\/(\d+)/;
                 const match = msg.content.match(regex);
                 if (!match) return;
                 const [ ,, channelId, messageId ] = match;
