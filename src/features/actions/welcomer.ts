@@ -38,7 +38,7 @@ export const welcomeNewUserAction: Action<UserEventCtx> = {
     ],
 }
 
-export const sayGoodbyeAction: Action<UserEventCtx> = {
+export const sayGoodbyeAction: Action<UserEventCtx> = { 
     activationEventType: PredefinedActionEventTypes.OnUserQuit,
     constraints: [
         (_member) => cfg.general.welcomer.enabled ? Ok : Skip,

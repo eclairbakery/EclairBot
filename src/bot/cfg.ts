@@ -510,7 +510,7 @@ const defaultCfg: Config = {
         hallOfFameEnabled: false,
         
         welcomer: {
-            channelId: channelsCfg.general.general,
+            channelId: channelsCfg.important.lobby,
             enabled: true,
             general: channelsCfg.general.general,
             mentionNewPeopleInLobby: false,

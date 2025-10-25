@@ -56,7 +56,7 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
         return 'kicked';
     }
     if (!cfg.masterSecurity.allowNewBots && mem.user.bot) {
-        const notifyChan = await client.channels.fetch(cfg.channels.mod.modGeneral);
+        const notifyChan = await client.channels.fetch(cfg.channels.mod.eclairBotAlerts);
         if (notifyChan && notifyChan.isSendable()) {
             await notifyChan.send('dodawanie botów jest wyłączone w konfiguracji')
             await notifyChan.send('aby dodać innego bota, włącz cfg.masterSecurity.allowNewBots');
