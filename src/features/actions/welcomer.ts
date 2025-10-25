@@ -32,15 +32,7 @@ export const welcomeNewUserAction: Action<UserEventCtx> = {
                 return;
             }
 
-            const messages = [
-                `Witaj szanowny użytkowniku ${member.user.username}!`,
-                `Siema, ale przystojny jesteś ${member.user.username} ngl`,
-                `Kocham cię ${member.user.username}`,
-                `C-cczęsto masz tak na imie ${member.user.username}?`,
-                `nie chce mi się, ${member.user.username}`
-            ];
-
-            await welcomeChannel.send('<:emoji1:1410551894023082027>' + messages[Math.floor(Math.random() * messages.length)]);
+            await welcomeChannel.send('<:emoji1:1410551894023082027>' + (cfg.general.welcomer.welcomeMsgs[Math.floor(Math.random() * cfg.general.welcomer.welcomeMsgs.length)]).replace('<mention>', cfg.general.welcomer.mentionNewPeopleInLobby ? `<@${member.user.id}>` : member.user.username));
             await generalChannel.send(`witaj <@${member.user.id}>, będzie nam miło jak się przywitasz czy coś <:emoji_a_radosci_nie_bylo_konca:1376664467416420362>`);
         }
     ],
@@ -61,13 +53,7 @@ export const sayGoodbyeAction: Action<UserEventCtx> = {
                 return;
             }
 
-            const messages = [
-                `Do widzenia ${member.user.username}!`,
-                `Żegnaj ${member.user.username}, będziemy za tobą tęsknić! (chyba)`,
-                `${member.user.username} opuścił nasz serwer, ale zawsze może wrócić! (nie wróci)`,
-            ];
-
-            await channel.send('<:emoji2:1410551857935290368>' + messages[Math.floor(Math.random() * messages.length)]);
+            await channel.send('<:emoji2:1410551857935290368>' + (cfg.general.welcomer.goodbyeMsgs[Math.floor(Math.random() * cfg.general.welcomer.goodbyeMsgs.length)]).replace('<mention>', cfg.general.welcomer.mentionNewPeopleInLobby ? `<@${member.user.id}>` : member.user.username));
         }
     ],
 };

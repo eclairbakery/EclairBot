@@ -60,8 +60,11 @@ export interface Config {
         /* The welcomer configuration */
         welcomer: {
             enabled: boolean;
-            channelId: string;
+            channelId: dsc.Snowflake;
             general: dsc.Snowflake;
+            mentionNewPeopleInLobby: boolean;
+            welcomeMsgs: `${string}<mention>${string}`[],
+            goodbyeMsgs: `${string}<mention>${string}`[]
         };
 
         forFun: {
@@ -507,9 +510,22 @@ const defaultCfg: Config = {
         hallOfFameEnabled: false,
         
         welcomer: {
-            channelId: "1235560269871190056",
+            channelId: channelsCfg.general.general,
             enabled: true,
             general: channelsCfg.general.general,
+            mentionNewPeopleInLobby: false,
+            welcomeMsgs: [
+                `witaj szanowny użytkowniku <mention>!`,
+                `siema, ale przystojny jesteś <mention> ngl`,
+                `kocham cię <mention>`,
+                `c-cczęsto masz tak na imie <mention>?`,
+                `nie chce mi się, <mention>`
+            ],
+            goodbyeMsgs: [
+                `do widzenia <mention>!`,
+                `żegnaj <mention>, będziemy za tobą tęsknić! (chyba)`,
+                `<mention> opuścił nasz serwer, ale zawsze może wrócić! (nie wróci)`,
+            ]
         },
 
         moderationProtectedRoles: [],
