@@ -5,7 +5,7 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 
-const cmdCfg = cfg.mod.commands.mute;
+const cmdCfg = cfg.commands.mod.mute;
 
 export const unmuteCmd: Command = {
     name: 'unmute',

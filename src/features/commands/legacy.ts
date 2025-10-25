@@ -17,6 +17,7 @@ import findCommand from "@/util/findCommand.js";
 
 import { parseArgs, handleError } from "./helpers.js";
 import isCommandBlockedOnChannel from '@/util/isCommandBlockedOnChannel.js';
+import { findCmdConfResolvable } from '@/util/findCmdConfigObj.js';
 
 client.on('messageCreate', async (msg) => {
     if (!(msg instanceof dsc.Message)) return;
@@ -51,6 +52,15 @@ client.on('messageCreate', async (msg) => {
             msg,
             'Ta komenda nie jest przeznaczona do tego trybu gadania!',
             `Taka komenda jak \`${cmdName.replace('`', '')}\` może być wykonana tylko na serwerach no sorki no!`
+        );
+        return;
+    }
+
+    if (!findCmdConfResolvable(commandObj.name).enabled) {
+        log.replyWarn(
+            msg,
+            'Ta komenda jest wyłączona',
+            'Eklerka coś tam gadał, że go wkurza bloat, więc dodałem wyłączanie komend. Trzeba będzie wszystko dodać jako możliwe do wyłączenia w konfiguracji XD.'
         );
         return;
     }

@@ -6,7 +6,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
 import { output } from '@/bot/logging.js';
 
-const cmdCfg = cfg.mod.commands.warn;
+const cmdCfg = cfg.commands.mod.warn;
 
 export const warnClearCmd: Command = {
     name: 'warn-clear',

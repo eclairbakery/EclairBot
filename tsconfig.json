@@ -27,5 +27,8 @@
     },
     "include": [
         "src/**/*.ts"
+    ],
+    "exclude": [
+        "src/bot/eclairai-*.ts"
     ]
 }

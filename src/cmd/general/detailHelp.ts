@@ -7,6 +7,7 @@ import canExecuteCmd from '@/util/canExecuteCmd.js';
 
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
+import { findCmdConfResolvable } from '@/util/findCmdConfigObj.js';
 
 function buildSelectMenu(commands: Map<Category, Command[]>): dsc.StringSelectMenuBuilder {
     return new dsc.StringSelectMenuBuilder()
@@ -142,6 +143,7 @@ export const detailHelpCmd: Command = {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
                 if (!canExecuteCmd(cmd, msg.member!.plainMember)) blockedCmds.push(cmd.name);
+                else if (!findCmdConfResolvable(cmd.name).enabled) blockedCmds.push(cmd.name);
             }
         }
 

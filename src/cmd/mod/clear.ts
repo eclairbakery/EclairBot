@@ -4,7 +4,7 @@ import * as log from '@/util/log.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 
-const cmdCfg = cfg.mod.commands.warn;
+const cmdCfg = cfg.commands.mod.warn;
 
 export const clearCmd: Command = {
     name: 'clear',

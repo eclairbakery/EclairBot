@@ -8,6 +8,7 @@ import * as dsc from 'discord.js';
 
 import findCommand from '@/util/findCommand.js';
 import { Category } from '@/bot/command.js';
+import { findCmdConfResolvable } from '@/util/findCmdConfigObj.js';
 
 export const manCmd: Command = {
     name: 'man',
@@ -85,6 +86,10 @@ export const manCmd: Command = {
         }
 
         const { command, category } = found;
+
+        if (!findCmdConfResolvable(command.name).enabled) {
+            return log.replyWarn(api.msg, 'Ta komenda jest wyłączona.', "Nie dowiesz się o niej nic, dopóki nie zostanie włączona.");
+        }
 
         const formattedArgs = command.expectedArgs.map((arg) => `**${arg.name}**: ${arg.description}`);
 

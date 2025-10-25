@@ -230,9 +230,13 @@ export interface Config {
         makeNeocities: dsc.Snowflake[];
     };
 
+    /** @deprecated - moved to cfg.commands.mod, going to be removed in the future */
     mod: {
-        /* Configuration for moderation commands */
-        commands: {
+        commands: Config['commands']['mod']
+    };
+
+    commands: {
+        mod: {
             ban: {
                 /* Whether the ban command is enabled */
                 enabled: boolean;
@@ -290,14 +294,20 @@ export interface Config {
                 minPoints: number;
             };
             ping: {
+                enabled: boolean;
                 allowedRoles: dsc.Snowflake[];
                 deathChatRenewInterval: number;
                 eclairNewsRenewInterval: number;
             };
             izolatka: {
+                enabled: boolean;
                 enabledForNormalAdministrators: boolean;
             }
-        };
+        },
+        customs: Record<string, { enabled: boolean, [key: string] : any }>,
+        defConf: {
+            enabled: boolean
+        }
     };
 
     economy: {
@@ -375,6 +385,55 @@ const channelsCfg: Config['channels'] = {
     },
     dev: {
         programming: '1426217543617740950'
+    }
+};
+
+const commandsCfg: Config['commands'] = {
+    mod: {
+        ban: {
+            enabled: true,
+            aliases: [],
+            allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod],
+            allowedUsers: [],
+            reasonRequired: false,
+        },
+        kick: {
+            enabled: true,
+            aliases: [],
+            allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod],
+            allowedUsers: [],
+            reasonRequired: false,
+        },
+        mute: {
+            enabled: true,
+            aliases: [],
+            allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
+            allowedUsers: [],
+            reasonRequired: false,
+        },
+        warn: {
+            enabled: true,
+            aliases: [],
+            allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
+            allowedUsers: [],
+            reasonRequired: false,
+            maxPoints: 30,
+            minPoints: 1,
+        },
+        ping: {
+            allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin],
+            deathChatRenewInterval: 2 * 60 * 60 * 1000,
+            eclairNewsRenewInterval: 6 * 60 * 60 * 1000,
+            enabled: true
+        },
+        izolatka: {
+            enabledForNormalAdministrators: true,
+            enabled: true
+        }
+    },
+    customs: {},
+    defConf: {
+        enabled: true
     }
 };
 
@@ -548,48 +607,12 @@ const defaultCfg: Config = {
         embeddingSize: 16,
     },
 
+    /** @deprecated */
     mod: {
-        commands: {
-            ban: {
-                enabled: true,
-                aliases: [],
-                allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod],
-                allowedUsers: [],
-                reasonRequired: false,
-            },
-            kick: {
-                enabled: true,
-                aliases: [],
-                allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod],
-                allowedUsers: [],
-                reasonRequired: false,
-            },
-            mute: {
-                enabled: true,
-                aliases: [],
-                allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
-                allowedUsers: [],
-                reasonRequired: false,
-            },
-            warn: {
-                enabled: true,
-                aliases: [],
-                allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
-                allowedUsers: [],
-                reasonRequired: false,
-                maxPoints: 30,
-                minPoints: 1,
-            },
-            ping: {
-                allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin],
-                deathChatRenewInterval: 2 * 60 * 60 * 1000,
-                eclairNewsRenewInterval: 6 * 60 * 60 * 1000,
-            },
-            izolatka: {
-                enabledForNormalAdministrators: true
-            }
-        },
+        commands: commandsCfg.mod
     },
+
+    commands: commandsCfg,
 
     economy: {
         shop: [

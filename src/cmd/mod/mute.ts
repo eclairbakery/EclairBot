@@ -9,7 +9,7 @@ import { Hour, Timestamp } from '@/util/parseTimestamp.js';
 
 import mute from '@/bot/apis/mod/muting.js';
 
-const cmdCfg = cfg.mod.commands.mute;
+const cmdCfg = cfg.commands.mod.mute;
 
 export const muteCmd: Command = {
     name: 'mute',

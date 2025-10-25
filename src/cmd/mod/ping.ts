@@ -33,13 +33,13 @@ export const pings: Record<string, PingAPI> = {
             'Lubisz [Desaferio](<https://talk.shapes.inc/desaferio/dm>)?'
         ],
         automatic: true,
-        automaticWaitUntilLastMsgInterval: cfg.mod.commands.ping.deathChatRenewInterval
+        automaticWaitUntilLastMsgInterval: cfg.commands.mod.ping.deathChatRenewInterval
     },
     'eclairnews': {
         roleId: '1402756114394644620',
         questions: null,
         automatic: false,
-        automaticWaitUntilLastMsgInterval: cfg.mod.commands.ping.eclairNewsRenewInterval
+        automaticWaitUntilLastMsgInterval: cfg.commands.mod.ping.eclairNewsRenewInterval
     }
 };
 
@@ -60,7 +60,7 @@ export const notifyCmd: Command = {
         }
     ],
     permissions: {
-        allowedRoles: cfg.mod.commands.ping.allowedRoles,
+        allowedRoles: cfg.commands.mod.ping.allowedRoles,
         allowedUsers: [],
         discordPerms: []
     },

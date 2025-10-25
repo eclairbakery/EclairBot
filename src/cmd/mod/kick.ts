@@ -7,7 +7,7 @@ import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import kick from '@/bot/apis/mod/kicks.js';
 
-const cmdCfg = cfg.mod.commands.kick;
+const cmdCfg = cfg.commands.mod.kick;
 
 export const kickCmd: Command = {
     name: 'kick',

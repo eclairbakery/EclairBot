@@ -7,7 +7,7 @@ import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import ban from '@/bot/apis/mod/bans.js';
 
-const cmdCfg = cfg.mod.commands.ban;
+const cmdCfg = cfg.commands.mod.ban;
 
 export const banCmd: Command = {
     name: 'ban',

@@ -10,7 +10,7 @@ import * as dsc from 'discord.js';
 
 export const shitwarnCmd: Command = {
     name: 'shitwarn',
-    aliases: cfg.mod.commands.warn.aliases,
+    aliases: cfg.commands.mod.warn.aliases,
     description: {
         main: 'Lubisz warnować? Świetnie! Ta komenda daje fake-warny!',
         short: 'Ta komenda daje fake-warny!'
@@ -27,23 +27,23 @@ export const shitwarnCmd: Command = {
         {
             name: 'points',
             type: 'number',
-            description: `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cfg.mod.commands.warn.maxPoints}`,
+            description: `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cfg.commands.mod.warn.maxPoints}`,
             optional: true
         },
         {
             name: 'reason',
             type: 'trailing-string',
-            description: cfg.mod.commands.warn.reasonRequired
+            description: cfg.commands.mod.warn.reasonRequired
                 ? 'Po prostu powód warna'
                 : 'Po prostu powód warna. Możesz go pominąć ale nie polecam',
-            optional: !cfg.mod.commands.warn.reasonRequired
+            optional: !cfg.commands.mod.warn.reasonRequired
         }
     ],
 
     permissions: {
         discordPerms: null,
-        allowedRoles: cfg.mod.commands.warn.allowedRoles,
-        allowedUsers: cfg.mod.commands.warn.allowedUsers
+        allowedRoles: cfg.commands.mod.warn.allowedRoles,
+        allowedUsers: cfg.commands.mod.warn.allowedUsers
     },
 
     async execute(api) {
@@ -74,7 +74,7 @@ export const shitwarnCmd: Command = {
         }
 
         if (!reason) {
-            if (cfg.mod.commands.warn.reasonRequired) {
+            if (cfg.commands.mod.warn.reasonRequired) {
                 return log.replyError(api.msg, 'Nie podano powodu', 'Ale za co ten warn? proszę o doprecyzowanie!');
             } else {
                 reason =
@@ -90,7 +90,7 @@ export const shitwarnCmd: Command = {
             );
         }
 
-        points = clamp(cfg.mod.commands.warn.minPoints, points, cfg.mod.commands.warn.maxPoints);
+        points = clamp(cfg.commands.mod.warn.minPoints, points, cfg.commands.mod.warn.maxPoints);
 
         if (targetUser.id === api.msg.author.plainUser.client.user?.id) {
             points = 2;
