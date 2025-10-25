@@ -4,6 +4,8 @@ import { PredefinedColors } from '@/util/color.js';
 import { client } from '@/client.js';
 import {output as debug, ft} from '@/bot/logging.js';
 import { Action, MessageEventCtx, Ok, PredefinedActionEventTypes } from '@/features/actions.js';
+import { getChannel } from '@/features/actions/templateChannels.js';
+import sleep from '@/util/sleep.js';
 
 const recentJoins: { id: string; joinedAt: number; username: string }[] = [];
 
@@ -54,6 +56,18 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
     if (cfg.masterSecurity.fuckNewMembers) {
         await mem.kick();
         return 'kicked';
+    }
+    if (cfg.masterSecurity.fuckNewMembersLight) {
+        await mem.roles.add('1415020555572088872');
+        const chan = await getChannel(cfg.channels.isolation.isolationCell, client);
+        for (let integer = 0; integer < 3; integer++) {
+            if (!chan?.isSendable()) {
+                break;
+            }
+            await sleep(15_000);
+            await chan.send(`<@${mem.user.id}> włączone są zabezpiecznia, bo jest raid czy coś, więc przenieśliśmy cię do izolatki. jak udowodnisz że nie jesteś altem to cie wypuścimy z izolatki... (ten ping odbędzie się jeszcze ${3 - (integer + 1)} razy, ponieważ nie masz uprawnień do czytania historii wiadomości)`);
+        }
+        return false;
     }
     if (!cfg.masterSecurity.allowNewBots && mem.user.bot) {
         const notifyChan = await client.channels.fetch(cfg.channels.mod.eclairBotAlerts);
