@@ -10,7 +10,9 @@ import {
     CommandArgumentWithRoleMentionValue,
     CommandArgumentWithChannelMentionValue,
     CommandArgType,
-    CommandMessageAPI
+    CommandMessageAPI,
+    Command,
+    CommandFlags
 } from "@/bot/command.js";
 import * as dsc from 'discord.js';
 import parseTimestamp from "@/util/parseTimestamp.js";
@@ -65,7 +67,7 @@ function parseMentionsFromStrings(args: string[], guild: dsc.Guild) {
 export async function parseArgs(
     rawArgs: string[],
     declaredArgs: CommandArgument[],
-    context?: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction }
+    context?: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction; cmd?: Command }
 ): Promise<CommandValuableArgument[]> {
     const parsedArgs: CommandValuableArgument[] = [];
 
@@ -104,7 +106,7 @@ loop:
         }
 
         case 'number': {
-            if ((raw?.normalize('NFKC').trim().toLowerCase() ?? '') === 'all') {
+            if ((raw?.normalize('NFKC').trim().toLowerCase() ?? '') === 'all' && (context?.cmd?.flags ?? CommandFlags.None) == CommandFlags.Economy) {
                 let x = context?.interaction?.user.id ?? context?.msg?.author.id ?? "someone";
                 const balance = await getBalance(x);
                 parsedArgs.push({ ...decl, value: balance.money } as CommandArgumentWithNumberValue);

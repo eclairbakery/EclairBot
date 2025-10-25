@@ -67,7 +67,19 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
                 } else {
                     replyValue = reply as (string | dsc.MessagePayload | dsc.MessageReplyOptions);
                 }
-                msg.reply(replyValue);
+                if (typeof replyValue === 'string') {
+                    msg.reply({
+                        content: replyValue,
+                        allowedMentions: { repliedUser: false },
+                    });
+                } else if ('content' in replyValue || 'embeds' in replyValue || 'components' in replyValue) {
+                    msg.reply({
+                        ...replyValue,
+                        allowedMentions: { repliedUser: false },
+                    });
+                } else {
+                    msg.reply(replyValue satisfies (dsc.MessageReplyOptions | dsc.MessagePayload));
+                }
                 if (shallEndActionsLoop) {
                     return MagicSkipAllActions;
                 }

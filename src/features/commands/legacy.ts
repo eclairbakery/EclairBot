@@ -66,7 +66,7 @@ client.on('messageCreate', async (msg) => {
     }
 
     try {
-        const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, { msg: msg, guild: msg.guild ?? undefined });
+        const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, { msg: msg, guild: msg.guild ?? undefined, cmd: commandObj });
         const api: CommandAPI = {
             args: parsedArgs,
             getArg(name) {
