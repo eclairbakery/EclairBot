@@ -2,6 +2,7 @@ import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 import { client } from "@/client.js";
 import { getChannel } from "@/features/actions/templateChannels.js";
+import { PredefinedColors } from "@/util/color.js";
 import { getErrorEmbed, getSuccessEmbed, replyError } from "@/util/log.js";
 import {
     ModalBuilder,
@@ -16,6 +17,7 @@ import {
     ButtonStyle,
     ActionRowBuilder as ActionRowComponents,
     ComponentType,
+    EmbedBuilder,
 } from "discord.js";
 
 const cooldown: Record<Snowflake, boolean> = {};
@@ -119,17 +121,30 @@ const anonSaysCmd: Command = {
             }
 
             const webhook = new WebhookClient({ url: process.env.ANON_SAYS_WEBHOOK! });
-            const sent = await webhook.send(`💬 **jakiś anonim powiedział** ${text}`);
+            const sent = await webhook.send({
+                content: `💬 **jakiś anonim powiedział** ${text}`,
+                allowedMentions: {
+                    parse: []
+                }
+            });
 
             await submitted.reply({
                 ephemeral: true,
                 embeds: [getSuccessEmbed("Udało się!", "Twoja anonimowa wiadomość została wysłana!")],
             });
 
-            const modChan = await getChannel(cfg.channels.mod.eclairBotAlerts, client);
+            const modChan = await getChannel(cfg.channels.mod.logs, client);
             if (modChan?.isSendable() && sent) {
                 await modChan.send({
-                    content: `https://discord.com/channels/${guild.id}/${sent.channel_id}/${sent.id} wysłał <@${userId}>`,
+                    embeds: [
+                        new EmbedBuilder()
+                            .setDescription(`https://discord.com/channels/${guild.id}/${sent.channel_id}/${sent.id} jest wyslane przez <@${userId}>`)
+                            .setTitle('Anonimowa wiadomość')
+                            .setColor(PredefinedColors.Grey)
+                            .setAuthor({
+                                name: 'EclairBOT'
+                            })
+                    ],
                     allowedMentions: { parse: [] },
                 });
             }
