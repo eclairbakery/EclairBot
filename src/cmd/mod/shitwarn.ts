@@ -54,11 +54,7 @@ export const shitwarnCmd: Command = {
         let expiresAt: number | null = null;
 
         if (!targetUser) {
-            return log.replyError(
-                api.msg,
-                'Nie podano celu',
-                'Kolego, myślisz że ja się sam domyślę komu chcesz dać warna? Użycie: reply na wiadomość lub !warn <@user> (punkty:1) <powód>'
-            );
+            return log.replyError(api.msg, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
         }
 
         if (reason) {
@@ -75,18 +71,17 @@ export const shitwarnCmd: Command = {
 
         if (!reason) {
             if (cfg.commands.mod.warn.reasonRequired) {
-                return log.replyError(api.msg, 'Nie podano powodu', 'Ale za co ten warn? proszę o doprecyzowanie!');
+                return log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
             } else {
-                reason =
-                    'Moderator nie poszczycił się zbytnią znajomością komendy i nie podał powodu... Ale może to i lepiej';
+                reason = cfg.customization.modTexts.defaultReason;
             }
         }
 
         if (targetUser.id === api.msg.author.id) {
             return log.replyError(
                 api.msg,
-                'Bro co ty odpierdalasz',
-                'Co ty chcesz sobie dać warna :sob:? Co jest z tobą nie tak? Potrzebujesz pomocy?'
+                cfg.customization.modTexts.havingMentalProblemsByWarningYourselfHeader,
+                cfg.customization.modTexts.havingMentalProblemsByWarningYourselfText
             );
         }
 
@@ -94,17 +89,17 @@ export const shitwarnCmd: Command = {
 
         if (targetUser.id === api.msg.author.plainUser.client.user?.id) {
             points = 2;
-            reason = 'nie warnuje się istoty wyższej panie';
+            reason = cfg.customization.modTexts.warningEclairBotReason;
         }
 
         if (targetUser.id === '1409902422108934226') {
             points = 2;
-            reason = 'co prawda watchdog istotą wyższą nie jest ale się lubimy więc daje ci warna. nice try';
+            reason = cfg.customization.modTexts.warningWatchdogReason;
         }
 
         const embed = new dsc.EmbedBuilder()
-            .setTitle(`📢 Masz fake-warna/shitwarna, ${targetUser.user.username}!`)
-            .setDescription(`Właśnie dostałeś darmoweeego warna (punktów: ${points})!`)
+            .setTitle(`📢 ${cfg.customization.modTexts.shitwarnHeader.replace('<mention>', targetUser.user.username)}`)
+            .setDescription(cfg.customization.modTexts.warnDescription.replace('<points>', `${points}`))
             .addFields(
                 { name: 'Moderator', value: `<@${api.msg.author.id}>`, inline: true },
                 { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },

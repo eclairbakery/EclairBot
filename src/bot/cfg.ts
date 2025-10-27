@@ -313,6 +313,56 @@ export interface Config {
         }
     };
 
+    customization: {
+        modTexts: {
+            userIsProtectedHeader: string;
+            userIsProtectedDesc: string;
+            reasonRequiredNotSpecifiedHeader: string;
+            reasonRequiredNotSpecifiedText: string;
+            defaultReason: string;
+            havingMentalProblemsByWarningYourselfHeader: string;
+            havingMentalProblemsByWarningYourselfText: string;
+            warningEclairBotReason: string;
+            warningWatchdogReason: string;
+            warnHeader: string;
+            shitwarnHeader: string;
+            warnDescription: string;
+            noTargetSpecifiedHeader: string;
+            noTargetSpecifiedText: string;
+        },
+        evalWarnings: {
+            consoleLogWarn: string;
+            doNotDownloadDatabase: string;
+            execReturnWarn: string;
+            unsafeEval: string;
+            wait: string;
+            waitRestart: string;
+            gonnaRestart: string;
+        },
+        commandsErrors: {
+            legacy: {
+                commandDisabledHeader: string;
+                commandDisabledDescription: string;
+                doesNotWorkInDmHeader: string;
+                doesNotWorkInDmText: string;
+                missingPermissionsHeader: string;
+                missingPermissionsText: string;
+                commandNotFoundHeader: string;
+                commandNotFoundText: string;
+            },
+            slash: {
+                notAllowedInDm: string;
+                commandIsDisabled: string;
+                commandNotFound: string;
+                missingPermissions: string;
+            }
+        },
+        economyTexts: {
+            betWrongAmountHeader: string;
+            betWrongAmountText: string;
+        }
+    };
+
     economy: {
         shop: ConfigEconomyShopItem[]
     },
@@ -400,7 +450,7 @@ const commandsCfg: Config['commands'] = {
             aliases: [],
             allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod],
             allowedUsers: [],
-            reasonRequired: false,
+            reasonRequired: false
         },
         kick: {
             enabled: true,
@@ -631,6 +681,56 @@ const defaultCfg: Config = {
     },
 
     commands: commandsCfg,
+
+    customization: {
+        modTexts: {
+            userIsProtectedHeader: 'Ten użytkownik jest chroniony!',
+            userIsProtectedDesc: 'Ten uzytkownik chyba prosił o ochronę... A jak nie prosił... to i tak ją ma.',
+            reasonRequiredNotSpecifiedHeader: 'Musisz podać powód!',
+            reasonRequiredNotSpecifiedText: 'Bratku... dlaczego ty chcesz to zrobić? Możesz mi chociaż powiedzieć, a nie wysuwać pochopne wnioski i banować/warnować/mute\'ować ludzi bez powodu?',
+            defaultReason: 'Moderator nie poszczycił się znajomością komendy i nie podał powodu... Ale moze to i lepiej...',
+            havingMentalProblemsByWarningYourselfHeader: 'Bro co ty odpierdalasz?',
+            havingMentalProblemsByWarningYourselfText: 'Czemu ty chcesz sobie dać warna? Co jest z tobą nie tak... Zabrać cię do szpitala zdrowia psychicznego czy co ja mam zrobić...',
+            warningEclairBotReason: 'nei warnuje sie istoty wyższej panie',
+            warningWatchdogReason: 'co prawda nie jest istotą wyższą watchdog, ale my sie lubimy. dam ci w zamian warna. nice try',
+            warnHeader: 'Masz warna, <mention>!',
+            warnDescription: 'Właśnie dostałeś darmoweeego warna (punktów: <points>)!',
+            shitwarnHeader: 'Masz shitwarna/fake-warna, <mention>!',
+            noTargetSpecifiedHeader: 'Nie podano celu',
+            noTargetSpecifiedText: 'Kolego co ty myślisz że ja się sam domyślę, komu ty to chcesz zrobić? Zgadłeś - nie domyślę się. Więc bądź tak miły i podaj użytkownika, dla którego odpalasz tą komendę.'
+        },
+        evalWarnings: {
+            consoleLogWarn: '`console.log` spowoduje iż gorciu dostanie dm z wynikiem, ale może się on nie pojawić w wyniku komendy. evaluje sie funkcja wiec po prostu uzyj return by cos napisac. mozesz ten zrobic zmienna z buforem wyjscia i zwracac ja na koncu. z kolei `console.error` w ogóle nie da wyniku...',
+            doNotDownloadDatabase: 'wiem, ze jest do tego masa sposóbów by bypassnąć ten restriction ale plz nie pobieraj bazy danych bota',
+            execReturnWarn: 'używasz return, ale nie komendy exec, więc coś się zepsuje...',
+            unsafeEval: 'unsafe, użyj do tego komendy `restart`',
+            wait: 'cierpliwości nauczę cię, nie sbrickujesz mnie',
+            waitRestart: 'cierpliwości',
+            gonnaRestart: 'jusz siem restartujem plis łejt plis plis plis łejt'
+        },
+        commandsErrors: {
+            legacy: {
+                commandDisabledHeader: 'Ta komenda jest wyłączona',
+                commandDisabledDescription: 'Eklerka coś tam gadał, że go wkurza bloat, więc dodałem wyłączanie komend. Trzeba będzie wszystko dodać jako możliwe do wyłączenia w konfiguracji XD.',
+                doesNotWorkInDmHeader: 'Ta komenda nie jest przeznaczona do tego trybu gadania!',
+                doesNotWorkInDmText: 'Taka komenda jak \`<cmd>\` może być wykonana tylko na serwerach no sorki no!',
+                missingPermissionsHeader: 'Hej, a co ty odpie*dalasz?',
+                missingPermissionsText: 'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...',
+                commandNotFoundHeader: 'Nie znam takiej komendy',
+                commandNotFoundText: 'Komenda \`<cmd>\` nie istnieje'
+            },
+            slash: {
+                notAllowedInDm: 'Nie możesz tej komendy uruchomić w DMach.',
+                commandIsDisabled: 'Ktoś tą komendę z jakiegoś powodu wyłączył...',
+                commandNotFound: 'Nie znam takiej komendy',
+                missingPermissions: 'Nie masz uprawnień.'
+            }
+        },
+        economyTexts: {
+            betWrongAmountHeader: 'Namieszałeś z kwotą.',
+            betWrongAmountText: 'Podaj poprawną kwotę zakładu!'
+        }
+    },
 
     economy: {
         shop: [

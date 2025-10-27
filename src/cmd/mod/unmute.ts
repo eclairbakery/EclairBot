@@ -55,19 +55,14 @@ export const unmuteCmd: Command = {
         }
 
         if (!targetUser) {
-            return log.replyError(
-                api.msg,
-                'Nie podano celu',
-                'Musisz wskazać kogo odciszyć (odpowiedź na wiadomość lub /unmute <@user> <powód>).'
-            );
+            return log.replyError(api.msg, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
         }
 
         if (!reason) {
             if (cmdCfg.reasonRequired) {
-                return log.replyError(api.msg, 'Nie podano powodu', 'Ale za co te odwyciszenie? Poproszę o doprecyzowanie!');
+                return log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
             }
-            reason =
-                'Moderator nie poszczycił się zbytnią znajomością komendy i nie podał powodu... Ale może to i lepiej';
+            reason = cfg.customization.modTexts.defaultReason;
         }
 
         try {

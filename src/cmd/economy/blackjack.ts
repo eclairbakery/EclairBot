@@ -2,6 +2,8 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { dbGet, dbRun } from '@/util/db-utils.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
+import * as log from '@/util/log.js'
+import { cfg } from '@/bot/cfg.js';
 
 interface Card {
     name: string;
@@ -44,7 +46,7 @@ export const blackjackCmd: Command = {
         const betArg = api.getTypedArg('amount', 'number');
         const bet = betArg?.value as number;
         if (!bet || bet <= 0) {
-            return api.msg.reply('❌ Podaj poprawną kwotę zakładu.');
+            return log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
         }
 
         const userId = api.msg.author.id;

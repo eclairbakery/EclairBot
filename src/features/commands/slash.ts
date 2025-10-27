@@ -15,20 +15,20 @@ client.on('interactionCreate', async (int: Interaction) => {
     if (!int.isChatInputCommand()) return;
 
     const cmdObj = findCommand(int.commandName, commands)?.command;
-    if (!cmdObj) return int.reply({ content: 'Nie znam takiej komendy' });
+    if (!cmdObj) return int.reply({ content: cfg.customization.commandsErrors.slash.commandNotFound });
 
     if (!int.guild && (cmdObj.permissions.worksInDM ?? false)) {
-        int.reply('Nie możesz tej komendy uruchomić w DMach.');
+        int.reply(cfg.customization.commandsErrors.slash.notAllowedInDm);
         return;
     }
 
     if (!canExecuteCmd(cmdObj, int.member! as any)) {
-        int.reply('Nie masz uprawnień.');
+        int.reply(cfg.customization.commandsErrors.slash.missingPermissions);
         return;
     } 
 
     if (!findCmdConfResolvable(cmdObj.name).enabled) {
-        int.reply('Ktoś tą komendę z jakiegoś powodu wyłączył...');
+        int.reply(cfg.customization.commandsErrors.slash.commandIsDisabled);
         return;
     }
 

@@ -47,13 +47,13 @@ export const kickCmd: Command = {
         }
 
         if (targetUser.roles.cache.hasAny(...cfg.general.moderationProtectedRoles)) {
-            return log.replyError(api.msg, 'Chronimy go!', 'Użytkownik poprosił o ochronę i ją dostał!');
+            return log.replyError(api.msg, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
         }
 
         if (!reason && cmdCfg.reasonRequired) {
-            return log.replyError(api.msg, 'Nie podano powodu', 'Ale za co ten kick? Poproszę o doprecyzowanie!');
+            return log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
         } else if (!reason) {
-            reason = 'Moderator nie poszczycił się zbytnią znajomością komendy i nie podał powodu... Ale może to i lepiej';
+            reason = cfg.customization.modTexts.defaultReason;
         }
 
         try {

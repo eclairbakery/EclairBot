@@ -28,15 +28,15 @@ client.on('messageCreate', async (msg) => {
 
     const commandObj = findCommand(cmdName, commands)?.command;
     if (!commandObj) {
-        return log.replyError(msg, 'Nie znam takiej komendy', `Komenda \`${cmdName}\` nie istnieje`);
+        return log.replyError(msg, cfg.customization.commandsErrors.legacy.commandNotFoundHeader, cfg.customization.commandsErrors.legacy.commandNotFoundText.replace('<cmd>', cmdName.replaceAll('`', '')));
     }
 
 
     if (!canExecuteCmd(commandObj, msg.member!)) {
         log.replyError(
             msg,
-            'Hej, a co ty odpie*dalasz?',
-            'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...'
+            cfg.customization.commandsErrors.legacy.missingPermissionsHeader,
+            cfg.customization.commandsErrors.legacy.missingPermissionsText
         );
         return;
     }
@@ -50,8 +50,8 @@ client.on('messageCreate', async (msg) => {
     if (!msg.inGuild() && (commandObj.permissions.worksInDM ?? false)) {
         log.replyError(
             msg,
-            'Ta komenda nie jest przeznaczona do tego trybu gadania!',
-            `Taka komenda jak \`${cmdName.replace('`', '')}\` może być wykonana tylko na serwerach no sorki no!`
+            cfg.customization.commandsErrors.legacy.doesNotWorkInDmHeader,
+            cfg.customization.commandsErrors.legacy.doesNotWorkInDmText.replace('<cmd>', cmdName.replaceAll('`', ''))
         );
         return;
     }
@@ -59,8 +59,8 @@ client.on('messageCreate', async (msg) => {
     if (!findCmdConfResolvable(commandObj.name).enabled) {
         log.replyWarn(
             msg,
-            'Ta komenda jest wyłączona',
-            'Eklerka coś tam gadał, że go wkurza bloat, więc dodałem wyłączanie komend. Trzeba będzie wszystko dodać jako możliwe do wyłączenia w konfiguracji XD.'
+            cfg.customization.commandsErrors.legacy.commandDisabledHeader,
+            cfg.customization.commandsErrors.legacy.commandDisabledDescription
         );
         return;
     }

@@ -58,9 +58,15 @@ export const configurationCommand: Command = {
 
         if (!value) {
             const currentValue = target[lastKey];
-            return api.msg.reply(
-                `🔍 wartość \`${property}\` = \`\`\`${JSON.stringify(currentValue, null, 4)}\`\`\``
-            );
+            const text = `🔍 wartość \`${property}\` = \`\`\`${JSON.stringify(currentValue, null, 4)}\`\`\``;
+            if (text.length > 1900) {
+                if (typeof currentValue === 'object') {
+                    return api.msg.reply(`⚠️ \`${property}\` jest trochę za długie by je tu wyświetlić, ale jest obiektem, więc mogę Ci podać klucze, pod którymi może znajdziesz swoją wymarzoną wartość: \`[${Object.keys(currentValue).join(', ')}]\``);
+                }
+                return api.msg.reply(`❌ \`${property}\` jest trochę za długie by je tu wyświetlić i nie jest obiektem, więc niestety nic nie mogę zrobić, by ci pomóc`);
+            } else {
+                return api.msg.reply(text);
+            }
         }
 
         let sanitizedValue = value.trim();
