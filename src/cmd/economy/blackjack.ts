@@ -51,7 +51,8 @@ export const blackjackCmd: Command = {
 
         const userId = api.msg.author.id;
         const row = await dbGet('SELECT * FROM economy WHERE user_id = ?', [userId]);
-        if ((row?.money ?? 0) < bet) return api.msg.reply('❌ Nie masz wystarczającej ilości pieniędzy.');
+        if ((row?.money ?? 0) < bet) 
+            return log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
 
         let playerHand: Card[] = [drawCard(), drawCard()];
         let dealerHand: Card[] = [drawCard(), drawCard()];
@@ -65,11 +66,11 @@ export const blackjackCmd: Command = {
         const getEmbed = (hideDealer = true): dsc.EmbedBuilder => {
             const dealerShown = hideDealer ? `${dealerHand[0].name} ❓` : handToString(dealerHand);
             return new dsc.EmbedBuilder()
-                .setTitle('♠️ Blackjack ♠️')
+                .setTitle(cfg.customization.economyTexts.blackjackTitle)
                 .setColor(PredefinedColors.Green)
                 .addFields(
-                    { inline: true, name: 'Twoje karty', value: `${handToString(playerHand)} (${calcHandValue(playerHand)})` },
-                    { inline: true, name: 'Karty dealera', value: `${dealerShown}${hideDealer ? '' : ` (${calcHandValue(dealerHand)})`}` }
+                    { inline: true, name: cfg.customization.economyTexts.playerCardsLabel, value: `${handToString(playerHand)} (${calcHandValue(playerHand)})` },
+                    { inline: true, name: cfg.customization.economyTexts.dealerCardsLabel, value: `${dealerShown}${hideDealer ? '' : ` (${calcHandValue(dealerHand)})`}` }
                 );
         };
 
@@ -88,7 +89,7 @@ export const blackjackCmd: Command = {
                 if (calcHandValue(playerHand) > 21) {
                     await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ?', [bet, userId]);
                     gameOver = true;
-                    await button.update({ embeds: [getEmbed(false).setDescription('💥 Przegrałeś! Przekroczyłeś 21.')], components: [] });
+                    await button.update({ embeds: [getEmbed(false).setDescription(cfg.customization.economyTexts.blackjackDescriptionBust)], components: [] });
                     collector.stop();
                     return;
                 }
@@ -104,12 +105,12 @@ export const blackjackCmd: Command = {
 
                 if (dealerValue > 21 || playerValue > dealerValue) {
                     await dbRun('UPDATE economy SET money = money + ? WHERE user_id = ?', [bet, userId]);
-                    result = '🏆 Wygrałeś!';
+                    result = cfg.customization.economyTexts.blackjackDescriptionWin;
                 } else if (playerValue === dealerValue) {
-                    result = '🤝 Remis!';
+                    result = cfg.customization.economyTexts.blackjackDescriptionDraw;
                 } else {
                     await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ?', [bet, userId]);
-                    result = '💥 Przegrałeś!';
+                    result = cfg.customization.economyTexts.blackjackDescriptionLose;
                 }
 
                 gameOver = true;
@@ -120,7 +121,7 @@ export const blackjackCmd: Command = {
 
         collector.on('end', async () => {
             if (!gameOver) {
-                await gameMsg.edit({ embeds: [getEmbed(false).setDescription('⏳ Czas minął!')], components: [] });
+                await gameMsg.edit({ embeds: [getEmbed(false).setDescription(cfg.customization.economyTexts.blackjackDescriptionTimeout)], components: [] });
             }
         });
     }

@@ -197,9 +197,12 @@ export interface Config {
         enabled: boolean;
         channel: dsc.Snowflake;
         notAllowedCharacters: string[];
+        /** @deprecated */
         modelPath: string;
+        /** @deprecated */
         aiTokensLimit: number;
         bannedSequences: string[];
+        /** @deprecated */
         unlimitedAiRole: dsc.Snowflake[];
         /**
          * This determines how the model is going to react
@@ -218,18 +221,26 @@ export interface Config {
          *         and ignore the hint
          *
          * I suggest setting it to a float like 0.5, even 0.4.
+         * 
+         * @deprecated
          */
         temperature: number;
+        /** @deprecated */
         pretrainedSuggestions: Record<string, string[]>;
+        /** @deprecated */
         memoryLimit: number;
+        /** @deprecated */
         embeddingSize: number;
+        /** @deprecated */
         hiddenSize: number;
     };
 
     unfilteredRelated: {
+        /**  @deprecated */
         eligibleToRemoveGifBan: dsc.Snowflake[];
         gifBan: dsc.Snowflake;
         unfilteredChannel: dsc.Snowflake;
+        /**  @deprecated */
         makeNeocities: dsc.Snowflake[];
     };
 
@@ -360,6 +371,22 @@ export interface Config {
         economyTexts: {
             betWrongAmountHeader: string;
             betWrongAmountText: string;
+            balanceNotSufficientHeader: string;
+            balanceNotSufficientText: string;
+            bankBalanceNotSufficientText: string;
+            blackjackTitle: string,
+            blackjackDescriptionWin: string,
+            blackjackDescriptionLose: string,
+            blackjackDescriptionDraw: string,
+            blackjackDescriptionTimeout: string,
+            blackjackDescriptionBust: string,
+            playerCardsLabel: string,
+            dealerCardsLabel: string
+        },
+        uncategorized: {
+            gifWrongApiKey: string;
+            gifNotFound: string;
+            gifErrorString: string;
         }
     };
 
@@ -653,9 +680,11 @@ const defaultCfg: Config = {
     },
 
     unfilteredRelated: {
+        /**  @deprecated */
         eligibleToRemoveGifBan: [rolesCfg.eclair25, rolesCfg.secondLevelOwner],
         gifBan: "1406369089634435204",
         unfilteredChannel: channelsCfg.forfun.unfiltred,
+        /**  @deprecated */
         makeNeocities: [],
     },
 
@@ -664,14 +693,21 @@ const defaultCfg: Config = {
         channel: '1276271917665484801',
         //channel: '1406643477210726550',
         notAllowedCharacters: [':', '#', '!', '&', '*'],
+        /** @deprecated */
         modelPath: '@/bot/eclairai-db.json',
+        /** @deprecated */
         aiTokensLimit: 100, // believe me it's a lot, you won't get more if you're not flooding
         bannedSequences: ['@here', '@everyone', 'choler', 'chuj', 'debil', 'fiucie', 'fiut', 'fuck', 'gówn', 'hitler', 'ja pierdole', 'ja pierdolę', 'jeba', 'jebany', 'jebi', 'jprdl', 'kurwa', 'kutas', 'niger', 'nigger', 'penis', 'pierdol', 'porn', 'putin', 'rucha', 'skibidi', 'skibidi toilet', 'spierdalaj', 'toilet', 'wypierdalaj', 'zapierdalaj'],
+        /** @deprecated */
         unlimitedAiRole: ['1235594078305914880', '1235594081556627577', '1235594083544858667', '1235594085188767835', '1390802440739356762', '1255213321301524643'],
+        /** @deprecated */
         temperature: 0.5, // this is a lot... i need to decrease this
         pretrainedSuggestions: { "siema": ["witam, w czym mogę zepsuć"], "ile to": ["co ty myslisz że ja matematyk"], "witaj": ["witam bardzo średnioserdecznie"], "jaka pogoda": ["wyjrzyj za okno"] },
+        /** @deprecated */
         memoryLimit: 15,
+        /** @deprecated */
         hiddenSize: 32,
+        /** @deprecated */
         embeddingSize: 16,
     },
 
@@ -728,7 +764,23 @@ const defaultCfg: Config = {
         },
         economyTexts: {
             betWrongAmountHeader: 'Namieszałeś z kwotą.',
-            betWrongAmountText: 'Podaj poprawną kwotę zakładu!'
+            betWrongAmountText: 'Podaj poprawną kwotę!',
+            balanceNotSufficientHeader: 'Nie masz wystarczającej ilości pieniędzy.',
+            balanceNotSufficientText: 'Może nie zdążyłeś ich wypłacić?',
+            bankBalanceNotSufficientText: 'Przynajmniej w banku...',
+            blackjackTitle: '♠️ Blackjack ♠️',
+            blackjackDescriptionWin: '🏆 Wygrałeś!',
+            blackjackDescriptionLose: '💥 Przegrałeś!',
+            blackjackDescriptionDraw: '🤝 Remis!',
+            blackjackDescriptionTimeout: '⏳ Czas minął!',
+            blackjackDescriptionBust: '💥 Przegrałeś! Przekroczyłeś 21.',
+            playerCardsLabel: 'Twoje karty',
+            dealerCardsLabel: 'Karty dealera'
+        },
+        uncategorized: {
+            gifErrorString: 'Wystąpił jakiś błąd. To najprawdopodobniej nie moja wina, więc wiń Tenora.',
+            gifNotFound: 'Nie znaleziono GIF\'a...',
+            gifWrongApiKey: 'Spinguj deweloperów bota, bo zapomnieli ustawić zmienną środowiskową...'            
         }
     },
 

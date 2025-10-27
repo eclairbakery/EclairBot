@@ -1,4 +1,5 @@
 import { getBalance, updateBalance } from "@/bot/apis/economy/apis.js";
+import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags, CommandAPI } from "@/bot/command.js";
 import { output } from "@/bot/logging.js";
 import * as log from '@/util/log.js';
@@ -32,10 +33,10 @@ export const depositCmd: Command = {
             let amount = amountArg.toLowerCase() === "all" ? row.money : parseInt(amountArg);
 
             if (isNaN(amount) || amount <= 0) {
-                return api.msg.reply('❌ Podaj poprawną kwotę.');
+                return log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
             }
             if (row.money < amount) {
-                return api.msg.reply('❌ Nie masz tyle pieniędzy w portfelu.');
+                return log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
             }
 
             row.money -= amount;

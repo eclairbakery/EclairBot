@@ -15,16 +15,30 @@ async function getGIF(searchTerm: string): Promise<string> {
 
     try {
         const response = await fetch(url);
-        const json = (await response.json()) as any;
+        const json = (await response.json()) as {
+            error?: {
+                message?: string;
+                code: number;
+            }
+            results?: {
+                media_formats: {
+                    gif: {
+                        url: string;
+                    }
+                }
+            }[]
+        };
 
         if (json.results && json.results.length > 0) {
             return json.results[0].media_formats.gif.url;
+        } else if (json.error?.message == "API key not valid. Please pass a valid API key.") {
+            return cfg.customization.uncategorized.gifWrongApiKey;
         } else {
-            return 'Nie znaleziono!';
+            return cfg.customization.uncategorized.gifNotFound;
         }
     } catch (error) {
         output.warn('Błąd podczas pobierania GIFa: ' + error);
-        return 'Wystąpił błąd!';
+        return cfg.customization.uncategorized.gifErrorString;
     }
 }
 
@@ -91,7 +105,7 @@ export const animalCmd: Command = {
     },
 
     async execute(api) {
-        const lmfao = ['parrot', 'dog', 'giraffe', 'elephant', 'cat'];
+        const lmfao = ['parrot', 'dog', 'giraffe', 'elephant', 'cat', 'monkey', 'bear', 'cheetah', 'cow'];
         api.msg.reply(await getGIF(lmfao[Math.floor(Math.random() * lmfao.length)]));
     }
 };
