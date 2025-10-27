@@ -39,6 +39,21 @@ export default function warn(
                     }
                 }).catch(() => {});
 
+                member.client.channels.fetch(cfg.channels.mod.warnings).then(channel => {
+                    if (channel && channel.isSendable()) {
+                        channel.send({
+                            embeds: [
+                                new dsc.EmbedBuilder()
+                                    .setAuthor({ name: 'EclairBOT' })
+                                    .setColor(PredefinedColors.Orange)
+                                    .setTitle('Użytkownik dostał warna')
+                                    .setDescription(`Użytkownik <@${member.id}> dostał warna w wysokości ${data.points} pkt.`)
+                                    .addFields({ name: 'Powód', value: data.reason })
+                            ]
+                        });
+                    }
+                }).catch(() => {});
+
                 resolve({ id: warnId });
             }
         );
