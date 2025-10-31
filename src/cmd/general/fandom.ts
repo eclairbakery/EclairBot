@@ -1,3 +1,4 @@
+import { cfg } from '@/bot/cfg.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import * as log from '@/util/log.js';
@@ -75,7 +76,7 @@ export const fandomCmd: Command = {
     aliases: [],
     execute: async (api: CommandAPI) => {
         const queryArg = api.getTypedArg('query', 'trailing-string');
-        const searchQuery = queryArg.value as string || 'Eklerka25';
+        const searchQuery = queryArg.value as string || cfg.customization.uncategorized.fandomDefaultQueryText;
         const fandom = await getFandomSummary(searchQuery.replace(/ /g, '_'));
 
         const msg = api.msg;
@@ -98,8 +99,8 @@ export const fandomCmd: Command = {
             embeds: [
                 new dsc.EmbedBuilder()
                     .setAuthor({ name: 'EclairBOT' })
-                    .setTitle('Nie znalazłem')
-                    .setDescription('Takiego artykułu nie ma!')
+                    .setTitle(cfg.customization.uncategorized.fandomArticleNotFoundHeader)
+                    .setDescription(cfg.customization.uncategorized.fandomArticleNotFoundText)
                     .setColor(PredefinedColors.Orange)
             ]
         });

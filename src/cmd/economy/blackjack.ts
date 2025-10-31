@@ -66,7 +66,7 @@ export const blackjackCmd: Command = {
         const getEmbed = (hideDealer = true): dsc.EmbedBuilder => {
             const dealerShown = hideDealer ? `${dealerHand[0].name} ❓` : handToString(dealerHand);
             return new dsc.EmbedBuilder()
-                .setTitle(cfg.customization.economyTexts.blackjackTitle)
+                .setTitle(cfg.customization.economyTexts.blackjack.title)
                 .setColor(PredefinedColors.Green)
                 .addFields(
                     { inline: true, name: cfg.customization.economyTexts.playerCardsLabel, value: `${handToString(playerHand)} (${calcHandValue(playerHand)})` },
@@ -89,7 +89,7 @@ export const blackjackCmd: Command = {
                 if (calcHandValue(playerHand) > 21) {
                     await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ?', [bet, userId]);
                     gameOver = true;
-                    await button.update({ embeds: [getEmbed(false).setDescription(cfg.customization.economyTexts.blackjackDescriptionBust)], components: [] });
+                    await button.update({ embeds: [getEmbed(false).setDescription(cfg.customization.economyTexts.blackjack.descriptionBust)], components: [] });
                     collector.stop();
                     return;
                 }
@@ -105,12 +105,12 @@ export const blackjackCmd: Command = {
 
                 if (dealerValue > 21 || playerValue > dealerValue) {
                     await dbRun('UPDATE economy SET money = money + ? WHERE user_id = ?', [bet, userId]);
-                    result = cfg.customization.economyTexts.blackjackDescriptionWin;
+                    result = cfg.customization.economyTexts.blackjack.descriptionWin;
                 } else if (playerValue === dealerValue) {
-                    result = cfg.customization.economyTexts.blackjackDescriptionDraw;
+                    result = cfg.customization.economyTexts.blackjack.descriptionDraw;
                 } else {
                     await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ?', [bet, userId]);
-                    result = cfg.customization.economyTexts.blackjackDescriptionLose;
+                    result = cfg.customization.economyTexts.blackjack.descriptionLose;
                 }
 
                 gameOver = true;
@@ -121,7 +121,7 @@ export const blackjackCmd: Command = {
 
         collector.on('end', async () => {
             if (!gameOver) {
-                await gameMsg.edit({ embeds: [getEmbed(false).setDescription(cfg.customization.economyTexts.blackjackDescriptionTimeout)], components: [] });
+                await gameMsg.edit({ embeds: [getEmbed(false).setDescription(cfg.customization.economyTexts.blackjack.descriptionTimeout)], components: [] });
             }
         });
     }

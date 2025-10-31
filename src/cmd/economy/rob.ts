@@ -7,6 +7,7 @@ import { getRandomInt } from '@/util/rand.js';
 import { Command, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
+import { cfg } from '@/bot/cfg.js';
 
 const COOLDOWN_MS = 5 * 60 * 1000;
 const ROB_PERCENTAGE = 0.5;
@@ -85,8 +86,8 @@ export const robCmd: Command = {
                     const waitSeconds = Math.ceil(result.wait / 1000);
                     const embed = new dsc.EmbedBuilder()
                         .setColor(PredefinedColors.Yellow)
-                        .setTitle('Chwila przerwy!')
-                        .setDescription(`Musisz poczekać **${waitSeconds} sekund** zanim spróbujesz znowu okraść kogoś.`);
+                        .setTitle(cfg.customization.economyTexts.robbing.waitHeader)
+                        .setDescription(cfg.customization.economyTexts.robbing.waitText.replaceAll('<seconds>', String(waitSeconds)));
                     return msg.reply({ embeds: [embed] });
                 } else {
                     throw new Error('Nie udało się sprawdzić stanu konta.');

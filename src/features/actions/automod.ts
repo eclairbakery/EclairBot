@@ -59,25 +59,6 @@ export default class AutoModRules {
         additionalConstraints: [ AutoModRules.msgAuthorIsNotImmuneToAutomod ],
     });
 
-    static readonly BlockAnime: Action<MessageEventCtx> = mkAutoreplyAction({
-        activationOptions: [
-            { type: 'contains', keyword: 'anime' },
-        ],
-        reply: 'osoba na którą wiadomość odpowiadam jest gejem 🥀',
-        additionalConstraints: [ () => Math.random() < 0.14, AutoModRules.msgAuthorIsNotImmuneToAutomod ],
-    });
-
-    static readonly Ecliar25VideoQuestion: Action<MessageEventCtx> = mkAutoreplyAction({
-        activationOptions: [
-            { type: 'is-equal-to', keyword: 'kiedy odcinek' },
-            { type: 'is-equal-to', keyword: 'kiedy odcinek?' },
-            { type: 'is-equal-to', keyword: 'kiedy film' },
-            { type: 'is-equal-to', keyword: 'kiedy film?' },
-        ],
-        reply: 'nigdy - powiedział StartIT, ale ponieważ startit jest jebanym gównem no to spinguj eklerke by odpowiedział',
-        additionalConstraints: [],
-    })
-
     static readonly GitHubAutoreply: Action<MessageEventCtx> = mkAutoreplyAction({
         activationOptions: [
             { type: 'is-equal-to', keyword: 'git' }
@@ -85,30 +66,12 @@ export default class AutoModRules {
         reply: 'hub'
     });
 
-    static readonly InwiduaUnderflowAutoReply: Action<MessageEventCtx> = mkAutoreplyAction(
-        {
-            activationOptions: [
-                { type: 'contains', keyword: 'inwidua' },
-                { type: 'contains', keyword: 'underflow' },
-                { type: 'contains', keyword: 'jakyb' }
-            ],
-            reply: '*zdrajca piekarni'
-        }
-    );
-
     static all(): AnyAction[] {
         const rules = [
-            //AutoModRules.EveryoneAutoreply,
-            //AutoModRules.Ecliar25VideoQuestion,
             AutoModRules.EveryoneAutoreply,
-            /** AutoModRules.Ecliar25VideoQuestion, */
             AutoModRules.GitHubAutoreply,
             AutoModRules.BlockInvites,
             AutoModRules.BlockNWords,
-            //AutoModRules.BlockAnime,
-            //AutoModRules.InwiduaUnderflowAutoReply,
-            /** AutoModRules.BlockAnime, */
-            /** AutoModRules.InwiduaUnderflowAutoReply */
         ];
         return rules;
     }

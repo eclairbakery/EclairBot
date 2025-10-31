@@ -15,7 +15,7 @@ const StartItId = '572906387382861835';
 export const welcomeNewUserAction: Action<UserEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnUserJoin,
     constraints: [
-        (_member) => cfg.general.welcomer.enabled ? Ok : Skip,
+        () => cfg.general.welcomer.enabled ? Ok : Skip,
     ],
     callbacks: [
         async (member) => {
@@ -41,7 +41,7 @@ export const welcomeNewUserAction: Action<UserEventCtx> = {
 export const sayGoodbyeAction: Action<UserEventCtx> = { 
     activationEventType: PredefinedActionEventTypes.OnUserQuit,
     constraints: [
-        (_member) => cfg.general.welcomer.enabled ? Ok : Skip,
+        () => cfg.general.welcomer.enabled ? Ok : Skip,
     ],
     callbacks: [
         async (member) => {

@@ -6,6 +6,7 @@ import { getRandomInt } from '@/util/rand.js';
 import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
+import { cfg } from '@/bot/cfg.js';
 
 const COOLDOWN_MS = 15 * 60 * 1000;
 const WORK_AMOUNT_MIN = 2500;
@@ -68,8 +69,8 @@ export const crimeCmd: Command = {
         if ((row?.money ?? 0) <= 100) {
             const embed = new dsc.EmbedBuilder()
                 .setColor(PredefinedColors.DarkBlue)
-                .setTitle('Ta możliwość jest zablokowana!')
-                .setDescription(`Z racji, iż mógłbyś się zadłużyć i nie móc z tego wyjść potem bez resetu ekonomii, dokonywanie przestępstw jest dozwolone tylko, jeżeli masz więcej niż 100$.`);
+                .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.crimeNotAllowedHeader)
+                .setDescription(cfg.customization.economyTexts.workSlutOrCrime.crime.crimeNotAllowedText);
             return msg.reply({ embeds: [embed] });
         }
 
@@ -83,18 +84,18 @@ export const crimeCmd: Command = {
                 const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);
                 const embed = new dsc.EmbedBuilder()
                     .setColor(PredefinedColors.Yellow)
-                    .setTitle('Chwila przerwy!')
-                    .setDescription(`Musisz odczekać **${waitSeconds}** sekund zanim znowu popełnisz przestępstwo.`);
+                    .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.waitTextHeader)
+                    .setDescription(cfg.customization.economyTexts.workSlutOrCrime.crime.waitTextDescription.replaceAll('<seconds>', String(waitSeconds)));
                 return msg.reply({ embeds: [embed] });
             }
 
             const embed = new dsc.EmbedBuilder()
                 .setColor(win ? PredefinedColors.Blue : PredefinedColors.Red)
-                .setTitle(win ? 'Yay!' : 'Przestępstwo nie zawsze się opłaca...')
-                .setDescription(win
-                    ? `Popełniłeś przestępstwo i zarobiłeś **${amount}** dolarów!`
-                    : `Straciłeś **${amount}** dolarów, ponieważ musiałeś zapłacić mandat!`
-                );
+                .setTitle(win ? cfg.customization.economyTexts.workSlutOrCrime.crime.winHeader : cfg.customization.economyTexts.workSlutOrCrime.crime.loseHeader)
+                .setDescription((win
+                    ? cfg.customization.economyTexts.workSlutOrCrime.crime.winText
+                    : cfg.customization.economyTexts.workSlutOrCrime.crime.loseText
+                ).replaceAll('<amount>', String(amount)));
 
             return msg.reply({ embeds: [embed] });
 

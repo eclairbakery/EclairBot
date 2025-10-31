@@ -374,19 +374,46 @@ export interface Config {
             balanceNotSufficientHeader: string;
             balanceNotSufficientText: string;
             bankBalanceNotSufficientText: string;
-            blackjackTitle: string,
-            blackjackDescriptionWin: string,
-            blackjackDescriptionLose: string,
-            blackjackDescriptionDraw: string,
-            blackjackDescriptionTimeout: string,
-            blackjackDescriptionBust: string,
+            blackjack: {
+                title: string,
+                descriptionWin: string,
+                descriptionLose: string,
+                descriptionDraw: string,
+                descriptionTimeout: string,
+                descriptionBust: string,
+            }
             playerCardsLabel: string,
-            dealerCardsLabel: string
+            dealerCardsLabel: string,
+            workSlutOrCrime: {
+                crime: {
+                    waitTextHeader: string,
+                    waitTextDescription: `${string}<seconds>${string}`,
+                    crimeNotAllowedHeader: string,
+                    crimeNotAllowedText: string,
+                    winHeader: string,
+                    loseHeader: string,
+                    winText: `${string}<amount>${string}`,
+                    loseText: `${string}<amount>${string}`
+                }
+            },
+            robbing: {
+                waitHeader: string,
+                waitText: `${string}<seconds>${string}`
+            }
         },
         uncategorized: {
             gifWrongApiKey: string;
             gifNotFound: string;
             gifErrorString: string;
+            wikiUnknownArticleHeader: string;
+            wikiUnknownArticleText: string;
+            wikiIsNotFandomHeader: string;
+            wikiIsNotFandomText: string;
+            wikiDisambiguationPageHeader: string;
+            wikiDisambiguationPageText: string;
+            fandomDefaultQueryText: string;
+            fandomArticleNotFoundHeader: string;
+            fandomArticleNotFoundText: string;
         }
     };
 
@@ -768,19 +795,46 @@ const defaultCfg: Config = {
             balanceNotSufficientHeader: 'Nie masz wystarczającej ilości pieniędzy.',
             balanceNotSufficientText: 'Może nie zdążyłeś ich wypłacić?',
             bankBalanceNotSufficientText: 'Przynajmniej w banku...',
-            blackjackTitle: '♠️ Blackjack ♠️',
-            blackjackDescriptionWin: '🏆 Wygrałeś!',
-            blackjackDescriptionLose: '💥 Przegrałeś!',
-            blackjackDescriptionDraw: '🤝 Remis!',
-            blackjackDescriptionTimeout: '⏳ Czas minął!',
-            blackjackDescriptionBust: '💥 Przegrałeś! Przekroczyłeś 21.',
+            blackjack: {
+                title: '♠️ Blackjack ♠️',
+                descriptionWin: '🏆 Wygrałeś!',
+                descriptionLose: '💥 Przegrałeś!',
+                descriptionDraw: '🤝 Remis!',
+                descriptionTimeout: '⏳ Czas minął!',
+                descriptionBust: '💥 Przegrałeś! Przekroczyłeś 21.',
+            },
             playerCardsLabel: 'Twoje karty',
-            dealerCardsLabel: 'Karty dealera'
+            dealerCardsLabel: 'Karty dealera',
+            workSlutOrCrime: {
+                crime: {
+                    crimeNotAllowedHeader: 'Ta możliwość jest zablokowana!',
+                    crimeNotAllowedText: `Z racji, iż mógłbyś się zadłużyć i nie móc z tego wyjść potem bez resetu ekonomii, dokonywanie przestępstw jest dozwolone tylko, jeżeli masz więcej niż 100$.`,
+                    waitTextHeader: 'Chwila przerwy!',
+                    waitTextDescription: `Musisz odczekać **<seconds> sekund** zanim znowu popełnisz przestępstwo.`,
+                    winHeader: 'Yay!',
+                    winText: `Popełniłeś przestępstwo i zarobiłeś *<amount>** dolarów!`,
+                    loseHeader: 'Przestępstwo nie zawsze się opłaca...',
+                    loseText: `Straciłeś **<amount>** dolarów, ponieważ musiałeś zapłacić mandat!`
+                }
+            },
+            robbing: {
+                waitHeader: 'Chwila przerwy!',
+                waitText: `Musisz poczekać **<seconds> sekund** zanim spróbujesz znowu okraść kogoś.`
+            }
         },
         uncategorized: {
             gifErrorString: 'Wystąpił jakiś błąd. To najprawdopodobniej nie moja wina, więc wiń Tenora.',
             gifNotFound: 'Nie znaleziono GIF\'a...',
-            gifWrongApiKey: 'Spinguj deweloperów bota, bo zapomnieli ustawić zmienną środowiskową...'            
+            gifWrongApiKey: 'Spinguj deweloperów bota, bo zapomnieli ustawić zmienną środowiskową...',
+            wikiUnknownArticleHeader: 'Tego artykułu nie ma na Wikipedii!',
+            wikiUnknownArticleText: 'Wiem, to niemożliwe...',
+            wikiIsNotFandomHeader: 'Ta komenda nie jest do tego!',
+            wikiIsNotFandomText: 'Rzeczy takie jak `eklerka`, `aurorOS`, `piekarnia eklerki`, `gorciu`, `maqix`, itd. nie są na wikipedii... Ale **są na fandomie**, więc możesz użyć komendy fandom!',
+            wikiDisambiguationPageHeader: 'Doprecyzuj!',
+            wikiDisambiguationPageText: 'Natrafiłeś na stronę ujednoznaczniającą. Ona wyświetla różne znaczenia wyrazu...',
+            fandomDefaultQueryText: 'Zlew00',
+            fandomArticleNotFoundHeader: 'Nie znaleziono...',
+            fandomArticleNotFoundText: 'Niestety czegoś takiego na fandomie nie ma... Może jest na Wikipedii?'
         }
     },
 
