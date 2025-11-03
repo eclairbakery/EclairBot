@@ -127,10 +127,6 @@ export interface Command {
         short: string;
     };
     flags: CommandFlags;
-    /** @deprecated */
-    slashCmdFlags?: {
-        ephemeral: boolean
-    };
 
     /** A better argument system */
     expectedArgs: CommandArgument[];
@@ -142,12 +138,6 @@ export interface Command {
         allowedRoles: dsc.Snowflake[] | null;
         /** the last thing, allowed users */
         allowedUsers: dsc.Snowflake[] | null;
-
-        /**
-         * Whether the command works in DM channels
-         * @deprecated Use CommandFlags.WorksInDM
-         */
-        worksInDM?: boolean;
     };
     /** The execute function */
     execute: (api: CommandAPI) => any | PromiseLike<any>;

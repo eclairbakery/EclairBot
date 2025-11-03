@@ -17,7 +17,7 @@ client.on('interactionCreate', async (int: Interaction) => {
     const cmdObj = findCommand(int.commandName, commands)?.command;
     if (!cmdObj) return int.reply({ content: cfg.customization.commandsErrors.slash.commandNotFound });
 
-    if (!int.guild && !(cmdObj.permissions.worksInDM ?? false) && !(cmdObj.flags & CommandFlags.WorksInDM)) {
+    if (!int.guild && !(cmdObj.flags & CommandFlags.WorksInDM)) {
         int.reply(cfg.customization.commandsErrors.slash.notAllowedInDm);
         return;
     }

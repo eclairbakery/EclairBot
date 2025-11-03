@@ -47,7 +47,7 @@ client.on('messageCreate', async (msg) => {
         return;
     }
 
-    if (!msg.inGuild() && !(commandObj.permissions.worksInDM ?? false) && !(commandObj.flags & CommandFlags.WorksInDM)) {
+    if (!msg.inGuild() && !(commandObj.flags & CommandFlags.WorksInDM)) {
         log.replyError(
             msg,
             cfg.customization.commandsErrors.legacy.doesNotWorkInDmHeader,
