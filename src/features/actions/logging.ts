@@ -82,46 +82,4 @@ export default function registerLogging(client: dsc.Client) {
             ]
         });
     });
-
-    client.on('guildMemberUpdate', async (oldMember, newMember) => {
-        const rolesToWatch = [cfg.unfilteredRelated.gifBan];
-        const allowedRoleIds = cfg.unfilteredRelated.eligibleToRemoveGifBan;
-
-        const removedRoles = rolesToWatch.filter(roleId =>
-            oldMember.roles.cache.has(roleId) && !newMember.roles.cache.has(roleId)
-        );
-
-        if (removedRoles.length > 0) {
-            try {
-                const fetchedLogs = await newMember.guild.fetchAuditLogs({
-                    limit: 1,
-                    type: dsc.AuditLogEvent.MemberRoleUpdate
-                });
-
-                const logEntry = fetchedLogs.entries.first();
-
-                if (
-                    logEntry &&
-                    logEntry.target!.id === newMember.id &&
-                    logEntry.changes.some(change =>
-                        change.key === "$remove" &&
-                        change.new!.some(r => removedRoles.includes(r.id))
-                    )
-                ) {
-                    const executor = logEntry.executor;
-                    const memberExecutor = await newMember.guild.members.fetch(executor!.id);
-
-                    const hasAllowedRole = allowedRoleIds.some(id => memberExecutor.roles.cache.has(id));
-
-                    if (!hasAllowedRole) {
-                        for (const roleId of removedRoles) {
-                            await newMember.roles.add(roleId, "Nieautoryzowane odebranie roli");
-                        }
-                    }
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    });
 }

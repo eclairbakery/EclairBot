@@ -236,12 +236,8 @@ export interface Config {
     };
 
     unfilteredRelated: {
-        /**  @deprecated */
-        eligibleToRemoveGifBan: dsc.Snowflake[];
         gifBan: dsc.Snowflake;
         unfilteredChannel: dsc.Snowflake;
-        /**  @deprecated */
-        makeNeocities: dsc.Snowflake[];
     };
 
     /** @deprecated - moved to cfg.commands.mod, going to be removed in the future */
@@ -707,12 +703,8 @@ const defaultCfg: Config = {
     },
 
     unfilteredRelated: {
-        /**  @deprecated */
-        eligibleToRemoveGifBan: [rolesCfg.eclair25, rolesCfg.secondLevelOwner],
         gifBan: "1406369089634435204",
         unfilteredChannel: channelsCfg.forfun.unfiltred,
-        /**  @deprecated */
-        makeNeocities: [],
     },
 
     ai: {
