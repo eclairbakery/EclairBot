@@ -1,5 +1,5 @@
 import * as dsc from 'discord.js';
-import { dbRun, dbAll, DBRunResult, dbGet } from '@/util/db-utils.js';
+import { dbRun, dbAll, DBRunResult, dbGet } from '@/util/dbUtils.js';
 
 export interface Rep {
     id: number;

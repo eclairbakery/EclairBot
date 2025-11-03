@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 
-import { dbGet, dbRun } from '@/util/db-utils.js';
+import { dbGet, dbRun } from '@/util/dbUtils.js';
 import { getRandomInt } from '@/util/rand.js';
 
 import { Command, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
