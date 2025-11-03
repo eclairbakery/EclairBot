@@ -240,11 +240,6 @@ export interface Config {
         unfilteredChannel: dsc.Snowflake;
     };
 
-    /** @deprecated - moved to cfg.commands.mod, going to be removed in the future */
-    mod: {
-        commands: Config['commands']['mod']
-    };
-
     commands: {
         mod: {
             ban: {
@@ -728,11 +723,6 @@ const defaultCfg: Config = {
         hiddenSize: 32,
         /** @deprecated */
         embeddingSize: 16,
-    },
-
-    /** @deprecated */
-    mod: {
-        commands: commandsCfg.mod
     },
 
     commands: commandsCfg,
