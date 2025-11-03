@@ -16,6 +16,10 @@ function isBlockedByRules(id: dsc.Snowflake, rules: BlockCommandsRules): boolean
 export default function isCommandBlockedOnChannel(command: Command, channelID: dsc.Snowflake) {
    let result: boolean = false;
 
+   // this is confusing so i'll document it
+   //  cfg.blockCommands.fullExceptImportant allows important cmds on some channels
+   //  or maybe not
+   //  who knows
    if (command.flags & CommandFlags.Important)
        result ||= isBlockedByRules(channelID, cfg.blockCommands.fullExceptImportant);
    else
