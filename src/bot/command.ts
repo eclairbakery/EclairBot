@@ -6,9 +6,17 @@ export { Category };
 
 export enum CommandFlags {
     None = 0,
+
+    // command flags: command blocking by category
     Spammy = 1 << 0,
     Important = 1 << 1,
     Economy = 1 << 2,
+
+    // command flags: other command blocking
+    WorksInDM = 1 << 3,
+
+    // command flags: slash cmds specific
+    Ephemeral = 1 << 4,
 };
 
 export type CommandPermissionResolvable = 'administrator' | 'mute' | 'kick' | 'ban';
@@ -119,6 +127,7 @@ export interface Command {
         short: string;
     };
     flags: CommandFlags;
+    /** @deprecated */
     slashCmdFlags?: {
         ephemeral: boolean
     };
@@ -134,7 +143,10 @@ export interface Command {
         /** the last thing, allowed users */
         allowedUsers: dsc.Snowflake[] | null;
 
-        /* Whether the command works in DM channels */
+        /**
+         * Whether the command works in DM channels
+         * @deprecated Use CommandFlags.WorksInDM
+         */
         worksInDM?: boolean;
     };
     /** The execute function */

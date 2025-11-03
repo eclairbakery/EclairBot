@@ -2,7 +2,7 @@ import {output as debug} from '@/bot/logging.js';
 
 import { Interaction } from "discord.js";
 import { cfg } from "@/bot/cfg.js";
-import { CommandAPI } from "@/bot/command.js";
+import { CommandAPI, CommandFlags } from "@/bot/command.js";
 import { client } from "../../client.js";
 import { commands } from "../../cmd/list.js";
 import findCommand from "@/util/findCommand.js";
@@ -17,7 +17,7 @@ client.on('interactionCreate', async (int: Interaction) => {
     const cmdObj = findCommand(int.commandName, commands)?.command;
     if (!cmdObj) return int.reply({ content: cfg.customization.commandsErrors.slash.commandNotFound });
 
-    if (!int.guild && (cmdObj.permissions.worksInDM ?? false)) {
+    if (!int.guild && !(cmdObj.permissions.worksInDM ?? false) && !(cmdObj.flags & CommandFlags.WorksInDM)) {
         int.reply(cfg.customization.commandsErrors.slash.notAllowedInDm);
         return;
     }
@@ -34,7 +34,7 @@ client.on('interactionCreate', async (int: Interaction) => {
 
     const isBlocked = isCommandBlockedOnChannel(cmdObj, int.channelId);
     await int.deferReply({
-        ephemeral: isBlocked || cmdObj.slashCmdFlags?.ephemeral == true
+        flags: (!!(isBlocked || (cmdObj.flags & CommandFlags.Ephemeral))) ? ["Ephemeral"] : []
     });
 
     try {

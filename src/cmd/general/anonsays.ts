@@ -29,8 +29,7 @@ const anonSaysCmd: Command = {
         main: "Wyślij anonimową wiadomość przez webhook",
         short: "Anonimowe wysyłanie wiadomości",
     },
-    flags: CommandFlags.None,
-    slashCmdFlags: { ephemeral: true },
+    flags: CommandFlags.None | CommandFlags.Ephemeral,
     expectedArgs: [],
     permissions: {
         discordPerms: [],

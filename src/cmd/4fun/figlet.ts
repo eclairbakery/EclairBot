@@ -134,7 +134,7 @@ export const figletCmd: Command = {
         main: 'Ta komenda renderuje ci taki fajny ascii text, podobnie do terminalowej komendy `figlet`.',
         short: 'Renderuje tekst jako ascii art',
     },
-    flags: CommandFlags.Spammy,
+    flags: CommandFlags.Spammy | CommandFlags.WorksInDM,
 
     expectedArgs: [
         //{
@@ -153,8 +153,7 @@ export const figletCmd: Command = {
     permissions: {
         allowedUsers: null,
         allowedRoles: null,
-        discordPerms: null,
-        worksInDM: true,
+        discordPerms: null
     },
 
     async execute(api) {
