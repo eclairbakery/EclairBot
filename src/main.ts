@@ -22,7 +22,7 @@ import { countingChannelAction } from '@/features/actions/4fun/countingChannel.j
 import { lastLetterChannelAction } from '@/features/actions/4fun/lastLetterChannel.js';
 import { mediaChannelAction } from '@/features/actions/4fun/mediaChannelAction.js';
 import { antiSpamAndAntiFlood } from '@/features/actions/mod/anti-spam-flood.js';
-import { basicMsgCreateActions } from '@/features/actions/others/basic-msg-create-actions.js';
+import { basicMsgCreateActions } from '@/features/actions/others/basicMsgCreateActions.js';
 import { registerTemplateChannels } from '@/features/actions/channels/registerTemplateChannels.js';
 import registerLogging from './features/actions/others/logging.js';
 import { channelAddWatcher, channelDeleteWatcher } from './bot/watchdog.js';
