@@ -151,10 +151,6 @@ async function setUpCommands() {
             dsc.Routes.applicationCommands(client.application!.id),
             { body: commandsArray }
         );
-        await rest.put(
-            dsc.Routes.applicationGuildCommands(client.application!.id, '1235534146722463844'),
-            { body: commandsArray }
-        );
         debug.log('Slash commands registered ✅');
     } catch (err) {
         debug.err('Slash commands error: ' + err);
