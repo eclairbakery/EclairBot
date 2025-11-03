@@ -14,20 +14,20 @@ import * as dsc from 'discord.js';
 import { cfg } from './bot/cfg.js';
 
 // actions
-import AutoModRules from '@/features/actions/automod.js';
+import AutoModRules from '@/features/actions/mod/automod.js';
 import { initExpiredWarnsDeleter } from '@/features/deleteExpiredWarns.js';
-import { welcomeNewUserAction, sayGoodbyeAction } from '@/features/actions/welcomer.js';
-import { eclairAIAction } from '@/features/actions/eclairai.js';
-import { countingChannelAction } from '@/features/actions/countingChannel.js';
-import { lastLetterChannelAction } from '@/features/actions/lastLetterChannel.js';
-import { mediaChannelAction } from '@/features/actions/mediaChannelAction.js';
-import { antiSpamAndAntiFlood } from '@/features/actions/anti-spam-flood.js';
-import { basicMsgCreateActions } from '@/features/actions/basic-msg-create-actions.js';
-import { registerTemplateChannels } from '@/features/actions/registerTemplateChannels.js';
-import registerLogging from './features/actions/logging.js';
+import { welcomeNewUserAction, sayGoodbyeAction } from '@/features/actions/others/welcomer.js';
+import { eclairAIAction } from '@/features/actions/others/eclairai.js';
+import { countingChannelAction } from '@/features/actions/4fun/countingChannel.js';
+import { lastLetterChannelAction } from '@/features/actions/4fun/lastLetterChannel.js';
+import { mediaChannelAction } from '@/features/actions/4fun/mediaChannelAction.js';
+import { antiSpamAndAntiFlood } from '@/features/actions/mod/anti-spam-flood.js';
+import { basicMsgCreateActions } from '@/features/actions/others/basic-msg-create-actions.js';
+import { registerTemplateChannels } from '@/features/actions/channels/registerTemplateChannels.js';
+import registerLogging from './features/actions/others/logging.js';
 import { channelAddWatcher, channelDeleteWatcher } from './bot/watchdog.js';
 import { actionPing } from '@/cmd/mod/ping.js';
-import { hallOfFameAction } from './features/actions/hallOfFame.js';
+import { hallOfFameAction } from './features/actions/4fun/hallOfFame.js';
 
 // commands
 import * as slashCommands from '@/features/commands/slash.js';
@@ -36,7 +36,7 @@ import { commands } from '@/cmd/list.js';
 
 // misc
 import actionsManager from '@/features/actions.js';
-import { getChannel } from './features/actions/templateChannels.js';
+import { getChannel } from './features/actions/channels/templateChannels.js';
 
 // --------------- INIT ---------------
 client.once('ready', async () => {

@@ -1,7 +1,7 @@
 import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 import { client } from "@/client.js";
-import { getChannel } from "@/features/actions/templateChannels.js";
+import { getChannel } from "@/features/actions/channels/templateChannels.js";
 import { PredefinedColors } from "@/util/color.js";
 import { getErrorEmbed, getSuccessEmbed, replyError } from "@/util/log.js";
 import {
