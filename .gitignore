@@ -13,3 +13,4 @@ bot/config*
 .prettierrc
 .idea/
 *.hosting-only.js
+Dockerfile
