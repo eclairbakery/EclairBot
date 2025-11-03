@@ -12,12 +12,12 @@ import { CommandAPI, CommandFlags, CommandMessageAPI } from "@/bot/command.js";
 import { client } from "@/client.js";
 import { commands } from "@/cmd/list.js";
 
-import canExecuteCmd from "@/util/canExecuteCmd.js";
-import findCommand from "@/util/findCommand.js";
+import canExecuteCmd from "@/util/cmd/canExecuteCmd.js";
+import findCommand from "@/util/cmd/findCommand.js";
 
 import { parseArgs, handleError } from "./helpers.js";
-import isCommandBlockedOnChannel from '@/util/isCommandBlockedOnChannel.js';
-import { findCmdConfResolvable } from '@/util/findCmdConfigObj.js';
+import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.js';
+import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 
 client.on('messageCreate', async (msg) => {
     if (!(msg instanceof dsc.Message)) return;

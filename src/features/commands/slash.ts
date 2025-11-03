@@ -5,11 +5,11 @@ import { cfg } from "@/bot/cfg.js";
 import { CommandAPI, CommandFlags } from "@/bot/command.js";
 import { client } from "../../client.js";
 import { commands } from "../../cmd/list.js";
-import findCommand from "@/util/findCommand.js";
+import findCommand from "@/util/cmd/findCommand.js";
 import { handleError, parseArgs } from "./helpers.js";
-import canExecuteCmd from "@/util/canExecuteCmd.js";
-import isCommandBlockedOnChannel from "@/util/isCommandBlockedOnChannel.js";
-import { findCmdConfResolvable } from '@/util/findCmdConfigObj.js';
+import canExecuteCmd from "@/util/cmd/canExecuteCmd.js";
+import isCommandBlockedOnChannel from "@/util/cmd/isCommandBlockedOnChannel.js";
+import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 
 client.on('interactionCreate', async (int: Interaction) => {
     if (!int.isChatInputCommand()) return;

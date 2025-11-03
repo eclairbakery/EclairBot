@@ -3,11 +3,11 @@ import { cfg } from '@/bot/cfg.js';
 
 import { PredefinedColors } from '@/util/color.js';
 import capitalizeFirst from '@/util/capitalizeFirst.js';
-import canExecuteCmd from '@/util/canExecuteCmd.js';
+import canExecuteCmd from '@/util/cmd/canExecuteCmd.js';
 
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
-import { findCmdConfResolvable } from '@/util/findCmdConfigObj.js';
+import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 
 function buildSelectMenu(commands: Map<Category, Command[]>): dsc.StringSelectMenuBuilder {
     return new dsc.StringSelectMenuBuilder()

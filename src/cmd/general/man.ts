@@ -6,9 +6,9 @@ import { db, sqlite } from '@/bot/db.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
-import findCommand from '@/util/findCommand.js';
+import findCommand from '@/util/cmd/findCommand.js';
 import { Category } from '@/bot/command.js';
-import { findCmdConfResolvable } from '@/util/findCmdConfigObj.js';
+import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 
 export const manCmd: Command = {
     name: 'man',
