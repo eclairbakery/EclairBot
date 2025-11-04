@@ -41,7 +41,7 @@ client.on('messageCreate', async (msg) => {
         return;
     }
 
-    const isBlocked = isCommandBlockedOnChannel(commandObj, msg.channelId);
+    const isBlocked = isCommandBlockedOnChannel(commandObj, msg.channelId, !msg.inGuild());
     if (isBlocked) {
         await msg.react('❌');
         return;

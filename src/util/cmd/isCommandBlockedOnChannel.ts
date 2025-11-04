@@ -13,7 +13,9 @@ function isBlockedByRules(id: dsc.Snowflake, rules: BlockCommandsRules): boolean
     return false;
 }
 
-export default function isCommandBlockedOnChannel(command: Command, channelID: dsc.Snowflake) {
+export default function isCommandBlockedOnChannel(command: Command, channelID: dsc.Snowflake, dm: boolean) {
+   if (dm) return false;
+
    let result: boolean = false;
 
    // this is confusing so i'll document it
