@@ -1,6 +1,7 @@
 import {output as debug} from '@/bot/logging.js';
 
 import { Interaction } from "discord.js";
+import * as dsc from 'discord.js';
 import { cfg } from "@/bot/cfg.js";
 import { CommandAPI, CommandFlags } from "@/bot/command.js";
 import { client } from "../../client.js";
@@ -65,6 +66,93 @@ client.on('interactionCreate', async (int: Interaction) => {
     }
 });
 
-export function init() {
-    debug.log('Slash commands event registered');
+export async function init() {
+    const commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
+    const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
+
+    for (const [, cmds] of commands) {
+        for (const cmd of cmds) {
+            const scb = new dsc.SlashCommandBuilder()
+                .setName(cmd.name)
+                .setDescription(
+                    cmd.description.main.length > 90
+                        ? (cmd.description.short.length > 90
+                            ? (cmd.description.short.slice(0, 87) + '...')
+                            : cmd.description.short)
+                        : cmd.description.main
+                );
+
+            for (const arg of cmd.expectedArgs) {
+                switch (arg.type) {
+                    case 'trailing-string':
+                    case 'string':
+                        scb.addStringOption(option =>
+                            option
+                                .setName(arg.name)
+                                .setDescription('Podaj wartość')
+                                .setRequired(!arg.optional)
+                        );
+                        break;
+
+                    case 'number':
+                        scb.addNumberOption(option =>
+                            option
+                                .setName(arg.name)
+                                .setDescription('Podaj liczbę')
+                                .setRequired(!arg.optional)
+                        );
+                        break;
+
+                    case 'user-mention-or-reference-msg-author':
+                    case 'user-mention':
+                        scb.addStringOption(option =>
+                            option
+                                .setName(arg.name)
+                                .setDescription('Wskaż użytkownika')
+                                .setRequired(!arg.optional)
+                        );
+                        break;
+
+                    case 'role-mention':
+                        scb.addRoleOption(option =>
+                            option
+                                .setName(arg.name)
+                                .setDescription('Wskaż rolę')
+                                .setRequired(!arg.optional)
+                        );
+                        break;
+
+                    case 'channel-mention':
+                        scb.addChannelOption(option =>
+                            option
+                                .setName(arg.name)
+                                .setDescription('Wskaż kanał')
+                                .setRequired(!arg.optional)
+                        );
+                        break;
+
+                    case 'timestamp':
+                        scb.addStringOption(option =>
+                            option
+                                .setName(arg.name)
+                                .setDescription('Podaj timestamp')
+                                .setRequired(!arg.optional)
+                        );
+                        break;
+                }
+            }
+
+            commandsArray.push(scb.toJSON());
+        }
+    }
+
+    try {
+        await rest.put(
+            dsc.Routes.applicationCommands(client.application!.id),
+            { body: commandsArray }
+        );
+        debug.log('Slash commands registered');
+    } catch (err) {
+        debug.err('Slash commands error: ' + err);
+    }
 }

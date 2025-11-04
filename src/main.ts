@@ -66,96 +66,6 @@ client.once('ready', async () => {
 }); 
 
 // --------------- SETUP ---------------
-async function setUpCommands() {
-    const commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
-    const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
-
-    for (const [, cmds] of commands) {
-        for (const cmd of cmds) {
-            const scb = new dsc.SlashCommandBuilder()
-                .setName(cmd.name)
-                .setDescription(
-                    cmd.description.main.length > 90
-                        ? (cmd.description.short.length > 90
-                            ? cmd.description.short.slice(0, 87) + '...'
-                            : cmd.description.short)
-                        : cmd.description.main
-                );
-
-            for (const arg of cmd.expectedArgs) {
-                switch (arg.type) {
-                    case 'trailing-string':
-                    case 'string':
-                        scb.addStringOption(option =>
-                            option
-                                .setName(arg.name)
-                                .setDescription('Podaj wartość')
-                                .setRequired(!arg.optional)
-                        );
-                        break;
-
-                    case 'number':
-                        scb.addNumberOption(option =>
-                            option
-                                .setName(arg.name)
-                                .setDescription('Podaj liczbę')
-                                .setRequired(!arg.optional)
-                        );
-                        break;
-
-                    case 'user-mention-or-reference-msg-author':
-                    case 'user-mention':
-                        scb.addStringOption(option =>
-                            option
-                                .setName(arg.name)
-                                .setDescription('Wskaż użytkownika')
-                                .setRequired(!arg.optional)
-                        );
-                        break;
-
-                    case 'role-mention':
-                        scb.addRoleOption(option =>
-                            option
-                                .setName(arg.name)
-                                .setDescription('Wskaż rolę')
-                                .setRequired(!arg.optional)
-                        );
-                        break;
-
-                    case 'channel-mention':
-                        scb.addChannelOption(option =>
-                            option
-                                .setName(arg.name)
-                                .setDescription('Wskaż kanał')
-                                .setRequired(!arg.optional)
-                        );
-                        break;
-
-                    case 'timestamp':
-                        scb.addStringOption(option =>
-                            option
-                                .setName(arg.name)
-                                .setDescription('Podaj timestamp')
-                                .setRequired(!arg.optional)
-                        );
-                        break;
-                }
-            }
-
-            commandsArray.push(scb.toJSON());
-        }
-    }
-
-    try {
-        await rest.put(
-            dsc.Routes.applicationCommands(client.application!.id),
-            { body: commandsArray }
-        );
-        debug.log('Slash commands registered ✅');
-    } catch (err) {
-        debug.err('Slash commands error: ' + err);
-    }
-}
 
 function setUpActions() {
     actionsManager.addActions(
@@ -187,33 +97,34 @@ function setUpActions() {
 // --------------- MAIN ---------------
 async function main() {
     client.user!.setActivity({ type: dsc.ActivityType.Watching, name: 'was 😈', state: '(tak jak watchdog kiedyś)' });
-    setUpCommands();
     setUpActions();
 
-    setInterval(async () => {
-        let dbBackUpsChannel: dsc.GuildTextBasedChannel;
-        try {
-            dbBackUpsChannel = await getChannel(cfg.channels.eclairbot.dbBackups, client) as dsc.GuildTextBasedChannel;
-        } catch {
-            debug.err('could not find the channel to send db backups');
-            return;
-        }
-        if (!dbBackUpsChannel.isSendable()) {
-            debug.err('the channel with db backups is not sendable');
-            return;
-        }
-        try {
-            const dbPath = './bot.db';
-            const backupName = `backup-${new Date().toISOString().replace(/[:.]/g, '-')}.db`;
+    if (cfg.general.databaseBackups.enabled) {
+        setInterval(async () => {
+            let dbBackUpsChannel: dsc.GuildTextBasedChannel;
+            try {
+                dbBackUpsChannel = await getChannel(cfg.channels.eclairbot.dbBackups, client) as dsc.GuildTextBasedChannel;
+            } catch {
+                debug.err('could not find the channel to send db backups');
+                return;
+            }
+            if (!dbBackUpsChannel.isSendable()) {
+                debug.err('the channel with db backups is not sendable');
+                return;
+            }
+            try {
+                const dbPath = './bot.db';
+                const backupName = `backup-${new Date().toISOString().replace(/[:.]/g, '-')}.db`;
 
-            await dbBackUpsChannel.send({
-                content: `🗄️ automatyczny backup masz tutaj (${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })})`,
-                files: [{ attachment: dbPath, name: backupName }]
-            });
-        } catch (e) {
-            debug.err('while sending db at bot.db: ' + e);
-        }
-    }, 2 * 60 * 60 * 1000);
+                await dbBackUpsChannel.send({
+                    content: `${cfg.general.databaseBackups.msg} (${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })})`,
+                    files: [{ attachment: dbPath, name: backupName }]
+                });
+            } catch (e) {
+                debug.err('while sending db at bot.db: ' + e);
+            }
+        }, cfg.general.databaseBackups.interval);
+    }
 }
 
 (async function () { await client.login(process.env.TOKEN); })();

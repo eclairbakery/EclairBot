@@ -83,6 +83,12 @@ export interface Config {
         hallOfFameEligibleChannels: dsc.Snowflake[];
         hallOfFameEnabled: boolean;
         switchToProgrammingChance: number;
+
+        databaseBackups: {
+            enabled: boolean;
+            interval: number;
+            msg: string;
+        }
     };
 
     /* WARNING: Dev permissions allow doing many unsafe things and taking full control over the bot, so only give them to trusted people and the bot's developers! */
@@ -609,7 +615,12 @@ const defaultCfg: Config = {
             countingChannel: channelsCfg.forfun.counting,
             lastLetterChannel: channelsCfg.forfun.lastLetter,
         },
-        switchToProgrammingChance: 0.2
+        switchToProgrammingChance: 0.2,
+        databaseBackups: {
+            enabled: true,
+            msg: '🗄️ automatyczny backup masz tutaj',
+            interval: 2 * 60 * 60 * 1000
+        }
     },
 
     emoji: {
