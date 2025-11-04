@@ -77,6 +77,7 @@ export namespace output {
 
     let stdoutChannel: GuildTextBasedChannel;
     let stderrChannel: GuildTextBasedChannel;
+    let stdwarnChannel: GuildTextBasedChannel;
 
     // --- helpers ---
     function format(raw: any, ...args: any[]): string {
@@ -97,7 +98,7 @@ export namespace output {
         switch (where) {
             case "stdout": target = stdoutChannel; break;
             case "stderr": target = stderrChannel; break;
-            case "stdwarn": target = stderrChannel; break;
+            case "stdwarn": target = stdwarnChannel; break;
         }
         if (target) {
             try {
@@ -111,6 +112,7 @@ export namespace output {
         try {
             stdoutChannel = await client.channels.fetch(cfg.logs.stdout) as GuildTextBasedChannel;
             stderrChannel = await client.channels.fetch(cfg.logs.stderr) as GuildTextBasedChannel;
+            stdwarnChannel = await client.channels.fetch(cfg.logs.stdwarn) as GuildTextBasedChannel;
         } catch {}
     }
 

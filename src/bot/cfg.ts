@@ -64,7 +64,8 @@ export interface Config {
             general: dsc.Snowflake;
             mentionNewPeopleInLobby: boolean;
             welcomeMsgs: `${string}<mention>${string}`[],
-            goodbyeMsgs: `${string}<mention>${string}`[]
+            goodbyeMsgs: `${string}<mention>${string}`[],
+            freeRolesForEveryone: `${number}`[];
         };
 
         forFun: {
@@ -152,6 +153,7 @@ export interface Config {
         eclairbot: {
             stdout: dsc.Snowflake;
             stderr: dsc.Snowflake;
+            stdwarn: dsc.Snowflake;
             dbBackups: dsc.Snowflake;
         };
     };
@@ -197,6 +199,7 @@ export interface Config {
         channel: dsc.Snowflake;
         stdout: dsc.Snowflake;
         stderr: dsc.Snowflake;
+        stdwarn: dsc.Snowflake;
     };
 
     ai: {
@@ -452,6 +455,7 @@ const channelsCfg: Config['channels'] = {
     eclairbot: {
         stdout: '1419323394440167555',
         stderr: '1419323609419092019',
+        stdwarn: '1435307953660887101',
         dbBackups: '1429118062816137318'
     },
     dev: {
@@ -587,12 +591,21 @@ const defaultCfg: Config = {
                 `siema, ale przystojny jesteś <mention> ngl`,
                 `kocham cię <mention>`,
                 `c-cczęsto masz tak na imie <mention>?`,
-                `nie chce mi się, <mention>`
+                `nie chce mi się, <mention>`,
+                `<mention>, lubimy cie (chyba)`
             ],
             goodbyeMsgs: [
                 `do widzenia <mention>!`,
                 `żegnaj <mention>, będziemy za tobą tęsknić! (chyba)`,
                 `<mention> opuścił nasz serwer, ale zawsze może wrócić! (nie wróci)`,
+            ],
+            freeRolesForEveryone: [
+                '1235548306550161451',
+                // roles for appereance
+                '1235540123576176652',
+                '1415582195564806154',
+                '1235541500889137273',
+                '1235540273556361268'
             ]
         },
 
@@ -666,6 +679,7 @@ const defaultCfg: Config = {
         channel: channelsCfg.mod.logs,
         stdout: channelsCfg.eclairbot.stdout,
         stderr: channelsCfg.eclairbot.stderr,
+        stdwarn: channelsCfg.eclairbot.stdwarn
     },
 
 
