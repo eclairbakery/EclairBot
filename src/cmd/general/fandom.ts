@@ -58,7 +58,7 @@ export const fandomCmd: Command = {
         main: 'Generalnie pobiera artykuł z Fandomu. Super użyteczne!',
         short: 'Pobiera rzecz z Fandomu!'
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.None | CommandFlags.WorksInDM,
 
     permissions: {
         discordPerms: null,

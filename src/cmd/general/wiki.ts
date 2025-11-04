@@ -55,7 +55,7 @@ export const wikiCmd: Command = {
         main: 'Generalnie pobiera artykuł z Wikipedii. Super użyteczne!',
         short: 'Pobiera rzecz z Wikipedii!'
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.None | CommandFlags.WorksInDM,
 
     expectedArgs: [
         {

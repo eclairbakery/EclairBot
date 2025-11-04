@@ -14,7 +14,7 @@ export const siemaCmd: Command = {
         main: 'Jakby to ująć... niespodzianka... Generalnie to taki jeden pan, nazywa się chlebek i serio jest chlebek, błagał 300000000 miliardów godzin, by to dodać, więc dodałem.',
         short: 'Mała niespodzianka dla każdego!'
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.None | CommandFlags.WorksInDM,
 
     expectedArgs: [],
     aliases: [],

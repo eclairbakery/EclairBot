@@ -49,7 +49,7 @@ export const catCmd: Command = {
         main: 'Lubisz koty? Jakże pięknie się składa. Możemy Ci pokazać losowego kota.',
         short: 'Pokazuje losowego kota',
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.None | CommandFlags.WorksInDM,
 
     expectedArgs: [],
 
@@ -70,7 +70,7 @@ export const dogCmd: Command = {
         main: 'Ohhh... dasz mi karmę? Chcesz zobaczyć moją słodką mordkę? To ja, piesek.',
         short: 'Pokazuje losowego psa',
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.None | CommandFlags.WorksInDM,
 
     expectedArgs: [],
 
@@ -93,7 +93,7 @@ export const animalCmd: Command = {
         main: 'Chcesz do ZOO? Mamy ZOO w domu. ZOO w domu: [wpisz jakiego gifa chcesz]',
         short: 'Pokazuje losowego zwierza',
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.None | CommandFlags.WorksInDM,
 
     expectedArgs: [],
 
@@ -116,7 +116,7 @@ export const parrotCmd: Command = {
         main: 'Pokazuje losową papugę czy coś!',
         short: 'Pokazuje losową papugę!',
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.None | CommandFlags.WorksInDM,
 
     expectedArgs: [],
 
