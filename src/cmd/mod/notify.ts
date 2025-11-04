@@ -7,7 +7,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
 
 import actionsManager, { OnForceReloadTemplates, ForceReloadTemplatesEventCtx } from '../../events/templatesEvents.js';
-import { Action, ConstraintCallback, ActionEventType, MessageEventCtx, PredefinedActionEventTypes, AnyConstraintCallback } from '@/features/actions.js';
+import { Action, ConstraintCallback, ActionEventType, MessageEventCtx, PredefinedActionEventTypes, AnyConstraintCallback } from '@/features/actions/index.js';
 
 // export interface NotifyTarget {
 //     type: 'role' | 'user';

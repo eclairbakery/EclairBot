@@ -3,7 +3,7 @@ import { cfg } from './cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { client } from '@/client.js';
 import {output as debug, ft} from '@/bot/logging.js';
-import { Action, MessageEventCtx, Ok, PredefinedActionEventTypes } from '@/features/actions.js';
+import { Action, MessageEventCtx, Ok, PredefinedActionEventTypes } from '@/features/actions/index.js';
 import { getChannel } from '@/features/actions/channels/templateChannels.js';
 import sleep from '@/util/sleep.js';
 

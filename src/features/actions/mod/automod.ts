@@ -1,4 +1,4 @@
-import { Action, Skip, Ok, AnyAction, MessageEventCtx, PredefinedActionCallbacks, PredefinedActionConstraints } from '../../actions.js';
+import { Action, Skip, Ok, AnyAction, MessageEventCtx, PredefinedActionCallbacks, PredefinedActionConstraints } from '../index.js';
 
 import { mkAutoreplyAction } from '../autoreply.js';
 

@@ -1,6 +1,6 @@
-import { Action, PredefinedActionEventTypes, ActionCallback, ConstraintCallback, MagicSkipAllActions } from '../actions.js';
-import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx } from '../actions.js';
-import { PredefinedActionCallbacks, PredefinedActionConstraints } from '../actions.js';
+import { Action, PredefinedActionEventTypes, ActionCallback, ConstraintCallback, MagicSkipAllActions } from './index.js';
+import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx } from './index.js';
+import { PredefinedActionCallbacks, PredefinedActionConstraints } from './index.js';
 
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';

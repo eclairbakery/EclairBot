@@ -2,7 +2,7 @@ import { client } from '../../../client.js';
 
 import sleep from '@/util/sleep.js';
 
-import actionsManager, { Action, UserEventCtx, PredefinedActionEventTypes, PredefinedActionConstraints, PredefinedActionCallbacks, Ok, Skip, MagicSkipAllActions } from '../../actions.js';
+import actionsManager, { Action, UserEventCtx, PredefinedActionEventTypes, PredefinedActionConstraints, PredefinedActionCallbacks, Ok, Skip, MagicSkipAllActions } from '../index.js';
 export default actionsManager;
 
 import * as dsc from 'discord.js';

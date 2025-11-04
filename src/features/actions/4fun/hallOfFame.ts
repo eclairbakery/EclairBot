@@ -2,7 +2,7 @@ import { cfg } from "@/bot/cfg.js";
 import { output } from "@/bot/logging.js";
 import sleep from "@/util/sleep.js";
 import * as dsc from 'discord.js';
-import { Action, PredefinedActionEventTypes, ReactionEventCtx } from "../../actions.js";
+import { Action, PredefinedActionEventTypes, ReactionEventCtx } from "../index.js";
 
 let alreadyInHallOfFame: dsc.Snowflake[] = [];
 

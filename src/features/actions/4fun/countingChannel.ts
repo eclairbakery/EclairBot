@@ -1,6 +1,6 @@
 import sleep from '@/util/sleep.js';
 
-import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes, PredefinedActionConstraints, PredefinedActionCallbacks } from '../../actions.js';
+import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes, PredefinedActionConstraints, PredefinedActionCallbacks } from '../index.js';
 export default actionsManager;
 
 import * as dsc from 'discord.js';

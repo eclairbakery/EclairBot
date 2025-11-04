@@ -374,7 +374,9 @@ class ActionManager {
             for (const callback of action.callbacks) {
                 const result = callback(ctx as any);
                 if (result && typeof (result as any).then === "function") {
-                    await result;
+                    if (await result == MagicSkipAllActions) {
+                        break actionsLoop;
+                    }
                 }
             }
         }

@@ -133,7 +133,7 @@ export const eclairAIAction: Action<MessageEventCtx> = {
  */
 
 import { client } from "@/client.js";
-import { Action, MessageEventCtx, Ok, PredefinedActionEventTypes, Skip } from "../../actions.js";
+import { Action, MessageEventCtx, Ok, PredefinedActionEventTypes, Skip } from "../index.js";
 import { cfg } from "@/bot/cfg.js";
 import sleep from "@/util/sleep.js";
 

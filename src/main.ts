@@ -35,7 +35,7 @@ import * as legacyCommands from '@/features/commands/legacy.js';
 import { commands } from '@/cmd/list.js';
 
 // misc
-import actionsManager from '@/features/actions.js';
+import actionsManager from '@/features/actions/index.js';
 import { getChannel } from './features/actions/channels/templateChannels.js';
 
 // --------------- INIT ---------------
