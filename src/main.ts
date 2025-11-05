@@ -44,7 +44,7 @@ import actionsManager from '@/features/actions/index.js';
 import { getChannel } from './features/actions/channels/templateChannels.js';
 
 // --------------- INIT ---------------
-client.once('ready', async () => {
+client.once('clientReady', async () => {
     await debug.init();
     debug.log(`${ft.CYAN}Logged in.`);
 
