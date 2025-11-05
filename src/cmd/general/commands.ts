@@ -72,7 +72,7 @@ export const commandsCmd: Command = {
                     continue;
                 }
 
-                let formattedName = `${cfg.general.prefix}${cmd.name}`;
+                let formattedName = `**${cfg.general.prefix}${cmd.name}**`;
                 if (cmd.aliases.length > 0) {
                     formattedName += ` *(a.k.a. \`${cfg.general.prefix}${cmd.aliases[0]}\`)*`;
                 }
