@@ -74,7 +74,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
                 return parsedArgs.find(a => a.name == name)!;
             },
             getTypedArg(name, type) {
-                return parsedArgs.find(a => a.name == name && a.type == type)!;
+                return parsedArgs.find(a => a.name == name && a.type == type)! as any;
             },
             msg: {
                 content: msg.content,
@@ -105,7 +105,11 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
                 channel: msg.channel
             },
             plainMessage: msg,
-            commands: commands
+            commands: commands,
+            guild: msg.guild ?? undefined,
+            log,
+            channel: msg.channel,
+            reply: (options) => msg.reply(options as any),
         };
 
         await commandObj.execute(api);

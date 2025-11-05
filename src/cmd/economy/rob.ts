@@ -4,7 +4,7 @@ import * as log from '@/util/log.js';
 import { dbGet, dbRun } from '@/util/dbUtils.js';
 import { getRandomInt } from '@/util/rand.js';
 
-import { Command, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
+import { Command, CommandArgumentWithUserMentionOrMsgReferenceValue, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { cfg } from '@/bot/cfg.js';
@@ -71,7 +71,7 @@ export const robCmd: Command = {
     aliases: [],
     execute: async (api) => {
         const msg = api.msg;
-        const targetArg = api.getTypedArg('user', 'user-mention-or-reference-msg-author') as CommandArgumentWithUserMentionValue;
+        const targetArg = api.getTypedArg('user', 'user-mention-or-reference-msg-author') as CommandArgumentWithUserMentionOrMsgReferenceValue;
 
         if (!targetArg?.value) return msg.reply('Musisz oznaczyć osobę, którą chcesz okraść!');
         const target = targetArg.value;

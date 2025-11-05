@@ -29,8 +29,7 @@ export const depositCmd: Command = {
         const user = api.msg.member!.plainMember;
         try {
             const row = await getBalance(user.id);
-            let amountArg = api.getTypedArg('amount', 'number')?.value as string;
-            let amount = amountArg.toLowerCase() === "all" ? row.money : parseInt(amountArg);
+            let amount = api.getTypedArg('amount', 'number')?.value as number;
 
             if (isNaN(amount) || amount <= 0) {
                 return log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);

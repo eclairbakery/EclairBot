@@ -79,7 +79,7 @@ export const execCmd: Command = {
         await evalCmd.execute(deepMerge(api, {getTypedArg: (name, type) => {
             if (name == 'code') {
                 let arg = api.getTypedArg('code', type);
-                return deepMerge(arg, {value: `(async function () {${arg.value}})();`});
+                return deepMerge(arg, {value: `(async function () {${arg.value}})();`} as any);
             }
             return api.getTypedArg(name, type);
         }}));

@@ -3,6 +3,7 @@ import * as dsc from 'discord.js';
 import { Category } from '@/bot/categories.js';
 import { Timestamp } from '@/util/parseTimestamp.js';
 export { Category };
+import type * as log from '@/util/log.js';
 
 export enum CommandFlags {
     None = 0,
@@ -41,8 +42,18 @@ export interface CommandArgumentWithStringValue extends CommandArgument {
     value?: string;
 };
 
+export interface CommandArgumentWithTrailStringValue extends CommandArgument {
+    type: 'trailing-string';
+    value?: string;
+};
+
 export interface CommandArgumentWithUserMentionValue extends CommandArgument {
     type: 'user-mention';
+    value?: dsc.GuildMember;
+};
+
+export interface CommandArgumentWithUserMentionOrMsgReferenceValue extends CommandArgument {
+    type: 'user-mention-or-reference-msg-author';
     value?: dsc.GuildMember;
 };
 
@@ -71,8 +82,10 @@ export type CommandValuableArgument =
     | CommandArgumentWithRoleMentionValue
     | CommandArgumentWithChannelMentionValue
     | CommandArgumentWithStringValue
+    | CommandArgumentWithTrailStringValue
     | CommandArgumentWithTimestampValue
     | CommandArgumentWithUserMentionValue
+    | CommandArgumentWithUserMentionOrMsgReferenceValue
     ;;
 
 export interface CommandMessageAPI {
@@ -95,6 +108,7 @@ export interface CommandMessageAPI {
         (options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions)
         => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;
 
+    /** @deprecated */
     mentions: {
         members: dsc.Collection<dsc.Snowflake, dsc.GuildMember>;
         roles: dsc.Collection<dsc.Snowflake, dsc.Role>;
@@ -106,14 +120,27 @@ export interface CommandMessageAPI {
 };
 
 export interface CommandAPI {
+    // ---- ARGS ----
     args: CommandValuableArgument[];
+    /** @deprecated */
     getArg: (name: string) => CommandValuableArgument;
-    getTypedArg(name: string, type: CommandArgType): CommandValuableArgument;
+    getTypedArg<T extends CommandArgType>(name: string, type: T): Extract<CommandValuableArgument, { type: T }>;
+
+    // ---- MSGS ----
     msg: CommandMessageAPI;
     referenceMessage?: CommandMessageAPI;
     plainInteraction?: dsc.ChatInputCommandInteraction;
     plainMessage?: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>;
+
+    // ---- QUICK FUNCTIONS ----
+    reply: (options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions)
+        => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;
+
+    // ---- EXTERNAL DATA ----
     commands: Map<Category, Command[]>;
+    log: typeof log;
+    guild?: dsc.Guild;
+    channel: dsc.Channel | dsc.GuildChannel
 }
 
 export interface Command {

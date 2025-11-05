@@ -2,6 +2,7 @@ import {output as debug} from '@/bot/logging.js';
 
 import { Interaction } from "discord.js";
 import * as dsc from 'discord.js';
+import * as log from '@/util/log.js';
 import { cfg } from "@/bot/cfg.js";
 import { CommandAPI, CommandFlags } from "@/bot/command.js";
 import { client } from "../../client.js";
@@ -45,7 +46,7 @@ client.on('interactionCreate', async (int: Interaction) => {
         const api: CommandAPI = {
             args: parsedArgs,
             getArg: (name) => parsedArgs.find(a => a.name === name)!,
-            getTypedArg: (name, type) => parsedArgs.find(a => a.name === name && a.type === type)!,
+            getTypedArg: (name, type) => parsedArgs.find(a => a.name === name && a.type === type)! as any,
             msg: {
                 content: int.commandName,
                 author: { id: int.user.id, plainUser: int.user },
@@ -56,7 +57,11 @@ client.on('interactionCreate', async (int: Interaction) => {
                 channel: int.channel!
             },
             plainInteraction: int,
-            commands: commands
+            commands: commands,
+            guild: int.guild ?? undefined,
+            channel: int.channel!,
+            log,
+            reply: (options) => int.editReply(options as any)
         };
 
         await cmdObj.execute(api);
