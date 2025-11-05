@@ -4,7 +4,7 @@ import * as dsc from 'discord.js';
 import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
-import actionsManager, { OnForceReloadTemplates } from '../../events/templatesEvents.js';
+import actionsManager, { OnForceReloadTemplates } from '../../events/actions/templatesEvents.js';
 
 export const forceReloadTemplatesCmd: Command = {
     name: 'force-reload-templates',

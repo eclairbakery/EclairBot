@@ -1,7 +1,7 @@
 import { Action, AnyAction, PredefinedActionEventTypes, ActionCallback, ConstraintCallback, AnyEventCtx, ActionEventType } from '../index.js';
 import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx } from '../index.js';
 import { PredefinedActionCallbacks, PredefinedActionConstraints } from '../index.js';
-import { OnForceReloadTemplates } from '../../../events/templatesEvents.js';
+import { OnForceReloadTemplates } from '../../../events/actions/templatesEvents.js';
 
 import actionsManager from '../index.js';
 

@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
 import { Snowflake } from '../../../defs.js';
 import { PredefinedActionEventTypes } from '../index.js';
-import { OnForceReloadTemplates } from '../../../events/templatesEvents.js';
+import { OnForceReloadTemplates } from '../../../events/actions/templatesEvents.js';
 import { addTemplateChannel, getChannel, makeNameGuard } from './templateChannels.js';
 import { makeChannelName } from '@/util/makeChannelName.js';
 import { cfg } from '@/bot/cfg.js';

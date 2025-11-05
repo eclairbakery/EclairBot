@@ -18,8 +18,9 @@ import findCommand from "@/util/cmd/findCommand.js";
 import { parseArgs, handleError } from "./helpers.js";
 import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
+import actionsManager, { PredefinedActionEventTypes } from '../actions/index.js';
 
-client.on('messageCreate', async (msg) => {
+async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     if (!(msg instanceof dsc.Message)) return;
     if (!msg.content.toLowerCase().startsWith(cfg.general.prefix.toLowerCase())) return;
 
@@ -111,8 +112,13 @@ client.on('messageCreate', async (msg) => {
     } catch (err) {
         handleError(err, msg);
     }
-});
+}
 
 export function init() {
+    actionsManager.addAction({
+        callbacks: [legacyCommandsMessageHandler],
+        constraints: [(msg) => msg.content.toLowerCase().startsWith(cfg.general.prefix.toLowerCase())],
+        activationEventType: PredefinedActionEventTypes.OnMessageCreate
+    });
     debug.log('Legacy commands event registered');
 }

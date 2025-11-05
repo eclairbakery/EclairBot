@@ -24,10 +24,15 @@ import { mediaChannelAction } from '@/features/actions/4fun/mediaChannelAction.j
 import { antiSpamAndAntiFlood } from '@/features/actions/mod/anti-spam-flood.js';
 import { basicMsgCreateActions } from '@/features/actions/others/basicMsgCreateActions.js';
 import { registerTemplateChannels } from '@/features/actions/channels/registerTemplateChannels.js';
-import registerLogging from './features/actions/others/logging.js';
 import { channelAddWatcher, channelDeleteWatcher } from './bot/watchdog.js';
 import { actionPing } from '@/cmd/mod/ping.js';
 import { hallOfFameAction } from './features/actions/4fun/hallOfFame.js';
+
+// events
+import { registerChannelCreateDscEvents } from './events/client/channelCreate.js';
+import { registerChannelDeleteDscEvents } from './events/client/channelDelete.js';
+import { registerMsgEditDscEvents } from './events/client/messageUpdate.js';
+import { registerMsgDeleteDscEvents } from './events/client/messageDelete.js';
 
 // commands
 import * as slashCommands from '@/features/commands/slash.js';
@@ -41,7 +46,6 @@ import { getChannel } from './features/actions/channels/templateChannels.js';
 // --------------- INIT ---------------
 client.once('ready', async () => {
     await debug.init();
-
     debug.log(`${ft.CYAN}Logged in.`);
 
     if (!process.env.ANON_SAYS_WEBHOOK) {
@@ -50,17 +54,6 @@ client.once('ready', async () => {
     if (!process.env.TENOR_API) {
         debug.warn('You should set the TENOR_API enviorment variable to a Tenor API key.\nOtherwise, the Tenor API-based commands will not work.');
     }
-
-    initExpiredWarnsDeleter();
-    slashCommands.init();
-    legacyCommands.init();
-
-    setInterval(() => {
-        if (!process.memoryUsage || !process.availableMemory) return;
-        if (process.memoryUsage().heapUsed > process.availableMemory() - 25000000) {
-            debug.warn('High on memory!');
-        }
-    }, 500);
 
     main();
 }); 
@@ -90,14 +83,31 @@ function setUpActions() {
         actionPing,
     );
     registerTemplateChannels(client);
-    registerLogging(client);
+    slashCommands.init();
+    legacyCommands.init();
     actionsManager.registerEvents(client);
+}
+
+function setUpEvents() {
+    registerChannelCreateDscEvents(client);
+    registerChannelDeleteDscEvents(client);
+    registerMsgEditDscEvents(client);
+    registerMsgDeleteDscEvents(client);
 }
 
 // --------------- MAIN ---------------
 async function main() {
     client.user!.setActivity({ type: dsc.ActivityType.Watching, name: 'was 😈', state: '(tak jak watchdog kiedyś)' });
+    initExpiredWarnsDeleter();
     setUpActions();
+    setUpEvents();
+
+    setInterval(() => {
+        if (!process.memoryUsage || !process.availableMemory) return;
+        if (process.memoryUsage().heapUsed > process.availableMemory() - 25000000) {
+            debug.warn('High on memory!');
+        }
+    }, 500);
 
     if (cfg.general.databaseBackups.enabled) {
         setInterval(async () => {
