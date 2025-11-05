@@ -89,7 +89,9 @@ export interface Config {
             enabled: boolean;
             interval: number;
             msg: string;
-        }
+        };
+
+        usingNormalHosting: boolean;
     };
 
     /* WARNING: Dev permissions allow doing many unsafe things and taking full control over the bot, so only give them to trusted people and the bot's developers! */
@@ -606,7 +608,7 @@ const defaultCfg: Config = {
                 '1415582195564806154',
                 '1235541500889137273',
                 '1235540273556361268'
-            ]
+            ],
         },
 
         moderationProtectedRoles: [],
@@ -633,7 +635,9 @@ const defaultCfg: Config = {
             enabled: true,
             msg: '🗄️ automatyczny backup masz tutaj',
             interval: 2 * 60 * 60 * 1000
-        }
+        },
+
+        usingNormalHosting: false
     },
 
     emoji: {
