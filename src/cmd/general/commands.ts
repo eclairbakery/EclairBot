@@ -58,7 +58,7 @@ export const commandsCmd: Command = {
 
         const embed = new dsc.EmbedBuilder()
             .setTitle('📢 Moje komendy, władzco!')
-            .setDescription('O to lista komend podzielona na kategorie! Zauważ że komendy których możesz użyć są oznaczone pogrubieniem, a te których nie możesz nie.')
+            .setDescription('O to lista komend podzielona na kategorie! A, no i o czywiście by nie śmiecić to sie nie wyświetlają komendy do których nie masz uprawnień.')
             .setColor(PredefinedColors.Cyan);
 
         for (const category of categoriesToShow) {
@@ -68,16 +68,20 @@ export const commandsCmd: Command = {
             for (let i = 0; i < cmds.length; i++) {
                 const cmd = cmds[i];
 
+                if (!canExecuteCmd(cmd, api.msg.member!.plainMember)) {
+                    continue;
+                }
+
                 let formattedName = `${cfg.general.prefix}${cmd.name}`;
                 if (cmd.aliases.length > 0) {
                     formattedName += ` *(a.k.a. \`${cfg.general.prefix}${cmd.aliases[0]}\`)*`;
                 }
 
-                if (canExecuteCmd(cmd, api.msg.member!.plainMember)) {
-                    formattedName = `**${formattedName}**`;
-                }
-
                 text += i == 0 ? `${formattedName}` : `, ${formattedName}`;
+            }
+
+            if (text == '') {
+                text = '*brak komend możliwych do użycia w tej kategorii*';
             }
 
             let categoryField: dsc.APIEmbedField = {
