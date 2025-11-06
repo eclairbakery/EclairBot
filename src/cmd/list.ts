@@ -53,6 +53,9 @@ import { restartCmd } from '@/cmd/dev/restart.js';
 import { evalCmd, execCmd } from '@/cmd/dev/eval.js';
 import { configurationCommand } from './dev/configuration.js';
 import anonSaysCmd from './general/anonsays.js';
+import { moneyCmd } from './economy/money.js';
+import { enableCommandCmd } from './dev/enable-cmd.js';
+import { disableCommandCmd } from './dev/disable-cmd.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -90,13 +93,14 @@ export const commands: Map<Category, Command[]> = new Map([
     [
         Category.Economy,
         [
-            balCmd, workCmd, blackjackCmd, slutCmd, crimeCmd, topecoCmd, robCmd, withdrawCmd, depositCmd, shopCmd
+            balCmd, workCmd, blackjackCmd, slutCmd, crimeCmd, topecoCmd, robCmd, withdrawCmd, depositCmd, shopCmd, moneyCmd
         ]
     ],
     [
         Category.DevelopersOnly,
         [
-            evalCmd, restartCmd, execCmd, configurationCommand
+            evalCmd, restartCmd, execCmd, configurationCommand,
+            enableCommandCmd, disableCommandCmd
         ],
     ],
     [
