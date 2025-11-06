@@ -44,14 +44,16 @@ export const topecoCmd: Command = {
             for (const row of rows) {
                 if (++i === 25) return;
 
-                const member = await msg.guild!.members.fetch(row.user_id);
-                const userEcoRole = ecoRoles.filter(id => member.roles.cache.has(id)).at(-1);
+                try {
+                    const member = await msg.guild!.members.fetch(row.user_id);
+                    const userEcoRole = ecoRoles.filter(id => member.roles.cache.has(id)).at(-1);
 
-                fields.push({
-                    name: `${i} » ${member.user.username}`,
-                    value: `${userEcoRole ? `<@&${userEcoRole}>` : 'Nowicjusz...'}\n${row.money}**$**`,
-                    inline: true
-                });
+                    fields.push({
+                        name: `${i} » ${member.user.username}`,
+                        value: `${userEcoRole ? `<@&${userEcoRole}>` : 'Nowicjusz...'}\n${row.money}**$**`,
+                        inline: true
+                    });
+                } catch {};
             }
 
             return msg.reply({
