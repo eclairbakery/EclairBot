@@ -1,6 +1,6 @@
 import { cfg, saveConfigurationChanges } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
-import { findCmdConfResolvable } from "@/util/cmd/findCmdConfigObj.js";
+import { findCmdConfigLocation, findCmdConfResolvable } from "@/util/cmd/findCmdConfigObj.js";
 
 export const enableCommandCmd: Command = {
     name: 'cmd-enable',
@@ -25,12 +25,18 @@ export const enableCommandCmd: Command = {
     },
     
     async execute(api) {
-        let where = findCmdConfResolvable(api.getTypedArg('arg', 'string')?.value ?? 'siema');
-        if (!where || !where.enabled) {
-            where = { enabled: true };
+        const name = api.getTypedArg('arg', 'string')?.value!;
+        const found = findCmdConfigLocation(name);
+
+        if (found.category === "defConf") {
+            cfg.commands.customs ??= {};
+            cfg.commands.customs[name] = { enabled: true };
         } else {
-            where.enabled = true;
+            found.conf.enabled = true;
         }
+
         saveConfigurationChanges();
+
+        api.log.replySuccess(api.msg, 'Udało się!', `Włączono komendę **${name}**!`);
     }
 };

@@ -27,3 +27,25 @@ export function findCmdConfResolvable(commandName: string): CommandConfigResolva
 export function findCmdConfigObj(command: Command): CommandConfigResolvable {
     return findCmdConfResolvable(command.name);
 }
+
+export function findCmdConfigLocation(cmdName: string) {
+    const commands = cfg.commands;
+
+    for (const [category, content] of Object.entries(commands)) {
+        if (category === "defConf") continue;
+        const cat = content as Record<string, CommandConfigResolvable>;
+        if (cmdName in cat) {
+            return {
+                category,
+                name: cmdName,
+                conf: cat[cmdName] 
+            };
+        }
+    }
+
+    return {
+        category: "defConf",
+        name: cmdName,
+        conf: commands.defConf
+    };
+}

@@ -57,7 +57,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         return;
     }
 
-    if (!findCmdConfResolvable(commandObj.name).enabled) {
+    if (!findCmdConfResolvable(commandObj.name).enabled && commandObj.name !== 'configuration') {
         log.replyWarn(
             msg,
             cfg.customization.commandsErrors.legacy.commandDisabledHeader,
