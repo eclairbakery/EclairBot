@@ -28,22 +28,20 @@ function randomPercentBetween(min: number, max: number): number {
     return getRandomFloat(min,max);
 }
 
-async function tryRob(userId: string, targetId: string): Promise<{ ok: boolean; amount?: number; wait?: number; success?: boolean; reason?: string }> {
+async function tryRob(userId: string, targetId: string): Promise<{ ok: boolean; amount?: number; wait?: number; success?: boolean; percent?: number; reason?: string }> {
     const check = await canRob(userId);
     if (!check.can) return { ok: false, wait: check.wait };
-
     if (userId === targetId) return { ok: false, amount: 0, success: false, reason: 'self' };
 
     const targetRow = await dbGet('SELECT money FROM economy WHERE user_id = ?', [targetId]);
     const attackerRow = await dbGet('SELECT money FROM economy WHERE user_id = ?', [userId]);
 
-    const targetMoney = (targetRow && typeof targetRow.money === 'number') ? targetRow.money : 0;
-    const attackerMoney = (attackerRow && typeof attackerRow.money === 'number') ? attackerRow.money : 0;
+    const targetMoney = (targetRow && typeof targetRow.money === 'number') ? Number(targetRow.money) : 0;
+    const attackerMoney = (attackerRow && typeof attackerRow.money === 'number') ? Number(attackerRow.money) : 0;
 
     if (targetMoney < MIN_STEALABLE) return { ok: false, amount: 0, success: false, reason: 'too_poor' };
 
     const success = Math.random() < BASE_SUCCESS_CHANCE;
-
     const percent = randomPercentBetween(MIN_PERCENT, MAX_PERCENT);
     const rawAmount = Math.floor(targetMoney * percent);
     const amount = Math.max(1, Math.min(rawAmount, targetMoney));
@@ -51,22 +49,39 @@ async function tryRob(userId: string, targetId: string): Promise<{ ok: boolean; 
     const now = Date.now();
 
     try {
+        await dbRun('BEGIN TRANSACTION');
+
         await dbRun(
             `INSERT INTO economy (user_id, money, last_worked, last_robbed, last_slutted, last_crimed)
-             VALUES (?, ?, 0, ?, 0, 0)
-             ON CONFLICT(user_id) DO UPDATE SET last_robbed = excluded.last_robbed`,
-            [userId, 0, now]
+            VALUES (?, ?, 0, ?, 0, 0)
+            ON CONFLICT(user_id) DO UPDATE SET last_robbed = excluded.last_robbed`,
+            [userId, attackerMoney, now]
         );
 
         if (success && amount > 0) {
-            await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ?', [amount, targetId]);
+            await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ? AND money >= ?', [amount, targetId, amount]);
+
+            const targetAfter = await dbGet('SELECT money FROM economy WHERE user_id = ?', [targetId]);
+            const targetAfterMoney = (targetAfter && typeof targetAfter.money === 'number') ? Number(targetAfter.money) : 0;
+
+
+            if (targetAfterMoney === targetMoney) {
+                await dbRun('ROLLBACK');
+                return { ok: false, amount: 0, success: false, reason: 'target_update_failed' };
+            }
+
             await dbRun('UPDATE economy SET money = money + ? WHERE user_id = ?', [amount, userId]);
-            return { ok: true, amount, success: true };
+
+            await dbRun('COMMIT');
+            const percentDone = Math.round((amount / targetMoney) * 100);
+            return { ok: true, amount, success: true, percent: percentDone };
         } else {
-            return { ok: true, amount: 0, success: false };
+            await dbRun('COMMIT');
+            return { ok: true, amount: 0, success: false, percent: 0 };
         }
     } catch (err) {
         output.err(err);
+        try { await dbRun('ROLLBACK'); } catch {}
         return { ok: false, reason: 'db_error' };
     }
 }
@@ -130,7 +145,7 @@ export const robCmd: Command = {
                 .setColor(result.success ? PredefinedColors.Green : PredefinedColors.Red)
                 .setTitle(result.success ? 'TAAAAAAAAAAAAAAAAK!' : 'System ochrony w banku się włączył.')
                 .setDescription(result.success
-                    ? `Udało Ci się ukraść <@${target.id}> **${result.amount}** dolarów (${Math.round((result.amount ?? 0) / Math.max(1, result.amount ?? 1) * 100)}%).`
+                    ? `Udało Ci się ukraść <@${target.id}> **${result.amount}** dolarów (${result.percent}%).`
                     : `Nie udało Ci się nic ukraść od <@${target.id}>!`
                 );
 
