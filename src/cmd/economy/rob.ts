@@ -2,7 +2,7 @@ import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 
 import { dbGet, dbRun } from '@/util/dbUtils.js';
-import { getRandomInt } from '@/util/rand.js';
+import { getRandomFloat, getRandomInt } from '@/util/rand.js';
 
 import { Command, CommandArgumentWithUserMentionOrMsgReferenceValue, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
@@ -25,7 +25,7 @@ async function canRob(userId: string): Promise<{ can: boolean; wait?: number }> 
 }
 
 function randomPercentBetween(min: number, max: number): number {
-    return getRandomInt(min,max);
+    return getRandomFloat(min,max);
 }
 
 async function tryRob(userId: string, targetId: string): Promise<{ ok: boolean; amount?: number; wait?: number; success?: boolean; reason?: string }> {
