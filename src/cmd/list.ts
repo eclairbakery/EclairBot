@@ -5,7 +5,6 @@ import { quickHelpCmd } from '@/cmd/general/help.js';
 import { commandsCmd } from '@/cmd/general/commands.js';
 import { manCmd } from '@/cmd/general/man.js';
 import { siemaCmd } from '@/cmd/general/siema.js';
-import { changelogCmd } from '@/cmd/general/changelog.js';
 import { randsiteCmd } from '@/cmd/general/randsite.js';
 import { pfpCmd } from '@/cmd/general/pfp.js';
 import { fandomCmd } from '@/cmd/general/fandom.js';
@@ -60,7 +59,7 @@ export const commands: Map<Category, Command[]> = new Map([
         Category.General,
         [
             detailHelpCmd, quickHelpCmd, commandsCmd,
-            manCmd, changelogCmd,
+            manCmd, 
             bannerCmd, pfpCmd,
             siemaCmd, randsiteCmd,
             wikiCmd, fandomCmd, anonSaysCmd
