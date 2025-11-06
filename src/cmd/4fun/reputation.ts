@@ -100,6 +100,6 @@ export const reputationCmd: Command = {
                 },
             );
 
-        return api.msg.reply({ embeds: [embed] });
+        return api.reply({ embeds: [embed] });
     },
 };

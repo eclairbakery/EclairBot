@@ -86,7 +86,7 @@ export const muteCmd: Command = {
                 });
             }
 
-            return api.msg.reply({
+            return api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setTitle(`📢 Na ${targetUser.user.username} przymusowo nałożono kłódkę na buzię!`)

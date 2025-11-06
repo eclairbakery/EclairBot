@@ -42,7 +42,7 @@ export const balCmd: Command = {
             row.money = row.money ?? 0;
             row.bank_money = row.bank_money ?? 0;
 
-            await api.msg.reply({
+            await api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setTitle('📊 Twoje pieniądze')

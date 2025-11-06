@@ -41,11 +41,11 @@ export const bannerCmd: Command = {
         const accentColor = fetchedUser.accentColor;
 
         if (bannerURL == null && accentColor == null) {
-            return api.msg.reply({ content: 'Ten użytkownik nie ma ustawionego banera ani koloru baneru.' });
+            return api.reply({ content: 'Ten użytkownik nie ma ustawionego banera ani koloru baneru.' });
         }
 
         if (bannerURL != null) {
-            api.msg.reply({
+            api.reply({
                 content: 'Proszę, oto baner:',
                 files: [bannerURL]
             });
@@ -56,7 +56,7 @@ export const bannerCmd: Command = {
             const buffer = Buffer.from(await response.arrayBuffer());
             const attachment = new dsc.AttachmentBuilder(buffer, { name: "color.png" });
 
-            api.msg.reply({
+            api.reply({
                 content: `Proszę, oto baner: (stały kolor, #${colorHex})`,
                 files: [attachment]
             });

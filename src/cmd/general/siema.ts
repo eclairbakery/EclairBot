@@ -25,6 +25,6 @@ export const siemaCmd: Command = {
     },
 
     execute(api) {
-        api.msg.reply({files: ['https://raw.githubusercontent.com/gorciu-official/studio-online-content/refs/heads/main/togif.gif']});
+        api.reply({files: ['https://raw.githubusercontent.com/gorciu-official/studio-online-content/refs/heads/main/togif.gif']});
     },
 };

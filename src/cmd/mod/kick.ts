@@ -70,7 +70,7 @@ export const kickCmd: Command = {
 
             await kick(targetUser, { reason });
 
-            await api.msg.reply({
+            await api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setTitle(`📢 ${targetUser.user.username} został wywalony!`)

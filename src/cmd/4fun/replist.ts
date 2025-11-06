@@ -70,7 +70,7 @@ export const replistCmd: Command = {
             });
         }
 
-        return api.msg.reply({
+        return api.reply({
             embeds: [
                 new dsc.EmbedBuilder()
                     .setTitle(`Lista opini użytkownika ${api.msg.member?.plainMember.displayName ?? api.msg.author.plainUser.username}`)

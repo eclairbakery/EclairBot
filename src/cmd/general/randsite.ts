@@ -59,6 +59,6 @@ export const randsiteCmd: Command = {
     async execute(api) {
         const everything = [...neocitiesPages];
         if ((api.getTypedArg('neocities-bypass', 'string').value as string ?? 'xd').includes('all')) everything.push(...nonNeocitiesPages);
-        return api.msg.reply(everything[Math.floor(Math.random() * everything.length)]);
+        return api.reply(everything[Math.floor(Math.random() * everything.length)]);
     },
 };

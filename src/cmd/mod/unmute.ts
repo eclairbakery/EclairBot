@@ -87,7 +87,7 @@ export const unmuteCmd: Command = {
                 });
             }
 
-            return api.msg.reply({
+            return api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setTitle(`📢 ${targetUser.user.username} został odmutowany!`)

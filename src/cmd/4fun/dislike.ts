@@ -77,6 +77,6 @@ export const subRepCmd: Command = {
                 );
         }
 
-        return api.msg.reply({ embeds: [embed] });
+        return api.reply({ embeds: [embed] });
     },
 };

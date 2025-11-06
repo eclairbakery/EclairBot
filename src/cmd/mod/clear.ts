@@ -40,7 +40,7 @@ export const clearCmd: Command = {
         const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember;
 
         if (!amount || amount < 1) {
-            return api.msg.reply({
+            return api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setTitle('Hej!')
@@ -64,7 +64,7 @@ export const clearCmd: Command = {
             await channel.bulkDelete(fetched.filter(m => m.id !== api.msg.author.id), true);
         }
 
-        await api.msg.reply({
+        await api.reply({
             embeds: [
                 new dsc.EmbedBuilder()
                     .setTitle('Już!')

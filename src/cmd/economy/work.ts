@@ -73,7 +73,7 @@ export const workCmd: Command = {
                     .setTitle('Chwila przerwy!')
                     .setDescription(`Ktoś tam Ci każe czekać **${waitSeconds}** sekund zanim znowu popr*cujesz, żebyś nie naspamił komendami w chuja hajsu...`);
 
-                return api.msg.reply({ embeds: [embed] });
+                return api.reply({ embeds: [embed] });
             }
 
             const embed = new dsc.EmbedBuilder()
@@ -81,7 +81,7 @@ export const workCmd: Command = {
                 .setTitle('Yay!')
                 .setDescription(`Zarobiłeś **${amount}** dolarów!`);
 
-            return api.msg.reply({ embeds: [embed] });
+            return api.reply({ embeds: [embed] });
         } catch (error) {
             output.err(error);
 
@@ -91,7 +91,7 @@ export const workCmd: Command = {
                 .setDescription('Coś się złego odwaliło z tą ekonomią...')
                 .setTimestamp();
 
-            return api.msg.reply({ embeds: [embed] });
+            return api.reply({ embeds: [embed] });
         }
     }
 };

@@ -41,7 +41,7 @@ export const lvlCmd: Command = {
             ) as { xp: number } | undefined;
 
             if (!row) {
-                await api.msg.reply(
+                await api.reply(
                     `❌ Użytkownik **${who.tag}** nie znajduje się w bazie poziomów. Nic nie napisał, krótko mówiąc...`
                 );
                 return;
@@ -59,7 +59,7 @@ export const lvlCmd: Command = {
                 )
                 .setThumbnail(who.displayAvatarURL({ size: 128 }));
 
-            await api.msg.reply({ embeds: [embed] });
+            await api.reply({ embeds: [embed] });
         } catch (err) {
             output.err(err);
         }

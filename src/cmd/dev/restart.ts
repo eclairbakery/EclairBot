@@ -21,10 +21,10 @@ export const restartCmd: Command = {
 
     async execute(api) {
         if (!canEval) {
-            return api.msg.reply(cfg.customization.evalWarnings.waitRestart);
+            return api.reply(cfg.customization.evalWarnings.waitRestart);
         }
         output.log('Issued restart. This will work due to the behaviour of Pterodactyl Daemon.');
-        await api.msg.reply(cfg.customization.evalWarnings.gonnaRestart);
+        await api.reply(cfg.customization.evalWarnings.gonnaRestart);
         process.exit(1);
     },
 };

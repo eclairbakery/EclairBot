@@ -29,7 +29,7 @@ export const changelogCmd: Command = {
         const version = api.getArg('version')?.value as string | undefined;
 
         if (version === 'beta-1.0') {
-            return api.msg.reply({
+            return api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setAuthor({ name: 'EclairBOT' })
@@ -41,7 +41,7 @@ export const changelogCmd: Command = {
                 ],
             });
         } else if (version === '1.0') {
-            return api.msg.reply({
+            return api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setAuthor({ name: 'EclairBOT' })
@@ -53,7 +53,7 @@ export const changelogCmd: Command = {
                 ],
             });
         } else if (version === '1.1') {
-            return api.msg.reply({
+            return api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setAuthor({ name: 'EclairBOT' })
@@ -65,7 +65,7 @@ export const changelogCmd: Command = {
                 ],
             });
         } else {
-            return api.msg.reply({
+            return api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setAuthor({ name: 'EclairBOT' })

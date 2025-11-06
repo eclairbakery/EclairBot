@@ -73,7 +73,7 @@ export const warnClearCmd: Command = {
                     ]
                 });
 
-                return api.msg.reply({
+                return api.reply({
                     embeds: [
                         new dsc.EmbedBuilder()
                             .setTitle(':white_check_mark: Warn usunięty')

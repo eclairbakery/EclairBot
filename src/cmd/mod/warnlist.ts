@@ -122,7 +122,7 @@ export const warnlistCmd: Command = {
                 : 'Nie ma żadnych warnów w bazie.');
         }
 
-        const msg = await api.msg.reply({
+        const msg = await api.reply({
             embeds: [render.embed],
             components: [render.components]
         });

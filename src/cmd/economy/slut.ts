@@ -75,7 +75,7 @@ export const slutCmd: Command = {
                     .setTitle('Chwila przerwy!')
                     .setDescription(`Ktoś tam Ci każe czekać **${waitSeconds}** sekund zanim znowu popr*cujesz, żebyś nie naspamił komendami w chuja hajsu...`);
 
-                return api.msg.reply({ embeds: [embed] });
+                return api.reply({ embeds: [embed] });
             }
 
             let embed: dsc.EmbedBuilder;
@@ -92,7 +92,7 @@ export const slutCmd: Command = {
                     .setDescription(`Straciłeś **${amount}** dolarów!`);
             }
 
-            return api.msg.reply({ embeds: [embed] });
+            return api.reply({ embeds: [embed] });
         } catch (error) {
             output.err(error);
 
@@ -102,7 +102,7 @@ export const slutCmd: Command = {
                 .setDescription('Coś się złego odwaliło z tą ekonomią...')
                 .setTimestamp();
 
-            return api.msg.reply({ embeds: [embed] });
+            return api.reply({ embeds: [embed] });
         }
     },
 };

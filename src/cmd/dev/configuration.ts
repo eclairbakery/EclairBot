@@ -40,7 +40,7 @@ export const configurationCommand: Command = {
         for (let i = 0; i < keys.length - 1; i++) {
             const key = keys[i];
             if (!(key in target)) {
-                return api.msg.reply(`❌ klucz "${key}" nie istnieje w konfiguracji (nie, nie możesz robić nowych).`);
+                return api.reply(`❌ klucz "${key}" nie istnieje w konfiguracji (nie, nie możesz robić nowych).`);
             }
             target = target[key];
 
@@ -53,7 +53,7 @@ export const configurationCommand: Command = {
         const lastKey = keys[keys.length - 1];
 
         if (!(lastKey in target)) {
-            return api.msg.reply(`❌ klucz "${lastKey}" nie istnieje w konfiguracji (nie, nie możesz robić nowych).`);
+            return api.reply(`❌ klucz "${lastKey}" nie istnieje w konfiguracji (nie, nie możesz robić nowych).`);
         }
 
         if (!value) {
@@ -61,11 +61,11 @@ export const configurationCommand: Command = {
             const text = `🔍 wartość \`${property}\` = \`\`\`${JSON.stringify(currentValue, null, 4)}\`\`\``;
             if (text.length > 1900) {
                 if (typeof currentValue === 'object') {
-                    return api.msg.reply(`⚠️ \`${property}\` jest trochę za długie by je tu wyświetlić, ale jest obiektem, więc mogę Ci podać klucze, pod którymi może znajdziesz swoją wymarzoną wartość: \`[${Object.keys(currentValue).join(', ')}]\``);
+                    return api.reply(`⚠️ \`${property}\` jest trochę za długie by je tu wyświetlić, ale jest obiektem, więc mogę Ci podać klucze, pod którymi może znajdziesz swoją wymarzoną wartość: \`[${Object.keys(currentValue).join(', ')}]\``);
                 }
-                return api.msg.reply(`❌ \`${property}\` jest trochę za długie by je tu wyświetlić i nie jest obiektem, więc niestety nic nie mogę zrobić, by ci pomóc`);
+                return api.reply(`❌ \`${property}\` jest trochę za długie by je tu wyświetlić i nie jest obiektem, więc niestety nic nie mogę zrobić, by ci pomóc`);
             } else {
-                return api.msg.reply(text);
+                return api.reply(text);
             }
         }
 
@@ -78,7 +78,7 @@ export const configurationCommand: Command = {
         try {
             evaluatedValue = (0, eval)(sanitizedValue);
         } catch (e) {
-            return api.msg.reply(`❌ nie udało się sparsować wartości: ${e}`);
+            return api.reply(`❌ nie udało się sparsować wartości: ${e}`);
         }
 
         target[lastKey] = evaluatedValue;
@@ -87,10 +87,10 @@ export const configurationCommand: Command = {
         try {
             saveConfigurationChanges();
         } catch (e) {
-            return api.msg.reply(`⚠️ ustawiono \`${property}\`, ale nie udało się zapisać zmian w stałej konfiguracji`);
+            return api.reply(`⚠️ ustawiono \`${property}\`, ale nie udało się zapisać zmian w stałej konfiguracji`);
         }
 
-        return api.msg.reply(
+        return api.reply(
             `✅ ustawiono \`${property}\` na \`${sanitizedValue}\`; polecam jeszcze odpalić \`${cfg.general.prefix}restart\`.`
         );
     },

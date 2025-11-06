@@ -179,7 +179,7 @@ export const figletCmd: Command = {
         const words = tokenize(text);
         const result = renderFigletWrappedString(words, font, 40);
 
-        return api.msg.reply({
+        return api.reply({
             embeds: [new dsc.EmbedBuilder().setTitle('Wynik').setDescription(`\`\`\`${result}\`\`\``)],
         });
     },

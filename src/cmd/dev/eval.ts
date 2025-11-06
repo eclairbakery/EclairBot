@@ -31,10 +31,10 @@ export const evalCmd: Command = {
     async execute(api) {
         const code = api.getTypedArg('code', 'trailing-string')?.value as string;
         if (code.includes('process.exit')) {
-            return api.msg.reply(cfg.customization.evalWarnings.unsafeEval);
+            return api.reply(cfg.customization.evalWarnings.unsafeEval);
         }
         if (code.includes('bot.db') || code.includes('bot/eclair')) {
-            return api.msg.reply(cfg.customization.evalWarnings.doNotDownloadDatabase);
+            return api.reply(cfg.customization.evalWarnings.doNotDownloadDatabase);
         }
         let warns: string[] = [];
         if (code.includes('console.log') || code.includes('console.error')) {
@@ -51,9 +51,9 @@ export const evalCmd: Command = {
         }
         try {
             const result = await (cfg.general.usingNormalHosting ? eval(code) : (0, eval)(`${canEval ? code : 'false'}`));
-            return api.msg.reply(`wynik twojej super komendy:\n\`\`\`${String(result).replace('`', '\`')}\`\`\``);
+            return api.reply(`wynik twojej super komendy:\n\`\`\`${String(result).replace('`', '\`')}\`\`\``);
         } catch (err) {
-            return api.msg.reply(`❌ niepowodzenie:\n\`\`\`${err}\`\`\``);
+            return api.reply(`❌ niepowodzenie:\n\`\`\`${err}\`\`\``);
         }
     },
 };

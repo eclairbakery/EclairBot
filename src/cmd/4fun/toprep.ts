@@ -63,7 +63,7 @@ export const toprepCmd: Command = {
             ++i;
         }
 
-        return api.msg.reply({
+        return api.reply({
             embeds: [
                 new dsc.EmbedBuilder()
                     .setColor(PredefinedColors.Cyan)

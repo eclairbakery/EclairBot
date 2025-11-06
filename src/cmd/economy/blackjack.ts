@@ -74,7 +74,7 @@ export const blackjackCmd: Command = {
                 );
         };
 
-        const gameMsg = await api.msg.reply({ embeds: [getEmbed()], components: [rowBtns] });
+        const gameMsg = await api.reply({ embeds: [getEmbed()], components: [rowBtns] });
 
         const collector = gameMsg.createMessageComponentCollector({
             time: 30000,

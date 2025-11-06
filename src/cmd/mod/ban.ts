@@ -68,7 +68,7 @@ export const banCmd: Command = {
 
             await ban(targetUser, { reason });
 
-            await api.msg.reply({
+            await api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setTitle(`📢 ${targetUser.user.username} został zbanowany!`)

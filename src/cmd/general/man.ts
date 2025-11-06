@@ -120,6 +120,6 @@ export const manCmd: Command = {
                 ].join('\n')
             );
 
-        return api.msg.reply({ embeds: [embed] });
+        return api.reply({ embeds: [embed] });
     },
 };

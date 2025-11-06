@@ -92,7 +92,7 @@ export const commandsCmd: Command = {
             embed.addFields(categoryField);
         }
 
-        api.msg.reply({
+        api.reply({
             embeds: [embed],
         });
     }

@@ -77,6 +77,6 @@ export const plusRepCmd: Command = {
                 );
         }
 
-        return api.msg.reply({ embeds: [embed] });
+        return api.reply({ embeds: [embed] });
     },
 };

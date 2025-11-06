@@ -112,6 +112,6 @@ export const shitwarnCmd: Command = {
             embed.addFields({ name: 'Wygasa', value: `<t:${expiresAt}:R>`, inline: false });
         }
 
-        await api.msg.reply({ embeds: [embed] });
+        await api.reply({ embeds: [embed] });
     }
 };

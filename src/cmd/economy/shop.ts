@@ -26,7 +26,7 @@ export const shopCmd: Command = {
                 value: `${shopItem.price}💸 - ${shopItem.description} (daje <@&${shopItem.role}>)`
             });
         });
-        api.msg.reply({
+        api.reply({
             embeds: [
                 new EmbedBuilder()
                     .setTitle('💳 Sklep')

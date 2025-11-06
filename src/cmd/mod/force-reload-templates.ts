@@ -25,7 +25,7 @@ export const forceReloadTemplatesCmd: Command = {
     async execute(api: CommandAPI) {
         actionsManager.emit(OnForceReloadTemplates, {});
 
-        await api.msg.reply({
+        await api.reply({
             embeds: [
                 new dsc.EmbedBuilder()
                     .setTitle('Przeladowano wszystkie template channels!')

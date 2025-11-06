@@ -60,7 +60,7 @@ export const catCmd: Command = {
     },
 
     async execute(api) {
-        api.msg.reply(await getGIF('cat'));
+        api.reply(await getGIF('cat'));
     }
 };
 
@@ -83,7 +83,7 @@ export const dogCmd: Command = {
     },
 
     async execute(api) {
-        api.msg.reply(await getGIF('parrot'));
+        api.reply(await getGIF('parrot'));
     }
 };
 
@@ -106,7 +106,7 @@ export const animalCmd: Command = {
 
     async execute(api) {
         const lmfao = ['parrot', 'dog', 'giraffe', 'elephant', 'cat', 'monkey', 'bear', 'cheetah', 'cow'];
-        api.msg.reply(await getGIF(lmfao[Math.floor(Math.random() * lmfao.length)]));
+        api.reply(await getGIF(lmfao[Math.floor(Math.random() * lmfao.length)]));
     }
 };
 
@@ -128,6 +128,6 @@ export const parrotCmd: Command = {
     },
 
     async execute(api) {
-        api.msg.reply(await getGIF('parrot'));
+        api.reply(await getGIF('parrot'));
     }
 };
