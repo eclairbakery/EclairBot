@@ -4,54 +4,78 @@ import * as log from '@/util/log.js';
 import { dbGet, dbRun } from '@/util/dbUtils.js';
 import { getRandomInt } from '@/util/rand.js';
 
-import { Command, CommandArgumentWithUserMentionOrMsgReferenceValue, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
+import { Command, CommandArgumentWithUserMentionOrMsgReferenceValue, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { cfg } from '@/bot/cfg.js';
 
 const COOLDOWN_MS = 5 * 60 * 1000;
-const ROB_PERCENTAGE = 0.5;
-const ROB_AMOUNT_MIN = 200;
-const ROB_AMOUNT_MAX = 1200;
+const BASE_SUCCESS_CHANCE = 0.5;
+const MIN_PERCENT = 0.05;
+const MAX_PERCENT = 0.25; 
+const MIN_STEALABLE = 50;
 
 async function canRob(userId: string): Promise<{ can: boolean; wait?: number }> {
     const row = await dbGet('SELECT last_robbed FROM economy WHERE user_id = ?', [userId]);
     const now = Date.now();
     if (!row || row.last_robbed == null) return { can: true };
-    const timeSinceLastRob = now - row.last_robbed;
-    if (timeSinceLastRob < COOLDOWN_MS) return { can: false, wait: COOLDOWN_MS - timeSinceLastRob };
+    const timeSinceLast = now - row.last_robbed;
+    if (timeSinceLast < COOLDOWN_MS) return { can: false, wait: COOLDOWN_MS - timeSinceLast };
     return { can: true };
 }
 
-async function tryRob(userId: string, targetId: string): Promise<{ ok: boolean; amount?: number; wait?: number; success?: boolean }> {
+function randomPercentBetween(min: number, max: number): number {
+    return getRandomInt(min,max);
+}
+
+async function tryRob(userId: string, targetId: string): Promise<{ ok: boolean; amount?: number; wait?: number; success?: boolean; reason?: string }> {
     const check = await canRob(userId);
     if (!check.can) return { ok: false, wait: check.wait };
 
-    const targetRow = await dbGet('SELECT money FROM economy WHERE user_id = ?', [targetId]);
-    if (!targetRow || targetRow.money <= 0) return { ok: false, amount: 0, success: false };
+    if (userId === targetId) return { ok: false, amount: 0, success: false, reason: 'self' };
 
-    const success = Math.random() < ROB_PERCENTAGE;
-    const amount = getRandomInt(ROB_AMOUNT_MIN, ROB_AMOUNT_MAX);
-    const robbedAmount = success ? Math.min(amount, targetRow.money) : 0;
+    const targetRow = await dbGet('SELECT money FROM economy WHERE user_id = ?', [targetId]);
+    const attackerRow = await dbGet('SELECT money FROM economy WHERE user_id = ?', [userId]);
+
+    const targetMoney = (targetRow && typeof targetRow.money === 'number') ? targetRow.money : 0;
+    const attackerMoney = (attackerRow && typeof attackerRow.money === 'number') ? attackerRow.money : 0;
+
+    if (targetMoney < MIN_STEALABLE) return { ok: false, amount: 0, success: false, reason: 'too_poor' };
+
+    const success = Math.random() < BASE_SUCCESS_CHANCE;
+
+    const percent = randomPercentBetween(MIN_PERCENT, MAX_PERCENT);
+    const rawAmount = Math.floor(targetMoney * percent);
+    const amount = Math.max(1, Math.min(rawAmount, targetMoney));
 
     const now = Date.now();
-    await dbRun(
-        `INSERT INTO economy (user_id, money, last_worked, last_robbed, last_slutted, last_crimed)
-         VALUES (?, ?, 0, ?, 0, 0)
-         ON CONFLICT(user_id) DO UPDATE SET money = money + ?, last_robbed = ?`,
-        [userId, robbedAmount, now, robbedAmount, now]
-    );
 
-    if (success) await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ?', [robbedAmount, targetId]);
+    try {
+        await dbRun(
+            `INSERT INTO economy (user_id, money, last_worked, last_robbed, last_slutted, last_crimed)
+             VALUES (?, ?, 0, ?, 0, 0)
+             ON CONFLICT(user_id) DO UPDATE SET last_robbed = excluded.last_robbed`,
+            [userId, 0, now]
+        );
 
-    return { ok: true, amount: robbedAmount, success };
+        if (success && amount > 0) {
+            await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ?', [amount, targetId]);
+            await dbRun('UPDATE economy SET money = money + ? WHERE user_id = ?', [amount, userId]);
+            return { ok: true, amount, success: true };
+        } else {
+            return { ok: true, amount: 0, success: false };
+        }
+    } catch (err) {
+        output.err(err);
+        return { ok: false, reason: 'db_error' };
+    }
 }
 
 export const robCmd: Command = {
     name: 'rob',
     description: {
-        main: 'Spróbuj okraść innego gracza i zgarnąć trochę hajsu. Ale nie miej potem wyrzutów sumienia...',
-        short: 'Okradnij kogoś!'
+        main: 'Spróbuj okraść innego gracza. Kwota kradzieży bazuje na procencie pieniędzy celu.',
+        short: 'Okradnij kogoś (proc.)'
     },
     flags: CommandFlags.Economy,
 
@@ -89,16 +113,24 @@ export const robCmd: Command = {
                         .setTitle(cfg.customization.economyTexts.robbing.waitHeader)
                         .setDescription(cfg.customization.economyTexts.robbing.waitText.replaceAll('<seconds>', String(waitSeconds)));
                     return msg.reply({ embeds: [embed] });
-                } else {
-                    throw new Error('Nie udało się sprawdzić stanu konta.');
                 }
+
+                if (result.reason === 'too_poor') {
+                    const embed = new dsc.EmbedBuilder()
+                        .setColor(PredefinedColors.Yellow)
+                        .setTitle('Cel jest zbyt biedny')
+                        .setDescription(`<@${target.id}> ma za mało pieniędzy (mniej niż ${MIN_STEALABLE} dolarów).`);
+                    return msg.reply({ embeds: [embed] });
+                }
+
+                return api.log.replyError(msg, 'Coś poszło nie tak...', 'Spróbuj ponownie później.');
             }
 
             const embed = new dsc.EmbedBuilder()
                 .setColor(result.success ? PredefinedColors.Green : PredefinedColors.Red)
                 .setTitle(result.success ? 'TAAAAAAAAAAAAAAAAK!' : 'System ochrony w banku się włączył.')
                 .setDescription(result.success
-                    ? `Udało Ci się okraść <@${target.id}> i zgarnąć **${result.amount}** dolarów!`
+                    ? `Udało Ci się ukraść <@${target.id}> **${result.amount}** dolarów (${Math.round((result.amount ?? 0) / Math.max(1, result.amount ?? 1) * 100)}%).`
                     : `Nie udało Ci się nic ukraść od <@${target.id}>!`
                 );
 
