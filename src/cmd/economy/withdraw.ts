@@ -33,10 +33,10 @@ export const withdrawCmd: Command = {
             let amount = amountArg.toLowerCase() === "all" ? row.bank_money : parseInt(amountArg);
 
             if (isNaN(amount) || amount <= 0) {
-                return log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
+                return api.log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
             }
             if (row.bank_money < amount) {
-                return log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.bankBalanceNotSufficientText);
+                return api.log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.bankBalanceNotSufficientText);
             }
 
             row.bank_money -= amount;
@@ -46,7 +46,7 @@ export const withdrawCmd: Command = {
             await api.reply(`✅ Wypłacono ${amount}$ z banku.\nNowy stan: 💳 ${row.bank_money}$ w banku, 💷 ${row.money}$ w portfelu.`);
         } catch (err) {
             output.err(err);
-            log.replyError(api.msg, 'Błąd wypłaty', 'Coś poszło nie tak z bazą danych.');
+            api.log.replyError(api.msg, 'Błąd wypłaty', 'Coś poszło nie tak z bazą danych.');
         }
     }
 };

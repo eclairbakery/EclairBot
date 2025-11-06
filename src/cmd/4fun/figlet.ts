@@ -169,7 +169,7 @@ export const figletCmd: Command = {
 
         const availableFonts = await figletFonts();
         if (!availableFonts.includes(font)) {
-            return log.replyError(
+            return api.log.replyError(
                 api.msg,
                 'Nieznana czcionka!',
                 `Nie znam czionki o nazwie ${font}.\n**Spróbuj tak:** ${fmtArr(availableFonts)}`,

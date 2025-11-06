@@ -54,7 +54,7 @@ export const shitwarnCmd: Command = {
         let expiresAt: number | null = null;
 
         if (!targetUser) {
-            return log.replyError(api.msg, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
+            return api.log.replyError(api.msg, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
         }
 
         if (reason) {
@@ -71,14 +71,14 @@ export const shitwarnCmd: Command = {
 
         if (!reason) {
             if (cfg.commands.mod.warn.reasonRequired) {
-                return log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+                return api.log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
             } else {
                 reason = cfg.customization.modTexts.defaultReason;
             }
         }
 
         if (targetUser.id === api.msg.author.id) {
-            return log.replyError(
+            return api.log.replyError(
                 api.msg,
                 cfg.customization.modTexts.havingMentalProblemsByWarningYourselfHeader,
                 cfg.customization.modTexts.havingMentalProblemsByWarningYourselfText

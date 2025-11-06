@@ -55,12 +55,12 @@ export const unmuteCmd: Command = {
         }
 
         if (!targetUser) {
-            return log.replyError(api.msg, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
+            return api.log.replyError(api.msg, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
         }
 
         if (!reason) {
             if (cmdCfg.reasonRequired) {
-                return log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+                return api.log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
             }
             reason = cfg.customization.modTexts.defaultReason;
         }
@@ -97,7 +97,7 @@ export const unmuteCmd: Command = {
             });
         } catch (err) {
             output.err(err);
-            return log.replyError(api.msg, 'Błąd', 'Nie udało się odciszyć użytkownika. Sprawdź permisje.');
+            return api.log.replyError(api.msg, 'Błąd', 'Nie udało się odciszyć użytkownika. Sprawdź permisje.');
         }
     },
 };

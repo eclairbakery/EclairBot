@@ -31,11 +31,11 @@ export const topecoCmd: Command = {
         db.all('SELECT * FROM economy ORDER BY money DESC LIMIT 12', [], async (err, rows: any[]) => {
             if (err) {
                 output.err(err);
-                return log.replyError(msg, 'Błąd pobierania topki', 'Pytaj twórców biblioteki sqlite3...');
+                return api.log.replyError(msg, 'Błąd pobierania topki', 'Pytaj twórców biblioteki sqlite3...');
             }
 
             if (!rows.length) {
-                return log.replyError(msg, 'Zero pieniędzy', 'Nie ma żadnego w bazie usera z hajsem :sob:');
+                return api.log.replyError(msg, 'Zero pieniędzy', 'Nie ma żadnego w bazie usera z hajsem :sob:');
             }
 
             let fields: dsc.APIEmbedField[] = [];

@@ -32,10 +32,10 @@ export const depositCmd: Command = {
             let amount = api.getTypedArg('amount', 'number')?.value as number;
 
             if (isNaN(amount) || amount <= 0) {
-                return log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
+                return api.log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
             }
             if (row.money < amount) {
-                return log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
+                return api.log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
             }
 
             row.money -= amount;
@@ -45,7 +45,7 @@ export const depositCmd: Command = {
             await api.reply(`✅ Wpłacono ${amount}$ do banku.\nNowy stan: 💳 ${row.bank_money}$ w banku, 💷 ${row.money}$ w portfelu.`);
         } catch (err) {
             output.err(err);
-            log.replyError(api.msg, 'Błąd depozytu', 'Coś poszło nie tak z bazą danych.');
+            api.log.replyError(api.msg, 'Błąd depozytu', 'Coś poszło nie tak z bazą danych.');
         }
     }
 };

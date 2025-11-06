@@ -131,7 +131,7 @@ export const detailHelpCmd: Command = {
             for (const val of values) {
                 const category = Category.fromString(val);
                 if (!category) {
-                    log.replyError(msg, 'Nieznana kategoria', `Nie znam kategorii ${val}. Czy możesz powtórzyć?`);
+                    api.log.replyError(msg, 'Nieznana kategoria', `Nie znam kategorii ${val}. Czy możesz powtórzyć?`);
                     return;
                 }
                 categoriesToShow.add(category);

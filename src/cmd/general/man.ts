@@ -67,7 +67,7 @@ export const manCmd: Command = {
         ]);
 
         if (api.args.length === 0) {
-            return log.replyError(
+            return api.log.replyError(
                 api.msg,
                 'Nie tędy droga...',
                 'No nie wiem jak ty, ale ja bym wolał, żeby man opisywał funkcje, które już znasz.\nDokładne logi błędu:\n```What manual page do you want?\nFor example, try \'man man\'.```'
@@ -78,7 +78,7 @@ export const manCmd: Command = {
         const found = findCommand(cmdName.value as string ?? 'man', manuals);
 
         if (!found) {
-            return log.replyError(
+            return api.log.replyError(
                 api.msg,
                 'Nie tędy droga...',
                 `Tak w ogóle, to wiesz, że nawet nie ma takiej komendy?\nDokładne logi błędu:\n\`\`\`No manual entry for  ${cmdName}\`\`\``
@@ -88,7 +88,7 @@ export const manCmd: Command = {
         const { command, category } = found;
 
         if (!findCmdConfResolvable(command.name).enabled) {
-            return log.replyWarn(api.msg, 'Ta komenda jest wyłączona.', "Nie dowiesz się o niej nic, dopóki nie zostanie włączona.");
+            return api.log.replyWarn(api.msg, 'Ta komenda jest wyłączona.', "Nie dowiesz się o niej nic, dopóki nie zostanie włączona.");
         }
 
         const formattedArgs = command.expectedArgs.map((arg) => `**${arg.name}**: ${arg.description}`);

@@ -64,7 +64,7 @@ export const warnCmd: Command = {
         debug.log('Warn command args:', { targetUser, points, reason });
 
         if (!targetUser) {
-            return log.replyError(
+            return api.log.replyError(
                 api.msg,
                 cfg.customization.modTexts.noTargetSpecifiedHeader,
                 cfg.customization.modTexts.noTargetSpecifiedText
@@ -72,19 +72,19 @@ export const warnCmd: Command = {
         }
 
         if (targetUser.roles.cache.hasAny(...cfg.general.moderationProtectedRoles)) {
-            return log.replyError(api.msg, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
+            return api.log.replyError(api.msg, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
         }
 
         if (!reason) {
             if (cfg.commands.mod.warn.reasonRequired) {
-                return log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+                return api.log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
             } else {
                 reason = cfg.customization.modTexts.defaultReason;
             }
         }
 
         if (targetUser.id === api.msg.author.id) {
-            return log.replyError(
+            return api.log.replyError(
                 api.msg,
                 cfg.customization.modTexts.havingMentalProblemsByWarningYourselfHeader,
                 cfg.customization.modTexts.havingMentalProblemsByWarningYourselfText,
@@ -114,7 +114,7 @@ export const warnCmd: Command = {
             });
         } catch (err) {
             debug.err(err);
-            return log.replyError(api.msg, 'Błąd bazy danych', 'Nie udało się zapisać warna');
+            return api.log.replyError(api.msg, 'Błąd bazy danych', 'Nie udało się zapisać warna');
         }
 
         const embed = new dsc.EmbedBuilder()

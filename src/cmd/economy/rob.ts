@@ -105,7 +105,7 @@ export const robCmd: Command = {
             return msg.reply({ embeds: [embed] });
         } catch (error) {
             output.err(error);
-            return log.replyError(msg, 'Coś się odwaliło...', 'Proszę, pytaj sqlite3 a nie mnie obwiniasz.');
+            return api.log.replyError(msg, 'Coś się odwaliło...', 'Proszę, pytaj sqlite3 a nie mnie obwiniasz.');
         }
     }
 };

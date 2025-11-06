@@ -41,7 +41,7 @@ export const commandsCmd: Command = {
             for (const arg of categoriesList) {
                 const category = Category.fromString(arg);
                 if (!category) {
-                    log.replyError(api.msg, 'Nieznana kategoria', `Nie znam kategori ${arg}. Czy możesz powtórzyć?`);
+                    api.log.replyError(api.msg, 'Nieznana kategoria', `Nie znam kategori ${arg}. Czy możesz powtórzyć?`);
                     return;
                 }
                 categoriesToShow.add(category);

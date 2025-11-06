@@ -41,7 +41,7 @@ export const warnlistCmd: Command = {
             client = api.plainMessage.client;
             guild = api.plainMessage.guild!;
         } else {
-            return log.replyError(api.msg, 'Błąd', 'Nie mogę znaleźć klienta bota...');
+            return api.log.replyError(api.msg, 'Błąd', 'Nie mogę znaleźć klienta bota...');
         }
 
         const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember | undefined;
@@ -117,7 +117,7 @@ export const warnlistCmd: Command = {
 
         let render = await renderPage(currentPage);
         if (!render) {
-            return log.replyError(api.msg, 'Brak wyników', targetUser
+            return api.log.replyError(api.msg, 'Brak wyników', targetUser
                 ? `Nie znaleziono żadnych warnów dla ${targetUser.user.username}.`
                 : 'Nie ma żadnych warnów w bazie.');
         }

@@ -46,13 +46,13 @@ export const blackjackCmd: Command = {
         const betArg = api.getTypedArg('amount', 'number');
         const bet = betArg?.value as number;
         if (!bet || bet <= 0) {
-            return log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
+            return api.log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
         }
 
         const userId = api.msg.author.id;
         const row = await dbGet('SELECT * FROM economy WHERE user_id = ?', [userId]);
         if ((row?.money ?? 0) < bet) 
-            return log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
+            return api.log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
 
         let playerHand: Card[] = [drawCard(), drawCard()];
         let dealerHand: Card[] = [drawCard(), drawCard()];

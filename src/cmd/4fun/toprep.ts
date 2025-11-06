@@ -38,7 +38,7 @@ export const toprepCmd: Command = {
         const count = api.getTypedArg('count', 'number').value as number | null ?? DefaultCount;
 
         if (count > 18) {
-            return log.replyError(api.msg, 'Ej nie przesadzaj!', 'Nie pozwole ci więcej niż 18 pól bo zrobi się flood!');
+            return api.log.replyError(api.msg, 'Ej nie przesadzaj!', 'Nie pozwole ci więcej niż 18 pól bo zrobi się flood!');
         }
 
         const top = await getTopRep(50);

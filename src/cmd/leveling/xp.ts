@@ -56,7 +56,7 @@ export const xpCmd: Command = {
         const affect = api.getTypedArg('affect', 'string')?.value as string ?? 'levels';
 
         if (!targetUser || !actionStr || amount === undefined) {
-            return log.replyError(api.msg, 'Niepoprawne argumenty', 'Sprawdź składnię komendy i spróbuj ponownie.');
+            return api.log.replyError(api.msg, 'Niepoprawne argumenty', 'Sprawdź składnię komendy i spróbuj ponownie.');
         }
 
         let shouldLeveler = affect === 'levels';
@@ -65,7 +65,7 @@ export const xpCmd: Command = {
         }
 
         if (actionStr != 'set' && actionStr != 'add' && actionStr != 'delete') {
-            return log.replyError(api.msg, 'Nie poprawna akcja', 'Argument `action` powinien być `set`, `add` lub `delete`!');
+            return api.log.replyError(api.msg, 'Nie poprawna akcja', 'Argument `action` powinien być `set`, `add` lub `delete`!');
         }
         const action = actionStr as 'set' | 'add' | 'delete';
 
@@ -78,10 +78,10 @@ export const xpCmd: Command = {
                 amount: amount,
             });
 
-            log.replySuccess(api.msg, 'Udało się!', `Wykonałem akcję na użytkowniku **${targetUser.user.tag}**`);
+            api.log.replySuccess(api.msg, 'Udało się!', `Wykonałem akcję na użytkowniku **${targetUser.user.tag}**`);
         } catch (err) {
             output.err(err);
-            log.replyError(api.msg, 'Błąd wykonania', 'Coś poszło nie tak podczas modyfikacji XP/levela.');
+            api.log.replyError(api.msg, 'Błąd wykonania', 'Coś poszło nie tak podczas modyfikacji XP/levela.');
         }
     },
 };

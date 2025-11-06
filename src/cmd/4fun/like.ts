@@ -40,7 +40,7 @@ export const plusRepCmd: Command = {
         const comment = api.getTypedArg('comment', 'trailing-string').value as string | null;
 
         if (api.msg.author.id == targetUser.id) {
-            return log.replyWarn(api.msg, 'Halo!', 'Nie mozesz modyfikować swoich punktów reputacji!');
+            return api.log.replyWarn(api.msg, 'Halo!', 'Nie mozesz modyfikować swoich punktów reputacji!');
         }
 
         const lastRepGivenByUser = await getLastRepGivenByUser(api.msg.author.id);
@@ -51,7 +51,7 @@ export const plusRepCmd: Command = {
             const nextAvailable = new Date(createdAt.getTime() + 24 * 60 * 60 * 1000);
 
             if (now < nextAvailable) {
-                return log.replyWarn(
+                return api.log.replyWarn(
                     api.msg, 'Halo!',
                     `Możesz oceniać użytkowników co 24h ale ten czas jeszcze nie miną! Będziesz mógł oceniać dopiero <t:${Math.floor(nextAvailable.getTime() / 1000)}:R>`
                 );

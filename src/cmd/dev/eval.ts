@@ -47,7 +47,7 @@ export const evalCmd: Command = {
             warns.push(cfg.customization.evalWarnings.wait);
         }
         for (const warn of warns) {
-            await log.replyTip(api.msg, 'Ten kod może nie zadziałać!', warn);
+            await api.log.replyTip(api.msg, 'Ten kod może nie zadziałać!', warn);
         }
         try {
             const result = await (cfg.general.usingNormalHosting ? eval(code) : (0, eval)(`${canEval ? code : 'false'}`));

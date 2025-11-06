@@ -52,7 +52,7 @@ export const balCmd: Command = {
             });
         } catch (err) {
             output.err(err);
-            log.replyError(api.msg, 'Błąd pobierania balansu', 'Coś poszło nie tak z bazą danych.');
+            api.log.replyError(api.msg, 'Błąd pobierania balansu', 'Coś poszło nie tak z bazą danych.');
         }
     }
 };

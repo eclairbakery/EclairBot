@@ -27,13 +27,13 @@ export const izolatkaCmd: Command = {
         const modeOrig = api.getTypedArg('question', 'string').value as string;
         const mode = modeOrig.replace('#force-do', '').trim();
         if (mode !== 'add' && mode !== 'rem') {
-            return log.replyError(api.msg, 'Podaj akcję.', 'Kolego, panie! Mam go dodać (add) czy usunąć (rem)?');
+            return api.log.replyError(api.msg, 'Podaj akcję.', 'Kolego, panie! Mam go dodać (add) czy usunąć (rem)?');
         }
         if (!modeOrig.includes('#force-do') && !cfg.commands.mod.izolatka.enabledForNormalAdministrators) {
-            return log.replyWarn(api.msg, 'Nie polecam', 'Dwie osoby wyszły z serwera przez tą izolatkę. To po prostu wina tego konceptu. Nawet nie próbuj tłumaczyć, że to wina Gorciu\'a, bo ich dodał; tak to prawda, ale co to kurde w ogóle za koncept... ||Jak naprawdę Ci zależy, to dodaj po rem/add `#force-do` (bez spacji, połączone).||');
+            return api.log.replyWarn(api.msg, 'Nie polecam', 'Dwie osoby wyszły z serwera przez tą izolatkę. To po prostu wina tego konceptu. Nawet nie próbuj tłumaczyć, że to wina Gorciu\'a, bo ich dodał; tak to prawda, ale co to kurde w ogóle za koncept... ||Jak naprawdę Ci zależy, to dodaj po rem/add `#force-do` (bez spacji, połączone).||');
         }
         if (modeOrig.includes('#force-do') && !cfg.commands.mod.izolatka.enabledForNormalAdministrators && !api.msg.member!.plainMember.roles.cache.hasAny(cfg.roles.eclair25, cfg.roles.secondLevelOwner)) {
-            return log.replyError(api.msg, 'Ty nie możesz!', 'Izolatka została wyłączona w konfiguracji dla administratorów poniżej współwłaściciela! (psst... prawdopodobnie dlatego, że została zaarchiwizowana)');
+            return api.log.replyError(api.msg, 'Ty nie możesz!', 'Izolatka została wyłączona w konfiguracji dla administratorów poniżej współwłaściciela! (psst... prawdopodobnie dlatego, że została zaarchiwizowana)');
         }
         if (mode == 'add' && !targetUser.roles.cache.has('1415020555572088872')) {
             targetUser.roles.add('1415020555572088872');
@@ -42,6 +42,6 @@ export const izolatkaCmd: Command = {
             targetUser.roles.remove('1415020555572088872');
         }
 
-        return log.replySuccess(api.msg, 'TAAK!', 'Udało się przenieść / wywalić usera z izolatki!')
+        return api.log.replySuccess(api.msg, 'TAAK!', 'Udało się przenieść / wywalić usera z izolatki!')
     }
 };
