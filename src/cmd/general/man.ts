@@ -110,6 +110,14 @@ export const manCmd: Command = {
             id: '1430647658736914622'
         });
 
+        const canUseCommand =
+        command.permissions.allowedRoles != null &&
+        api.msg.member?.plainMember &&
+        api.msg.member?.plainMember.roles &&
+        api.msg.member?.plainMember.roles.cache.some((role: any) =>
+            command.permissions.allowedRoles!.includes(role.id)
+        );
+
         const embed = new dsc.EmbedBuilder()
             .setTitle(':loudspeaker: Instrukcja')
             .setColor(category.color)
@@ -121,8 +129,7 @@ export const manCmd: Command = {
                     `${emoji} **Kategoria:** ${category.name} ${category.emoji}`,
                     `${emoji} **Argumenty**: ${formattedArgs.length === 0 ? 'brak' : `\n- ${formattedArgs.join('\n- ')}`}`,
                     `${emoji} **Uprawnienia**: ${
-                        command.permissions.allowedRoles != null &&
-                        !api.msg.member!.plainMember.roles.cache.some((role: any) => command.permissions.allowedRoles!.includes(role.id))
+                        canUseCommand
                             ? ':thumbsdown: nie masz wymaganych uprawnień, by użyć tej komendy'
                             : ':thumbsup: możesz użyć tej komendy'
                     }\n - **dozwolone role**: ${formattedAllowedRoles.length === 0 ? 'brak' : formattedAllowedRoles.join(', ')}\n - **dozwoleni użytkownicy**: ${formattedAllowedUsers.length === 0 ? 'brak' : formattedAllowedUsers.join(', ')}`,
