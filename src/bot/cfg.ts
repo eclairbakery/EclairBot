@@ -94,7 +94,7 @@ export interface Config {
         usingNormalHosting: boolean;
     };
 
-    /* WARNING: Dev permissions allow doing many unsafe things and taking full control over the bot, so only give them to trusted people and the bot's developers! */
+    /* WARNING: Dev permissions allows doing many unsafe things and taking full control over the bot, so only give them to trusted people and the bot's developers! */
     devPerms: {
         allowedRoles: dsc.Snowflake[];
         allowedUsers: dsc.Snowflake[];
@@ -108,6 +108,8 @@ export interface Config {
         headMod: dsc.Snowflake;
         mod: dsc.Snowflake;
         helper: dsc.Snowflake;
+
+        automodBypassRoles: dsc.Snowflake[];
     };
 
     channels: {
@@ -185,21 +187,13 @@ export interface Config {
         lightGreenBlock: Emoji;
 
         circleProgressBar: {
-            '0/4': Emoji;
-            '1/4': Emoji;
-            '2/4': Emoji;
-            '3/4': Emoji;
+            [key: `${number}/4`]: Emoji;
         };
 
         idkEmoji: Emoji;
         wowEmoji: Emoji;
         sadEmoji: Emoji;
         heartAttackEmoji: Emoji;
-    };
-
-
-    cheatsRoles: {
-        automodBypassRoles: dsc.Snowflake[];
     };
 
     logs: {
@@ -417,7 +411,9 @@ const rolesCfg: Config['roles'] = {
     admin: '1415710969732005980',
     headMod: '1415710973288910919',
     mod: '1415710976644349972',
-    helper: '1415710980612034771'
+    helper: '1415710980612034771',
+
+    automodBypassRoles: ['1380875827998097418'],
 };   
      
 const channelsCfg: Config['channels'] = {
@@ -694,11 +690,6 @@ const defaultCfg: Config = {
         stdout: channelsCfg.eclairbot.stdout,
         stderr: channelsCfg.eclairbot.stderr,
         stdwarn: channelsCfg.eclairbot.stdwarn
-    },
-
-
-    cheatsRoles: {
-        automodBypassRoles: ['1380875827998097418'],
     },
 
     unfilteredRelated: {

@@ -9,6 +9,7 @@ import * as dsc from 'discord.js';
 import findCommand from '@/util/cmd/findCommand.js';
 import { Category } from '@/bot/command.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
+import fmtEmoji from '@/util/fmtEmoji.js';
 
 export const manCmd: Command = {
     name: 'man',
@@ -98,7 +99,15 @@ export const manCmd: Command = {
                 ? command.permissions.allowedRoles.map((role: string) => `<@&${role}>`)
                 : ['każda rola'];
 
-        const emoji: string = ':diamond_shape_with_a_dot_inside:';
+        const formattedAllowedUsers: string[] =
+            command.permissions.allowedUsers !== null
+                ? command.permissions.allowedUsers.map((user: string) => `<@${user}>`)
+                : ['każdy użytkownik'];
+
+        const emoji: string = fmtEmoji({
+            name: 'emoji_kropa',
+            id: '1430647658736914622'
+        });
 
         const embed = new dsc.EmbedBuilder()
             .setTitle(':loudspeaker: Instrukcja')
@@ -107,16 +116,15 @@ export const manCmd: Command = {
                 [
                     `${emoji} **Wywołanie:** ${cfg.general.prefix}${command.name}`,
                     `${emoji} **Aliasy do nazwy**: ${command.aliases.length === 0 ? 'brak aliasów' : command.aliases.join(', ')}`,
-                    `${emoji} **Opis**: ${command.description.main}`,
-                    `${emoji} **Krótki opis:** ${command.description.short}`,
+                    `${emoji} **Opisy**:\n- **długi**: ${command.description.main}\n- **krótki**: ${command.description.short}`,
                     `${emoji} **Kategoria:** ${category.name} ${category.emoji}`,
-                    `${emoji} **Argumenty**: ${formattedArgs.length === 0 ? 'brak' : `\n> ${formattedArgs.join('\n> ')}`}`,
+                    `${emoji} **Argumenty**: ${formattedArgs.length === 0 ? 'brak' : `\n- ${formattedArgs.join('\n- ')}`}`,
                     `${emoji} **Uprawnienia**: ${
                         command.permissions.allowedRoles != null &&
                         !api.msg.member!.plainMember.roles.cache.some((role: any) => command.permissions.allowedRoles!.includes(role.id))
                             ? ':thumbsdown: nie masz wymaganych uprawnień, by użyć tej komendy'
                             : ':thumbsup: możesz użyć tej komendy'
-                    }; **dozwolone role**: ${formattedAllowedRoles.length === 0 ? 'brak' : formattedAllowedRoles.join(', ')}; **dozwoleni użytkownicy**: te ustawienie nie ma jeszcze efektu`,
+                    }\n - **dozwolone role**: ${formattedAllowedRoles.length === 0 ? 'brak' : formattedAllowedRoles.join(', ')}\n - **dozwoleni użytkownicy**: ${formattedAllowedUsers.length === 0 ? 'brak' : formattedAllowedUsers.join(', ')}`,
                 ].join('\n')
             );
 
