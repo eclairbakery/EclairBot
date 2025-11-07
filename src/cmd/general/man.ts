@@ -75,8 +75,8 @@ export const manCmd: Command = {
             );
         }
 
-        const cmdName = api.args[0];
-        const found = findCommand(cmdName.value as string ?? 'man', manuals);
+        const cmdName = api.getTypedArg('command', 'string');
+        const found = findCommand(cmdName.value! ?? 'man', manuals);
 
         if (!found) {
             return api.log.replyError(
