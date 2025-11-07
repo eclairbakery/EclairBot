@@ -67,7 +67,9 @@ export const manCmd: Command = {
             ...api.commands.entries(),
         ]);
 
-        if (api.args.length === 0) {
+        const cmdName = api.getTypedArg('command', 'string')?.value;
+
+        if (!cmdName) {
             return api.log.replyError(
                 api.msg,
                 'Nie tędy droga...',
@@ -75,14 +77,13 @@ export const manCmd: Command = {
             );
         }
 
-        const cmdName = api.getTypedArg('command', 'string').value!;
         const found = findCommand(cmdName ?? 'man', manuals);
 
         if (!found) {
             return api.log.replyError(
                 api.msg,
                 'Nie tędy droga...',
-                `Tak w ogóle, to wiesz, że nawet nie ma takiej komendy?\nDokładne logi błędu:\n\`\`\`No manual entry for  ${cmdName}\`\`\``
+                `Tak w ogóle, to wiesz, że nawet nie ma takiej komendy?\nDokładne logi błędu:\n\`\`\`No manual entry for ${cmdName}\`\`\``
             );
         }
 
