@@ -43,7 +43,7 @@ export const manCmd: Command = {
                         name: 'woman',
                         description: {
                             main: 'Kobieta. Po prostu kobieta. Ta komenda nie istnieje naprawdę, ale jest śmieszne, więc dodałem. Lubi się wkurzać o byle co. Mówi szyfrem (zrób mi herbatę = nie dbasz o mnie) i jest wymagana do urodzenia dziecka.',
-                            short: ''
+                            short: 'No kobieta bratku.'
                         },
                         aliases: ['kobieta', 'żona', 'dziewczyna'],
                         flags: CommandFlags.None,
@@ -125,14 +125,14 @@ export const manCmd: Command = {
                 [
                     `${emoji} **Wywołanie:** ${cfg.general.prefix}${command.name}`,
                     `${emoji} **Aliasy do nazwy**: ${command.aliases.length === 0 ? 'brak aliasów' : command.aliases.join(', ')}`,
-                    `${emoji} **Opisy**:\n- **długi**: ${command.description.main}\n- **krótki**: ${command.description.short}`,
+                    `${emoji} **Opisy**:\n> - **długi**: ${command.description.main}\n> - **krótki**: ${command.description.short}`,
                     `${emoji} **Kategoria:** ${category.name} ${category.emoji}`,
                     `${emoji} **Argumenty**: ${formattedArgs.length === 0 ? 'brak' : `\n- ${formattedArgs.join('\n- ')}`}`,
                     `${emoji} **Uprawnienia**: ${
                         canUseCommand
                             ? ':thumbsdown: nie masz wymaganych uprawnień, by użyć tej komendy'
                             : ':thumbsup: możesz użyć tej komendy'
-                    }\n - **dozwolone role**: ${formattedAllowedRoles.length === 0 ? 'brak' : formattedAllowedRoles.join(', ')}\n - **dozwoleni użytkownicy**: ${formattedAllowedUsers.length === 0 ? 'brak' : formattedAllowedUsers.join(', ')}`,
+                    }\n> - **dozwolone role**: ${formattedAllowedRoles.length === 0 ? 'brak' : formattedAllowedRoles.join(', ')}\n> - **dozwoleni użytkownicy**: ${formattedAllowedUsers.length === 0 ? 'brak' : formattedAllowedUsers.join(', ')}`,
                 ].join('\n')
             );
 
