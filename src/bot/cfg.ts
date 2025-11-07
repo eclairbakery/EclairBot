@@ -190,6 +190,11 @@ export interface Config {
             '2/4': Emoji;
             '3/4': Emoji;
         };
+
+        idkEmoji: Emoji;
+        wowEmoji: Emoji;
+        sadEmoji: Emoji;
+        heartAttackEmoji: Emoji;
     };
 
 
@@ -652,6 +657,11 @@ const defaultCfg: Config = {
             '2/4': { name: 'circle_progress_bar_24', id: '1416021143315546162' },
             '3/4': { name: 'circle_progress_bar_34', id: '1416021126890655894' },
         },
+
+        heartAttackEmoji: { name: 'joe_zatrzymanie_akcji_serca', id: '1308174897758994443' },
+        sadEmoji: { name: 'joe_smutny', id: '1317904814025474088' },
+        wowEmoji: { name: 'joe_wow', id: '1308174905489100820' },
+        idkEmoji: { name: 'joe_noniewiemno', id: '1317904812779503676' }
     },
 
     devPerms: {

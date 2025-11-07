@@ -6,6 +6,7 @@ export default actionsManager;
 import * as dsc from 'discord.js';
 
 import { cfg } from '@/bot/cfg.js';
+import fmtEmoji from '@/util/fmtEmoji.js';
 
 export const countingChannelAction: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
@@ -20,7 +21,7 @@ export const countingChannelAction: Action<MessageEventCtx> = {
         async (msg: dsc.Message) => {
             const number = parseInt(msg.content.trim());
             if (isNaN(number)) {
-                const reply = await msg.reply(`to nie do tego kanał <:joe_wow:1308174905489100820>`);
+                const reply = await msg.reply(`to nie do tego kanał ${fmtEmoji(cfg.emoji.wowEmoji)}`);
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();
@@ -41,7 +42,7 @@ export const countingChannelAction: Action<MessageEventCtx> = {
             if (number === lastNumber + 1) {
                 return;
             } else {
-                const reply = await msg.reply(`pomyliłeś się <:joe_smutny:1317904814025474088>`);
+                const reply = await msg.reply(`pomyliłeś się ${fmtEmoji(cfg.emoji.sadEmoji)}`);
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();

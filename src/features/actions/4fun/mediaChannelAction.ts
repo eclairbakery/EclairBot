@@ -6,6 +6,7 @@ export default actionsManager;
 import * as dsc from 'discord.js';
 
 import { cfg } from '@/bot/cfg.js';
+import fmtEmoji from '@/util/fmtEmoji.js';
 
 export const mediaChannelAction: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreate,
@@ -44,7 +45,7 @@ export const mediaChannelAction: Action<MessageEventCtx> = {
                     await msg.react(reaction);
                 }
             } else if (channelConfig.deleteMessageIfNotMedia) {
-                const reply = await msg.reply('to nie do tego kanał <:joe_wow:1308174905489100820>');
+                const reply = await msg.reply(`to nie do tego kanał ${fmtEmoji(cfg.emoji.wowEmoji)}`);
                 await sleep(2000);
                 await msg.delete();
                 await reply.delete();

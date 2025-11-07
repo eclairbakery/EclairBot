@@ -6,6 +6,7 @@ export default actionsManager;
 import * as dsc from 'discord.js';
 
 import { cfg } from '@/bot/cfg.js';
+import fmtEmoji from '@/util/fmtEmoji.js';
 
 export const lastLetterChannelAction: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
@@ -20,7 +21,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
         async (msg: dsc.Message) => {
             const word = msg.content.trim();
             if (word.length < 1) {
-                const reply = await msg.reply(`to nie do tego kanał <:joe_wow:1308174905489100820>`);
+                const reply = await msg.reply(`to nie do tego kanał ${fmtEmoji(cfg.emoji.wowEmoji)}`);
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();
@@ -37,7 +38,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                     const actualFirst = word[0].toLowerCase();
 
                     if (expectedFirst !== actualFirst) {
-                        const reply = await msg.reply(`pomyliłeś się <:joe_smutny:1317904814025474088>`);
+                        const reply = await msg.reply(`pomyliłeś się ${fmtEmoji(cfg.emoji.sadEmoji)}`);
                         await sleep(1000);
                         await msg.delete();
                         await reply.delete();
@@ -46,7 +47,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                 }
             }
             if (msg.content.endsWith('ą')) {
-                const reply = await msg.reply(`no ej no przeczytałeś kanał opis? <:joe_zatrzymanie_akcji_serca:1308174897758994443>`);
+                const reply = await msg.reply(`no ej no przeczytałeś kanał opis? ${fmtEmoji(cfg.emoji.heartAttackEmoji)}`);
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();
