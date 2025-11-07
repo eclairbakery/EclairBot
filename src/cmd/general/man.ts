@@ -127,7 +127,7 @@ export const manCmd: Command = {
                     `${emoji} **Aliasy do nazwy**: ${command.aliases.length === 0 ? 'brak aliasów' : command.aliases.join(', ')}`,
                     `${emoji} **Opisy**:\n> - **długi**: ${command.description.main}\n> - **krótki**: ${command.description.short}`,
                     `${emoji} **Kategoria:** ${category.name} ${category.emoji}`,
-                    `${emoji} **Argumenty**: ${formattedArgs.length === 0 ? 'brak' : `\n- ${formattedArgs.join('\n- ')}`}`,
+                    `${emoji} **Argumenty**: ${formattedArgs.length === 0 ? 'brak' : `\n> - ${formattedArgs.join('\n> - ')}`}`,
                     `${emoji} **Uprawnienia**: ${
                         canUseCommand
                             ? ':thumbsdown: nie masz wymaganych uprawnień, by użyć tej komendy'
