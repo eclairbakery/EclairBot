@@ -31,21 +31,11 @@ export const warnlistCmd: Command = {
     },
 
     async execute(api) {
-        let client: dsc.Client;
-        let guild: dsc.Guild;
-
-        if (api.plainInteraction) {
-            client = api.plainInteraction.client;
-            guild = api.plainInteraction.guild!;
-        } else if (api.plainMessage) {
-            client = api.plainMessage.client;
-            guild = api.plainMessage.guild!;
-        } else {
-            return api.log.replyError(api.msg, 'Błąd', 'Nie mogę znaleźć klienta bota...');
-        }
+        let client: dsc.Client = api.channel.client;
+        let guild: dsc.Guild = api.guild!;
 
         const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember | undefined;
-        const limit = 10;
+        const limit = 5;
         let currentPage = 1;
 
         async function fetchWarns(page: number) {

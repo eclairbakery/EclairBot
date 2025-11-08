@@ -32,7 +32,7 @@ export default function warn(
                                     .setAuthor({ name: 'EclairBOT' })
                                     .setColor(PredefinedColors.Orange)
                                     .setTitle('Użytkownik dostał warna')
-                                    .setDescription(`Użytkownik <@${member.id}> dostał warna w wysokości ${data.points} pkt.`)
+                                    .setDescription(`Użytkownik <@${member.id}> dostał warna w wysokości ${data.points} pkt od ${data.mod ? `moderatora <@${data.mod}>` : 'nieznanego moderatora'}.`)
                                     .addFields({ name: 'Powód', value: data.reason })
                             ]
                         });
@@ -47,7 +47,7 @@ export default function warn(
                                     .setAuthor({ name: 'EclairBOT' })
                                     .setColor(PredefinedColors.Orange)
                                     .setTitle('Użytkownik dostał warna')
-                                    .setDescription(`Użytkownik <@${member.id}> dostał warna w wysokości ${data.points} pkt.`)
+                                    .setDescription(`Użytkownik <@${member.id}> dostał warna w wysokości ${data.points} pkt od ${data.mod ? `moderatora <@${data.mod}>` : 'nieznanego moderatora'}.`)
                                     .addFields({ name: 'Powód', value: data.reason })
                             ]
                         });
