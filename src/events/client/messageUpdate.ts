@@ -4,6 +4,10 @@ import * as dsc from 'discord.js';
 
 export function registerMsgEditDscEvents(client: dsc.Client) {
     client.on('messageUpdate', async (oldMsg, msg) => {
+        if (oldMsg.content?.trim() == msg.content?.trim()) {
+            return;
+        }
+
         const channel = await client.channels.fetch(cfg.logs.channel);
         if (!channel?.isSendable()) return;
         channel.send({
