@@ -112,12 +112,15 @@ loop:
                 parsedArgs.push({ ...decl, value: balance.money } as CommandArgumentWithNumberValue);
                 break;
             }
-            const num = Number(raw?.replace(/[^\d.-]/g, '').trim() ?? '');
-            if (isNaN(num)) {
-                if (decl.optional) continue;
+            const rawIsNumber = /^-?\d+(\.\d+)?$/.test(raw ?? '');
+            if (!rawIsNumber) {
+                if (decl.optional) {
+                    continue;
+                }
                 throw new ArgMustBeSomeTypeError(decl.name, 'number');
             }
-            parsedArgs.push({ ...decl, value: isNaN(num) ? undefined : num } as CommandArgumentWithNumberValue);
+            const num = Number(raw);
+            parsedArgs.push({ ...decl, value: num } as CommandArgumentWithNumberValue);
             break;
         }
 
