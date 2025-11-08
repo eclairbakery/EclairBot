@@ -8,6 +8,7 @@ import { getChannel } from '@/features/actions/channels/templateChannels.js';
 import sleep from '@/util/sleep.js';
 
 const recentJoins: { id: string; joinedAt: number; username: string }[] = [];
+const recentWarns: { id: string; givenAt: number; givenTo: dsc.Snowflake; givenFrom: dsc.Snowflake }[] = [];
 
 function levenshtein(a: string, b: string): number {
     const matrix: number[][] = [];
@@ -147,15 +148,27 @@ const roleHierarchy: dsc.Snowflake[] = [cfg.roles.secondLevelOwner, cfg.roles.he
 const userCounters = new Map<string, { creates: number; deletes: number; timeout?: NodeJS.Timeout }>();
 
 async function downgradeRole(member: dsc.GuildMember) {
-    const memberRoles = member.roles.cache;
-    const highestRoleId = roleHierarchy.find(rid => memberRoles.has(rid));
-    if (!highestRoleId) return;
-    const currentIndex = roleHierarchy.indexOf(highestRoleId);
-    if (currentIndex === roleHierarchy.length - 1) return; 
-    const newRoleId = roleHierarchy[currentIndex + 1];
-    await member.roles.remove(highestRoleId);
-    await member.roles.add(newRoleId);
-    debug.log(`watchdog: degraded ${member.user.username} from ${highestRoleId} to ${newRoleId}`);
+    debug.log(`watchdog: about to degrade role for ${member.user.username} (user id: ${member.id}); remove all adm roles for user: ${cfg.masterSecurity.notForgiveAdministration}`);
+    if (cfg.masterSecurity.notForgiveAdministration) {
+        for (const admRoleId of roleHierarchy) {
+            if (member.roles.cache.has(admRoleId)) {
+                try {
+                    member.roles.remove(admRoleId);
+                } catch {}
+            }
+        }
+        debug.log(`watchdog: kicked ${member.user.username} from the administration`);
+    } else {
+        const memberRoles = member.roles.cache;
+        const highestRoleId = roleHierarchy.find(rid => memberRoles.has(rid));
+        if (!highestRoleId) return;
+        const currentIndex = roleHierarchy.indexOf(highestRoleId);
+        if (currentIndex === roleHierarchy.length - 1) return; 
+        const newRoleId = roleHierarchy[currentIndex + 1];
+        await member.roles.remove(highestRoleId, 'watchdog');
+        await member.roles.add(newRoleId, 'watchdog');
+        debug.log(`watchdog: degraded ${member.user.username} from ${highestRoleId} to ${newRoleId}`);
+    }
 }
 
 function addAction(userId: string, type: "create" | "delete") {
