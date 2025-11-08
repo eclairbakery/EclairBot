@@ -9,9 +9,8 @@ export const OnWarnDeleted = actionsManager.mkEvent('OnWarnDeleted');
 export interface WarnEventCtx {
     id: number;
     user: dsc.GuildMember;
-    moderator: dsc.User;
+    moderator?: dsc.Snowflake;
     reason: string;
     points: number;
-    duration: number | null;
-    expiresAt: number | null;
+    expiresAt?: number;
 };

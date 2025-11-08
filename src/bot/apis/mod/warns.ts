@@ -3,10 +3,12 @@ import { db } from '@/bot/db.js';
 import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { scheduleWarnDeletion } from '@/features/deleteExpiredWarns.js';
+import actionsManager from '@/features/actions/index.js';
+import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.js';
 
 export default function warn(
     member: dsc.GuildMember,
-    data: { reason: string; expiresAt: number | null; points: number; mod?: dsc.Snowflake }
+    data: { reason: string; expiresAt: number | null; points: number; mod?: dsc.Snowflake; }
 ): Promise<{ id: number }> {
     return new Promise((resolve, reject) => {
         db.run(
@@ -24,35 +26,14 @@ export default function warn(
                     scheduleWarnDeletion(warnId, data.expiresAt);
                 }
 
-                member.client.channels.fetch(cfg.logs.channel).then(channel => {
-                    if (channel && channel.isSendable()) {
-                        channel.send({
-                            embeds: [
-                                new dsc.EmbedBuilder()
-                                    .setAuthor({ name: 'EclairBOT' })
-                                    .setColor(PredefinedColors.Orange)
-                                    .setTitle('Użytkownik dostał warna')
-                                    .setDescription(`Użytkownik <@${member.id}> dostał warna w wysokości ${data.points} pkt od ${data.mod ? `moderatora <@${data.mod}>` : 'nieznanego moderatora'}.`)
-                                    .addFields({ name: 'Powód', value: data.reason })
-                            ]
-                        });
-                    }
-                }).catch(() => {});
-
-                member.client.channels.fetch(cfg.channels.mod.warnings).then(channel => {
-                    if (channel && channel.isSendable()) {
-                        channel.send({
-                            embeds: [
-                                new dsc.EmbedBuilder()
-                                    .setAuthor({ name: 'EclairBOT' })
-                                    .setColor(PredefinedColors.Orange)
-                                    .setTitle('Użytkownik dostał warna')
-                                    .setDescription(`Użytkownik <@${member.id}> dostał warna w wysokości ${data.points} pkt od ${data.mod ? `moderatora <@${data.mod}>` : 'nieznanego moderatora'}.`)
-                                    .addFields({ name: 'Powód', value: data.reason })
-                            ]
-                        });
-                    }
-                }).catch(() => {});
+                actionsManager.emit(OnWarnGiven, {
+                    id: warnId,
+                    user: member,
+                    moderator: data.mod,
+                    reason: data.reason,
+                    points: data.points,
+                    expiresAt: data.expiresAt ?? undefined
+                } satisfies WarnEventCtx);
 
                 resolve({ id: warnId });
             }

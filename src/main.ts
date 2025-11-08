@@ -42,6 +42,7 @@ import { commands } from '@/cmd/list.js';
 // misc
 import actionsManager from '@/features/actions/index.js';
 import { getChannel } from './features/actions/channels/templateChannels.js';
+import { warnGivenLogAction } from './features/actions/mod/warn-given.js';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -81,6 +82,7 @@ function setUpActions() {
         eclairAIAction,
         // additional features
         actionPing,
+        warnGivenLogAction
     );
     registerTemplateChannels(client);
     slashCommands.init();
