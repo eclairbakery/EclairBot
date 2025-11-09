@@ -297,6 +297,7 @@ export async function watchMute(executor: dsc.GuildMember)
 const dangerousPerms: dsc.PermissionsString[] = ["Administrator", "ModerateMembers", "BanMembers", "ManageChannels", "ManageGuild", "ManageMessages", "ManageRoles", "MuteMembers", "DeafenMembers", "KickMembers", "MentionEveryone", "ManageWebhooks"];
 
 export async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.PermissionsString[]) {
+    await sleep(1500);
     for (const perm of permissionsAdded) {
         if (dangerousPerms.includes(perm)) {
             if (cfg.masterSecurity.approveDangerousPermissions) {
