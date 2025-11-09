@@ -8,6 +8,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { Hour, Timestamp } from '@/util/parseTimestamp.js';
 
 import mute from '@/bot/apis/mod/muting.js';
+import { watchMute } from '@/bot/watchdog.js';
 
 const cmdCfg = cfg.commands.mod.mute;
 
@@ -67,10 +68,8 @@ export const muteCmd: Command = {
         }
 
         try {
+            if (api.msg.member) watchMute(api.msg.member?.plainMember);
             await mute(targetUser, { reason, duration });
-
-            const role = api.msg.guild?.roles.cache.find(r => r.name.toLowerCase().includes("zamknij ryj"));
-            if (role != undefined) await targetUser.roles.add(role, reason);
 
             const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
             if (logChannel != null && logChannel.isSendable()) {

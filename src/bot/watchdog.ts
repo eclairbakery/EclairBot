@@ -7,6 +7,7 @@ import { Action, ChannelEventCtx, MessageEventCtx, Ok, PredefinedActionEventType
 import { getChannel } from '@/features/actions/channels/templateChannels.js';
 import sleep from '@/util/sleep.js';
 import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.js';
+import { CommandMessageAPI, CommandPermissionResolvable } from './command.js';
 
 const recentJoins: { id: string; joinedAt: number; username: string }[] = [];
 const recentWarns: { id: string; givenAt: number; givenTo: dsc.Snowflake; givenFrom: dsc.Snowflake }[] = [];
@@ -271,6 +272,10 @@ const onMuteGivenWatcher: Action<UserEventCtx> = {
     callbacks: [
         async (ctx) => {
             debug.log('watchdog: mute given');
+            if (ctx.user.id == ctx.client.user.id) {
+                debug.log('watchdog: ignoring mute, given by eclairbot');
+                return;
+            }
             if (addAction(ctx.id, "mute")) {
                 debug.log(`watchdog: about to downgrade role for ${ctx.user.username} [muting too many times per minute]`);
                 await downgradeRole(ctx);
@@ -278,5 +283,37 @@ const onMuteGivenWatcher: Action<UserEventCtx> = {
         }
     ]
 };
+
+export async function watchMute(executor: dsc.GuildMember)
+{   
+    if (!cfg.masterSecurity.shallAutoDegrade) return;
+    debug.log('watchdog: mute given by commmand');
+    if (addAction(executor.id, "mute")) {
+        debug.log(`watchdog: about to downgrade role for ${executor.user.username} [muting too many times per minute]`);
+        await downgradeRole(executor);
+    }
+}
+
+const dangerousPerms: dsc.PermissionsString[] = ["Administrator", "ModerateMembers", "BanMembers", "ManageChannels", "ManageGuild", "ManageMessages", "ManageRoles", "MuteMembers", "DeafenMembers", "KickMembers", "MentionEveryone", "ManageWebhooks"];
+
+async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.PermissionsString[]) {
+    for (const perm of permissionsAdded) {
+        if (dangerousPerms.includes(perm)) {
+            if (cfg.masterSecurity.approveDangerousPermissions) {
+                debug.log(`watchdog: role ${role.id} contains dangerous permission '${perm}'; removing it is disabled`);
+            }
+            role.permissions.remove(perm);
+            debug.log(`watchdog: modified role ${role.id}; removed permission '${perm}'`);
+        }
+    }
+}
+
+client.on('roleCreate', (newRole: dsc.Role) => {
+    watchRoleChanges(newRole, newRole.permissions.toArray());
+});
+
+client.on('roleUpdate', (oldRole: dsc.Role, newRole: dsc.Role) => {
+    watchRoleChanges(newRole, oldRole.permissions.toArray().filter(p => !oldRole.permissions.toArray().includes(p)));
+});
 
 export {channelAddWatcher, channelDeleteWatcher, onWarnGivenWatcher, onMuteGivenWatcher};

@@ -400,15 +400,17 @@ export interface Config {
         massJoinThreshold: number;
         similarityThreshold: number;
         allowNewBots: boolean;
+        /** master switch for most of the watchdog security features */
         shallAutoDegrade: boolean;
         /** if this is enabled, eclairbot will ensure to remove EVERY SINGLE ONE of administration roles to the member that has violated watchdog rules; if disabled it'll just degrade that person by one role */
         notForgiveAdministration: boolean;
+        approveDangerousPermissions: boolean;
         limitsConfiguration: {
             maxMutes: number;
             maxWarns: number;
             maxChannelCreations: number;
             maxChannelDeletions: number;
-        }
+        };
     }
 }
 
@@ -846,7 +848,8 @@ const defaultCfg: Config = {
             maxWarns: 4,
             maxChannelCreations: 10,
             maxChannelDeletions: 2
-        }
+        },
+        approveDangerousPermissions: false
     }
 };
 
