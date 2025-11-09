@@ -297,16 +297,24 @@ export async function watchMute(executor: dsc.GuildMember)
 const dangerousPerms: dsc.PermissionsString[] = ["Administrator", "ModerateMembers", "BanMembers", "ManageChannels", "ManageGuild", "ManageMessages", "ManageRoles", "MuteMembers", "DeafenMembers", "KickMembers", "MentionEveryone", "ManageWebhooks"];
 
 export async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.PermissionsString[]) {
-    await sleep(1500);
-    for (const perm of permissionsAdded) {
-        if (dangerousPerms.includes(perm)) {
-            if (cfg.masterSecurity.approveDangerousPermissions) {
-                debug.log(`watchdog: role ${role.id} contains dangerous permission '${perm}'; removing it is disabled`);
-                continue;
-            }
-            role.permissions.remove(perm);
-            debug.log(`watchdog: modified role ${role.id}; removed permission '${perm}'`);
+    const current = role.permissions.toArray();
+    const dangerous = permissionsAdded.filter(p => dangerousPerms.includes(p));
+
+    if (dangerous.length === 0) return;
+
+    if (cfg.masterSecurity.approveDangerousPermissions) {
+        for (const p of dangerous) {
+            debug.log(`watchdog: role ${role.id} contains dangerous permission '${p}'; removing it is disabled`);
         }
+        return;
+    }
+
+    const cleaned = current.filter(p => !dangerous.includes(p));
+
+    await role.setPermissions(cleaned);
+
+    for (const p of dangerous) {
+        debug.log(`watchdog: modified role ${role.id}; removed permission '${p}'`);
     }
 }
 
