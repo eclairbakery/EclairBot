@@ -24,7 +24,7 @@ import { mediaChannelAction } from '@/features/actions/4fun/mediaChannelAction.j
 import { antiSpamAndAntiFlood } from '@/features/actions/mod/anti-spam-flood.js';
 import { basicMsgCreateActions } from '@/features/actions/others/basicMsgCreateActions.js';
 import { registerTemplateChannels } from '@/features/actions/channels/registerTemplateChannels.js';
-import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher } from './bot/watchdog.js';
+import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher, watchRoleChanges } from './bot/watchdog.js';
 import { actionPing } from '@/cmd/mod/ping.js';
 import { hallOfFameAction } from './features/actions/4fun/hallOfFame.js';
 
@@ -90,6 +90,15 @@ function setUpActions() {
     slashCommands.init();
     legacyCommands.init();
     actionsManager.registerEvents(client);
+
+    // will be moved
+    client.on('roleCreate', (newRole: dsc.Role) => {
+        watchRoleChanges(newRole, newRole.permissions.toArray());
+    });
+
+    client.on('roleUpdate', (oldRole: dsc.Role, newRole: dsc.Role) => {
+        watchRoleChanges(newRole, oldRole.permissions.toArray().filter(p => !oldRole.permissions.toArray().includes(p)));
+    });
 }
 
 function setUpEvents() {

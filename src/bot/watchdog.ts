@@ -296,7 +296,7 @@ export async function watchMute(executor: dsc.GuildMember)
 
 const dangerousPerms: dsc.PermissionsString[] = ["Administrator", "ModerateMembers", "BanMembers", "ManageChannels", "ManageGuild", "ManageMessages", "ManageRoles", "MuteMembers", "DeafenMembers", "KickMembers", "MentionEveryone", "ManageWebhooks"];
 
-async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.PermissionsString[]) {
+export async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.PermissionsString[]) {
     for (const perm of permissionsAdded) {
         if (dangerousPerms.includes(perm)) {
             if (cfg.masterSecurity.approveDangerousPermissions) {
@@ -308,13 +308,5 @@ async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.Permission
         }
     }
 }
-
-client.on('roleCreate', (newRole: dsc.Role) => {
-    watchRoleChanges(newRole, newRole.permissions.toArray());
-});
-
-client.on('roleUpdate', (oldRole: dsc.Role, newRole: dsc.Role) => {
-    watchRoleChanges(newRole, oldRole.permissions.toArray().filter(p => !oldRole.permissions.toArray().includes(p)));
-});
 
 export {channelAddWatcher, channelDeleteWatcher, onWarnGivenWatcher, onMuteGivenWatcher};
