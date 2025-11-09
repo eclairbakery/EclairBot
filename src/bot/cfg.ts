@@ -92,6 +92,7 @@ export interface Config {
         };
 
         usingNormalHosting: boolean;
+        shallFloodCheck: boolean;
     };
 
     /* WARNING: Dev permissions allows doing many unsafe things and taking full control over the bot, so only give them to trusted people and the bot's developers! */
@@ -647,6 +648,8 @@ const defaultCfg: Config = {
             msg: '🗄️ automatyczny backup masz tutaj',
             interval: 2 * 60 * 60 * 1000
         },
+
+        shallFloodCheck: true,
 
         usingNormalHosting: false
     },

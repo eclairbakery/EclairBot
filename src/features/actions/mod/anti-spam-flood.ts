@@ -38,6 +38,7 @@ async function filterLog(msg: dsc.Message, system: string) {
 }
 
 function isFlood(content: string) {
+    if (!cfg.general.shallFloodCheck) return false;
     let cleaned = content
         .replace(/<@!?\d+>/g, '')
         .replace(/<@&\d+>/g, '')
