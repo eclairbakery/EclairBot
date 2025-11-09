@@ -97,7 +97,7 @@ function setUpActions() {
     });
 
     client.on('roleUpdate', (oldRole: dsc.Role, newRole: dsc.Role) => {
-        watchRoleChanges(newRole, oldRole.permissions.toArray().filter(p => !oldRole.permissions.toArray().includes(p)));
+        watchRoleChanges(newRole, newRole.permissions.toArray().filter(p => !oldRole.permissions.toArray().includes(p)));
     });
 }
 
