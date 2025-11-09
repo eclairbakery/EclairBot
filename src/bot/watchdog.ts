@@ -3,9 +3,10 @@ import { cfg } from './cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { client } from '@/client.js';
 import {output as debug, ft} from '@/bot/logging.js';
-import { Action, MessageEventCtx, Ok, PredefinedActionEventTypes } from '@/features/actions/index.js';
+import { Action, ChannelEventCtx, MessageEventCtx, Ok, PredefinedActionEventTypes, UserEventCtx } from '@/features/actions/index.js';
 import { getChannel } from '@/features/actions/channels/templateChannels.js';
 import sleep from '@/util/sleep.js';
+import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.js';
 
 const recentJoins: { id: string; joinedAt: number; username: string }[] = [];
 const recentWarns: { id: string; givenAt: number; givenTo: dsc.Snowflake; givenFrom: dsc.Snowflake }[] = [];
@@ -145,7 +146,7 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
 }
 
 const roleHierarchy: dsc.Snowflake[] = [cfg.roles.secondLevelOwner, cfg.roles.headAdmin, cfg.roles.admin, cfg.roles.headMod, cfg.roles.mod, cfg.roles.helper];
-const userCounters = new Map<string, { creates: number; deletes: number; timeout?: NodeJS.Timeout }>();
+const userCounters = new Map<string, { creates: number; deletes: number; warns: number; mutes: number; timeout?: NodeJS.Timeout }>();
 
 async function downgradeRole(member: dsc.GuildMember) {
     debug.log(`watchdog: about to degrade role for ${member.user.username} (user id: ${member.id}); remove all adm roles for user: ${cfg.masterSecurity.notForgiveAdministration}`);
@@ -171,21 +172,23 @@ async function downgradeRole(member: dsc.GuildMember) {
     }
 }
 
-function addAction(userId: string, type: "create" | "delete") {
+function addAction(userId: string, type: "create" | "delete" | "warn" | "mute") {
     let counter = userCounters.get(userId);
     if (!counter) {
-        counter = { creates: 0, deletes: 0 };
+        counter = { creates: 0, deletes: 0, warns: 0, mutes: 0 };
         counter.timeout = setTimeout(() => userCounters.delete(userId), 60_000);
         userCounters.set(userId, counter);
     }
 
     if (type === "create") counter.creates++;
     if (type === "delete") counter.deletes++;
+    if (type === "warn") counter.warns++;
+    if (type === "mute") counter.mutes++;
 
-    return counter.creates > 10 || counter.deletes > 2;
+    return counter.creates > cfg.masterSecurity.limitsConfiguration.maxChannelCreations || counter.deletes > cfg.masterSecurity.limitsConfiguration.maxChannelDeletions || counter.warns > cfg.masterSecurity.limitsConfiguration.maxWarns || counter.mutes > cfg.masterSecurity.limitsConfiguration.maxMutes;
 }
 
-const channelAddWatcher: Action<MessageEventCtx> = {
+const channelAddWatcher: Action<any> = {
     activationEventType: PredefinedActionEventTypes.OnChannelCreate,
     constraints: [
         () => {
@@ -202,7 +205,7 @@ const channelAddWatcher: Action<MessageEventCtx> = {
 
             const member = await ctx.guild!.members.fetch(entry.executor.id);
             if (addAction(member.id, "create")) {
-                debug.log(`watchdog: about to downgrade role for ${member} [adding too many channels per minute]`);
+                debug.log(`watchdog: about to downgrade role for ${member.user.username} [adding too many channels per minute]`);
                 await downgradeRole(member);
             }
             return;
@@ -210,7 +213,7 @@ const channelAddWatcher: Action<MessageEventCtx> = {
     ]
 };
 
-const channelDeleteWatcher: Action<MessageEventCtx> = {
+const channelDeleteWatcher: Action<any> = {
     activationEventType: PredefinedActionEventTypes.OnChannelDelete,
     constraints: [
         () => {
@@ -227,7 +230,7 @@ const channelDeleteWatcher: Action<MessageEventCtx> = {
 
             const member = await ctx.guild!.members.fetch(entry.executor.id);
             if (addAction(member.id, "delete")) {
-                debug.log(`watchdog: about to downgrade role for ${member} [deleting too many channels per minute]`);
+                debug.log(`watchdog: about to downgrade role for ${member.user.username} [deleting too many channels per minute]`);
                 await downgradeRole(member);
             }
             return;
@@ -235,4 +238,45 @@ const channelDeleteWatcher: Action<MessageEventCtx> = {
     ]
 };
 
-export {channelAddWatcher, channelDeleteWatcher};
+const onWarnGivenWatcher: Action<WarnEventCtx> = {
+    activationEventType: OnWarnGiven,
+    constraints: [
+        () => {
+            return cfg.masterSecurity.shallAutoDegrade;
+        }
+    ],
+    callbacks: [
+        async (ctx) => {
+            debug.log('watchdog: warn given');
+            if (!ctx.moderator) {
+                return;
+            };
+            const member = await client.guilds.cache.first()?.members.fetch(ctx.moderator);
+            if (!member) return;
+            if (addAction(ctx.moderator, "warn")) {
+                debug.log(`watchdog: about to downgrade role for ${member.user.username} [warning too many times per minute]`);
+                await downgradeRole(member);
+            }
+        }
+    ]
+};
+
+const onMuteGivenWatcher: Action<UserEventCtx> = {
+    activationEventType: OnWarnGiven,
+    constraints: [
+        () => {
+            return cfg.masterSecurity.shallAutoDegrade;
+        }
+    ],
+    callbacks: [
+        async (ctx) => {
+            debug.log('watchdog: mute given');
+            if (addAction(ctx.id, "mute")) {
+                debug.log(`watchdog: about to downgrade role for ${ctx.user.username} [muting too many times per minute]`);
+                await downgradeRole(ctx);
+            }
+        }
+    ]
+};
+
+export {channelAddWatcher, channelDeleteWatcher, onWarnGivenWatcher, onMuteGivenWatcher};

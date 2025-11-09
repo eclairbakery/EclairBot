@@ -403,6 +403,12 @@ export interface Config {
         shallAutoDegrade: boolean;
         /** if this is enabled, eclairbot will ensure to remove EVERY SINGLE ONE of administration roles to the member that has violated watchdog rules; if disabled it'll just degrade that person by one role */
         notForgiveAdministration: boolean;
+        limitsConfiguration: {
+            maxMutes: number;
+            maxWarns: number;
+            maxChannelCreations: number;
+            maxChannelDeletions: number;
+        }
     }
 }
 
@@ -834,7 +840,13 @@ const defaultCfg: Config = {
         similarityThreshold: 3,
         allowNewBots: false,
         shallAutoDegrade: true,
-        notForgiveAdministration: false
+        notForgiveAdministration: false,
+        limitsConfiguration: {
+            maxMutes: 6,
+            maxWarns: 4,
+            maxChannelCreations: 10,
+            maxChannelDeletions: 2
+        }
     }
 };
 

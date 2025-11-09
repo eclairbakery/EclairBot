@@ -24,7 +24,7 @@ import { mediaChannelAction } from '@/features/actions/4fun/mediaChannelAction.j
 import { antiSpamAndAntiFlood } from '@/features/actions/mod/anti-spam-flood.js';
 import { basicMsgCreateActions } from '@/features/actions/others/basicMsgCreateActions.js';
 import { registerTemplateChannels } from '@/features/actions/channels/registerTemplateChannels.js';
-import { channelAddWatcher, channelDeleteWatcher } from './bot/watchdog.js';
+import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher } from './bot/watchdog.js';
 import { actionPing } from '@/cmd/mod/ping.js';
 import { hallOfFameAction } from './features/actions/4fun/hallOfFame.js';
 
@@ -63,11 +63,11 @@ client.once('clientReady', async () => {
 
 function setUpActions() {
     actionsManager.addActions(
-        // hall of fame
-        hallOfFameAction,
         // watchdog security features
         channelAddWatcher,
         channelDeleteWatcher,
+        onWarnGivenWatcher,
+        onMuteGivenWatcher,
         // lobby & users watchdog
         welcomeNewUserAction,
         sayGoodbyeAction,
@@ -80,6 +80,8 @@ function setUpActions() {
         countingChannelAction,
         lastLetterChannelAction,
         eclairAIAction,
+        // hall of fame
+        hallOfFameAction,
         // additional features
         actionPing,
         warnGivenLogAction
