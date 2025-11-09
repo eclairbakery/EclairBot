@@ -262,7 +262,7 @@ const onWarnGivenWatcher: Action<WarnEventCtx> = {
 };
 
 const onMuteGivenWatcher: Action<UserEventCtx> = {
-    activationEventType: OnWarnGiven,
+    activationEventType: PredefinedActionEventTypes.OnUserMute,
     constraints: [
         () => {
             return cfg.masterSecurity.shallAutoDegrade;
