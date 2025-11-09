@@ -284,8 +284,7 @@ const onMuteGivenWatcher: Action<UserEventCtx> = {
     ]
 };
 
-export async function watchMute(executor: dsc.GuildMember)
-{   
+export async function watchMute(executor: dsc.GuildMember) {   
     if (!cfg.masterSecurity.shallAutoDegrade) return;
     debug.log('watchdog: mute given by commmand');
     if (addAction(executor.id, "mute")) {
