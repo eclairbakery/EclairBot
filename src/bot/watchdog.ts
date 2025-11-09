@@ -301,6 +301,7 @@ async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.Permission
         if (dangerousPerms.includes(perm)) {
             if (cfg.masterSecurity.approveDangerousPermissions) {
                 debug.log(`watchdog: role ${role.id} contains dangerous permission '${perm}'; removing it is disabled`);
+                continue;
             }
             role.permissions.remove(perm);
             debug.log(`watchdog: modified role ${role.id}; removed permission '${perm}'`);
