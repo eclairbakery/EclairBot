@@ -11,7 +11,7 @@ import { EclairAiFirstEdition } from '@/bot/eclairai-legacy.js';
 let openbabcia = 'openbabcia';
 
 function checkYesNo(msg: Message) {
-    return msg.content.toLowerCase().startsWith(`<@${msg.client.user?.id}> czy`) || msg.content.toLowerCase().startsWith(`<@!${msg.client.user?.id}> czy`) || (msg.content.toLowerCase().startsWith(`czy`) && msg.channelId == cfg.ai.channel && !msg.author.bot);
+    return msg.content.toLowerCase().startsWith(`<@${msg.client.user?.id}> czy`) || msg.content.toLowerCase().startsWith(`<@!${msg.client.user?.id}> czy`) || (msg.content.toLowerCase().startsWith(`czy`) && msg.channelId == cfg.features.ai.channel && !msg.author.bot);
 }
 
 export const eclairAIAction: Action<MessageEventCtx> = {
@@ -20,7 +20,7 @@ export const eclairAIAction: Action<MessageEventCtx> = {
         (msg) => {
             if (msg.author.bot) return false;
             if (msg.author.id === msg.client.user?.id) return false;
-            return checkYesNo(msg) || msg.channelId == cfg.ai.channel;
+            return checkYesNo(msg) || msg.channelId == cfg.features.ai.channel;
         },
     ],
     callbacks: [
@@ -345,14 +345,14 @@ export const eclairAIAction: Action<MessageEventCtx> = {
         (ctx) => {
             if (ctx.author.bot) return Skip;
             if (!ctx.inGuild()) return Skip;
-            return cfg.ai.enabled ? Ok : Skip;
+            return cfg.features.ai.enabled ? Ok : Skip;
         }
     ],
     callbacks: [
         async (msg) => {
             const reference = msg.reference ? (await msg.fetchReference()) : null;
             const isMention = msg.content.startsWith(`<@${client.user!.id}>`) || msg.content.startsWith(`<@!${client.user!.id}>`);
-            const isInAiChannel = msg.channelId === cfg.ai.channel;
+            const isInAiChannel = msg.channelId === cfg.features.ai.channel;
             const isReplyToBot = reference
                 && reference.author.id === client.user!.id
                 && reference.content?.includes('-# eclairAI-fe');
@@ -373,7 +373,7 @@ export const eclairAIAction: Action<MessageEventCtx> = {
             const reaction = await msg.react('⏰');
 
             let fatal = false;
-            [...cfg.ai.bannedSequences, ...cfg.ai.notAllowedCharacters].forEach((sequence) => {
+            [...cfg.features.ai.bannedSequences, ...cfg.features.ai.notAllowedCharacters].forEach((sequence) => {
                 if (fatal) return;
                 if (msg.content.includes(sequence)) {
                     fatal = true;

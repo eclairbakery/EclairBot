@@ -36,58 +36,7 @@ export interface Config {
         /* General configuration for the bot */
         prefix: string;
 
-        /** Experience configuration @deprecated */
-        leveling: {
-            xpPerMessage: number;
-            levelDivider: number;
-            excludedChannels: string[];
-            milestoneRoles: Record<number, dsc.Snowflake>;
-            canChangeXP: dsc.Snowflake[];
-            levelChannel: dsc.Snowflake;
-            shallPingWhenNewLevel: boolean;
-            currentEvent: {
-                enabled: boolean;
-                channels: dsc.Snowflake[];
-                multiplier: number;
-            },
-            generalLevelBoost: {
-                enabled: boolean,
-                boostTimeInMinutes: number,
-                generalActivityMeterRefreshInMinutes: number
-            }
-        };
-
-        /** The welcomer configuration
-        * @deprecated moved to features.welcomer */
-        welcomer: {
-            enabled: boolean;
-            channelId: dsc.Snowflake;
-            general: dsc.Snowflake;
-            mentionNewPeopleInLobby: boolean;
-            welcomeMsgs: `${string}<mention>${string}`[],
-            goodbyeMsgs: `${string}<mention>${string}`[],
-            freeRolesForEveryone: `${number}`[];
-        };
-
-        /** @deprecated */
-        forFun: {
-            media: {
-                addReactions: string[];
-                deleteMessageIfNotMedia: boolean;
-                channel: dsc.Snowflake;
-                shallCreateThread: boolean;
-            } [],
-            lastLetterChannel: dsc.Snowflake;
-            countingChannel: dsc.Snowflake;
-        };
-
         moderationProtectedRoles: dsc.Snowflake[];
-        /** @deprecated */
-        hallOfFame: dsc.Snowflake;
-        /** @deprecated */
-        hallOfFameEligibleChannels: dsc.Snowflake[];
-        /** @deprecated */
-        hallOfFameEnabled: boolean;
         switchToProgrammingChance: number;
 
         databaseBackups: {
@@ -97,8 +46,6 @@ export interface Config {
         };
 
         usingNormalHosting: boolean;
-        /** @deprecated */
-        shallFloodCheck: boolean;
     };
 
     /* WARNING: Dev permissions allows doing many unsafe things and taking full control over the bot, so only give them to trusted people and the bot's developers! */
@@ -201,22 +148,6 @@ export interface Config {
         wowEmoji: Emoji;
         sadEmoji: Emoji;
         heartAttackEmoji: Emoji;
-    };
-
-    /** @deprecated */
-    logs: {
-        channel: dsc.Snowflake;
-        stdout: dsc.Snowflake;
-        stderr: dsc.Snowflake;
-        stdwarn: dsc.Snowflake;
-    };
-
-    /** @deprecated */
-    ai: {
-        enabled: boolean;
-        channel: dsc.Snowflake;
-        notAllowedCharacters: string[];
-        bannedSequences: string[];
     };
 
     unfilteredRelated: {
@@ -391,11 +322,6 @@ export interface Config {
             fandomArticleNotFoundText: string;
         }
     };
-
-    /** @deprecated */
-    economy: {
-        shop: ConfigEconomyShopItem[]
-    },
 
     masterSecurity: {
         /** if true, watchNewMember will always return true (trustworthy) */
@@ -634,100 +560,13 @@ const defaultCfg: Config = {
 
     general: {
         prefix: 'sudo ',
-        /** @deprecated */
-        leveling: {
-            xpPerMessage: 4,
-            levelDivider: 100,
-            excludedChannels: [],
-            canChangeXP: ['1404392144441180221', rolesCfg.eclair25, rolesCfg.secondLevelOwner],
-            milestoneRoles: {
-                3: '1297559525989158912',
-                5: '1235550102563852348',
-                10: '1235550105751392276',
-                15: '1235550109891035218',
-                20: '1235570092218122251',
-                25: '1235594078305914880',
-                30: '1235594081556627577',
-                50: '1235594083544858667',
-                75: '1235594085188767835',
-                100: '1390802440739356762'
-            },
-            levelChannel: '1235592947831930993',
-            shallPingWhenNewLevel: false,
-            currentEvent: {
-                enabled: false,
-                channels: [ channelsCfg.dev.programming ],
-                multiplier: 2
-            },
-            generalLevelBoost: {
-                enabled: true,
-                boostTimeInMinutes: 2,
-                generalActivityMeterRefreshInMinutes: 5
-            }
-        },
-
-        hallOfFame: '1392128976574484592',
-        hallOfFameEligibleChannels: [channelsCfg.general.general, channelsCfg.general.offtopic, channelsCfg.general.media, channelsCfg.mod.hallOfShame],
-        hallOfFameEnabled: false,
-        
-        /** @deprecated */
-        welcomer: {
-            channelId: channelsCfg.important.lobby,
-            enabled: true,
-            general: channelsCfg.general.general,
-            mentionNewPeopleInLobby: false,
-            welcomeMsgs: [
-                `witaj szanowny użytkowniku <mention>!`,
-                `siema, ale przystojny jesteś <mention> ngl`,
-                `kocham cię <mention>`,
-                `c-cczęsto masz tak na imie <mention>?`,
-                `nie chce mi się, <mention>`,
-                `<mention>, lubimy cie (chyba)`
-            ],
-            goodbyeMsgs: [
-                `do widzenia <mention>!`,
-                `żegnaj <mention>, będziemy za tobą tęsknić! (chyba)`,
-                `<mention> opuścił nasz serwer, ale zawsze może wrócić! (nie wróci)`,
-            ],
-            freeRolesForEveryone: [
-                '1235548306550161451',
-                // roles for appereance
-                '1235540123576176652',
-                '1415582195564806154',
-                '1235541500889137273',
-                '1235540273556361268'
-            ],
-        },
-
         moderationProtectedRoles: [],
-        /** @deprecated */
-        forFun: {
-            media: [
-                {
-                    channel: channelsCfg.general.media,
-                    addReactions: ['👍', '👎', '😭', '🙏', '🤣', '<:joe_i_git:1376096877610799205>'],
-                    deleteMessageIfNotMedia: true,
-                    shallCreateThread: true
-                },
-                {
-                    channel: channelsCfg.mod.hallOfShame,
-                    addReactions: ['🙏'],
-                    deleteMessageIfNotMedia: false,
-                    shallCreateThread: false
-                }
-            ],
-            countingChannel: channelsCfg.forfun.counting,
-            lastLetterChannel: channelsCfg.forfun.lastLetter,
-        },
         switchToProgrammingChance: 0.2,
         databaseBackups: {
             enabled: true,
             msg: '🗄️ automatyczny backup masz tutaj',
             interval: 2 * 60 * 60 * 1000
         },
-
-        shallFloodCheck: true,
-
         usingNormalHosting: false
     },
 
@@ -755,7 +594,6 @@ const defaultCfg: Config = {
         allowedUsers: ['1368171061585117224', '990959984005222410', '985053803151753316', '1274610053843783768', '1401568817766862899']
     },
 
-
     blockCommands: {
         full: {
             default: 'allow',
@@ -775,23 +613,9 @@ const defaultCfg: Config = {
         },
     },
 
-    logs: {
-        channel: channelsCfg.mod.logs,
-        stdout: channelsCfg.eclairbot.stdout,
-        stderr: channelsCfg.eclairbot.stderr,
-        stdwarn: channelsCfg.eclairbot.stdwarn
-    },
-
     unfilteredRelated: {
         gifBan: "1406369089634435204",
         unfilteredChannel: channelsCfg.forfun.unfiltred,
-    },
-
-    ai: {
-        enabled: false,
-        channel: '1276271917665484801',
-        notAllowedCharacters: [':', '#', '!', '&', '*'],
-        bannedSequences: ['@here', '@everyone', 'choler', 'chuj', 'debil', 'fiucie', 'fiut', 'fuck', 'gówn', 'hitler', 'ja pierdole', 'ja pierdolę', 'jeba', 'jebany', 'jebi', 'jprdl', 'kurwa', 'kutas', 'niger', 'nigger', 'penis', 'pierdol', 'porn', 'putin', 'rucha', 'skibidi', 'skibidi toilet', 'spierdalaj', 'toilet', 'wypierdalaj', 'zapierdalaj'],
     },
 
     commands: commandsCfg,
@@ -887,29 +711,6 @@ const defaultCfg: Config = {
             fandomArticleNotFoundHeader: 'Nie znaleziono...',
             fandomArticleNotFoundText: 'Niestety czegoś takiego na fandomie nie ma... Może jest na Wikipedii?'
         }
-    },
-
-    economy: {
-        shop: [
-            {
-                name: 'VIP',
-                description: 'Nie wiem poflexuj się rangą która jest na końcu listy, ale hej - dalej jesteś VIP\'em.',
-                price: 25_000,
-                role: '1235548993933541397'
-            },
-            {
-                name: 'miniVIP',
-                description: 'Taki VIP ale na sterydach. Nie możesz się poflexować, bo ma mini w nazwie i będą myśleli, że cię nie stać...',
-                price: 5_000,
-                role: '1235550013233303582'
-            },
-            {
-                name: 'SVIP',
-                description: 'Już lepszy VIP. Nie wiem co Ci daje to ciągłe upgradeowanie VIP\'ów, ale musi coś dawać, bo inaczej byś tego nie robił :wilted_rose:',
-                price: 100_000,
-                role: '1235550115998076948'
-            }
-        ]
     },
 
     features: {
