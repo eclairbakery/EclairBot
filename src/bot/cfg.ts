@@ -392,6 +392,7 @@ export interface Config {
         }
     };
 
+    /** @deprecated */
     economy: {
         shop: ConfigEconomyShopItem[]
     },
@@ -482,6 +483,9 @@ export interface Config {
             notAllowedCharacters: string[];
             bannedSequences: string[];
         };
+        economy: {
+            shop: ConfigEconomyShopItem[]
+        },
     }
 }
 
@@ -1004,6 +1008,28 @@ const defaultCfg: Config = {
             channel: '1276271917665484801',
             notAllowedCharacters: [':', '#', '!', '&', '*'],
             bannedSequences: ['@here', '@everyone', 'choler', 'chuj', 'debil', 'fiucie', 'fiut', 'fuck', 'gówn', 'hitler', 'ja pierdole', 'ja pierdolę', 'jeba', 'jebany', 'jebi', 'jprdl', 'kurwa', 'kutas', 'niger', 'nigger', 'penis', 'pierdol', 'porn', 'putin', 'rucha', 'skibidi', 'skibidi toilet', 'spierdalaj', 'toilet', 'wypierdalaj', 'zapierdalaj'],
+        },
+        economy: {
+            shop: [
+                {
+                    name: 'VIP',
+                    description: 'Nie wiem poflexuj się rangą która jest na końcu listy, ale hej - dalej jesteś VIP\'em.',
+                    price: 25_000,
+                    role: '1235548993933541397'
+                },
+                {
+                    name: 'miniVIP',
+                    description: 'Taki VIP ale na sterydach. Nie możesz się poflexować, bo ma mini w nazwie i będą myśleli, że cię nie stać...',
+                    price: 5_000,
+                    role: '1235550013233303582'
+                },
+                {
+                    name: 'SVIP',
+                    description: 'Już lepszy VIP. Nie wiem co Ci daje to ciągłe upgradeowanie VIP\'ów, ale musi coś dawać, bo inaczej byś tego nie robił :wilted_rose:',
+                    price: 100_000,
+                    role: '1235550115998076948'
+                }
+            ]
         },
     },
 

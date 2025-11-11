@@ -20,7 +20,7 @@ export const shopCmd: Command = {
 
     execute(api) {
         let fields: APIEmbedField[] = [];
-        cfg.economy.shop.sort((a, b) => a.price - b.price).forEach((shopItem) => {
+        cfg.features.economy.shop.sort((a, b) => a.price - b.price).forEach((shopItem) => {
             fields.push({
                 name: shopItem.name,
                 value: `${shopItem.price}💸 - ${shopItem.description} (daje <@&${shopItem.role}>)`
