@@ -51,10 +51,10 @@ export const lvlCmd: Command = {
                 .setColor(PredefinedColors.Blue)
                 .setTitle(`📊 Poziom użytkownika`)
                 .setDescription(
-                    `**${who.tag}** ma poziom **${xpToLevel(row.xp, cfg.general.leveling.levelDivider)}** (XP: ${row.xp}).`
+                    `**${who.tag}** ma poziom **${xpToLevel(row.xp, cfg.features.leveling.levelDivider)}** (XP: ${row.xp}).`
                     + `\n${mkLvlProgressBar(
                         row.xp,
-                        cfg.general.leveling.levelDivider
+                        cfg.features.leveling.levelDivider
                     )}`,
                 )
                 .setThumbnail(who.displayAvatarURL({ size: 128 }));

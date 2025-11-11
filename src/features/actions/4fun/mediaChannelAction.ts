@@ -13,14 +13,14 @@ export const mediaChannelAction: Action<MessageEventCtx> = {
     constraints: [
         (msg: dsc.Message) => {
             if (msg.author.bot) return false;
-            const channel = cfg.general.forFun.media.find((mc) => mc.channel == msg.channelId);
+            const channel = cfg.features.forFun.media.find((mc) => mc.channel == msg.channelId);
             if (channel == null || channel == undefined) return false;
             return true;
         }
     ],
     callbacks: [
         async (msg: dsc.Message) => {
-            const channelConfig = cfg.general.forFun.media.find((mc) => mc.channel == msg.channelId)!;
+            const channelConfig = cfg.features.forFun.media.find((mc) => mc.channel == msg.channelId)!;
             let check = false;
             if (msg.attachments.size > 0) {
                 for (const attachment of msg.attachments.values()) {

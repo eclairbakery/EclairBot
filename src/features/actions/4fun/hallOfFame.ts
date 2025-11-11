@@ -27,15 +27,15 @@ export const hallOfFameAction: Action<ReactionEventCtx> = {
             const count = reaction.count;
             const emoji = reaction.emoji.name;
 
-            if ((emoji === "⭐" || emoji === "💎" || emoji === "🔥") && count === 3 && cfg.general.hallOfFameEligibleChannels.includes(msg.channelId)) {
-                if (!cfg.general.hallOfFameEnabled) {
+            if ((emoji === "⭐" || emoji === "💎" || emoji === "🔥") && count === 3 && cfg.features.hallOfFame.eligibleChannels.includes(msg.channelId)) {
+                if (!cfg.features.hallOfFame.enabled) {
                     const response = await reaction.message.reply('hall of fame jest wyłączony/zaarchiwizowany btw');
                     await sleep(1000);
                     response.delete();
                     return;
                 }
 
-                const channel = await msg.guild?.channels.fetch(cfg.general.hallOfFame);
+                const channel = await msg.guild?.channels.fetch(cfg.features.hallOfFame.channel);
                 if (!channel) return;
                 if (!channel.isTextBased()) return;
                 if (alreadyInHallOfFame.includes(msg.id)) return;

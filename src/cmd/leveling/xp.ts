@@ -19,7 +19,7 @@ export const xpCmd: Command = {
 
     permissions: {
         discordPerms: null,
-        allowedRoles: cfg.general.leveling.canChangeXP,
+        allowedRoles: cfg.features.leveling.canChangeXP,
         allowedUsers: [],
     },
     expectedArgs: [
@@ -61,7 +61,7 @@ export const xpCmd: Command = {
 
         let shouldLeveler = affect === 'levels';
         if (shouldLeveler) {
-            amount = levelToXp(amount, cfg.general.leveling.levelDivider);
+            amount = levelToXp(amount, cfg.features.leveling.levelDivider);
         }
 
         if (actionStr != 'set' && actionStr != 'add' && actionStr != 'delete') {

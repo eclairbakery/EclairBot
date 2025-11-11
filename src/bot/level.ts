@@ -17,19 +17,19 @@ export interface XpEventCtx {
     amount: number;
 };
 
-export function xpToLevel(xp: number, levelDivider: number = cfg.general.leveling.levelDivider): number {
+export function xpToLevel(xp: number, levelDivider: number = cfg.features.leveling.levelDivider): number {
     return Math.floor(
         (1 + Math.sqrt(1 + 8 * xp / levelDivider)) / 2
     );
 }
 
-export function levelToXp(level: number, levelDivider: number = cfg.general.leveling.levelDivider): number {
+export function levelToXp(level: number, levelDivider: number = cfg.features.leveling.levelDivider): number {
     return Math.floor((level * (level - 1) / 2) * levelDivider);
 }
 
-export const lvlRoles = Object.values(cfg.general.leveling.milestoneRoles);
+export const lvlRoles = Object.values(cfg.features.leveling.milestoneRoles);
 
-function getMention(user: dsc.GuildMember, ping: boolean = cfg.general.leveling.shallPingWhenNewLevel) {
+function getMention(user: dsc.GuildMember, ping: boolean = cfg.features.leveling.shallPingWhenNewLevel) {
     return ping ? `<@${user.user.id}>` : `**${user.displayName.replace('**', '\*\*')}**`;
 }
 
@@ -56,7 +56,7 @@ function msgEligibleForGeneralLevelBoost(msg: dsc.OmitPartialGroupDMChannel<dsc.
     for (const phrase of ['aborcja', 'seks', 'rucha', 'putin', 'hitler', 'niemcy', 'legal']) {
         if (msg.content.includes(phrase)) return false;
     }
-    return Math.random() < 0.001 && cfg.general.leveling.generalLevelBoost.enabled;
+    return Math.random() < 0.001 && cfg.features.leveling.generalLevelBoost.enabled;
 }
 
 export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
@@ -82,7 +82,7 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
                 generalLevelBoost[interaction.user.id] = true;
                 setInterval(() => {
                     generalLevelBoost[interaction.user.id] = false;
-                }, cfg.general.leveling.generalLevelBoost.boostTimeInMinutes * 60 * 1000);
+                }, cfg.features.leveling.generalLevelBoost.boostTimeInMinutes * 60 * 1000);
             }
         });
         collector.on('end', async (collected, reason) => {
@@ -96,23 +96,23 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
     }
 
     // check if eligible
-    if (cfg.general.leveling.excludedChannels.includes(msg.channelId)) return;
+    if (cfg.features.leveling.excludedChannels.includes(msg.channelId)) return;
     if (msg.channelId == cfg.unfilteredRelated.unfilteredChannel) return;
 
     // amount
-    let amount = cfg.general.leveling.xpPerMessage;
+    let amount = cfg.features.leveling.xpPerMessage;
     if (msg.attachments.size > 0 && msg.content.length > 5) amount = Math.floor(amount * 1.5);
     if (msg.content.length > 100) amount = Math.floor(amount * 1.2);
 
     // events
-    if (cfg.general.leveling.currentEvent.enabled && cfg.general.leveling.currentEvent.channels.includes(msg.channelId)) {
-        amount = Math.floor(amount * cfg.general.leveling.currentEvent.multiplier);
+    if (cfg.features.leveling.currentEvent.enabled && cfg.features.leveling.currentEvent.channels.includes(msg.channelId)) {
+        amount = Math.floor(amount * cfg.features.leveling.currentEvent.multiplier);
     }
     if (generalLevelBoost[msg.author.id] == true) {
         amount = Math.floor(amount * 3);
     }
 
-    //output.log(`Receiving ${amount} XP, while multiplier ${cfg.general.leveling.currentEvent.multiplier}`);
+    //output.log(`Receiving ${amount} XP, while multiplier ${cfg.features.leveling.currentEvent.multiplier}`);
 
     // checkpoints
     // Fetch current XP from the database
@@ -128,8 +128,8 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
             const prevXp = row ? row.xp : 0;
             const newXp = prevXp + amount;
 
-            const prevLevel = xpToLevel(prevXp, cfg.general.leveling.levelDivider);
-            const newLevel = xpToLevel(newXp, cfg.general.leveling.levelDivider);
+            const prevLevel = xpToLevel(prevXp, cfg.features.leveling.levelDivider);
+            const newLevel = xpToLevel(newXp, cfg.features.leveling.levelDivider);
 
             // let's insert this data
             db.run(
@@ -141,7 +141,7 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
             // Check for level up
             if (newLevel > prevLevel) {
                 // Check for milestone roles
-                const milestones = cfg.general.leveling.milestoneRoles || {};
+                const milestones = cfg.features.leveling.milestoneRoles || {};
                 const milestoneRoleId: string | null = milestones[newLevel] ?? null;
                 if (milestoneRoleId != null && msg.guild) {
                     const member = msg.guild.members.cache.get(msg.author.id);
@@ -164,7 +164,7 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
                 }
 
                 // Let's ping this guy
-                const channelLvl = await msg.client.channels.fetch(cfg.general.leveling.levelChannel);
+                const channelLvl = await msg.client.channels.fetch(cfg.features.leveling.levelChannel);
                 if (!channelLvl || !channelLvl.isSendable()) return;
 
                 let content = `${getMention(msg.member!)} wbił poziom ${newLevel}! Wow co za osiągnięcie!`;
@@ -206,8 +206,8 @@ const updateXpAction: Action<XpEventCtx> = {
 
             let content: string;
 
-            const prevLevel = xpToLevel(prevXp, cfg.general.leveling.levelDivider);
-            const newLevel = xpToLevel(newXp, cfg.general.leveling.levelDivider);
+            const prevLevel = xpToLevel(prevXp, cfg.features.leveling.levelDivider);
+            const newLevel = xpToLevel(newXp, cfg.features.leveling.levelDivider);
 
             if (newLevel > prevLevel) {
                 content = `Level użytkownika ${getMention(user)} został zmieniony i teraz ma aż ${newLevel} level!`;
@@ -223,7 +223,7 @@ const updateXpAction: Action<XpEventCtx> = {
                 }
             }
 
-            const channelLvl = await client.channels.fetch(cfg.general.leveling.levelChannel);
+            const channelLvl = await client.channels.fetch(cfg.features.leveling.levelChannel);
             if (!channelLvl || !channelLvl.isSendable()) return;
             return channelLvl.send(content);
         },

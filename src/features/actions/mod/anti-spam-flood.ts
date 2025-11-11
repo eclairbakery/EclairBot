@@ -38,7 +38,7 @@ async function filterLog(msg: dsc.Message, system: string) {
 }
 
 function isFlood(content: string) {
-    if (!cfg.general.shallFloodCheck) return false;
+    if (!cfg.features.automod.antiFloodEnabled) return false;
     let cleaned = content
         .replace(/<@!?\d+>/g, '')
         .replace(/<@&\d+>/g, '')
@@ -86,7 +86,7 @@ export const antiSpamAndAntiFlood: Action<MessageEventCtx> = {
             }
             timestamps.push(antispamNow);
             userMessagesAntiSpamMap.set(msg.author.id, timestamps);
-            if (timestamps.length > antispamLimit && client.user!.id !== msg.author.id && !userRecentlyInTheList[msg.author.id]) {
+            if (timestamps.length > antispamLimit && client.user!.id !== msg.author.id && !userRecentlyInTheList[msg.author.id] && cfg.features.automod.antiSpamEnabled) {
                 userRecentlyInTheList[msg.author.id] = true;
                 await (msg.channel as SendableChannel).send(`🚨 <@${msg.author.id}> co ty odsigmiasz`);
                 try {

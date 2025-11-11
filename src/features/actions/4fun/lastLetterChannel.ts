@@ -13,7 +13,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
     constraints: [
         (msg: dsc.Message) => {
             if (msg.author.bot) return false;
-            if (msg.channelId !== cfg.general.forFun.lastLetterChannel) return false;
+            if (msg.channelId !== cfg.features.forFun.lastLetterChannel) return false;
             return true;
         }
     ],

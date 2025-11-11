@@ -13,7 +13,7 @@ export const countingChannelAction: Action<MessageEventCtx> = {
     constraints: [
         (msg: dsc.Message) => {
             if (msg.author.bot) return false;
-            if (msg.channelId !== cfg.general.forFun.countingChannel) return false;
+            if (msg.channelId !== cfg.features.forFun.countingChannel) return false;
             return true;
         }
     ],
