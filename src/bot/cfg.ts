@@ -412,6 +412,14 @@ export interface Config {
             maxChannelCreations: number;
             maxChannelDeletions: number;
         };
+    },
+
+    features: {
+        automod: {
+            antiFloodEnabled: boolean;
+            antiSpamEnabled: boolean;
+            automodBypassRoles: dsc.Snowflake[]
+        }
     }
 }
 
@@ -833,6 +841,14 @@ const defaultCfg: Config = {
                 role: '1235550115998076948'
             }
         ]
+    },
+
+    features: {
+        automod: {
+            antiFloodEnabled: false,
+            antiSpamEnabled: false,
+            automodBypassRoles: ['1380875827998097418']
+        }
     },
 
     masterSecurity: {
