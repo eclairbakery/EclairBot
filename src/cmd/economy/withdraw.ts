@@ -43,7 +43,7 @@ export const withdrawCmd: Command = {
             row.money += amount;
             await updateBalance(user.id, row.money, row.bank_money);
 
-            await api.reply(`✅ Wypłacono ${amount}$ z banku.\nNowy stan: 💳 ${row.bank_money}$ w banku, 💷 ${row.money}$ w portfelu.`);
+            return api.log.replySuccess(api, 'Udało się!', `Wypłacono ${amount}$ z banku.\nNowy stan:\n- ${row.bank_money}$ w banku\n- ${row.money}$ w portfelu.`);
         } catch (err) {
             output.err(err);
             api.log.replyError(api.msg, 'Błąd wypłaty', 'Coś poszło nie tak z bazą danych.');

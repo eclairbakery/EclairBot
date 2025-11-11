@@ -42,7 +42,7 @@ export const depositCmd: Command = {
             row.bank_money += amount;
             await updateBalance(user.id, row.money, row.bank_money);
 
-            await api.reply(`✅ Wpłacono ${amount}$ do banku.\nNowy stan: 💳 ${row.bank_money}$ w banku, 💷 ${row.money}$ w portfelu.`);
+            return api.log.replySuccess(api, 'Udało się!', `Wpłacono ${amount}$ do banku.\nNowy stan:\n- ${row.bank_money}$ w banku\n- ${row.money}$ w portfelu.`);
         } catch (err) {
             output.err(err);
             api.log.replyError(api.msg, 'Błąd depozytu', 'Coś poszło nie tak z bazą danych.');
