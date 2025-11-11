@@ -84,7 +84,7 @@ export const kickCmd: Command = {
                 ]
             });
 
-            const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
+            const logChannel = await api.msg.channel.client.channels.fetch(cfg.features.logs.channel);
             if (logChannel?.isSendable()) {
                 logChannel.send({
                     embeds: [

@@ -82,7 +82,7 @@ export const banCmd: Command = {
                 ]
             });
 
-            const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
+            const logChannel = await api.msg.channel.client.channels.fetch(cfg.features.logs.channel);
             if (logChannel?.isSendable()) {
                 return logChannel.send({
                     embeds: [

@@ -4,7 +4,7 @@ import * as dsc from 'discord.js';
 
 export function registerChannelDeleteDscEvents(client: dsc.Client) {
     client.on('channelDelete', async (chan) => {
-        const channel = await client.channels.fetch(cfg.logs.channel);
+        const channel = await client.channels.fetch(cfg.features.logs.channel);
         if (!channel?.isSendable()) return;
         channel.send({
             embeds: [

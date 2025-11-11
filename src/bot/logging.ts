@@ -110,9 +110,9 @@ export namespace output {
     // --- public ---
     export async function init() {
         try {
-            stdoutChannel = await client.channels.fetch(cfg.logs.stdout) as GuildTextBasedChannel;
-            stderrChannel = await client.channels.fetch(cfg.logs.stderr) as GuildTextBasedChannel;
-            stdwarnChannel = await client.channels.fetch(cfg.logs.stdwarn) as GuildTextBasedChannel;
+            stdoutChannel = await client.channels.fetch(cfg.features.logs.stdout) as GuildTextBasedChannel;
+            stderrChannel = await client.channels.fetch(cfg.features.logs.stderr) as GuildTextBasedChannel;
+            stdwarnChannel = await client.channels.fetch(cfg.features.logs.stdwarn) as GuildTextBasedChannel;
         } catch {}
     }
 

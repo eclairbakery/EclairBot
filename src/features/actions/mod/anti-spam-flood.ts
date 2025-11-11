@@ -11,7 +11,7 @@ const userMessagesAntiSpamMap: Map<Snowflake, number[]> = new Map();
 let userRecentlyInTheList: Record<Snowflake, boolean> = {};
 
 async function filterLog(msg: dsc.Message, system: string) {
-    const channel = await msg.client.channels.fetch(cfg.logs.channel);
+    const channel = await msg.client.channels.fetch(cfg.features.logs.channel);
     if (!channel?.isSendable()) return;
     await channel.send({
         content: '<@&1410323193763463188>',

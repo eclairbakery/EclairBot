@@ -71,7 +71,7 @@ export const muteCmd: Command = {
             if (api.msg.member) watchMute(api.msg.member?.plainMember);
             await mute(targetUser, { reason, duration });
 
-            const logChannel = await api.msg.channel.client.channels.fetch(cfg.logs.channel);
+            const logChannel = await api.msg.channel.client.channels.fetch(cfg.features.logs.channel);
             if (logChannel != null && logChannel.isSendable()) {
                 logChannel.send({
                     embeds: [

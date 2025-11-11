@@ -9,7 +9,7 @@ export const warnGivenLogAction: Action<WarnEventCtx> = {
     constraints: [() => true],
     callbacks: [
         (ctx) => {
-            ctx.user.client.channels.fetch(cfg.logs.channel).then(channel => {
+            ctx.user.client.channels.fetch(cfg.features.logs.channel).then(channel => {
                 if (channel && channel.isSendable()) {
                     channel.send({
                         embeds: [

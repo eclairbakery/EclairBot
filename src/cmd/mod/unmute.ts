@@ -73,7 +73,7 @@ export const unmuteCmd: Command = {
                 await targetUser.roles.remove(muteRole, reason).catch(() => null);
             }
 
-            const channel = await api.msg.guild?.channels.fetch(cfg.logs.channel).catch(() => null);
+            const channel = await api.msg.guild?.channels.fetch(cfg.features.logs.channel).catch(() => null);
             if (channel && (channel as dsc.TextChannel).isSendable()) {
                 (channel as dsc.TextChannel).send({
                     embeds: [

@@ -60,7 +60,7 @@ export const warnClearCmd: Command = {
                     return api.log.replyError(api.msg, 'Błąd podczas usuwania', 'Spróbuj ponownie później.');
                 }
 
-                const channel = await api.msg.guild?.channels.fetch(cfg.logs.channel);
+                const channel = await api.msg.guild?.channels.fetch(cfg.features.logs.channel);
                 if (!channel || !channel.isSendable()) return;
 
                 channel.send({

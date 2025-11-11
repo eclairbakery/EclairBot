@@ -203,6 +203,7 @@ export interface Config {
         heartAttackEmoji: Emoji;
     };
 
+    /** @deprecated */
     logs: {
         channel: dsc.Snowflake;
         stdout: dsc.Snowflake;
@@ -210,6 +211,7 @@ export interface Config {
         stdwarn: dsc.Snowflake;
     };
 
+    /** @deprecated */
     ai: {
         enabled: boolean;
         channel: dsc.Snowflake;
@@ -467,7 +469,19 @@ export interface Config {
             enabled: boolean;
             channel: dsc.Snowflake;
             eligibleChannels: dsc.Snowflake[];
-        }
+        },
+        logs: {
+            channel: dsc.Snowflake;
+            stdout: dsc.Snowflake;
+            stderr: dsc.Snowflake;
+            stdwarn: dsc.Snowflake;
+        };
+        ai: {
+            enabled: boolean;
+            channel: dsc.Snowflake;
+            notAllowedCharacters: string[];
+            bannedSequences: string[];
+        };
     }
 }
 
@@ -978,7 +992,19 @@ const defaultCfg: Config = {
             channel: '1392128976574484592',
             eligibleChannels: [channelsCfg.general.general, channelsCfg.general.offtopic, channelsCfg.general.media, channelsCfg.mod.hallOfShame],
             enabled: false,
-        }
+        },
+        logs: {
+            channel: channelsCfg.mod.logs,
+            stdout: channelsCfg.eclairbot.stdout,
+            stderr: channelsCfg.eclairbot.stderr,
+            stdwarn: channelsCfg.eclairbot.stdwarn
+        },
+        ai: {
+            enabled: false,
+            channel: '1276271917665484801',
+            notAllowedCharacters: [':', '#', '!', '&', '*'],
+            bannedSequences: ['@here', '@everyone', 'choler', 'chuj', 'debil', 'fiucie', 'fiut', 'fuck', 'gówn', 'hitler', 'ja pierdole', 'ja pierdolę', 'jeba', 'jebany', 'jebi', 'jprdl', 'kurwa', 'kutas', 'niger', 'nigger', 'penis', 'pierdol', 'porn', 'putin', 'rucha', 'skibidi', 'skibidi toilet', 'spierdalaj', 'toilet', 'wypierdalaj', 'zapierdalaj'],
+        },
     },
 
     masterSecurity: {
