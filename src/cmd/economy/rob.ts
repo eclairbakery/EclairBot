@@ -12,20 +12,20 @@ import { cfg } from '@/bot/cfg.js';
 const COOLDOWN_MS = 5 * 60 * 1000;
 const BASE_SUCCESS_CHANCE = 0.5;
 const MIN_PERCENT = 0.05;
-const MAX_PERCENT = 0.25; 
+const MAX_PERCENT = 0.25;
 const MIN_STEALABLE = 50;
 
 async function canRob(userId: string): Promise<{ can: boolean; wait?: number }> {
     const row = await dbGet('SELECT last_robbed FROM economy WHERE user_id = ?', [userId]);
     const now = Date.now();
     if (!row || row.last_robbed == null) return { can: true };
-    const timeSinceLast = now - row.last_robbed;
+    const timeSinceLast = now - Number(row.last_robbed);
     if (timeSinceLast < COOLDOWN_MS) return { can: false, wait: COOLDOWN_MS - timeSinceLast };
     return { can: true };
 }
 
 function randomPercentBetween(min: number, max: number): number {
-    return getRandomFloat(min,max);
+    return getRandomFloat(min, max);
 }
 
 async function tryRob(userId: string, targetId: string): Promise<{ ok: boolean; amount?: number; wait?: number; success?: boolean; percent?: number; reason?: string }> {
@@ -40,8 +40,8 @@ async function tryRob(userId: string, targetId: string): Promise<{ ok: boolean; 
     const attackerMoney = (attackerRow && typeof attackerRow.money === 'number') ? Number(attackerRow.money) : 0;
 
     if (targetMoney < MIN_STEALABLE) return { ok: false, amount: 0, success: false, reason: 'too_poor' };
-
-    const success = Math.random() < BASE_SUCCESS_CHANCE;
+    
+    const success = getRandomFloat(0, 1) < BASE_SUCCESS_CHANCE;
     const percent = randomPercentBetween(MIN_PERCENT, MAX_PERCENT);
     const rawAmount = Math.floor(targetMoney * percent);
     const amount = Math.max(1, Math.min(rawAmount, targetMoney));
@@ -49,13 +49,13 @@ async function tryRob(userId: string, targetId: string): Promise<{ ok: boolean; 
     const now = Date.now();
 
     try {
-        await dbRun('BEGIN TRANSACTION');
+        await dbRun('BEGIN IMMEDIATE TRANSACTION');
 
         await dbRun(
             `INSERT INTO economy (user_id, money, last_worked, last_robbed, last_slutted, last_crimed)
-            VALUES (?, ?, 0, ?, 0, 0)
-            ON CONFLICT(user_id) DO UPDATE SET last_robbed = excluded.last_robbed`,
-            [userId, attackerMoney, now]
+             VALUES (?, ?, 0, ?, 0, 0)
+             ON CONFLICT(user_id) DO UPDATE SET last_robbed = ?`,
+            [userId, attackerMoney, now, now]
         );
 
         if (success && amount > 0) {
@@ -63,7 +63,6 @@ async function tryRob(userId: string, targetId: string): Promise<{ ok: boolean; 
 
             const targetAfter = await dbGet('SELECT money FROM economy WHERE user_id = ?', [targetId]);
             const targetAfterMoney = (targetAfter && typeof targetAfter.money === 'number') ? Number(targetAfter.money) : 0;
-
 
             if (targetAfterMoney === targetMoney) {
                 await dbRun('ROLLBACK');
