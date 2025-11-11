@@ -847,6 +847,12 @@ const defaultCfg: Config = {
                     description: 'VIP Final Boss. Daje ci aż pięciokrotny level boost!',
                     price: 1_000_000,
                     role: '1343632574437920799'
+                },
+                {
+                    name: 'Hall of Shame Access',
+                    description: 'Mamy taki fajny kanał zwany `Hall of Shame`! Właśnie dostaniesz do niego dostęp, wystarczy tylko, że ten przedmiot zostanie przez ciebie kupiony',
+                    price: 10_000_000,
+                    role: '1437780651356196864'
                 }
             ]
         },
