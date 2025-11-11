@@ -90,11 +90,11 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
     const accountAge = (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
     if (accountAge < 30) {
         issues.push('Konto jest dziwnie młode (młodsze niż miesiąc).');
-        trustScore -= 5;
+        trustScore -= 2;
     }
     if (accountAge < 7) {
         issues.push('Konto jest naprawdę świeże (młodsze niż tydzień).');
-        trustScore -= 1;
+        trustScore -= 5;
     }
 
     if (!mem.user.avatar) {
