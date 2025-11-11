@@ -44,57 +44,7 @@ export function mkLvlProgressBar(xp: number, levelDivider: number, totalLength: 
     return `${mkProgressBar(progressXp, neededXp, totalLength)} ${progressXp}/${neededXp}xp`;
 }
 
-let generalActivityMeter = 0;
-setInterval(() => {
-    generalActivityMeter = 0;
-}, 5 * 60 * 1000);
-let generalLevelBoost: Record<dsc.Snowflake, boolean> = {};
-
-function msgEligibleForGeneralLevelBoost(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
-    if (msg.channelId !== cfg.channels.general.general) return false;
-    if (++generalActivityMeter !== 10) return false;
-    for (const phrase of ['aborcja', 'seks', 'rucha', 'putin', 'hitler', 'niemcy', 'legal']) {
-        if (msg.content.includes(phrase)) return false;
-    }
-    return Math.random() < 0.001 && cfg.features.leveling.generalLevelBoost.enabled;
-}
-
 export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
-    // add an event if good message
-    if (msgEligibleForGeneralLevelBoost(msg)) {
-        const row = new dsc.ActionRowBuilder();
-        row.addComponents(new dsc.ButtonBuilder().setEmoji('👍').setLabel('Zdobądź').setStyle(dsc.ButtonStyle.Success).setCustomId('get-lvl'))
-        let sent = await msg.channel.send({
-            content: '🔥 kto pierwszy naciśnie przycisk, dostanie boost levela!',
-            components: [row.toJSON()]
-        });
-        const collector = sent.createMessageComponentCollector({
-            componentType: dsc.ComponentType.Button,
-            time: 15000,
-        });
-        collector.on('collect', async (interaction) => {
-            if (interaction.customId === 'get-lvl') {
-                collector.stop('someone_clicked');
-                await sent.edit({
-                    content: `✅ ${interaction.user.username} zdobył boost levela (lvl * 3)`,
-                    components: []
-                });
-                generalLevelBoost[interaction.user.id] = true;
-                setInterval(() => {
-                    generalLevelBoost[interaction.user.id] = false;
-                }, cfg.features.leveling.generalLevelBoost.boostTimeInMinutes * 60 * 1000);
-            }
-        });
-        collector.on('end', async (collected, reason) => {
-            if (reason !== 'someone_clicked') {
-                await sent.edit({
-                    content: '⏳ nikt nie zdążył kliknąć, więc nikt nie dostał boosta lvl...',
-                    components: []
-                });
-            }
-        });
-    }
-
     // check if eligible
     if (cfg.features.leveling.excludedChannels.includes(msg.channelId)) return;
     if (msg.channelId == cfg.unfilteredRelated.unfilteredChannel) return;
@@ -108,8 +58,13 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
     if (cfg.features.leveling.currentEvent.enabled && cfg.features.leveling.currentEvent.channels.includes(msg.channelId)) {
         amount = Math.floor(amount * cfg.features.leveling.currentEvent.multiplier);
     }
-    if (generalLevelBoost[msg.author.id] == true) {
-        amount = Math.floor(amount * 3);
+
+    // multipliers
+    for (const multiplier of cfg.features.leveling.multipliers) {
+        if (msg.member?.roles.cache.has(multiplier.role)) {
+            continue;
+        }
+        amount = Math.floor(amount * multiplier.multiplier);
     }
 
     //output.log(`Receiving ${amount} XP, while multiplier ${cfg.features.leveling.currentEvent.multiplier}`);

@@ -389,7 +389,11 @@ export interface Config {
                 enabled: boolean,
                 boostTimeInMinutes: number,
                 generalActivityMeterRefreshInMinutes: number
-            }
+            },
+            multipliers: {
+                role: dsc.Snowflake;
+                multiplier: number;
+            }[]
         };
         hallOfFame: {
             enabled: boolean;
@@ -792,7 +796,8 @@ const defaultCfg: Config = {
                 enabled: true,
                 boostTimeInMinutes: 2,
                 generalActivityMeterRefreshInMinutes: 5
-            }
+            },
+            multipliers: []
         },
         hallOfFame: {
             channel: '1392128976574484592',
