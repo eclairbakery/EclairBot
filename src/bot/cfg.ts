@@ -835,6 +835,18 @@ const defaultCfg: Config = {
                     description: 'Już lepszy VIP. Nie wiem co Ci daje to ciągłe upgradeowanie VIP\'ów, ale musi coś dawać, bo inaczej byś tego nie robił :wilted_rose:',
                     price: 100_000,
                     role: '1235550115998076948'
+                },
+                {
+                    name: 'MVIP',
+                    description: 'Kolejna generacja VIPa, której prawdopodobnie nie użyjesz...',
+                    price: 250_000,
+                    role: '1235569694451306516'
+                },
+                {
+                    name: 'Pieczywo VIP',
+                    description: 'VIP Final Boss. Daje ci aż pięciokrotny level boost!',
+                    price: 1_000_000,
+                    role: '1343632574437920799'
                 }
             ]
         },
