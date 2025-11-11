@@ -36,7 +36,6 @@ export interface Config {
         /* General configuration for the bot */
         prefix: string;
 
-        moderationProtectedRoles: dsc.Snowflake[];
         switchToProgrammingChance: number;
 
         databaseBackups: {
@@ -412,6 +411,9 @@ export interface Config {
         economy: {
             shop: ConfigEconomyShopItem[]
         },
+        moderation: {
+            protectedRoles: dsc.Snowflake[]
+        },
     }
 }
 
@@ -560,7 +562,6 @@ const defaultCfg: Config = {
 
     general: {
         prefix: 'sudo ',
-        moderationProtectedRoles: [],
         switchToProgrammingChance: 0.2,
         databaseBackups: {
             enabled: true,
@@ -832,6 +833,9 @@ const defaultCfg: Config = {
                 }
             ]
         },
+        moderation: {
+            protectedRoles: []
+        }
     },
 
     masterSecurity: {

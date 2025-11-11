@@ -71,7 +71,7 @@ export const warnCmd: Command = {
             );
         }
 
-        if (targetUser.roles.cache.hasAny(...cfg.general.moderationProtectedRoles)) {
+        if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
             return api.log.replyError(api.msg, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
         }
 
