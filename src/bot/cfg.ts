@@ -223,7 +223,7 @@ export interface Config {
                 enabledForNormalAdministrators: boolean;
             }
         },
-        customs: Record<string, { enabled: boolean, [key: string] : any }>,
+        customs: Record<string, { enabled: boolean, [key: string]: any }>,
         defConf: {
             enabled: boolean
         }
@@ -358,8 +358,8 @@ export interface Config {
             channelId: dsc.Snowflake;
             general: dsc.Snowflake;
             mentionNewPeopleInLobby: boolean;
-            welcomeMsgs: `${string}<mention>${string}`[],
-            goodbyeMsgs: `${string}<mention>${string}`[],
+            welcomeMsgs: `${string}<mention>${string}`[];
+            goodbyeMsgs: `${string}<mention>${string}`[];
             freeRolesForEveryone: `${number}`[];
         };
         forFun: {
@@ -368,7 +368,7 @@ export interface Config {
                 deleteMessageIfNotMedia: boolean;
                 channel: dsc.Snowflake;
                 shallCreateThread: boolean;
-            } [],
+            } [];
             lastLetterChannel: dsc.Snowflake;
             countingChannel: dsc.Snowflake;
         };
@@ -393,7 +393,7 @@ export interface Config {
             multipliers: {
                 role: dsc.Snowflake;
                 multiplier: number;
-            }[]
+            } [];
         };
         hallOfFame: {
             enabled: boolean;
@@ -413,7 +413,9 @@ export interface Config {
             bannedSequences: string[];
         };
         economy: {
-            shop: ConfigEconomyShopItem[]
+            shop: ConfigEconomyShopItem[];
+            currencySign: string;
+            currencySignPlacement: 'left' | 'right';
         },
         moderation: {
             protectedRoles: dsc.Snowflake[]

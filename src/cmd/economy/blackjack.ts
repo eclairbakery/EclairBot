@@ -1,8 +1,10 @@
 import * as dsc from 'discord.js';
+
+import User from '@/bot/apis/db/user.js';
+
 import { PredefinedColors } from '@/util/color.js';
 import { dbGet, dbRun } from '@/util/dbUtils.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
-import * as log from '@/util/log.js'
 import { cfg } from '@/bot/cfg.js';
 
 interface Card {
@@ -50,10 +52,13 @@ export const blackjackCmd: Command = {
         }
 
         const userId = api.msg.author.id;
-        const row = await dbGet('SELECT * FROM economy WHERE user_id = ?', [userId]);
-        if ((row?.money ?? 0) < bet) 
+        const player = new User(userId);
+        const playerBalance = await player.economy.getBalance();
+
+        if (playerBalance.wallet < bet) 
             return api.log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
 
+    
         let playerHand: Card[] = [drawCard(), drawCard()];
         let dealerHand: Card[] = [drawCard(), drawCard()];
 
@@ -74,7 +79,10 @@ export const blackjackCmd: Command = {
                 );
         };
 
-        const gameMsg = await api.reply({ embeds: [getEmbed()], components: [rowBtns] });
+        const gameMsg = await api.reply({
+            embeds: [getEmbed()],
+            components: [rowBtns],
+        });
 
         const collector = gameMsg.createMessageComponentCollector({
             time: 30000,
@@ -89,11 +97,22 @@ export const blackjackCmd: Command = {
                 if (calcHandValue(playerHand) > 21) {
                     await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ?', [bet, userId]);
                     gameOver = true;
-                    await button.update({ embeds: [getEmbed(false).setDescription(cfg.customization.economyTexts.blackjack.descriptionBust)], components: [] });
+                    await button.update({
+                        embeds: [
+                            getEmbed(false)
+                                .setDescription(cfg.customization.economyTexts.blackjack.descriptionBust)
+                        ],
+                        components: [],
+                    });
                     collector.stop();
                     return;
                 }
-                await button.update({ embeds: [getEmbed()], components: [rowBtns] });
+                await button.update({
+                    embeds: [
+                        getEmbed()
+                    ],
+                    components: [rowBtns],
+                });
             }
 
             if (button.customId === 'stand') {
@@ -104,24 +123,36 @@ export const blackjackCmd: Command = {
                 let result: string;
 
                 if (dealerValue > 21 || playerValue > dealerValue) {
-                    await dbRun('UPDATE economy SET money = money + ? WHERE user_id = ?', [bet, userId]);
+                    player.economy.addWalletMoney(bet);
                     result = cfg.customization.economyTexts.blackjack.descriptionWin;
                 } else if (playerValue === dealerValue) {
                     result = cfg.customization.economyTexts.blackjack.descriptionDraw;
                 } else {
-                    await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ?', [bet, userId]);
+                    player.economy.deductWalletMoney(bet);
                     result = cfg.customization.economyTexts.blackjack.descriptionLose;
                 }
 
                 gameOver = true;
-                await button.update({ embeds: [getEmbed(false).setDescription(result)], components: [] });
+                await button.update({
+                    embeds: [
+                        getEmbed(false)
+                            .setDescription(result)
+                    ],
+                    components: [],
+                });
                 collector.stop();
             }
         });
 
         collector.on('end', async () => {
             if (!gameOver) {
-                await gameMsg.edit({ embeds: [getEmbed(false).setDescription(cfg.customization.economyTexts.blackjack.descriptionTimeout)], components: [] });
+                await gameMsg.edit({
+                    embeds: [
+                        getEmbed(false)
+                            .setDescription(cfg.customization.economyTexts.blackjack.descriptionTimeout)
+                    ],
+                    components: [],
+                });
             }
         });
     }

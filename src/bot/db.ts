@@ -1,4 +1,3 @@
-import { existsSync, writeFileSync } from 'node:fs';
 import sqlite from 'sqlite3';
 
 export const db = new sqlite.Database('bot.db');
@@ -26,73 +25,168 @@ function delTable(table: string) {
     db.run(`DROP TABLE IF EXISTS ${table};`);
 }
 
+void addColumnIfNotExists, delTable;
+
 db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+        user_id TEXT PRIMARY KEY,
+    
+        -- leveling data
+        xp INTEGER DEFAULT 0,
+       
+        -- economy data
+        wallet_money REAL DEFAULT 0,
+        bank_money INTEGER DEFAULT 0,
+        last_worked INTEGER DEFAULT 0,
+        last_robbed INTEGER DEFAULT 0,
+        last_slutted INTEGER DEFAULT 0,
+        last_crimed INTEGER DEFAULT 0
+    );
+    
     CREATE TABLE IF NOT EXISTS warns (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id TEXT NOT NULL,
+        user_id TEXT NOT NULL REFERENCES users(user_id),
         moderator_id TEXT NOT NULL,
         reason_string TEXT NOT NULL,
         points INTEGER NOT NULL,
         expires_at INTEGER
     );
-`);
-
-db.exec(`
-    CREATE TABLE IF NOT EXISTS economy (
+    
+    CREATE TABLE IF NOT EXISTS items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id TEXT NOT NULL UNIQUE,
-        money INTEGER NOT NULL,
-        bank_money INTEGER NOT NULL,
-        last_worked INTEGER NOT NULL DEFAULT 0,
-        last_robbed INTEGER NOT NULL DEFAULT 0,
-        last_slutted INTEGER NOT NULL DEFAULT 0,
-        last_crimed INTEGER NOT NULL DEFAULT 0
+        owner_id TEXT NOT NULL REFERENCES users(user_id),
+        type TEXT NOT NULL CHECK(type IN ('mystery-box', 'check', 'role')),
+
+        item_properties TEXT   -- JSON with type-specific info
+                               -- for mystery-box: {'id': string}
+                               -- for role:        {'id': string}
+                               -- for check:       {'amount': number}
     );
-`);
-
-addColumnIfNotExists('economy', 'bank_money', 'INTEGER NOT NULL');
-
-db.exec(`
-    CREATE TABLE IF NOT EXISTS leveling (
-        user_id TEXT UNIQUE,
-        id INTEGER,
-        xp INTEGER
-    );
-`);
-
-db.exec(`
-    CREATE TABLE IF NOT EXISTS economyAssets (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL UNIQUE,
-        price REAL NOT NULL,
-        lastUpdate TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS investments (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userID TEXT NOT NULL,
-        assetID INTEGER NOT NULL,
-        amount REAL NOT NULL,
-        buyPrice REAL NOT NULL,
-        FOREIGN KEY(assetID) REFERENCES assets(id)
-    );
-`);
-
-// who knows, knows
-if (!existsSync('bot/lock-rep.txt')) {
-    writeFileSync('bot/lock-rep.txt', 'locked');
-    db.exec('DROP TABLE reputation;');
-}
-
-db.exec(`
+    
     CREATE TABLE IF NOT EXISTS reputation (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        authorID TEXT NOT NULL,
-        targetUserID TEXT NOT NULL,
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        author_id TEXT NOT NULL REFERENCES users(user_id),
+        target_user_id TEXT NOT NULL REFERENCES users(user_id),
         comment TEXT,
         type TEXT NOT NULL CHECK(type IN ('+rep', '-rep'))
     );
 `);
 
 export { sqlite };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// maqix was here

@@ -1,3 +1,4 @@
+import { formatMoney } from "@/bot/apis/economy/money.js";
 import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 import { PredefinedColors } from "@/util/color.js";
@@ -23,7 +24,7 @@ export const shopCmd: Command = {
         cfg.features.economy.shop.sort((a, b) => a.price - b.price).forEach((shopItem) => {
             fields.push({
                 name: shopItem.name,
-                value: `${shopItem.price}💸 - ${shopItem.description} (daje <@&${shopItem.role}>)`
+                value: `${formatMoney(shopItem.price)} - ${shopItem.description} (daje <@&${shopItem.role}>)`
             });
         });
         api.reply({

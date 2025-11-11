@@ -4,6 +4,7 @@ import { Command, CommandFlags } from "@/bot/command.js";
 import { dbGet, dbRun } from "@/util/dbUtils.js";
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
+import { formatMoney } from '@/bot/apis/economy/money.js';
 
 export const moneyCmd: Command = {
     name: 'money',
@@ -74,7 +75,6 @@ export const moneyCmd: Command = {
 
         const targetId = targetUser.id;
 
-        let connOk = true;
         try {
             await dbRun('BEGIN TRANSACTION');
 
@@ -96,28 +96,29 @@ export const moneyCmd: Command = {
             }
 
             await dbRun(
-                `INSERT INTO economy (user_id, money, bank_money, last_worked, last_robbed, last_slutted, last_crimed)
+                `INSERT INTO users (user_id, wallet_money, bank_money, last_worked, last_robbed, last_slutted, last_crimed)
                  VALUES (?, ?, ?, 0, 0, 0, 0)
-                 ON CONFLICT(user_id) DO UPDATE SET money = excluded.money, bank_money = excluded.bank_money`,
+                 ON CONFLICT(user_id) DO UPDATE SET wallet_money = excluded.wallet_money, bank_money = excluded.bank_money`,
                 [targetId, newMoney, newBank]
             );
 
             await dbRun('COMMIT');
 
-            const embed = new dsc.EmbedBuilder()
-                .setColor(PredefinedColors.Green)
-                .setTitle('Operacja zakończona!')
-                .setDescription(
-                    `Użytkownik: <@${targetId}>\n` +
-                    `Typ: ${location === 'wallet' ? 'Portfel' : 'Bank'}\n` +
-                    `Akcja: ${action}\n` +
-                    `Przed: ${location === 'wallet' ? currentMoney : currentBank}\n` +
-                    `Po: ${location === 'wallet' ? newMoney : newBank}`
-                );
-
-            return msg.reply({ embeds: [embed] });
+            return msg.reply({
+                embeds: [
+                    new dsc.EmbedBuilder()
+                        .setColor(PredefinedColors.Green)
+                        .setTitle('Operacja zakończona!')
+                        .setDescription([
+                            `Użytkownik: <@${targetId}>`,
+                            `Typ: ${location == 'wallet' ? 'Portfel' : 'Bank'}`,
+                            `Akcja: ${action}`,
+                            `Przed: ${formatMoney(location == 'wallet' ? currentMoney : currentBank)}`,
+                            `Po: ${formatMoney(location == 'wallet' ? newMoney : newBank)}`,
+                        ].join('\n')),
+                ]
+            });
         } catch (err) {
-            connOk = false;
             output.err(err);
             try { await dbRun('ROLLBACK'); } catch {}
             return api.log.replyError(msg, 'Błąd bazy danych', 'Operacja nie mogła zostać zakończona.');

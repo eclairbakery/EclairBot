@@ -6,6 +6,7 @@ import { getRandomInt } from '@/util/rand.js';
 import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
+import { formatMoney } from '@/bot/apis/economy/money.js';
 
 const COOLDOWN_MS = 2 * 60 * 1000;
 const WORK_AMOUNT_MIN = 500;
@@ -84,12 +85,12 @@ export const slutCmd: Command = {
                 embed = new dsc.EmbedBuilder()
                     .setColor(PredefinedColors.Blue)
                     .setTitle('Yay!')
-                    .setDescription(`Praca dorywcza dała Ci *prawie* darmowe **${amount}** dolarów!`);
+                    .setDescription(`Praca dorywcza dała Ci *prawie* darmowe **${formatMoney(amount)}**!`);
             } else {
                 embed = new dsc.EmbedBuilder()
                     .setColor(PredefinedColors.Red)
                     .setTitle('Niestety, nie tym razem...')
-                    .setDescription(`Straciłeś **${amount}** dolarów!`);
+                    .setDescription(`Straciłeś **${formatMoney(amount)}**!`);
             }
 
             return api.reply({ embeds: [embed] });
