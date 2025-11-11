@@ -56,6 +56,7 @@ import anonSaysCmd from './general/anonsays.js';
 import { moneyCmd } from './economy/money.js';
 import { enableCommandCmd } from './dev/enable-cmd.js';
 import { disableCommandCmd } from './dev/disable-cmd.js';
+import { buyCmd } from './economy/buy.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -93,7 +94,7 @@ export const commands: Map<Category, Command[]> = new Map([
     [
         Category.Economy,
         [
-            balCmd, workCmd, blackjackCmd, slutCmd, crimeCmd, topecoCmd, robCmd, withdrawCmd, depositCmd, shopCmd, moneyCmd
+            balCmd, workCmd, blackjackCmd, slutCmd, crimeCmd, topecoCmd, robCmd, withdrawCmd, depositCmd, shopCmd, moneyCmd, buyCmd
         ]
     ],
     [

@@ -78,7 +78,7 @@ export const moneyCmd: Command = {
         try {
             await dbRun('BEGIN TRANSACTION');
 
-            const row = await dbGet('SELECT money, bankMoney FROM economy WHERE user_id = ?', [targetId]);
+            const row = await dbGet('SELECT money, bank_money FROM economy WHERE user_id = ?', [targetId]);
             const currentMoney = row && typeof row.money === 'number' ? Number(row.money) : 0;
             const currentBank = row && typeof row.bankMoney === 'number' ? Number(row.bankMoney) : 0;
 
@@ -96,9 +96,9 @@ export const moneyCmd: Command = {
             }
 
             await dbRun(
-                `INSERT INTO economy (user_id, money, bankMoney, last_worked, last_robbed, last_slutted, last_crimed)
+                `INSERT INTO economy (user_id, money, bank_money, last_worked, last_robbed, last_slutted, last_crimed)
                  VALUES (?, ?, ?, 0, 0, 0, 0)
-                 ON CONFLICT(user_id) DO UPDATE SET money = excluded.money, bankMoney = excluded.bankMoney`,
+                 ON CONFLICT(user_id) DO UPDATE SET money = excluded.money, bank_money = excluded.bank_money`,
                 [targetId, newMoney, newBank]
             );
 
