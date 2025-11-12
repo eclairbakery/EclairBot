@@ -416,6 +416,15 @@ export interface Config {
             shop: ConfigEconomyShopItem[];
             currencySign: string;
             currencySignPlacement: 'left' | 'right';
+
+            commandSettings: {
+                crime: {
+                    cooldown: number;
+                    minimumCrimeAmount: number;
+                    maximumCrimeAmount: number;
+                    successRatio: number;
+                }
+            }
         },
         moderation: {
             protectedRoles: dsc.Snowflake[]
@@ -838,7 +847,18 @@ const defaultCfg: Config = {
                     price: 100_000,
                     role: '1235550115998076948'
                 }
-            ]
+            ],
+            currencySign: '$',
+            currencySignPlacement: 'left',
+
+            commandSettings: {
+                crime: {
+                    cooldown: 15 * 60 * 1000,
+                    maximumCrimeAmount: 8000,
+                    minimumCrimeAmount: 2500,
+                    successRatio: 0.4
+                }
+            }
         },
         moderation: {
             protectedRoles: []

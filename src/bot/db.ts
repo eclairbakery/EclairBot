@@ -18,8 +18,7 @@ function addColumnIfNotExists(table: string, column: string, type: string, defau
 }
 
 /**
- * Deletes a table from the database.
- * @param table The name of the table to delete.
+ * @author ChatGPT @madebyai idk who even needs this
  */
 function delTable(table: string) {
     db.run(`DROP TABLE IF EXISTS ${table};`);
@@ -36,7 +35,7 @@ db.exec(`
        
         -- economy data
         wallet_money REAL DEFAULT 0,
-        bank_money INTEGER DEFAULT 0,
+        bank_money REAL DEFAULT 0,
         last_worked INTEGER DEFAULT 0,
         last_robbed INTEGER DEFAULT 0,
         last_slutted INTEGER DEFAULT 0,
@@ -75,118 +74,5 @@ db.exec(`
 
 export { sqlite };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // maqix was here
+// and gorciu deleted your ugly lines

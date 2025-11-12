@@ -1,7 +1,7 @@
 import sqlite from 'sqlite3';
 
 import { db } from '@/bot/db.js';
-import { dbRun, dbGet, dbAll } from '@/util/dbUtils.js';
+import { dbRun, dbGet, dbAll, dbGetAll } from '@/util/dbUtils.js';
 
 export interface UserData {
     user_id: string;
@@ -67,34 +67,45 @@ export default class User {
         },
 
         addXP: async (amount: number) => {
+            await this.ensureExists();
             await dbRun(`UPDATE users SET xp = xp + ? WHERE user_id = ?`, [amount, this.id]);
         },
 
         setXP: async (value: number) => {
+            await this.ensureExists();
             await dbRun(`UPDATE users SET xp = ? WHERE user_id = ?`, [value, this.id]);
-        }
+        },
+
+        getEveryoneXPWithLimit: async (limit: number): Promise<{xp: number, user_id: string}[]> => {
+            await this.ensureExists();
+            const rows = await dbGetAll(`SELECT xp, user_id FROM users ORDER BY xp DESC LIMIT ?`, [limit]) ?? [];
+            return rows;
+        },
     };
 
     /** -------- ECONOMY -------- */
     readonly economy = {
         getBalance: async (): Promise<Balance> => {
+            await this.ensureExists();
             const row = await dbGet(
-                `SELECT wallet_money, bank_money FROM users WHERE user_id = ?`,
+                `SELECT * FROM users WHERE user_id = ?`,
                 [this.id],
             );
-            return { wallet: row?.money ?? 0, bank: row?.bank_money ?? 0 };
+            return { wallet: row?.wallet_money ?? 0, bank: row?.bank_money ?? 0 };
         },
 
         setBalance: async (bal: Balance) => {
+            await this.ensureExists();
             await dbRun(
                 `UPDATE users
-                 SET wallet_money = ?, bank_money = ?,
+                 SET wallet_money = ?, bank_money = ?
                  WHERE user_id = ?`,
                 [bal.wallet, bal.bank, this.id],
             );
         },
 
         addWalletMoney: async (amount: number) => {
+            await this.ensureExists();
             return dbRun(
                 `UPDATE users SET wallet_money = wallet_money + ? WHERE user_id = ?`,
                 [amount, this.id],
@@ -102,6 +113,7 @@ export default class User {
         },
 
         deductWalletMoney: async (amount: number) => {
+            await this.ensureExists();
             return dbRun(
                 `UPDATE users SET wallet_money = wallet_money - ? WHERE user_id = ?`,
                 [amount, this.id],
@@ -109,6 +121,7 @@ export default class User {
         },
 
         setWalletMoney: async (value: number) => {
+            await this.ensureExists();
             return dbRun(
                 `UPDATE users SET wallet_money = ? WHERE user_id = ?`,
                 [value, this.id],
@@ -116,6 +129,7 @@ export default class User {
         },
 
         addBankMoney: async (amount: number) => {
+            await this.ensureExists();
             return dbRun(
                 `UPDATE users SET bank_money = bank_money + ? WHERE user_id = ?`,
                 [amount, this.id],
@@ -123,6 +137,7 @@ export default class User {
         },
 
         deductBankMoney: async (amount: number) => {
+            await this.ensureExists();
             return dbRun(
                 `UPDATE users SET bank_money = bank_money - ? WHERE user_id = ?`,
                 [amount, this.id],
@@ -130,6 +145,7 @@ export default class User {
         },
 
         setBankMoney: async (value: number) => {
+            await this.ensureExists();
             return dbRun(
                 `UPDATE users SET bank_money = ? WHERE user_id = ?`,
                 [value, this.id],
@@ -137,28 +153,32 @@ export default class User {
         },
 
         depositToBank: async (amount: number) => {
+            await this.ensureExists();
             await dbRun(
                 `UPDATE users
-                 SET money = money - ?, bank_money = bank_money + ?
+                 SET wallet_money = wallet_money - ?, bank_money = bank_money + ?
                  WHERE user_id = ? AND money >= ?`,
                 [amount, amount, this.id, amount]
             );
         },
 
         withdrawFromBank: async (amount: number) => {
+            await this.ensureExists();
             await dbRun(
                 `UPDATE users
-                 SET bank_money = bank_money - ?, money = money + ?
+                 SET bank_money = bank_money - ?, wallet_money = wallet_money + ?
                  WHERE user_id = ? AND bank_money >= ?`,
                 [amount, amount, this.id, amount]
             );
         },
 
         setCooldown: async (field: 'last_worked' | 'last_robbed' | 'last_slutted' | 'last_crimed', timestamp: number) => {
+            await this.ensureExists();
             await dbRun(`UPDATE users SET ${field} = ? WHERE user_id = ?`, [timestamp, this.id]);
         },
 
         getCooldowns: async (): Promise<Cooldowns> => {
+            await this.ensureExists();
             const row = await dbGet(
                 `SELECT last_worked, last_robbed, last_slutted, last_crimed
                  FROM users WHERE user_id = ?`,

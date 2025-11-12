@@ -5,6 +5,7 @@ import { dbGet, dbRun } from "@/util/dbUtils.js";
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { formatMoney } from '@/bot/apis/economy/money.js';
+import User from '@/bot/apis/db/user.js';
 
 export const moneyCmd: Command = {
     name: 'money',
@@ -78,9 +79,11 @@ export const moneyCmd: Command = {
         try {
             await dbRun('BEGIN TRANSACTION');
 
-            const row = await dbGet('SELECT money, bank_money FROM economy WHERE user_id = ?', [targetId]);
-            const currentMoney = row && typeof row.money === 'number' ? Number(row.money) : 0;
-            const currentBank = row && typeof row.bankMoney === 'number' ? Number(row.bankMoney) : 0;
+            const user = new User(api.msg.author.id);
+
+            const row = await user.economy.getBalance();
+            const currentMoney = row && typeof row.wallet === 'number' ? Number(row.wallet) : 0;
+            const currentBank = row && typeof row.bank === 'number' ? Number(row.bank) : 0;
 
             let newMoney = currentMoney;
             let newBank = currentBank;
@@ -95,12 +98,10 @@ export const moneyCmd: Command = {
                 if (action === 'remove') newBank = Math.max(0, currentBank - amount);
             }
 
-            await dbRun(
-                `INSERT INTO users (user_id, wallet_money, bank_money, last_worked, last_robbed, last_slutted, last_crimed)
-                 VALUES (?, ?, ?, 0, 0, 0, 0)
-                 ON CONFLICT(user_id) DO UPDATE SET wallet_money = excluded.wallet_money, bank_money = excluded.bank_money`,
-                [targetId, newMoney, newBank]
-            );
+            await user.economy.setBalance({
+                bank: newBank,
+                wallet: newMoney
+            });
 
             await dbRun('COMMIT');
 

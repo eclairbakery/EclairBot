@@ -6,6 +6,7 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandFlags } from '@/bot/command.js';
 import { output } from '@/bot/logging.js';
+import User from '@/bot/apis/db/user.js';
 
 function calculateLevel(xp: number, levelDivider: number): number {
     return Math.floor(
@@ -33,12 +34,7 @@ export const toplvlCmd: Command = {
         const { msg } = api;
 
         try {
-            const rows: { user_id: string, xp: number }[] = await new Promise((resolve, reject) => {
-                db.all('SELECT * FROM leveling ORDER BY xp DESC LIMIT 50', [], (err, rows: any[]) => {
-                    if (err) return reject(err);
-                    resolve(rows);
-                });
-            });
+            const rows = await (new User(api.msg.author.id)).leveling.getEveryoneXPWithLimit(50);
 
             if (!rows.length) {
                 await msg.reply('Nie ma żadnego w bazie poziomu :sob:');

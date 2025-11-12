@@ -41,7 +41,10 @@ async function tryRob(attackerId: string, targetId: string): Promise<{ ok: boole
     const attacker = new User(attackerId);
     const target = new User(targetId);
 
-    const attackerBalance = await user.economy.getBalance(); 
+    await attacker.ensureExists();
+    await target.ensureExists();
+
+    const attackerBalance = await attacker.economy.getBalance();
     const targetBalance = await target.economy.getBalance();
 
     if (targetBalance.wallet < MIN_STEALABLE) {
@@ -58,28 +61,30 @@ async function tryRob(attackerId: string, targetId: string): Promise<{ ok: boole
     try {
         await dbRun('BEGIN IMMEDIATE TRANSACTION');
 
-        await dbRun(
-            `INSERT INTO users (user_id, money, last_worked, last_robbed, last_slutted, last_crimed)
-             VALUES (?, ?, 0, ?, 0, 0)
-             ON CONFLICT(user_id) DO UPDATE SET last_robbed = ?`,
-            [userId, attackerMoney, now, now]
-        );
+        await attacker.economy.setCooldown('last_robbed', now);
 
         if (success && amount > 0) {
-            await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ? AND money >= ?', [amount, targetId, amount]);
+            await dbRun(
+                `UPDATE users SET wallet_money = wallet_money - ? WHERE user_id = ? AND wallet_money >= ?`,
+                [amount, targetId, amount]
+            );
 
-            const targetAfter = await dbGet('SELECT money FROM economy WHERE user_id = ?', [targetId]);
-            const targetAfterMoney = (targetAfter && typeof targetAfter.money === 'number') ? Number(targetAfter.money) : 0;
+            const targetAfter = await dbGet(`SELECT wallet_money FROM users WHERE user_id = ?`, [targetId]);
+            const targetAfterMoney = (targetAfter && typeof targetAfter.wallet_money === 'number') ? Number(targetAfter.wallet_money) : 0;
 
-            if (targetAfterMoney === targetMoney) {
+            if (targetAfterMoney === targetBalance.wallet) {
                 await dbRun('ROLLBACK');
                 return { ok: false, amount: 0, success: false, reason: 'target_update_failed' };
             }
 
-            await dbRun('UPDATE economy SET money = money + ? WHERE user_id = ?', [amount, userId]);
+            await dbRun(
+                `UPDATE users SET wallet_money = wallet_money + ? WHERE user_id = ?`,
+                [amount, attackerId]
+            );
 
             await dbRun('COMMIT');
-            const percentDone = Math.round((amount / targetMoney) * 100);
+
+            const percentDone = Math.round((amount / targetBalance.wallet) * 100);
             return { ok: true, amount, success: true, percent: percentDone };
         } else {
             await dbRun('COMMIT');
