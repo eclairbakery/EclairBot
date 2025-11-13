@@ -47,8 +47,9 @@ export async function mitigateToUsersTable(db: SqliteDatabase) {
                     } else {
                         rows.forEach((row: any) => {
                             db.run(`
-                                UPDATE users SET xp = ? WHERE user_id = ?;
-                            `, [row.xp, row.user_id]);
+                                INSERT OR REPLACE INTO users (user_id, xp)
+                                VALUES (?, ?);
+                            `, [row.user_id, row.xp]);
                         });
                     }
                 });
