@@ -1,8 +1,9 @@
-import { cfg } from '@/bot/cfg.js';
-import { db } from '@/bot/db.js';
+import User from '@/bot/apis/db/user.js';
+
 import * as dsc from 'discord.js';
-import * as log from '@/util/log.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { formatMoney } from '@/bot/apis/economy/money.js';
 import { output } from '@/bot/logging.js';
 
 export const balCmd: Command = {
@@ -31,23 +32,23 @@ export const balCmd: Command = {
     async execute(api: CommandAPI) {
         const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member!.plainMember;
 
-        try {
-            const row: { money: number, bank_money: number; } = (await new Promise((resolve, reject) => {
-                db.get('SELECT * FROM economy WHERE user_id = ?', [who.id], (err, row: any) => {
-                    if (err) return reject(err);
-                    resolve(row);
-                });
-            })) ?? { money: 0, bank_money: 0 };
+        const user = new User(who.id);
 
-            row.money = row.money ?? 0;
-            row.bank_money = row.bank_money ?? 0;
+        try {
+            const balance = await user.economy.getBalance();
+            const isIndebted = (balance.wallet + balance.bank) < 0;
 
             await api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setTitle('📊 Twoje pieniądze')
-                        .setDescription(`Konto jest ${row.money >= 0 ? 'warte' : 'zadłużone o'} ${Math.abs(row.money + row.bank_money)}$.\n\n💳 Pieniądze w banku: ${row.bank_money}\n💷 Pieniądze w portfelu: ${row.money}`)
-                        .setColor("#1ebfd5")
+                        .setDescription([
+                            `Konto jest ${!isIndebted ? 'warte' : 'zadłużone o'} ${formatMoney(Math.abs(balance.wallet + balance.bank))}.`,
+                            '',
+                            `🏦 Pieniądze w banku: ${formatMoney(balance.bank)}`,
+                            `👛 Pieniądze w portfelu: ${formatMoney(balance.wallet)}`,
+                        ].join('\n'))
+                        .setColor(isIndebted ? PredefinedColors.Red : PredefinedColors.Gold)
                 ]
             });
         } catch (err) {

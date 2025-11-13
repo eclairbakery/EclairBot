@@ -1,27 +1,26 @@
 import * as dsc from 'discord.js';
 
-import { dbGet, dbRun } from '@/util/dbUtils.js';
 import { getRandomInt } from '@/util/rand.js';
 
 import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { cfg } from '@/bot/cfg.js';
+import User from '@/bot/apis/db/user.js';
 
-const COOLDOWN_MS = 15 * 60 * 1000;
-const WORK_AMOUNT_MIN = 2500;
-const WORK_AMOUNT_MAX = 8000;
-const PERCENTAGE = 0.4;
+const WORK_AMOUNT_MIN = cfg.features.economy.commandSettings.crime.minimumCrimeAmount;
+const WORK_AMOUNT_MAX = cfg.features.economy.commandSettings.crime.maximumCrimeAmount;
+const PERCENTAGE = cfg.features.economy.commandSettings.crime.successRatio;
 
 async function canSlut(userId: string): Promise<{ can: boolean; wait?: number }> {
-    const row = await dbGet('SELECT last_crimed FROM economy WHERE user_id = ?', [userId]);
+    const row = await (new User(userId)).economy.getCooldowns();
     const now = Date.now();
 
     if (!row) return { can: true };
 
-    const timeSinceLastWork = now - row.last_crimed;
-    if (timeSinceLastWork < COOLDOWN_MS) {
-        return { can: false, wait: COOLDOWN_MS - timeSinceLastWork };
+    const timeSinceLastWork = now - (row.lastCrimed ?? 0);
+    if (timeSinceLastWork < cfg.features.economy.commandSettings.crime.cooldown) {
+        return { can: false, wait: cfg.features.economy.commandSettings.crime.cooldown - timeSinceLastWork };
     }
 
     return { can: true };
@@ -36,12 +35,9 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
 
     const now = Date.now();
 
-    await dbRun(
-        `INSERT INTO economy (user_id, money, last_worked, last_robbed, last_slutted, last_crimed)
-         VALUES (?, ?, ?, 0, 0, 0)
-         ON CONFLICT(user_id) DO UPDATE SET money = money ${success ? '+' : '-'} ?, last_crimed = ?`,
-        [userId, amount, now, amount, now]
-    );
+    if (success) await (new User(userId)).economy.addWalletMoney(amount);
+            else await (new User(userId)).economy.deductWalletMoney(amount);
+    await (new User(userId)).economy.setCooldown('last_crimed', now);
 
     return { ok: true };
 }
@@ -63,22 +59,19 @@ export const crimeCmd: Command = {
     aliases: [],
 
     async execute(api) {
-        const msg = api.msg;
-
-        const row = await dbGet('SELECT * FROM economy WHERE user_id = ?', [msg.author.id]);
-        if ((row?.money ?? 0) <= 100) {
+        if (((await (new User(api.msg.author.id)).economy.getBalance()).wallet ?? 0) <= 100) {
             const embed = new dsc.EmbedBuilder()
                 .setColor(PredefinedColors.DarkBlue)
                 .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.crimeNotAllowedHeader)
                 .setDescription(cfg.customization.economyTexts.workSlutOrCrime.crime.crimeNotAllowedText);
-            return msg.reply({ embeds: [embed] });
+            return api.reply({ embeds: [embed] });
         }
 
         try {
             const amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
             const win = Math.random() < PERCENTAGE;
 
-            const result = await trySlut(msg.author.id, amount, win);
+            const result = await trySlut(api.msg.author.id, amount, win);
 
             if (!result.ok) {
                 const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);
@@ -86,7 +79,7 @@ export const crimeCmd: Command = {
                     .setColor(PredefinedColors.Yellow)
                     .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.waitTextHeader)
                     .setDescription(cfg.customization.economyTexts.workSlutOrCrime.crime.waitTextDescription.replaceAll('<seconds>', String(waitSeconds)));
-                return msg.reply({ embeds: [embed] });
+                return api.reply({ embeds: [embed] });
             }
 
             const embed = new dsc.EmbedBuilder()
@@ -97,7 +90,7 @@ export const crimeCmd: Command = {
                     : cfg.customization.economyTexts.workSlutOrCrime.crime.loseText
                 ).replaceAll('<amount>', String(amount)));
 
-            return msg.reply({ embeds: [embed] });
+            return api.reply({ embeds: [embed] });
 
         } catch (error) {
             output.err(error);
@@ -106,7 +99,7 @@ export const crimeCmd: Command = {
                 .setTitle('Błąd')
                 .setDescription('Coś się złego odwaliło z tą ekonomią...')
                 .setTimestamp();
-            return msg.reply({ embeds: [embed] });
+            return api.reply({ embeds: [embed] });
         }
     }
 };

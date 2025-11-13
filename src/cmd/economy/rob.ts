@@ -8,6 +8,7 @@ import { Command, CommandArgumentWithUserMentionOrMsgReferenceValue, CommandFlag
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { cfg } from '@/bot/cfg.js';
+import User from '@/bot/apis/db/user.js';
 
 const COOLDOWN_MS = 5 * 60 * 1000;
 const BASE_SUCCESS_CHANCE = 0.5;
@@ -16,11 +17,15 @@ const MAX_PERCENT = 0.25;
 const MIN_STEALABLE = 50;
 
 async function canRob(userId: string): Promise<{ can: boolean; wait?: number }> {
-    const row = await dbGet('SELECT last_robbed FROM economy WHERE user_id = ?', [userId]);
+    const user = new User(userId);
+    const cooldowns = await user.economy.getCooldowns();
+
     const now = Date.now();
-    if (!row || row.last_robbed == null) return { can: true };
-    const timeSinceLast = now - Number(row.last_robbed);
-    if (timeSinceLast < COOLDOWN_MS) return { can: false, wait: COOLDOWN_MS - timeSinceLast };
+    if (cooldowns.lastRobbed == null) return { can: true };
+    const timeSinceLast = now - cooldowns.lastRobbed;
+    if (timeSinceLast < COOLDOWN_MS) {
+        return { can: false, wait: COOLDOWN_MS - timeSinceLast };
+    }
     return { can: true };
 }
 
@@ -28,51 +33,58 @@ function randomPercentBetween(min: number, max: number): number {
     return getRandomFloat(min, max);
 }
 
-async function tryRob(userId: string, targetId: string): Promise<{ ok: boolean; amount?: number; wait?: number; success?: boolean; percent?: number; reason?: string }> {
-    const check = await canRob(userId);
+async function tryRob(attackerId: string, targetId: string): Promise<{ ok: boolean; amount?: number; wait?: number; success?: boolean; percent?: number; reason?: string }> {
+    const check = await canRob(attackerId);
     if (!check.can) return { ok: false, wait: check.wait };
-    if (userId === targetId) return { ok: false, amount: 0, success: false, reason: 'self' };
+    if (attackerId === targetId) return { ok: false, amount: 0, success: false, reason: 'self' };
 
-    const targetRow = await dbGet('SELECT money FROM economy WHERE user_id = ?', [targetId]);
-    const attackerRow = await dbGet('SELECT money FROM economy WHERE user_id = ?', [userId]);
+    const attacker = new User(attackerId);
+    const target = new User(targetId);
 
-    const targetMoney = (targetRow && typeof targetRow.money === 'number') ? Number(targetRow.money) : 0;
-    const attackerMoney = (attackerRow && typeof attackerRow.money === 'number') ? Number(attackerRow.money) : 0;
+    await attacker.ensureExists();
+    await target.ensureExists();
 
-    if (targetMoney < MIN_STEALABLE) return { ok: false, amount: 0, success: false, reason: 'too_poor' };
+    const attackerBalance = await attacker.economy.getBalance();
+    const targetBalance = await target.economy.getBalance();
+
+    if (targetBalance.wallet < MIN_STEALABLE) {
+        return { ok: false, amount: 0, success: false, reason: 'too_poor' };
+    }
     
     const success = getRandomFloat(0, 1) < BASE_SUCCESS_CHANCE;
     const percent = randomPercentBetween(MIN_PERCENT, MAX_PERCENT);
-    const rawAmount = Math.floor(targetMoney * percent);
-    const amount = Math.max(1, Math.min(rawAmount, targetMoney));
+    const rawAmount = Math.floor(targetBalance.wallet * percent);
+    const amount = Math.max(1, Math.min(rawAmount, targetBalance.wallet));
 
     const now = Date.now();
 
     try {
         await dbRun('BEGIN IMMEDIATE TRANSACTION');
 
-        await dbRun(
-            `INSERT INTO economy (user_id, money, last_worked, last_robbed, last_slutted, last_crimed)
-             VALUES (?, ?, 0, ?, 0, 0)
-             ON CONFLICT(user_id) DO UPDATE SET last_robbed = ?`,
-            [userId, attackerMoney, now, now]
-        );
+        await attacker.economy.setCooldown('last_robbed', now);
 
         if (success && amount > 0) {
-            await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ? AND money >= ?', [amount, targetId, amount]);
+            await dbRun(
+                `UPDATE users SET wallet_money = wallet_money - ? WHERE user_id = ? AND wallet_money >= ?`,
+                [amount, targetId, amount]
+            );
 
-            const targetAfter = await dbGet('SELECT money FROM economy WHERE user_id = ?', [targetId]);
-            const targetAfterMoney = (targetAfter && typeof targetAfter.money === 'number') ? Number(targetAfter.money) : 0;
+            const targetAfter = await dbGet(`SELECT wallet_money FROM users WHERE user_id = ?`, [targetId]);
+            const targetAfterMoney = (targetAfter && typeof targetAfter.wallet_money === 'number') ? Number(targetAfter.wallet_money) : 0;
 
-            if (targetAfterMoney === targetMoney) {
+            if (targetAfterMoney === targetBalance.wallet) {
                 await dbRun('ROLLBACK');
                 return { ok: false, amount: 0, success: false, reason: 'target_update_failed' };
             }
 
-            await dbRun('UPDATE economy SET money = money + ? WHERE user_id = ?', [amount, userId]);
+            await dbRun(
+                `UPDATE users SET wallet_money = wallet_money + ? WHERE user_id = ?`,
+                [amount, attackerId]
+            );
 
             await dbRun('COMMIT');
-            const percentDone = Math.round((amount / targetMoney) * 100);
+
+            const percentDone = Math.round((amount / targetBalance.wallet) * 100);
             return { ok: true, amount, success: true, percent: percentDone };
         } else {
             await dbRun('COMMIT');

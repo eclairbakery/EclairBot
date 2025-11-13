@@ -6,6 +6,8 @@ import { getRandomInt } from '@/util/rand.js';
 import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
+import { formatMoney } from '@/bot/apis/economy/money.js';
+import User from '@/bot/apis/db/user.js';
 
 const COOLDOWN_MS = 2 * 60 * 1000;
 const WORK_AMOUNT_MIN = 500;
@@ -13,12 +15,12 @@ const WORK_AMOUNT_MAX = 1600;
 const PERCENTAGE = 0.6;
 
 async function canSlut(userId: string): Promise<{ can: boolean; wait?: number }> {
-    const row = await dbGet('SELECT last_slutted FROM economy WHERE user_id = ?', [userId]);
+    const row = await (new User(userId)).economy.getCooldowns();
     const now = Date.now();
 
     if (!row) return { can: true };
 
-    const timeSinceLastWork = now - row.last_slutted;
+    const timeSinceLastWork = now - (row.lastSlutted ?? 0);
     if (timeSinceLastWork < COOLDOWN_MS) {
         return { can: false, wait: COOLDOWN_MS - timeSinceLastWork };
     }
@@ -35,12 +37,9 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
 
     const now = Date.now();
 
-    await dbRun(
-        `INSERT INTO economy (user_id, money, last_worked, last_robbed, last_slutted, last_crimed)
-         VALUES (?, ?, ?, 0, 0, 0)
-         ON CONFLICT(user_id) DO UPDATE SET money = money ${success ? '+' : '-'} ?, last_slutted = ?`,
-        [userId, amount, now, amount, now]
-    );
+    if (success) await (new User(userId)).economy.addWalletMoney(amount);
+                 else await (new User(userId)).economy.deductWalletMoney(amount);
+    await (new User(userId)).economy.setCooldown('last_slutted', now);
 
     return { ok: true };
 }
@@ -84,12 +83,12 @@ export const slutCmd: Command = {
                 embed = new dsc.EmbedBuilder()
                     .setColor(PredefinedColors.Blue)
                     .setTitle('Yay!')
-                    .setDescription(`Praca dorywcza dała Ci *prawie* darmowe **${amount}** dolarów!`);
+                    .setDescription(`Praca dorywcza dała Ci *prawie* darmowe **${formatMoney(amount)}**!`);
             } else {
                 embed = new dsc.EmbedBuilder()
                     .setColor(PredefinedColors.Red)
                     .setTitle('Niestety, nie tym razem...')
-                    .setDescription(`Straciłeś **${amount}** dolarów!`);
+                    .setDescription(`Straciłeś **${formatMoney(amount)}**!`);
             }
 
             return api.reply({ embeds: [embed] });

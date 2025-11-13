@@ -1,4 +1,6 @@
+import User from "@/bot/apis/db/user.js";
 import { getBalance, updateBalance } from "@/bot/apis/economy/apis.js";
+import { formatMoney } from "@/bot/apis/economy/money.js";
 import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags, CommandAPI } from "@/bot/command.js";
 import { output } from "@/bot/logging.js";
@@ -26,23 +28,31 @@ export const depositCmd: Command = {
         }
     ],
     async execute(api: CommandAPI) {
-        const user = api.msg.member!.plainMember;
-        try {
-            const row = await getBalance(user.id);
-            let amount = api.getTypedArg('amount', 'number')?.value as number;
+        const amount = api.getTypedArg('amount', 'number')?.value as number;
+        if (isNaN(amount) || amount <= 0) {
+            return api.log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
+        }
 
-            if (isNaN(amount) || amount <= 0) {
-                return api.log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
-            }
-            if (row.money < amount) {
+        const userId = api.msg.member!.plainMember.id;
+        const user = new User(userId);
+        const userBalance = await user.economy.getBalance();
+
+        try {
+            if (userBalance.wallet < amount) {
                 return api.log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
             }
 
-            row.money -= amount;
-            row.bank_money += amount;
-            await updateBalance(user.id, row.money, row.bank_money);
-
-            return api.log.replySuccess(api, 'Udało się!', `Wpłacono ${amount}$ do banku.\nNowy stan:\n- ${row.bank_money}$ w banku\n- ${row.money}$ w portfelu.`);
+            await user.economy.depositToBank(amount);
+            return api.log.replySuccess(
+                api,
+                'Udało się!',
+                [
+                    `Wpłacono ${amount}$ do banku.`,
+                    `Nowy stan konta:`,
+                    `- ${formatMoney(userBalance.bank)} w banku`,
+                    `- ${formatMoney(userBalance.wallet)}$ w portfelu.`,
+                ].join('\n')
+            );
         } catch (err) {
             output.err(err);
             api.log.replyError(api.msg, 'Błąd depozytu', 'Coś poszło nie tak z bazą danych.');

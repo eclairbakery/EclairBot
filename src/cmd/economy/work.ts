@@ -6,18 +6,19 @@ import { getRandomInt } from '@/util/rand.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { output } from '@/bot/logging.js';
+import User from '@/bot/apis/db/user.js';
 
 const COOLDOWN_MS = 10 * 1000;
 const WORK_AMOUNT_MIN = 50;
 const WORK_AMOUNT_MAX = 300;
 
 async function canWork(userId: string): Promise<{ can: boolean; wait?: number }> {
-    const row = await dbGet('SELECT last_worked FROM economy WHERE user_id = ?', [userId]);
+    const row = await (new User(userId)).economy.getCooldowns();
     const now = Date.now();
 
     if (!row) return { can: true };
 
-    const timeSinceLastWork = now - row.last_worked;
+    const timeSinceLastWork = now - (row.lastWorked ?? 0);
     if (timeSinceLastWork < COOLDOWN_MS) {
         return { can: false, wait: COOLDOWN_MS - timeSinceLastWork };
     }
@@ -34,12 +35,8 @@ async function tryWork(userId: string, amount: number): Promise<{ ok: boolean; w
 
     const now = Date.now();
 
-    await dbRun(
-        `INSERT INTO economy (user_id, money, last_worked, last_robbed, last_slutted, last_crimed)
-         VALUES (?, ?, ?, 0, 0, 0)
-         ON CONFLICT(user_id) DO UPDATE SET money = money + ?, last_worked = ?`,
-        [userId, amount, now, amount, now]
-    );
+    await (new User(userId)).economy.addWalletMoney(amount);
+    await (new User(userId)).economy.setCooldown('last_worked', now);
 
     return { ok: true };
 }

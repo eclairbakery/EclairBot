@@ -28,7 +28,7 @@ export const topecoCmd: Command = {
     async execute(api) {
         const msg = api.msg;
 
-        db.all('SELECT * FROM economy ORDER BY money DESC LIMIT 12', [], async (err, rows: any[]) => {
+        db.all('SELECT * FROM users ORDER BY wallet_money DESC LIMIT 12', [], async (err, rows: any[]) => {
             if (err) {
                 output.err(err);
                 return api.log.replyError(msg, 'Błąd pobierania topki', 'Pytaj twórców biblioteki sqlite3...');

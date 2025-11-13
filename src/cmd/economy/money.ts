@@ -4,6 +4,8 @@ import { Command, CommandFlags } from "@/bot/command.js";
 import { dbGet, dbRun } from "@/util/dbUtils.js";
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
+import { formatMoney } from '@/bot/apis/economy/money.js';
+import User from '@/bot/apis/db/user.js';
 
 export const moneyCmd: Command = {
     name: 'money',
@@ -74,13 +76,14 @@ export const moneyCmd: Command = {
 
         const targetId = targetUser.id;
 
-        let connOk = true;
         try {
             await dbRun('BEGIN TRANSACTION');
 
-            const row = await dbGet('SELECT money, bank_money FROM economy WHERE user_id = ?', [targetId]);
-            const currentMoney = row && typeof row.money === 'number' ? Number(row.money) : 0;
-            const currentBank = row && typeof row.bankMoney === 'number' ? Number(row.bankMoney) : 0;
+            const user = new User(api.msg.author.id);
+
+            const row = await user.economy.getBalance();
+            const currentMoney = row && typeof row.wallet === 'number' ? Number(row.wallet) : 0;
+            const currentBank = row && typeof row.bank === 'number' ? Number(row.bank) : 0;
 
             let newMoney = currentMoney;
             let newBank = currentBank;
@@ -95,29 +98,28 @@ export const moneyCmd: Command = {
                 if (action === 'remove') newBank = Math.max(0, currentBank - amount);
             }
 
-            await dbRun(
-                `INSERT INTO economy (user_id, money, bank_money, last_worked, last_robbed, last_slutted, last_crimed)
-                 VALUES (?, ?, ?, 0, 0, 0, 0)
-                 ON CONFLICT(user_id) DO UPDATE SET money = excluded.money, bank_money = excluded.bank_money`,
-                [targetId, newMoney, newBank]
-            );
+            await user.economy.setBalance({
+                bank: newBank,
+                wallet: newMoney
+            });
 
             await dbRun('COMMIT');
 
-            const embed = new dsc.EmbedBuilder()
-                .setColor(PredefinedColors.Green)
-                .setTitle('Operacja zakończona!')
-                .setDescription(
-                    `Użytkownik: <@${targetId}>\n` +
-                    `Typ: ${location === 'wallet' ? 'Portfel' : 'Bank'}\n` +
-                    `Akcja: ${action}\n` +
-                    `Przed: ${location === 'wallet' ? currentMoney : currentBank}\n` +
-                    `Po: ${location === 'wallet' ? newMoney : newBank}`
-                );
-
-            return msg.reply({ embeds: [embed] });
+            return msg.reply({
+                embeds: [
+                    new dsc.EmbedBuilder()
+                        .setColor(PredefinedColors.Green)
+                        .setTitle('Operacja zakończona!')
+                        .setDescription([
+                            `Użytkownik: <@${targetId}>`,
+                            `Typ: ${location == 'wallet' ? 'Portfel' : 'Bank'}`,
+                            `Akcja: ${action}`,
+                            `Przed: ${formatMoney(location == 'wallet' ? currentMoney : currentBank)}`,
+                            `Po: ${formatMoney(location == 'wallet' ? newMoney : newBank)}`,
+                        ].join('\n')),
+                ]
+            });
         } catch (err) {
-            connOk = false;
             output.err(err);
             try { await dbRun('ROLLBACK'); } catch {}
             return api.log.replyError(msg, 'Błąd bazy danych', 'Operacja nie mogła zostać zakończona.');

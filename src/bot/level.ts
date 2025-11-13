@@ -7,6 +7,7 @@ import { dbGet, dbRun } from '@/util/dbUtils.js';
 import { client } from '@/client.js';
 import { mkProgressBar } from '@/util/progressbar.js';
 import { output } from './logging.js';
+import User from './apis/db/user.js';
 
 export const OnSetXpEvent = actionsManager.mkEvent('OnSetXpEvent');
 export interface XpEventCtx {
@@ -44,6 +45,31 @@ export function mkLvlProgressBar(xp: number, levelDivider: number, totalLength: 
     return `${mkProgressBar(progressXp, neededXp, totalLength)} ${progressXp}/${neededXp}xp`;
 }
 
+async function addLvlRole(guild: dsc.Guild, newLevel: number, user: dsc.Snowflake) {
+    const milestones = cfg.features.leveling.milestoneRoles || {};
+    const milestoneRoleId: string | null = milestones[newLevel] ?? null;
+    if (milestoneRoleId != null) {
+        const member = guild.members.cache.get(user);
+        if (member) {
+            for (const roleId of lvlRoles) {
+                try {
+                    if (member.roles.cache.has(roleId)) {
+                        await member.roles.remove(roleId);
+                    }
+                } catch (err) {
+                    output.log(`Failed to remove role ${roleId}:`, err);
+                }
+            }
+            try {
+                await member.roles.add(milestoneRoleId);
+            } catch (err: any) {
+                output.warn(err);
+            }
+        }
+    }
+    return milestoneRoleId;
+}
+
 export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     // check if eligible
     if (cfg.features.leveling.excludedChannels.includes(msg.channelId)) return;
@@ -67,67 +93,26 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
         amount = Math.floor(amount * multiplier.multiplier);
     }
 
-    //output.log(`Receiving ${amount} XP, while multiplier ${cfg.features.leveling.currentEvent.multiplier}`);
+    // logic
+    const user = new User(msg.author.id);
 
-    // checkpoints
-    // Fetch current XP from the database
-    db.get(
-        `SELECT xp FROM leveling WHERE user_id = ?`,
-        [msg.author.id],
-        async (err, row: any) => {
-            if (err) {
-                log.replyError(msg, 'Błąd', err.message);
-                return;
-            }
+    const prevXp = await user.leveling.getXP();
+    const newXp = prevXp + amount;
+    const prevLevel = xpToLevel(prevXp, cfg.features.leveling.levelDivider);
+    const newLevel = xpToLevel(newXp, cfg.features.leveling.levelDivider);
 
-            const prevXp = row ? row.xp : 0;
-            const newXp = prevXp + amount;
+    await user.leveling.addXP(amount);
 
-            const prevLevel = xpToLevel(prevXp, cfg.features.leveling.levelDivider);
-            const newLevel = xpToLevel(newXp, cfg.features.leveling.levelDivider);
+    if (newLevel > prevLevel) {
+        let milestoneRoleId = await addLvlRole(msg.guild!, newLevel, msg.author.id);
 
-            // let's insert this data
-            db.run(
-                `INSERT INTO leveling (user_id, xp) VALUES (?, ?)
-                 ON CONFLICT(user_id) DO UPDATE SET xp = xp + excluded.xp`,
-                [msg.author.id, amount]
-            );
+        const channelLvl = await msg.client.channels.fetch(cfg.features.leveling.levelChannel);
+        if (!channelLvl || !channelLvl.isSendable()) return;
 
-            // Check for level up
-            if (newLevel > prevLevel) {
-                // Check for milestone roles
-                const milestones = cfg.features.leveling.milestoneRoles || {};
-                const milestoneRoleId: string | null = milestones[newLevel] ?? null;
-                if (milestoneRoleId != null && msg.guild) {
-                    const member = msg.guild.members.cache.get(msg.author.id);
-                    if (member) {
-                        for (const roleId of lvlRoles) {
-                            try {
-                                if (member.roles.cache.has(roleId)) {
-                                    await member.roles.remove(roleId);
-                                }
-                            } catch (err) {
-                                output.log(`Failed to remove role ${roleId}:`, err);
-                            }
-                        }
-                        try {
-                            await member.roles.add(milestoneRoleId);
-                        } catch (err: any) {
-                            log.replyError(msg, `Błąd`, err.message ?? err);
-                        }
-                    }
-                }
-
-                // Let's ping this guy
-                const channelLvl = await msg.client.channels.fetch(cfg.features.leveling.levelChannel);
-                if (!channelLvl || !channelLvl.isSendable()) return;
-
-                let content = `${getMention(msg.member!)} wbił poziom ${newLevel}! Wow co za osiągnięcie!`;
-                if (milestoneRoleId) content += 'I btw nową rolę zdobyłeś!';
-                channelLvl.send(content);
-            }
-        }
-    );
+        let content = `${getMention(msg.member!)} wbił poziom ${newLevel}! Wow co za osiągnięcie!`;
+        if (milestoneRoleId) content += 'I btw nową rolę zdobyłeś!';
+        channelLvl.send(content);
+    }
 }
 
 const updateXpAction: Action<XpEventCtx> = {
@@ -135,8 +120,8 @@ const updateXpAction: Action<XpEventCtx> = {
     constraints: [],
     callbacks: [
         async (ctx) => {
-            const res = await dbGet('SELECT xp FROM leveling WHERE user_id = ?', [ctx.userID]);
-            const prevXp = res ? res.xp : 0;
+            const user = new User(ctx.userID);
+            const prevXp = await user.leveling.getXP();
 
             let newXp: number;
             switch (ctx.action) {
@@ -145,18 +130,14 @@ const updateXpAction: Action<XpEventCtx> = {
             case 'delete': newXp = Math.max(0, prevXp - ctx.amount); break;
             }
 
-            await dbRun(`
-                INSERT INTO leveling (user_id, xp)
-                VALUES (?, ?)
-                ON CONFLICT(user_id) DO UPDATE SET xp = excluded.xp;
-            `, [ctx.userID, newXp]);
+            await user.leveling.setXP(newXp);
 
-            let user: dsc.GuildMember;
+            let member: dsc.GuildMember;
             if (ctx?.user) {
-                user = ctx.user;
+                member = ctx.user;
             } else {
-                user = await ctx.guild.members.fetch(ctx.userID);
-                if (user == null) throw new Error;
+                member = await ctx.guild.members.fetch(ctx.userID);
+                if (member == null) throw new Error;
             }
 
             let content: string;
@@ -165,14 +146,16 @@ const updateXpAction: Action<XpEventCtx> = {
             const newLevel = xpToLevel(newXp, cfg.features.leveling.levelDivider);
 
             if (newLevel > prevLevel) {
-                content = `Level użytkownika ${getMention(user)} został zmieniony i teraz ma aż ${newLevel} level!`;
+                content = `Level użytkownika ${getMention(member)} został zmieniony i teraz ma aż ${newLevel} level!`;
+                await addLvlRole(member.guild, newLevel, member.id);
             } else if (newLevel < prevLevel) {
-                content = `Level użytkownika ${getMention(user)} został zmieniony, przez co cofną się do levela ${newLevel}!`;
+                content = `Level użytkownika ${getMention(member)} został zmieniony, przez co cofnął się do levela ${newLevel}!`;
+                await addLvlRole(member.guild, newLevel, member.id);
             } else {
                 if (prevXp == newXp) {
-                    content = `Administrator próbował zmienić level użytkownika ${getMention(user)}, ale ma autyzm i ustawił dokladnie taki sam jaki był wcześniej czyli ${prevLevel} level. Nic tylko pogratulować`;
+                    content = `Administrator próbował zmienić level użytkownika ${getMention(member)}, ale ma autyzm i ustawił dokladnie taki sam jaki był wcześniej czyli ${prevLevel} level. Nic tylko pogratulować`;
                 } else {
-                    content = `Level użytkownika ${getMention(user)} został zmieniony, co prawda dalej ma ${prevLevel} level, ale tym razem ${newXp}xp zamiast ${prevXp}xp?`
+                    content = `Level użytkownika ${getMention(member)} został zmieniony, co prawda dalej ma ${prevLevel} level, ale tym razem ${newXp}xp zamiast ${prevXp}xp?`
                         + ` Dobra przestane yappowac tych nerdowskich liczb i dam ci progress bar do następnego levela:` +
                         '\n' + mkLvlProgressBar(newXp, levelToXp(xpToLevel(newXp) + 1));
                 }

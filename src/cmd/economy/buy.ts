@@ -4,6 +4,8 @@ import { Command, CommandFlags } from "@/bot/command.js";
 import { dbGet, dbRun } from "@/util/dbUtils.js";
 import { PredefinedColors } from "@/util/color.js";
 import { output } from "@/bot/logging.js";
+import User from "@/bot/apis/db/user.js";
+import { formatMoney } from "@/bot/apis/economy/money.js";
 
 export const buyCmd: Command = {
     name: "buy",
@@ -48,20 +50,26 @@ export const buyCmd: Command = {
 
         try {
             const userId = msg.author.id;
-            const row = await dbGet("SELECT money FROM economy WHERE user_id = ?", [userId]);
-            const money = row && typeof row.money === "number" ? Number(row.money) : 0;
+            const user = new User(userId);
+            const userBalance = await user.economy.getBalance();
 
-            if (money < item.price) {
-                return api.log.replyError(
+            if (userBalance.wallet < item.price) {
+                api.log.replyError(
                     api,
-                    "Nie stać Cię!",
-                    `Nie stać Cię na **${item.name}**. Brakuje Ci **${item.price - money}** dolarów.`
+                    'Nie stać Cię!',
+                    `Nie stać Cię na **${item.name}**. Brakuje Ci **${formatMoney(item.price - userBalance.wallet)}** dolarów.`
                 );
+                if (userBalance.bank + userBalance.wallet >= item.price) {
+                    return api.log.replyTip(
+                        api,
+                        'Wskazówka',
+                        'Za przedmioty możesz płacić tylko pieniędzmi z portfela, jednak w banku masz wystarczającą ilość pieniędzy by kupić ten przedmiot.\n**Spróbuj troche wypłacić!**',
+                    );
+                }
+                return;
             }
 
-            await dbRun("BEGIN TRANSACTION");
-
-            await dbRun("UPDATE economy SET money = money - ? WHERE user_id = ?", [item.price, userId]);
+            user.economy.deductWalletMoney(item.price);
 
             if (item.role) {
                 const role = msg.guild?.roles.cache.get(item.role);
@@ -72,17 +80,14 @@ export const buyCmd: Command = {
                 }
             }
 
-            await dbRun("COMMIT");
-
             const embed = new dsc.EmbedBuilder()
                 .setColor(PredefinedColors.Green)
                 .setTitle("Zakup udany!")
-                .setDescription(`Kupiłeś **${item.name}** za **${item.price}** dolarów.\n${item.description}`);
+                .setDescription(`Kupiłeś **${item.name}** za **${formatMoney(item.price)}**.\n${item.description}`);
 
             return msg.reply({ embeds: [embed] });
         } catch (err) {
             output.err(err);
-            try { await dbRun("ROLLBACK"); } catch {}
 
             return api.log.replyError(
                 api,

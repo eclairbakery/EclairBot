@@ -3,7 +3,11 @@ import { client } from '@/client.js';
 import { output as debug, ft } from '@/bot/logging.js';
 import * as dotenv from 'dotenv';
 process.on('uncaughtException', async (e) => {
-    debug.warn(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
+    debug.err(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
+    if (e.message.includes('An invalid token was provided.')) {
+        debug.err('Automatic shutdown. Token is invalid.');
+        process.exit(2);
+    }
 });
 dotenv.config({ quiet: true });
 
@@ -43,11 +47,14 @@ import { commands } from '@/cmd/list.js';
 import actionsManager from '@/features/actions/index.js';
 import { getChannel } from './features/actions/channels/templateChannels.js';
 import { warnGivenLogAction } from './features/actions/mod/warn-given.js';
+import { performMitigations } from './bot/db.js';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
     await debug.init();
     debug.log(`${ft.CYAN}Logged in.`);
+
+    await performMitigations();
 
     if (!process.env.ANON_SAYS_WEBHOOK) {
         debug.warn('You should set the ANON_SAYS_WEBHOOK enviorment variable.\nOtherwise, the anonsays command will not work.\nThis webhook shall be in the general channel.');
