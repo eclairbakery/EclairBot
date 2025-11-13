@@ -27,6 +27,8 @@ function delTable(table: string) {
 
 void addColumnIfNotExists, delTable;
 
+db.exec("PRAGMA foreign_keys = ON;");
+
 db.exec(`
     CREATE TABLE IF NOT EXISTS users (
         user_id TEXT PRIMARY KEY,

@@ -89,25 +89,36 @@ export async function mitigateToUsersTable(db: SqliteDatabase) {
                 };
             });
 
-            const userInsertQueries: string[] = [];
-            const userValues: any[] = [];
-
-            Object.keys(userDataMap).forEach((user_id) => {
+            for (const user_id in userDataMap) {
                 const userData = userDataMap[user_id];
-                userInsertQueries.push(`
+
+                const query = `
                     INSERT OR REPLACE INTO users (user_id, xp, wallet_money, bank_money, last_worked, last_robbed, last_slutted, last_crimed)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-                `);
-                userValues.push(user_id, userData.xp || 0, userData.wallet_money || 0, userData.bank_money || 0, userData.last_worked || 0, userData.last_robbed || 0, userData.last_slutted || 0, userData.last_crimed || 0);
-            });
+                `;
+                const values = [
+                    user_id,
+                    userData.xp || 0,
+                    userData.wallet_money || 0,
+                    userData.bank_money || 0,
+                    userData.last_worked || 0,
+                    userData.last_robbed || 0,
+                    userData.last_slutted || 0,
+                    userData.last_crimed || 0,
+                ];
 
-            db.run(userInsertQueries.join(' '), userValues, (err) => {
-                if (err) {
-                    output.err('usersTable: vulnerable, mitigation failed: ' + err);
-                } else {
-                    output.err('usersTable: mitigation, moved data to users table');
-                }
-            });
+                await new Promise((resolve, reject) => {
+                    db.run(query, values, function(err) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(null);
+                        }
+                    });
+                });
+            }
+
+            output.log('usersTable: mitigation, moved data to users table');
         } else {
             output.log('usersTable: not affected');
         }
