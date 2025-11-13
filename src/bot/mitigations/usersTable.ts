@@ -40,6 +40,20 @@ export async function mitigateToUsersTable(db: SqliteDatabase) {
                 return;
             }
 
+            if (levelingExists) {
+                db.all('SELECT * FROM leveling', [], (err, rows) => {
+                    if (err) {
+                        console.error(err);
+                    } else {
+                        rows.forEach((row: any) => {
+                            db.run(`
+                                UPDATE users SET xp = ? WHERE user_id = ?;
+                            `, [row.xp, row.user_id]);
+                        });
+                    }
+                });
+            }
+
             if (economyExists) {
                 db.all('SELECT * FROM economy', [], (err, rows) => {
                     if (err) {
@@ -50,20 +64,6 @@ export async function mitigateToUsersTable(db: SqliteDatabase) {
                                 INSERT OR REPLACE INTO users (user_id, wallet_money, bank_money, last_worked, last_robbed, last_slutted, last_crimed)
                                 VALUES (?, ?, ?, ?, ?, ?, ?);
                             `, [row.user_id, row.money, row.bank_money, row.last_worked, row.last_robbed, row.last_slutted, row.last_crimed]);
-                        });
-                    }
-                });
-            }
-
-            if (levelingExists) {
-                db.all('SELECT * FROM leveling', [], (err, rows) => {
-                    if (err) {
-                        console.error(err);
-                    } else {
-                        rows.forEach((row: any) => {
-                            db.run(`
-                                UPDATE users SET xp = ? WHERE user_id = ?;
-                            `, [row.xp, row.user_id]);
                         });
                     }
                 });
