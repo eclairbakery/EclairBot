@@ -2,6 +2,7 @@ import sqlite from 'sqlite3';
 
 import { db } from '@/bot/db.js';
 import { dbRun, dbGet, dbAll, dbGetAll } from '@/util/dbUtils.js';
+import { output } from '@/bot/logging.js';
 
 export interface UserData {
     user_id: string;
@@ -91,7 +92,9 @@ export default class User {
                 `SELECT * FROM users WHERE user_id = ?`,
                 [this.id],
             );
-            return { wallet: row?.wallet_money ?? 0, bank: row?.bank_money ?? 0 };
+            let result = { wallet: row?.wallet_money ?? 0, bank: row?.bank_money ?? 0 };
+            output.log(`balance for ${this.id}: \`${JSON.stringify(result, undefined, 0)}\``);
+            return result;
         },
 
         setBalance: async (bal: Balance) => {

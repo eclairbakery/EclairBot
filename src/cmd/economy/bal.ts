@@ -36,15 +36,15 @@ export const balCmd: Command = {
 
         try {
             const balance = await user.economy.getBalance();
-            const isIndebted = balance.wallet + balance.bank < 0;
+            const isIndebted = (balance.wallet + balance.bank) < 0;
 
             await api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
                         .setTitle('📊 Twoje pieniądze')
                         .setDescription([
-                            `Konto jest ${!isIndebted ? 'warte' : 'zadłużone o'} ${formatMoney(Math.abs(balance.wallet + balance.bank))}$.`,
-                            ``,
+                            `Konto jest ${!isIndebted ? 'warte' : 'zadłużone o'} ${formatMoney(Math.abs(balance.wallet + balance.bank))}.`,
+                            '',
                             `🏦 Pieniądze w banku: ${formatMoney(balance.bank)}`,
                             `👛 Pieniądze w portfelu: ${formatMoney(balance.wallet)}`,
                         ].join('\n'))

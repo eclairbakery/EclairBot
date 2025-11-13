@@ -38,8 +38,8 @@ function formatNumber(value: number): string {
 export function formatMoney(money: Money): string {
     switch (cfg.features.economy.currencySignPlacement) {
     case 'left':
-        return cfg.features.economy.currencySign + formatMoney(money satisfies number);
+        return cfg.features.economy.currencySign + formatNumber(money satisfies number);
     case 'right':
-        return formatMoney(money satisfies number) + cfg.features.economy.currencySign;
+        return formatNumber(money satisfies number) + cfg.features.economy.currencySign;
     }
 }
