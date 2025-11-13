@@ -1,53 +1,41 @@
 import * as dsc from 'discord.js';
 import { dbRun, dbAll, dbGet } from '@/util/dbUtils.js';
 
-export interface Rep {
-    id: number;
-    createdAt: string;
-    authorID: dsc.Snowflake;
-    targetUserID: dsc.Snowflake;
-    comment: string | null;
-    type: '+rep' | '-rep';
-}
+import User, { Rep } from '@/bot/apis/db/user.js';
+export { Rep };
 
 export interface RepProportion {
     plus: number;
     sub: number;
 };
 
-export async function addRep(authorID: string, targetUserID: string, comment: string | null, type: '+rep' | '-rep') {
-    return dbRun(`
-        INSERT INTO reputation (authorID, targetUserID, comment, type)
-        VALUES (?, ?, ?, ?)
-    `, [authorID, targetUserID, comment, type]);
+/** @deprecated */
+export async function addRep(authorId: string, targetUserId: string, comment: string | null, type: '+rep' | '-rep') {
+    return new User(authorId).reputation.give(targetUserId, type, comment ?? undefined);
 }
 
-export async function getRepsGivenByUser(authorID: string): Promise<Rep[]> {
-    const rows = await dbAll<Rep>(
-        `
-            SELECT * FROM reputation WHERE authorID = ?
-        `,
-        [authorID],
-    );
-    return rows;
+/** @deprecated */
+export async function getRepsGivenByUser(authorId: string): Promise<Rep[]> {
+    return new User(authorId).reputation.getGiven();
 }
 
-export async function getLastRepGivenByUser(authorID: string): Promise<Rep | null> {
+/** @deprecated */
+export async function getLastRepGivenByUser(authorId: string): Promise<Rep | null> {
     const row = await dbGet<Rep>(`
-        SELECT * FROM reputation WHERE authorID = ?
-        ORDER BY createdAt DESC
+        SELECT * FROM reputation WHERE author_id = ?
+        ORDER BY created_at DESC
         LIMIT 1
-    `, [authorID]);
+    `, [authorId]);
     return row ?? null;
 }
 
-export async function getUserReps(userID: dsc.Snowflake): Promise<Rep[]> {
-    const rows = await dbAll<Rep>(`
-        SELECT * FROM reputation WHERE targetUserID = ?
-    `, [userID]);
-    return rows;
+/** @deprecated */
+export async function getUserReps(userId: dsc.Snowflake): Promise<Rep[]> {
+    return new User(userId).reputation.getReceived();
 }
 
+/** @deprecated */
+/** @fixme this function is unsafe 'cause the internal database reputation table does not match the Rep declaration. */
 export async function getAllRepsList(): Promise<Rep[]> {
     return dbAll<Rep>(`SELECT * FROM reputation`);
 }
@@ -55,10 +43,10 @@ export async function getAllRepsList(): Promise<Rep[]> {
 function buildRepsMap(reps: Rep[]): Map<dsc.Snowflake, Rep[]> {
     const map: Map<dsc.Snowflake, Rep[]> = new Map();
     for (const r of reps) {
-        if (!map.has(r.targetUserID)) {
-            map.set(r.targetUserID, []);
+        if (!map.has(r.targetUserId)) {
+            map.set(r.targetUserId, []);
         }
-        map.get(r.targetUserID)!.push(r);
+        map.get(r.targetUserId)!.push(r);
     }
     return map;
 }
@@ -71,8 +59,8 @@ export function computeReputationScores(reps: Rep[], opts?: { maxIter?: number; 
 
     const users: Set<dsc.Snowflake> = new Set();
     for (const r of reps) {
-        users.add(r.authorID);
-        users.add(r.targetUserID);
+        users.add(r.authorId);
+        users.add(r.targetUserId);
     }
 
     const reputations: Map<dsc.Snowflake, number> = new Map();
@@ -92,7 +80,7 @@ export function computeReputationScores(reps: Rep[], opts?: { maxIter?: number; 
             let weightedSum = 0;
             let totalWeight = 0;
             for (const r of incoming) {
-                const voterRep = reputations.get(r.authorID) ?? 0;
+                const voterRep = reputations.get(r.authorId) ?? 0;
                 const weight = Math.max(0.5, voterRep / 10); // prevent zero weight
                 const val = r.type === '+rep' ? 1 : -1;
                 weightedSum += val * weight;
@@ -150,8 +138,8 @@ async function deleteExpiredReps() {
 
 export type Reputation = { repScore: number; repScale: number; repProportion: RepProportion };
 
-export async function getUserReputationProportion(userID: dsc.Snowflake): Promise<RepProportion> {
-    const userReps = await getUserReps(userID);
+export async function getUserReputationProportion(userId: dsc.Snowflake): Promise<RepProportion> {
+    const userReps = await getUserReps(userId);
 
     const userPlusRepsCount = userReps.reduce((acc, rep) => acc + (rep.type === '+rep' ? 1 : 0), 0);
     const userSubRepsCount =  userReps.reduce((acc, rep) => acc + (rep.type === '-rep' ? 1 : 0), 0);
@@ -160,9 +148,9 @@ export async function getUserReputationProportion(userID: dsc.Snowflake): Promis
     return { plus: userPlusRepsCountScaled, sub: userSubRepsCountScaled };
 }
 
-function computeRepScaleSmooth(repScores: Map<string, number>, userID: string): number {
+function computeRepScaleSmooth(repScores: Map<string, number>, userId: string): number {
     const values = Array.from(repScores.values());
-    const repScore = repScores.get(userID) ?? 0;
+    const repScore = repScores.get(userId) ?? 0;
 
     // linear interpolation around min/max with small smoothing factor
     const min = Math.min(...values, 0);
@@ -191,31 +179,31 @@ export function computeReputationScales(repScores: Map<dsc.Snowflake, number>): 
 
     const scales: Map<dsc.Snowflake, number> = new Map();
 
-    for (const [userID, repScore] of repScores) {
+    for (const [userId, repScore] of repScores) {
         if (range < 1e-6) {
-            scales.set(userID, 0);
+            scales.set(userId, 0);
         } else {
             const repScale = ((repScore - min) / range) * 10;
-            scales.set(userID, Math.max(0, Math.min(10, repScale)));
+            scales.set(userId, Math.max(0, Math.min(10, repScale)));
         }
     }
 
     return scales;
 }
 
-export async function getUserReputation(userID: dsc.Snowflake): Promise<Reputation> {
+export async function getUserReputation(userId: dsc.Snowflake): Promise<Reputation> {
     await deleteExpiredReps();
 
     const reps = await getAllRepsList();
 
     const repScores = computeReputationScores(reps);
-    if (!repScores.has(userID)) {
+    if (!repScores.has(userId)) {
         return { repScore: 0, repScale: 0, repProportion: { plus: 0, sub: 0 } };
     }
 
-    const repScore = repScores.get(userID)!;
-    const repScale = computeRepScaleSmooth(repScores, userID);
-    const repProportion = await getUserReputationProportion(userID);
+    const repScore = repScores.get(userId)!;
+    const repScale = computeRepScaleSmooth(repScores, userId);
+    const repProportion = await getUserReputationProportion(userId);
 
     return { repScore, repScale, repProportion };
 }

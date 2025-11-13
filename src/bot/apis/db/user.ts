@@ -15,21 +15,59 @@ export interface UserData {
     last_crimed: number;
 }
 
-export interface Warn {
+interface WarnRaw {
     id: number;
     moderator_id: string;
     reason_string: string;
     points: number;
     expires_at: number | null;
-};
+}
 
-export interface Reputation {
+export interface Warn {
+    id: number;
+    moderatorId: string;
+    reason: string;
+    points: number;
+    expiresAt: number | null;
+}
+
+function warnFromRaw(raw: WarnRaw): Warn {
+    return {
+        id: raw.id,
+        moderatorId: raw.moderator_id,
+        reason: raw.reason_string,
+        points: raw.points,
+        expiresAt: raw.expires_at,
+    };
+}
+
+interface RepRaw {
     id: number;
     created_at: string;
     author_id: string;
     target_user_id: string;
     comment: string | null;
     type: '+rep' | '-rep';
+}
+
+export interface Rep {
+    id: number;
+    createdAt: string;
+    authorId: string;
+    targetUserId: string;
+    comment: string | null;
+    type: '+rep' | '-rep';
+}
+
+function repFromRaw(raw: RepRaw): Rep {
+    return {
+        id: raw.id,
+        createdAt: raw.created_at,
+        authorId: raw.author_id,
+        targetUserId: raw.target_user_id,
+        comment: raw.comment,
+        type: raw.type,
+    };
 }
 
 export interface Balance {
@@ -160,7 +198,7 @@ export default class User {
             await dbRun(
                 `UPDATE users
                  SET wallet_money = wallet_money - ?, bank_money = bank_money + ?
-                 WHERE user_id = ? AND money >= ?`,
+                 WHERE user_id = ? AND wallet_money >= ?`,
                 [amount, amount, this.id, amount]
             );
         },
@@ -201,32 +239,34 @@ export default class User {
     /** -------- REPUTATION -------- */
     readonly reputation = {
         give: async (targetId: string, type: '+rep' | '-rep', comment?: string) => {
-            await dbRun(
+            return dbRun(
                 `INSERT INTO reputation (author_id, target_user_id, type, comment)
                  VALUES (?, ?, ?, ?)`,
                 [this.id, targetId, type, comment ?? null]
             );
         },
 
-        getReceived: async (): Promise<Reputation[]> => {
-            return await dbAll(
+        getReceived: async (): Promise<Rep[]> => {
+            const rawReps = await dbAll<RepRaw>(
                 `SELECT * FROM reputation WHERE target_user_id = ? ORDER BY created_at DESC`,
                 [this.id]
             );
+            return rawReps.map(repFromRaw);
         },
 
-        getGiven: async (): Promise<Reputation[]> => {
-            return await dbAll(
+        getGiven: async (): Promise<Rep[]> => {
+            const rawReps = await dbAll<RepRaw>(
                 `SELECT * FROM reputation WHERE author_id = ? ORDER BY created_at DESC`,
                 [this.id]
             );
+            return rawReps.map(repFromRaw);
         }
     };
 
     /** -------- WARNS -------- */
     readonly warns = {
-        add: async (moderatorId: string, reason: string, points: number, expiresAt?: number) => {
-            await dbRun(
+        add: async ({ moderatorId, reason, points, expiresAt }: Warn) => {
+            return dbRun(
                 `INSERT INTO warns (user_id, moderator_id, reason_string, points, expires_at)
                  VALUES (?, ?, ?, ?, ?)`,
                 [this.id, moderatorId, reason, points, expiresAt ?? null]
@@ -234,15 +274,16 @@ export default class User {
         },
 
         getAll: async (): Promise<Warn[]> => {
-            return await dbAll(
+            const rawWarns = await dbAll<WarnRaw>(
                 `SELECT * FROM warns WHERE user_id = ? ORDER BY id DESC`,
                 [this.id]
             );
+            return rawWarns.map(warnFromRaw);
         },
 
         clearExpired: async () => {
             const now = Date.now();
-            await dbRun(
+            return dbRun(
                 `DELETE FROM warns WHERE expires_at IS NOT NULL AND expires_at <= ?`,
                 [now]
             );
