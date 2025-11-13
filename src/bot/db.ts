@@ -1,4 +1,5 @@
 import sqlite from 'sqlite3';
+import { mitigateToUsersTable } from './mitigations/usersTable.js';
 
 export const db = new sqlite.Database('bot.db');
 
@@ -71,6 +72,10 @@ db.exec(`
         type TEXT NOT NULL CHECK(type IN ('+rep', '-rep'))
     );
 `);
+
+export async function performMitigations() {
+    await mitigateToUsersTable(db);
+}
 
 export { sqlite };
 

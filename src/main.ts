@@ -47,11 +47,14 @@ import { commands } from '@/cmd/list.js';
 import actionsManager from '@/features/actions/index.js';
 import { getChannel } from './features/actions/channels/templateChannels.js';
 import { warnGivenLogAction } from './features/actions/mod/warn-given.js';
+import { performMitigations } from './bot/db.js';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
     await debug.init();
     debug.log(`${ft.CYAN}Logged in.`);
+
+    await performMitigations();
 
     if (!process.env.ANON_SAYS_WEBHOOK) {
         debug.warn('You should set the ANON_SAYS_WEBHOOK enviorment variable.\nOtherwise, the anonsays command will not work.\nThis webhook shall be in the general channel.');
