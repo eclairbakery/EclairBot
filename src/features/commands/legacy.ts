@@ -87,20 +87,22 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         .setStyle(dsc.ButtonStyle.Danger)
     );
 
-    const reply = await msg.reply({ embeds: [
-        new dsc.EmbedBuilder()
-            .setColor(PredefinedColors.Red)
-            .setTitle('Potwierdź, że chcesz uruchomić tą komendę!')
-            .setDescription('Została ona oznaczona jako potencjalnie niebezpieczna i może wywołać nieodwracalne skutki. Upewnij się, iż na pewno jest ona dobrze użyta i nie ma żadnych błędów w argumentach.')
-    ], components: [row.toJSON()] });
+    if (commandObj.flags & CommandFlags.Dangerous) {
+        const reply = await msg.reply({ embeds: [
+            new dsc.EmbedBuilder()
+                .setColor(PredefinedColors.Red)
+                .setTitle('Potwierdź, że chcesz uruchomić tą komendę!')
+                .setDescription('Została ona oznaczona jako potencjalnie niebezpieczna i może wywołać nieodwracalne skutki. Upewnij się, iż na pewno jest ona dobrze użyta i nie ma żadnych błędów w argumentach.')
+        ], components: [row.toJSON()] });
 
-    try {
-        await waitForButton(msg, 'confirm', 20000);
         try {
-            reply.delete();
-        } catch {}
-    } catch {
-        return;
+            await waitForButton(msg, 'confirm', 20000);
+            try {
+                reply.delete();
+            } catch {}
+        } catch {
+            return;
+        }
     }
 
     if (!findCmdConfResolvable(commandObj.name).enabled && commandObj.name !== 'configuration') {
