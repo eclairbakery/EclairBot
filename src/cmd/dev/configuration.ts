@@ -22,7 +22,7 @@ export const configurationCommand: Command = {
             optional: true
         }
     ],
-    flags: CommandFlags.Important,
+    flags: CommandFlags.Important | CommandFlags.Dangerous,
     permissions: {
         discordPerms: [],
         allowedRoles: cfg.devPerms.allowedRoles,

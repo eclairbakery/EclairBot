@@ -14,7 +14,7 @@ export const moneyCmd: Command = {
         short: 'Ustawia ilość pieniędzy danej osobie.'
     },
     aliases: ['moneymod', 'modeco'],
-    flags: CommandFlags.Economy,
+    flags: CommandFlags.Economy | CommandFlags.Dangerous,
 
     expectedArgs: [
         {

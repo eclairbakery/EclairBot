@@ -655,8 +655,8 @@ const defaultCfg: Config = {
         },
         evalWarnings: {
             consoleLogWarn: '`console.log` spowoduje iż gorciu dostanie dm z wynikiem, ale może się on nie pojawić w wyniku komendy. evaluje sie funkcja wiec po prostu uzyj return by cos napisac. mozesz ten zrobic zmienna z buforem wyjscia i zwracac ja na koncu. z kolei `console.error` w ogóle nie da wyniku...',
-            doNotDownloadDatabase: 'wiem, ze jest do tego masa sposóbów by bypassnąć ten restriction ale plz nie pobieraj bazy danych bota',
-            execReturnWarn: 'używasz return, ale nie komendy exec, więc coś się zepsuje...',
+            doNotDownloadDatabase: 'wiem, ze jest do tego masa sposóbów by bypassnąć ten restriction ale plz nie pobieraj bazy danych bota; btw masz do tego db-backups',
+            execReturnWarn: 'nie używasz return a masz używać...',
             unsafeEval: 'unsafe, użyj do tego komendy `restart`',
             wait: 'cierpliwości nauczę cię, nie sbrickujesz mnie',
             waitRestart: 'cierpliwości',

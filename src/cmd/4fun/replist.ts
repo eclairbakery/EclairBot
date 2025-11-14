@@ -51,7 +51,7 @@ export const replistCmd: Command = {
         for (const rep of userReps) {
             if (i > limit) break;
 
-            const author = await api.msg.guild?.members.fetch(rep.authorID);
+            const author = await api.msg.guild?.members.fetch(rep.authorId);
             if (author == null) continue;
 
             fields.push({

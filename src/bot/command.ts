@@ -18,7 +18,7 @@ export enum CommandFlags {
     Dangerous = 1 << 4,
 
     // command flags: slash cmds specific
-    Ephemeral = 1 << 4,
+    Ephemeral = 1 << 5,
 };
 
 export type CommandPermissionResolvable = 'administrator' | 'mute' | 'kick' | 'ban';

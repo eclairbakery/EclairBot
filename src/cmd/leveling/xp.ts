@@ -15,7 +15,7 @@ export const xpCmd: Command = {
         main: 'Dodaj komuś levela... Jak nadużyjesz, no to, chyba nie wiesz z jaką siłą igrasz! Pospólstwo jak pomyśli, że sobie za darmoszkę doda poziomów, no to nie! Do widzenia.',
         short: 'Komenda dla adminów, by bawić się levelem...',
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.None | CommandFlags.Dangerous,
 
     permissions: {
         discordPerms: null,

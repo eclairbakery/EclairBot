@@ -19,6 +19,28 @@ import { parseArgs, handleError } from "./helpers.js";
 import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import actionsManager, { PredefinedActionEventTypes } from '../actions/index.js';
+import { PredefinedColors } from '@/util/color.js';
+
+function waitForButton(interaction: dsc.Message, buttonId: string, time = 15000) {
+    return new Promise((resolve, reject) => {
+        const collector = interaction.channel.createMessageComponentCollector({
+            filter: function (i) {return i.customId === buttonId && i.user.id === interaction.author.id},
+            time
+        });
+
+        collector.on('collect', async i => {
+            await i.deferUpdate(); 
+            collector.stop('clicked');
+            resolve(i); 
+        });
+
+        collector.on('end', (collected, reason) => {
+            if (reason !== 'clicked') {
+                reject(new Error('Button not clicked in time'));
+            }
+        });
+    });
+}
 
 async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     if (!(msg instanceof dsc.Message)) return;
@@ -54,6 +76,30 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
             cfg.customization.commandsErrors.legacy.doesNotWorkInDmHeader,
             cfg.customization.commandsErrors.legacy.doesNotWorkInDmText.replace('<cmd>', cmdName.replaceAll('`', ''))
         );
+        return;
+    }
+
+    const row = new dsc.ActionRowBuilder()
+    .addComponents(
+        new dsc.ButtonBuilder()
+        .setCustomId('confirm')
+        .setLabel('Potwierdzam')
+        .setStyle(dsc.ButtonStyle.Danger)
+    );
+
+    const reply = await msg.reply({ embeds: [
+        new dsc.EmbedBuilder()
+            .setColor(PredefinedColors.Red)
+            .setTitle('Potwierdź, że chcesz uruchomić tą komendę!')
+            .setDescription('Została ona oznaczona jako potencjalnie niebezpieczna i może wywołać nieodwracalne skutki. Upewnij się, iż na pewno jest ona dobrze użyta i nie ma żadnych błędów w argumentach.')
+    ], components: [row.toJSON()] });
+
+    try {
+        await waitForButton(msg, 'confirm', 20000);
+        try {
+            reply.delete();
+        } catch {}
+    } catch {
         return;
     }
 

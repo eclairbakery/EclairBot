@@ -17,7 +17,7 @@ export const disableCommandCmd: Command = {
             optional: false
         },
     ],
-    flags: CommandFlags.Important,
+    flags: CommandFlags.Important | CommandFlags.Dangerous,
     permissions: {
         discordPerms: [],
         allowedRoles: cfg.devPerms.allowedRoles,
