@@ -1,7 +1,8 @@
 import * as dsc from 'discord.js';
 import { dbRun, dbAll, dbGet } from '@/util/dbUtils.js';
 
-import User, { Rep } from '@/bot/apis/db/user.js';
+import User from '@/bot/apis/db/user.js';
+import { Rep } from '@/bot/apis/db/db-defs.js';
 export { Rep };
 
 export interface RepProportion {
@@ -139,7 +140,8 @@ async function deleteExpiredReps() {
 export type Reputation = { repScore: number; repScale: number; repProportion: RepProportion };
 
 export async function getUserReputationProportion(userId: dsc.Snowflake): Promise<RepProportion> {
-    const userReps = await getUserReps(userId);
+    const user = new User(userId);
+    const userReps = await user.reputation.getReceived();
 
     const userPlusRepsCount = userReps.reduce((acc, rep) => acc + (rep.type === '+rep' ? 1 : 0), 0);
     const userSubRepsCount =  userReps.reduce((acc, rep) => acc + (rep.type === '-rep' ? 1 : 0), 0);
