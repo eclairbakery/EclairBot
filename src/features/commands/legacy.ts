@@ -87,7 +87,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         .setStyle(dsc.ButtonStyle.Danger)
     );
 
-    if (commandObj.flags & CommandFlags.Dangerous) {
+    if (commandObj.flags & CommandFlags.Unsafe) {
         const reply = await msg.reply({ embeds: [
             new dsc.EmbedBuilder()
                 .setColor(PredefinedColors.Red)

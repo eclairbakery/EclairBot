@@ -19,7 +19,7 @@ export const evalCmd: Command = {
         main: 'Wykonuje kod JavaScript. Jest naprawdę potencjalnie unsafe, dlatego to jest locknięte do granic możliwości.',
         short: 'Wykonuje kod JavaScript, więc jest bardzo unsafe.',
     },
-    flags: CommandFlags.Important | CommandFlags.Dangerous,
+    flags: CommandFlags.Important | CommandFlags.Unsafe,
 
     expectedArgs: [
         { name: 'code', type: 'trailing-string', description: 'Kod JS do wykonania', optional: false },

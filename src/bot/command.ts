@@ -15,7 +15,7 @@ export enum CommandFlags {
 
     // command flags: other command blocking
     WorksInDM = 1 << 3,
-    Dangerous = 1 << 4,
+    Unsafe = 1 << 4,
 
     // command flags: slash cmds specific
     Ephemeral = 1 << 5,
