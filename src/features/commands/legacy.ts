@@ -15,10 +15,35 @@ import { commands } from "@/cmd/list.js";
 import canExecuteCmd from "@/util/cmd/canExecuteCmd.js";
 import findCommand from "@/util/cmd/findCommand.js";
 
-import { parseArgs, handleError } from "./helpers.js";
+import { parseArgs } from "./helpers/argumentParser.js";
 import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import actionsManager, { PredefinedActionEventTypes } from '../actions/index.js';
+import { PredefinedColors } from '@/util/color.js';
+import User from '@/bot/apis/db/user.js';
+import { handleError } from './helpers/errorHandler.js';
+import { makeCommandApi } from './helpers/makeCommandApi.js';
+
+function waitForButton(interaction: dsc.Message, buttonId: string, time = 15000) {
+    return new Promise((resolve, reject) => {
+        const collector = interaction.channel.createMessageComponentCollector({
+            filter: function (i) {return i.customId === buttonId && i.user.id === interaction.author.id},
+            time
+        });
+
+        collector.on('collect', async i => {
+            await i.deferUpdate(); 
+            collector.stop('clicked');
+            resolve(i); 
+        });
+
+        collector.on('end', (collected, reason) => {
+            if (reason !== 'clicked') {
+                reject(new Error('Button not clicked in time'));
+            }
+        });
+    });
+}
 
 async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     if (!(msg instanceof dsc.Message)) return;
@@ -57,6 +82,32 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         return;
     }
 
+    const row = new dsc.ActionRowBuilder()
+    .addComponents(
+        new dsc.ButtonBuilder()
+        .setCustomId('confirm')
+        .setLabel('Potwierdzam')
+        .setStyle(dsc.ButtonStyle.Danger)
+    );
+
+    if (commandObj.flags & CommandFlags.Unsafe) {
+        const reply = await msg.reply({ embeds: [
+            new dsc.EmbedBuilder()
+                .setColor(PredefinedColors.Red)
+                .setTitle('Potwierdź, że chcesz uruchomić tą komendę!')
+                .setDescription('Została ona oznaczona jako potencjalnie niebezpieczna i może wywołać nieodwracalne skutki. Upewnij się, iż na pewno jest ona dobrze użyta i nie ma żadnych błędów w argumentach.')
+        ], components: [row.toJSON()] });
+
+        try {
+            await waitForButton(msg, 'confirm', 20000);
+            try {
+                reply.delete();
+            } catch {}
+        } catch {
+            return;
+        }
+    }
+
     if (!findCmdConfResolvable(commandObj.name).enabled && commandObj.name !== 'configuration') {
         log.replyWarn(
             msg,
@@ -67,52 +118,11 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     }
 
     try {
-        const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, { msg: msg, guild: msg.guild ?? undefined, cmd: commandObj });
-        const api: CommandAPI = {
-            args: parsedArgs,
-            getArg(name) {
-                return parsedArgs.find(a => a.name == name)!;
-            },
-            getTypedArg(name, type) {
-                return parsedArgs.find(a => a.name == name && a.type == type)! as any;
-            },
-            msg: {
-                content: msg.content,
-                author: { id: msg.author.id, plainUser: msg.author },
-                member: msg.member
-                    ? {
-                        id: msg.member!.id,
-                        moderation: {
-                            warn(data) {
-                                return warn(msg.member!, data);
-                            },
-                            mute(data) {
-                                return mute(msg.member!, data);
-                            },
-                            kick(data) {
-                                return kick(msg.member!, data);
-                            },
-                            ban(data) {
-                                return ban(msg.member!, data);
-                            },
-                        },
-                        plainMember: msg.member
-                      }
-                    : undefined,
-                reply: (options) => msg.reply(options as any),
-                mentions: (msg.mentions as any ?? { members: new dsc.Collection(), channels: new dsc.Collection(), roles: new dsc.Collection(), users: new dsc.Collection() }) satisfies CommandMessageAPI['mentions'],
-                guild: msg.guild != null ? msg.guild : undefined,
-                channel: msg.channel
-            },
-            plainMessage: msg,
-            commands: commands,
+        await commandObj.execute(await makeCommandApi(commandObj, argsRaw, {
+            msg,
             guild: msg.guild ?? undefined,
-            log,
-            channel: msg.channel,
-            reply: (options) => msg.reply(options as any),
-        };
-
-        await commandObj.execute(api);
+            cmd: commandObj
+        }));
     } catch (err) {
         handleError(err, msg);
     }

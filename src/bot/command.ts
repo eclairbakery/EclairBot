@@ -4,6 +4,7 @@ import { Category } from '@/bot/categories.js';
 import { Timestamp } from '@/util/parseTimestamp.js';
 export { Category };
 import type * as log from '@/util/log.js';
+import type User from './apis/db/user.js';
 
 export enum CommandFlags {
     None = 0,
@@ -15,10 +16,10 @@ export enum CommandFlags {
 
     // command flags: other command blocking
     WorksInDM = 1 << 3,
-    Dangerous = 1 << 4,
+    Unsafe = 1 << 4,
 
     // command flags: slash cmds specific
-    Ephemeral = 1 << 4,
+    Ephemeral = 1 << 5,
 };
 
 export type CommandPermissionResolvable = 'administrator' | 'mute' | 'kick' | 'ban';
@@ -109,13 +110,6 @@ export interface CommandMessageAPI {
         (options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions)
         => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;
 
-    /** @deprecated */
-    mentions: {
-        members: dsc.Collection<dsc.Snowflake, dsc.GuildMember>;
-        roles: dsc.Collection<dsc.Snowflake, dsc.Role>;
-        channels: dsc.Collection<string, dsc.Channel>;
-        users: dsc.Collection<dsc.Snowflake, dsc.User>;
-    };
     guild?: dsc.Guild;
     channel: dsc.Channel | dsc.GuildChannel
 };
@@ -141,7 +135,8 @@ export interface CommandAPI {
     commands: Map<Category, Command[]>;
     log: typeof log;
     guild?: dsc.Guild;
-    channel: dsc.Channel | dsc.GuildChannel
+    channel: dsc.Channel | dsc.GuildChannel;
+    executor: User
 }
 
 export interface Command {

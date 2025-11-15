@@ -3,6 +3,9 @@ import { Command, CommandFlags } from '@/bot/command.js';
 import * as dsc from 'discord.js';
 import * as log from '../../util/log.js';
 import { deepMerge } from '@/util/objects.js';
+import { db } from '@/bot/db.js';
+import { client } from '@/client.js';
+import { output } from '@/bot/logging.js';
 
 export let canEval = cfg.general.usingNormalHosting;
 
@@ -16,12 +19,12 @@ export const evalCmd: Command = {
         main: 'Wykonuje kod JavaScript. Jest naprawdę potencjalnie unsafe, dlatego to jest locknięte do granic możliwości.',
         short: 'Wykonuje kod JavaScript, więc jest bardzo unsafe.',
     },
-    flags: CommandFlags.Important,
+    flags: CommandFlags.Important | CommandFlags.Unsafe,
 
     expectedArgs: [
         { name: 'code', type: 'trailing-string', description: 'Kod JS do wykonania', optional: false },
     ],
-    aliases: [],
+    aliases: ['exec'],
     permissions: {
         discordPerms: [],
         allowedRoles: cfg.devPerms.allowedRoles,
@@ -40,7 +43,7 @@ export const evalCmd: Command = {
         if (code.includes('console.log') || code.includes('console.error')) {
             warns.push(cfg.customization.evalWarnings.consoleLogWarn);
         }
-        if (code.includes('return') && !code.startsWith('(async function')) {
+        if (!code.includes('return')) {
             warns.push(cfg.customization.evalWarnings.execReturnWarn);
         }
         if (!canEval) {
@@ -50,38 +53,10 @@ export const evalCmd: Command = {
             await api.log.replyTip(api.msg, 'Ten kod może nie zadziałać!', warn);
         }
         try {
-            const result = await (cfg.general.usingNormalHosting ? eval(code) : (0, eval)(`${canEval ? code : 'false'}`));
+            const result = await (new Function("api", "db", "client", "debug", canEval ? code : 'return false;'))(api, db, client, output);
             return api.reply(`wynik twojej super komendy:\n\`\`\`${String(result).replace('`', '\`')}\`\`\``);
         } catch (err) {
             return api.reply(`❌ niepowodzenie:\n\`\`\`${err}\`\`\``);
         }
-    },
-};
-
-export const execCmd: Command = {
-    name: 'exec',
-    description: {
-        main: 'Wykonuje kod JavaScript. Jest naprawdę potencjalnie unsafe, dlatego to jest locknięte do granic możliwości.',
-        short: 'Wykonuje kod JavaScript, więc jest bardzo unsafe.',
-    },
-    flags: CommandFlags.Important,
-    expectedArgs: [
-        { name: 'code', type: 'trailing-string', description: 'Kod JS do wykonania', optional: false },
-    ],
-    aliases: [],
-    permissions: {
-        discordPerms: [],
-        allowedRoles: cfg.devPerms.allowedRoles,
-        allowedUsers: cfg.devPerms.allowedUsers,
-    },
-
-    async execute(api) {
-        await evalCmd.execute(deepMerge(api, {getTypedArg: (name, type) => {
-            if (name == 'code') {
-                let arg = api.getTypedArg('code', type);
-                return deepMerge(arg, {value: `(async function () {${arg.value}})();`} as any);
-            }
-            return api.getTypedArg(name, type);
-        }}));
     },
 };

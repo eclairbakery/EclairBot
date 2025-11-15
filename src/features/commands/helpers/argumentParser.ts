@@ -1,5 +1,3 @@
-import * as log from '@/util/log.js';
-
 import {
     CommandArgument,
     CommandValuableArgument,
@@ -18,51 +16,8 @@ import * as dsc from 'discord.js';
 import parseTimestamp from "@/util/parseTimestamp.js";
 import { getBalance } from '@/bot/apis/economy/apis.js';
 import { output } from '@/bot/logging.js';
-
-export class ArgParseError extends Error {};
-
-export class MissingRequiredArgError extends ArgParseError {
-    public argName: string;
-    public argType: CommandArgType;
-    constructor(argName: string, argType: CommandArgType) { super(); this.argName = argName; this.argType = argType };
-}
-
-export class ArgMustBeSomeTypeError extends ArgParseError {
-    public argName: string;
-    public argType: CommandArgType;
-    constructor(argName: string, argType: CommandArgType) { super(); this.argName = argName;  this.argType = argType; };
-};
-
-function parseMentionsFromStrings(args: string[], guild: dsc.Guild) {
-    const users = new dsc.Collection<string, dsc.User>();
-    const roles = new dsc.Collection<string, dsc.Role>();
-    const members = new dsc.Collection<string, dsc.GuildMember>();
-    const channels = new dsc.Collection<string, dsc.GuildChannel>();
-    const userRegex = /^<@!?(\d+)>$/;
-    const roleRegex = /^<@&(\d+)>$/;
-    const channelRegex = /^<#(\d+)>$/;
-    for (const arg of args) {
-        let match: RegExpExecArray | null = null;
-        if ((match = userRegex.exec(arg))) {
-            const id = match[1];
-            const user = guild.client.users.cache.get(id);
-            if (user) users.set(id, user);
-            const member = guild.members.cache.get(id);
-            if (member) members.set(id, member);
-        } else if ((match = roleRegex.exec(arg))) {
-            const id = match[1];
-            const role = guild.roles.cache.get(id);
-            if (role) roles.set(id, role);
-        } else if ((match = channelRegex.exec(arg))) {
-            const id = match[1];
-            const channel = guild.channels.cache.get(id);
-            if (channel && channel.type !== dsc.ChannelType.PublicThread && channel.type !== dsc.ChannelType.PrivateThread) {
-                channels.set(id, channel as dsc.GuildChannel);
-            }
-        }
-    }
-    return { users, roles, members, channels };
-}
+import { ArgMustBeSomeTypeError, MissingRequiredArgError } from "../defs/errors.js";
+import { parseMentionsFromStrings } from "./mentions.js";
 
 export async function parseArgs(
     rawArgs: string[],
@@ -253,55 +208,4 @@ loop:
     }
 
     return parsedArgs;
-}
-
-function formatArgType(argType: CommandArgType) {
-    switch (argType) {
-    case 'string':
-    case 'trailing-string':
-        return 'tekstem';
-
-    case 'number':
-        return 'liczbą';
-
-    case 'timestamp':
-        return 'znacznikiem czasu';
-
-    case 'user-mention':
-    case 'user-mention-or-reference-msg-author':
-        return 'wzmianką użytkownika';
-
-    case 'role-mention':
-        return 'wzmianką roli';
-
-    case 'channel-mention':
-        return 'wzmianką kanału';
-    }
-}
-
-export function handleError(err: any, msg: log.Replyable) {
-    if (err instanceof ArgParseError) {
-        if (err instanceof MissingRequiredArgError) {
-            return log.replyError(
-                msg, 'Błąd!',
-                `No ten, jest problem! Ta komenda **oczekiwała argumentu ${err.argName}** który powinien być ${formatArgType(err.argType)}`
-                    + ` ale jesteś zbyt głupi i go **nie podałeś!**`,
-            );
-        } else if (err instanceof ArgMustBeSomeTypeError) {
-            return log.replyError(
-                msg, 'Błąd!',
-                `No ten, jest problem! Ta komenda **oczekiwała argumentu ${err.argName}** który powinien być ${formatArgType(err.argType)}`
-                    + ` ale oczywście jesteś pacanem i **nie podałeś oczekiwanego formatu!** Nic tylko gratulować.`,
-            );
-        }
-    } else {
-        if (err instanceof Error) {
-            output.warn(err.stack ?? err.message);
-        }
-        return log.replyError(
-            msg, 'Błąd!',
-            `Wystąpił błąd podczas wykonywania komendy: \`${String(err).replace('`', '\`')}\`.`
-                + ` To nie powinno się stać! Proszę o powiadomienie o tym właścicieli bota... a jak nie... ||To nic się nie stanie 🤗||`
-        );
-    }
 }

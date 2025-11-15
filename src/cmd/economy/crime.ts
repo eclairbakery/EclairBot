@@ -1,6 +1,6 @@
 import * as dsc from 'discord.js';
 
-import { getRandomInt } from '@/util/rand.js';
+import { getRandomInt } from '@/util/math/rand.js';
 
 import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
@@ -59,7 +59,7 @@ export const crimeCmd: Command = {
     aliases: [],
 
     async execute(api) {
-        if (((await (new User(api.msg.author.id)).economy.getBalance()).wallet ?? 0) <= 100) {
+        if (((await api.executor.economy.getBalance()).wallet ?? 0) <= 100) {
             const embed = new dsc.EmbedBuilder()
                 .setColor(PredefinedColors.DarkBlue)
                 .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.crimeNotAllowedHeader)

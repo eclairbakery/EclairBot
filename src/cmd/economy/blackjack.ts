@@ -52,7 +52,7 @@ export const blackjackCmd: Command = {
         }
 
         const userId = api.msg.author.id;
-        const player = new User(userId);
+        const player = api.executor;
         const playerBalance = await player.economy.getBalance();
 
         if (playerBalance.wallet < bet)

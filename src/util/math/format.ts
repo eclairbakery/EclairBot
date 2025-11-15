@@ -2,7 +2,7 @@ import { cfg } from '@/bot/cfg.js';
 
 export type Money = number;
 
-function formatNumber(value: number): string {
+export function formatNumber(value: number): string {
     const abs = Math.abs(value);
     const suffixes = [
         { limit: 1_000_000_000, suffix: ", w skrócie to W CHUJ" }, // easter egg 😈

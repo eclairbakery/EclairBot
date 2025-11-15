@@ -34,9 +34,9 @@ export const toplvlCmd: Command = {
         const { msg } = api;
 
         try {
-            const rows = await (new User(api.msg.author.id)).leveling.getEveryoneXPWithLimit(50);
+            const rows = await api.executor.leveling.getEveryoneXPWithLimit(50);
 
-            if (!rows.length) {
+            if (rows.length == 0) {
                 await msg.reply('Nie ma żadnego w bazie poziomu :sob:');
             }
 
@@ -63,6 +63,8 @@ export const toplvlCmd: Command = {
                 }
             }
 
+            const serverXP = await (new User(api.msg.author.id)).leveling.getTotalServerXP();
+
             await msg.reply({
                 embeds: [
                     new dsc.EmbedBuilder()
@@ -71,6 +73,9 @@ export const toplvlCmd: Command = {
                     new dsc.EmbedBuilder()
                         .setFields(fields)
                         .setColor("#1ebfd5")
+                        .setFooter({
+                            text: `Poziom serwera: ${calculateLevel(serverXP, cfg.features.leveling.levelDivider)} LVL (XP: ${serverXP})`
+                        })
                 ]
             });
         } catch (err) {

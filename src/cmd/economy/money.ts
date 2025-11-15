@@ -4,7 +4,7 @@ import { db } from '@/bot/apis/db/bot-db.js';
 import { Command, CommandFlags } from "@/bot/command.js";
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
-import { formatMoney } from '@/bot/apis/economy/money.js';
+import { formatMoney } from '@/util/math/format.js';
 import User from '@/bot/apis/db/user.js';
 
 export const moneyCmd: Command = {
@@ -14,7 +14,7 @@ export const moneyCmd: Command = {
         short: 'Ustawia ilość pieniędzy danej osobie.'
     },
     aliases: ['moneymod', 'modeco'],
-    flags: CommandFlags.Economy,
+    flags: CommandFlags.Economy | CommandFlags.Unsafe,
 
     expectedArgs: [
         {

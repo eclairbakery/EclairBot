@@ -1,6 +1,6 @@
 import User from "@/bot/apis/db/user.js";
 import { getBalance, updateBalance } from "@/bot/apis/economy/apis.js";
-import { formatMoney } from "@/bot/apis/economy/money.js";
+import { formatMoney } from '@/util/math/format.js';
 import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags, CommandAPI } from "@/bot/command.js";
 import { output } from "@/bot/logging.js";
@@ -33,8 +33,7 @@ export const depositCmd: Command = {
             return api.log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
         }
 
-        const userId = api.msg.member!.plainMember.id;
-        const user = new User(userId);
+        const user = api.executor;
         const userBalance = await user.economy.getBalance();
 
         try {

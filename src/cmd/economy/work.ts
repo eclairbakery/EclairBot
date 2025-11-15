@@ -1,6 +1,6 @@
 import * as dsc from 'discord.js';
 
-import { getRandomInt } from '@/util/rand.js';
+import { getRandomInt } from '@/util/math/rand.js';
 
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';

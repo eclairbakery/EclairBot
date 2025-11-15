@@ -50,13 +50,14 @@ import { replistCmd } from '@/cmd/4fun/replist.js';
 import { figletCmd } from '@/cmd/4fun/figlet.js';
 
 import { restartCmd } from '@/cmd/dev/restart.js';
-import { evalCmd, execCmd } from '@/cmd/dev/eval.js';
+import { evalCmd } from '@/cmd/dev/eval.js';
 import { configurationCommand } from './dev/configuration.js';
 import { anonSaysCmd } from './general/anonsays.js';
 import { moneyCmd } from './economy/money.js';
 import { enableCommandCmd } from './dev/enable-cmd.js';
 import { disableCommandCmd } from './dev/disable-cmd.js';
 import { buyCmd } from './economy/buy.js';
+import { refreshCmd } from './mod/refresh.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -76,7 +77,7 @@ export const commands: Map<Category, Command[]> = new Map([
             warnCmd, warnClearCmd, shitwarnCmd, warnlistCmd,
             muteCmd, unmuteCmd,
             banCmd, kickCmd, izolatkaCmd,
-            notifyCmd,
+            notifyCmd, refreshCmd
         ]
     ],
     [
@@ -100,7 +101,7 @@ export const commands: Map<Category, Command[]> = new Map([
     [
         Category.DevelopersOnly,
         [
-            evalCmd, restartCmd, execCmd, configurationCommand,
+            evalCmd, restartCmd, configurationCommand,
             enableCommandCmd, disableCommandCmd
         ],
     ],

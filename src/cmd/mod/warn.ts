@@ -8,7 +8,7 @@ import {output as debug} from '@/bot/logging.js';
 
 import warn from '@/bot/apis/mod/warns.js';
 import parseTimestamp, { Timestamp } from '@/util/parseTimestamp.js';
-import clamp from '@/util/clamp.js';
+import clamp from '@/util/math/clamp.js';
 
 export const warnCmd: Command = {
     name: 'warn',
