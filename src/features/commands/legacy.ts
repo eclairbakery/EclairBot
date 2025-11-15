@@ -15,12 +15,14 @@ import { commands } from "@/cmd/list.js";
 import canExecuteCmd from "@/util/cmd/canExecuteCmd.js";
 import findCommand from "@/util/cmd/findCommand.js";
 
-import { parseArgs, handleError } from "./helpers.js";
+import { parseArgs } from "./helpers/argumentParser.js";
 import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import actionsManager, { PredefinedActionEventTypes } from '../actions/index.js';
 import { PredefinedColors } from '@/util/color.js';
 import User from '@/bot/apis/db/user.js';
+import { handleError } from './helpers/errorHandler.js';
+import { makeCommandApi } from './helpers/makeCommandApi.js';
 
 function waitForButton(interaction: dsc.Message, buttonId: string, time = 15000) {
     return new Promise((resolve, reject) => {
@@ -116,52 +118,11 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     }
 
     try {
-        const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, { msg: msg, guild: msg.guild ?? undefined, cmd: commandObj });
-        const api: CommandAPI = {
-            args: parsedArgs,
-            getArg(name) {
-                return parsedArgs.find(a => a.name == name)!;
-            },
-            getTypedArg(name, type) {
-                return parsedArgs.find(a => a.name == name && a.type == type)! as any;
-            },
-            msg: {
-                content: msg.content,
-                author: { id: msg.author.id, plainUser: msg.author },
-                member: msg.member
-                    ? {
-                        id: msg.member!.id,
-                        moderation: {
-                            warn(data) {
-                                return warn(msg.member!, data);
-                            },
-                            mute(data) {
-                                return mute(msg.member!, data);
-                            },
-                            kick(data) {
-                                return kick(msg.member!, data);
-                            },
-                            ban(data) {
-                                return ban(msg.member!, data);
-                            },
-                        },
-                        plainMember: msg.member
-                      }
-                    : undefined,
-                reply: (options) => msg.reply(options as any),
-                guild: msg.guild != null ? msg.guild : undefined,
-                channel: msg.channel
-            },
-            plainMessage: msg,
-            commands: commands,
+        await commandObj.execute(await makeCommandApi(commandObj, argsRaw, {
+            msg,
             guild: msg.guild ?? undefined,
-            log,
-            channel: msg.channel,
-            reply: (options) => msg.reply(options as any),
-            executor: new User(msg.author.id)
-        };
-
-        await commandObj.execute(api);
+            cmd: commandObj
+        }));
     } catch (err) {
         handleError(err, msg);
     }

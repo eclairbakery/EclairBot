@@ -8,11 +8,14 @@ import { CommandAPI, CommandFlags } from "@/bot/command.js";
 import { client } from "../../client.js";
 import { commands } from "../../cmd/list.js";
 import findCommand from "@/util/cmd/findCommand.js";
-import { handleError, parseArgs } from "./helpers.js";
+import { parseArgs } from "./helpers/argumentParser.js";
 import canExecuteCmd from "@/util/cmd/canExecuteCmd.js";
 import isCommandBlockedOnChannel from "@/util/cmd/isCommandBlockedOnChannel.js";
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import User from '@/bot/apis/db/user.js';
+import { handleError } from './helpers/errorHandler.js';
+import { makeCommandApi } from './helpers/makeCommandApi.js';
+import { makeSlashCommandOptionDesc } from './helpers/makeSlashCommandOptionDesc.js';
 
 client.on('interactionCreate', async (int: Interaction) => {
     if (!int.isChatInputCommand()) return;
@@ -41,34 +44,11 @@ client.on('interactionCreate', async (int: Interaction) => {
     });
 
     try {
-        const argsRaw = cmdObj.expectedArgs.map(arg => int.options.getString(arg.name) ?? undefined);
-        const parsedArgs = await parseArgs(argsRaw as string[], cmdObj.expectedArgs, { interaction: int, cmd: cmdObj });
-
-        const api: CommandAPI = {
-            args: parsedArgs,
-            getArg: (name) => parsedArgs.find(a => a.name === name)!,
-            getTypedArg: (name, type) => parsedArgs.find(a => a.name === name && a.type === type)! as any,
-            msg: {
-                content: int.commandName,
-                author: { id: int.user.id, plainUser: int.user },
-                member: int.member as any,
-                reply: (options) => int.editReply(options as any),
-                guild: int.guild!,
-                channel: int.channel!
-            },
-            plainInteraction: int,
-            commands: commands,
-            guild: int.guild ?? undefined,
-            channel: int.channel!,
-            log,
-            reply: (options) => int.editReply(options as any),
-            executor: new User(int.user.id)
-        };
-
-        await cmdObj.execute(api);
+        const argsRaw = cmdObj.expectedArgs.map(arg => int.options.getString(arg.name) ?? '');
+        await cmdObj.execute(await makeCommandApi(cmdObj, argsRaw, {interaction: int, cmd: cmdObj, guild: int.guild ?? undefined}));
 
     } catch (err) {
-        handleError(err, { reply: (options) => int.editReply(options as any), });
+        handleError(err, { reply: (options: any) => int.editReply(options as any), });
     }
 });
 
@@ -95,7 +75,7 @@ export async function init() {
                         scb.addStringOption(option =>
                             option
                                 .setName(arg.name)
-                                .setDescription('Podaj wartość')
+                                .setDescription(makeSlashCommandOptionDesc(arg, 'Podaj wartość'))
                                 .setRequired(!arg.optional)
                         );
                         break;
@@ -104,7 +84,7 @@ export async function init() {
                         scb.addNumberOption(option =>
                             option
                                 .setName(arg.name)
-                                .setDescription('Podaj liczbę')
+                                .setDescription(makeSlashCommandOptionDesc(arg, 'Podaj liczbę'))
                                 .setRequired(!arg.optional)
                         );
                         break;
@@ -114,7 +94,7 @@ export async function init() {
                         scb.addStringOption(option =>
                             option
                                 .setName(arg.name)
-                                .setDescription('Wskaż użytkownika')
+                                .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż użytkownika'))
                                 .setRequired(!arg.optional)
                         );
                         break;
@@ -123,7 +103,7 @@ export async function init() {
                         scb.addRoleOption(option =>
                             option
                                 .setName(arg.name)
-                                .setDescription('Wskaż rolę')
+                                .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż rolę'))
                                 .setRequired(!arg.optional)
                         );
                         break;
@@ -132,7 +112,7 @@ export async function init() {
                         scb.addChannelOption(option =>
                             option
                                 .setName(arg.name)
-                                .setDescription('Wskaż kanał')
+                                .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż kanał'))
                                 .setRequired(!arg.optional)
                         );
                         break;
@@ -141,7 +121,7 @@ export async function init() {
                         scb.addStringOption(option =>
                             option
                                 .setName(arg.name)
-                                .setDescription('Podaj timestamp')
+                                .setDescription(makeSlashCommandOptionDesc(arg, 'Podaj czas (timestamp)'))
                                 .setRequired(!arg.optional)
                         );
                         break;
