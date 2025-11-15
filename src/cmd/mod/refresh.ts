@@ -2,7 +2,6 @@ import User from "@/bot/apis/db/user.js";
 import { Command, CommandAPI, CommandFlags } from "@/bot/command.js";
 import { addLvlRole, xpToLevel } from "@/bot/level.js";
 import actionsManager, { OnForceReloadTemplates } from "@/events/actions/templatesEvents.js";
-import * as dsc from 'discord.js';
 
 export const refreshCmd: Command = {
     name: 'refresh',
@@ -13,7 +12,14 @@ export const refreshCmd: Command = {
     },
     flags: CommandFlags.Important,
 
-    expectedArgs: [],
+    expectedArgs: [
+        {
+            name: "flags",
+            type: "trailing-string",
+            description: "Użyj różnych flag, by zmienić działanie tej komendy. Użyj \'--help\' by się czegoś dowiedzieć na ich temat.",
+            optional: true
+        }
+    ],
     permissions: {
         discordPerms: null,
         allowedRoles: null,
@@ -21,18 +27,49 @@ export const refreshCmd: Command = {
     },
 
     async execute(api: CommandAPI) {
+        // define constants & variables
+        let flags = (api.getTypedArg('flags', 'trailing-string')?.value ?? '').split(' ');
+        let reloadedThings: string[] = [];
+        const user = new User(api.msg.author.id);
+
+        // help
+        if (flags.includes('--help')) {
+            return api.log.replyTip(api, 'Flagi komendy', 'Możesz użyć tych flag: `--no-template-channels`, `--no-lvl-roles`. Możesz je ze soba łączyć, o ile rozdzielisz je spacją. Kolejność nie ma znaczenia.');
+        }
+
+        // checks
         if (!api.guild) {
             return api.log.replyWarn(api, 'Ta komenda wymaga serwera', 'Coś się wychrzaniło i EclairBOT nie może go znaleźć.')
         }
-        const user = new User(api.msg.author.id);
-        actionsManager.emit(OnForceReloadTemplates, {});
-        for (const userLvlObj of await user.leveling.getEveryoneXPNoLimit()) {
-            await addLvlRole(api.guild, xpToLevel(userLvlObj.xp), userLvlObj.user_id);
+
+        // base reply
+        const baseReply = await api.reply('Poczekaj...');
+
+        // template channels
+        if (!flags.includes('--no-template-channels')) {
+            actionsManager.emit(OnForceReloadTemplates, {});
+            reloadedThings.push('- template channels (statystyki)');
         }
-        api.log.replySuccess(api, 'Udało się!', [
-            'Pomyślnie przeładowano następujące rzeczy:',
-            '- template channels (statystyki)',
-            '- role poziomów'
-        ].join('\n'));
+
+        // lvl roles
+        if (!flags.includes('--no-lvl-roles')) {
+            for (const userLvlObj of await user.leveling.getEveryoneXPNoLimit()) {
+                await addLvlRole(api.guild, xpToLevel(userLvlObj.xp), userLvlObj.user_id);
+            }
+            reloadedThings.push('- role poziomów');
+        }
+
+        // reply
+        try {
+            baseReply.delete();
+        } catch {}
+        if (reloadedThings.length > 0) {
+            api.log.replySuccess(api, 'Udało się!', [
+                'Pomyślnie przeładowano następujące rzeczy:',
+                ...reloadedThings
+            ].join('\n'));
+        } else {
+            api.log.replyWarn(api, 'Nie przeładowano', 'Ziignorowałeś wszystko za pomocą flag...')
+        }
     }
 };
