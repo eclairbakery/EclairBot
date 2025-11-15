@@ -86,11 +86,12 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
     }
 
     // multipliers
-    for (const multiplier of cfg.features.leveling.multipliers) {
-        if (msg.member?.roles.cache.has(multiplier.role)) {
+    for (const multiplier of cfg.features.leveling.multipliers.sort((a, b) => b.multiplier - a.multiplier)) {
+        if (!msg.member?.roles.cache.has(multiplier.role)) {
             continue;
         }
         amount = Math.floor(amount * multiplier.multiplier);
+        break;
     }
 
     // logic
