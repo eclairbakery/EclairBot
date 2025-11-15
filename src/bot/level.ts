@@ -8,6 +8,7 @@ import { client } from '@/client.js';
 import { mkProgressBar } from '@/util/progressbar.js';
 import { output } from './logging.js';
 import User from './apis/db/user.js';
+import { findLowerClosestKey } from '@/util/findLowerClosestKey.js';
 
 export const OnSetXpEvent = actionsManager.mkEvent('OnSetXpEvent');
 export interface XpEventCtx {
@@ -47,7 +48,7 @@ export function mkLvlProgressBar(xp: number, levelDivider: number, totalLength: 
 
 async function addLvlRole(guild: dsc.Guild, newLevel: number, user: dsc.Snowflake) {
     const milestones = cfg.features.leveling.milestoneRoles || {};
-    const milestoneRoleId: string | null = milestones[newLevel] ?? null;
+    const milestoneRoleId: string | null = milestones[findLowerClosestKey(milestones, newLevel)] ?? null;
     if (milestoneRoleId != null) {
         const member = guild.members.cache.get(user);
         if (member) {
