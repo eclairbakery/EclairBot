@@ -60,5 +60,6 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
         log,
         executor: new User(((context.interaction?.member as dsc.GuildMember) ?? context.msg?.member)!.id),
         channel: context.interaction?.channel ?? context.msg!.channel,
+        guild: context.interaction?.guild ?? context.msg?.guild ?? undefined
     };
 }
