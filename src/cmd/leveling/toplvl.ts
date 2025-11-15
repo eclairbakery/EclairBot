@@ -36,7 +36,7 @@ export const toplvlCmd: Command = {
         try {
             const rows = await api.executor.leveling.getEveryoneXPWithLimit(50);
 
-            if (!rows.length) {
+            if (rows.length == 0) {
                 await msg.reply('Nie ma żadnego w bazie poziomu :sob:');
             }
 
