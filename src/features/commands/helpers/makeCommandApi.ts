@@ -11,6 +11,11 @@ import User from "@/bot/apis/db/user.js";
 
 export async function makeCommandApi(commandObj: Command, argsRaw: string[], context: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction; cmd?: Command }): Promise<CommandAPI> {
     const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, context);
+    const rawMember =
+        context.msg?.member ??
+        (context.interaction?.member as dsc.GuildMember) ??
+        null;
+
     return {
         // -- args --
         args: parsedArgs,
@@ -26,26 +31,27 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
             },
             reply: context.interaction ? ((options) => context.interaction!.editReply(options as any)) : ((options) => context.msg!.reply(options as any)),
             channel: context.interaction?.channel ?? context.msg!.channel,
-            member: (context.interaction?.member ?? context.msg?.member) ? 
+            member: rawMember ? 
             {
-                id: ((context.interaction?.member as dsc.GuildMember) ?? context.msg?.member)!.id,
+                id: rawMember!.id,
                 moderation: {
                     warn(data) {
-                        return warn(((context.interaction?.member as dsc.GuildMember) ?? context.msg?.member)!, data);
+                        return warn(rawMember!, data);
                     },
                     mute(data) {
-                        return mute(((context.interaction?.member as dsc.GuildMember) ?? context.msg?.member)!, data);
+                        return mute(rawMember!, data);
                     },
                     kick(data) {
-                        return kick(((context.interaction?.member as dsc.GuildMember) ?? context.msg?.member)!, data);
+                        return kick(rawMember!, data);
                     },
                     ban(data) {
-                        return ban(((context.interaction?.member as dsc.GuildMember) ?? context.msg?.member)!, data);
+                        return ban(rawMember!, data);
                     },
                 },
-                plainMember: ((context.interaction?.member as dsc.GuildMember) ?? context.msg?.member)
+                plainMember: rawMember!
             }
             : undefined,
+            guild: context.interaction?.guild ?? context.msg?.guild ?? undefined
         },
 
         // misc
