@@ -30,7 +30,7 @@ export const refreshCmd: Command = {
         // define constants & variables
         let flags = (api.getTypedArg('flags', 'trailing-string')?.value ?? '').split(' ');
         let reloadedThings: string[] = [];
-        const user = new User(api.msg.author.id);
+        const user = api.executor;
 
         // help
         if (flags.includes('--help')) {

@@ -4,7 +4,7 @@ import { Command, CommandFlags } from "@/bot/command.js";
 import { dbGet, dbRun } from "@/util/dbUtils.js";
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
-import { formatMoney } from '@/bot/apis/economy/money.js';
+import { formatMoney } from '@/util/math/format.js';
 import User from '@/bot/apis/db/user.js';
 
 export const moneyCmd: Command = {

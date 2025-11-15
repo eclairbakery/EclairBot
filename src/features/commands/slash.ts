@@ -12,6 +12,7 @@ import { handleError, parseArgs } from "./helpers.js";
 import canExecuteCmd from "@/util/cmd/canExecuteCmd.js";
 import isCommandBlockedOnChannel from "@/util/cmd/isCommandBlockedOnChannel.js";
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
+import User from '@/bot/apis/db/user.js';
 
 client.on('interactionCreate', async (int: Interaction) => {
     if (!int.isChatInputCommand()) return;
@@ -52,7 +53,6 @@ client.on('interactionCreate', async (int: Interaction) => {
                 author: { id: int.user.id, plainUser: int.user },
                 member: int.member as any,
                 reply: (options) => int.editReply(options as any),
-                mentions: int.options.data as any,
                 guild: int.guild!,
                 channel: int.channel!
             },
@@ -61,7 +61,8 @@ client.on('interactionCreate', async (int: Interaction) => {
             guild: int.guild ?? undefined,
             channel: int.channel!,
             log,
-            reply: (options) => int.editReply(options as any)
+            reply: (options) => int.editReply(options as any),
+            executor: new User(int.user.id)
         };
 
         await cmdObj.execute(api);

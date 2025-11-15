@@ -1,12 +1,12 @@
 import * as dsc from 'discord.js';
 
 import { dbGet, dbRun } from '@/util/dbUtils.js';
-import { getRandomInt } from '@/util/rand.js';
+import { getRandomInt } from '@/util/math/rand.js';
 
 import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
-import { formatMoney } from '@/bot/apis/economy/money.js';
+import { formatMoney } from '@/util/math/format.js';
 import User from '@/bot/apis/db/user.js';
 
 const COOLDOWN_MS = 2 * 60 * 1000;

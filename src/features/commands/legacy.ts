@@ -20,6 +20,7 @@ import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import actionsManager, { PredefinedActionEventTypes } from '../actions/index.js';
 import { PredefinedColors } from '@/util/color.js';
+import User from '@/bot/apis/db/user.js';
 
 function waitForButton(interaction: dsc.Message, buttonId: string, time = 15000) {
     return new Promise((resolve, reject) => {
@@ -148,7 +149,6 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
                       }
                     : undefined,
                 reply: (options) => msg.reply(options as any),
-                mentions: (msg.mentions as any ?? { members: new dsc.Collection(), channels: new dsc.Collection(), roles: new dsc.Collection(), users: new dsc.Collection() }) satisfies CommandMessageAPI['mentions'],
                 guild: msg.guild != null ? msg.guild : undefined,
                 channel: msg.channel
             },
@@ -158,6 +158,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
             log,
             channel: msg.channel,
             reply: (options) => msg.reply(options as any),
+            executor: new User(msg.author.id)
         };
 
         await commandObj.execute(api);

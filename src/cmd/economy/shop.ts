@@ -1,4 +1,4 @@
-import { formatMoney } from "@/bot/apis/economy/money.js";
+import { formatMoney } from '@/util/math/format.js';
 import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 import { PredefinedColors } from "@/util/color.js";

@@ -3,7 +3,7 @@ import User from '@/bot/apis/db/user.js';
 import * as dsc from 'discord.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
-import { formatMoney } from '@/bot/apis/economy/money.js';
+import { formatMoney } from '@/util/math/format.js';
 import { output } from '@/bot/logging.js';
 
 export const balCmd: Command = {

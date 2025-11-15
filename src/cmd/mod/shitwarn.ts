@@ -1,4 +1,4 @@
-import clamp from '@/util/clamp.js';
+import clamp from '@/util/math/clamp.js';
 import parseTimestamp from '@/util/parseTimestamp.js';
 
 import { Command, CommandFlags } from '@/bot/command.js';

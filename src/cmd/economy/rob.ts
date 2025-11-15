@@ -2,7 +2,7 @@ import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 
 import { dbGet, dbRun } from '@/util/dbUtils.js';
-import { getRandomFloat, getRandomInt } from '@/util/rand.js';
+import { getRandomFloat, getRandomInt } from '@/util/math/rand.js';
 
 import { Command, CommandArgumentWithUserMentionOrMsgReferenceValue, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
