@@ -120,6 +120,12 @@ export default class User {
             const rows = await dbGetAll(`SELECT xp, user_id FROM users ORDER BY xp DESC LIMIT ?`, [limit]) ?? [];
             return rows;
         },
+
+        getEveryoneXPNoLimit: async (): Promise<{xp: number, user_id: string}[]> => {
+            await this.ensureExists();
+            const rows = await dbGetAll(`SELECT xp, user_id FROM users ORDER BY xp DESC`) ?? [];
+            return rows;
+        },
         
         getTotalServerXP: async (): Promise<number> => {
             const row = await dbGet(`SELECT SUM(xp) AS totalXP FROM users`);

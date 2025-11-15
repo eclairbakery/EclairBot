@@ -46,11 +46,17 @@ export function mkLvlProgressBar(xp: number, levelDivider: number, totalLength: 
     return `${mkProgressBar(progressXp, neededXp, totalLength)} ${progressXp}/${neededXp}xp`;
 }
 
-async function addLvlRole(guild: dsc.Guild, newLevel: number, user: dsc.Snowflake) {
+export async function addLvlRole(guild: dsc.Guild, newLevel: number, user: dsc.Snowflake) {
     const milestones = cfg.features.leveling.milestoneRoles || {};
     const milestoneRoleId: string | null = milestones[findLowerClosestKey(milestones, newLevel)] ?? null;
     if (milestoneRoleId != null) {
-        const member = guild.members.cache.get(user);
+        let member: dsc.GuildMember;
+        try {
+            member = await guild.members.fetch(user);
+        } catch (err) {
+            output.warn(err);
+            return milestoneRoleId;
+        }
         if (member) {
             for (const roleId of lvlRoles) {
                 try {
