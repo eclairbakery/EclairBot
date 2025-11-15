@@ -1,7 +1,6 @@
 import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
-import { db, sqlite } from '@/bot/db.js';
 
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';

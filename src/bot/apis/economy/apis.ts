@@ -4,7 +4,6 @@
  * The economy API was deprecated in flavour of @link {/src/bot/apis/db/user.ts}
  */
 
-import { db } from "@/bot/db.js";
 import { output } from "@/bot/logging.js";
 import User from "../db/user.js";
 
