@@ -1,9 +1,8 @@
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 import { cfg } from '@/bot/cfg.js';
-import { db } from '@/bot/db.js';
+import { db } from '@/bot/apis/db/bot-db.js';
 import actionsManager, { Action } from '@/features/actions/index.js';
-import { dbGet, dbRun } from '@/util/dbUtils.js';
 import { client } from '@/client.js';
 import { mkProgressBar } from '@/util/progressbar.js';
 import { output } from './logging.js';

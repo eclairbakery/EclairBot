@@ -1,12 +1,10 @@
 import { Command, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js'
-import { db, sqlite } from '@/bot/db.js';
 
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
 import { PredefinedColors } from '@/util/color.js';
-import { dbGet } from '@/util/dbUtils.js';
 import { output } from '@/bot/logging.js';
 
 async function getGIF(searchTerm: string): Promise<string> {

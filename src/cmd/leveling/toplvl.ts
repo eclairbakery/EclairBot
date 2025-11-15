@@ -1,6 +1,6 @@
 import { cfg } from '@/bot/cfg.js';
 import { lvlRoles } from '@/bot/level.js';
-import { db } from '@/bot/db.js';
+import { db } from '@/bot/apis/db/bot-db.js';
 
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';

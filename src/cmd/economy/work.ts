@@ -1,6 +1,5 @@
 import * as dsc from 'discord.js';
 
-import { dbGet, dbRun } from '@/util/dbUtils.js';
 import { getRandomInt } from '@/util/math/rand.js';
 
 import { PredefinedColors } from '@/util/color.js';

@@ -52,7 +52,7 @@ import { figletCmd } from '@/cmd/4fun/figlet.js';
 import { restartCmd } from '@/cmd/dev/restart.js';
 import { evalCmd } from '@/cmd/dev/eval.js';
 import { configurationCommand } from './dev/configuration.js';
-import anonSaysCmd from './general/anonsays.js';
+import { anonSaysCmd } from './general/anonsays.js';
 import { moneyCmd } from './economy/money.js';
 import { enableCommandCmd } from './dev/enable-cmd.js';
 import { disableCommandCmd } from './dev/disable-cmd.js';
@@ -64,7 +64,7 @@ export const commands: Map<Category, Command[]> = new Map([
         Category.General,
         [
             detailHelpCmd, quickHelpCmd, commandsCmd,
-            manCmd, 
+            manCmd,
             bannerCmd, pfpCmd,
             siemaCmd, randsiteCmd,
             wikiCmd, fandomCmd, anonSaysCmd

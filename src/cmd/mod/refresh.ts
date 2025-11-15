@@ -1,8 +1,6 @@
 import User from "@/bot/apis/db/user.js";
 import { Command, CommandAPI, CommandFlags } from "@/bot/command.js";
-import { db } from "@/bot/db.js";
 import { addLvlRole, xpToLevel } from "@/bot/level.js";
-import { snapshotUsersToLegacy, tableExists } from "@/bot/mitigations/usersTable.js";
 import actionsManager, { OnForceReloadTemplates } from "@/events/actions/templatesEvents.js";
 
 export const refreshCmd: Command = {
@@ -37,7 +35,7 @@ export const refreshCmd: Command = {
 
         // help
         if (flags.includes('--help')) {
-            return api.log.replyTip(api, 'Flagi komendy', 'Możesz użyć tych flag: `--no-template-channels`, `--no-lvl-roles`, `--no-snapshot-back-to-old-db`, `--force-old-api-when-not-available`. Możesz je ze soba łączyć, o ile rozdzielisz je spacją. Kolejność nie ma znaczenia.');
+            return api.log.replyTip(api, 'Flagi komendy', 'Możesz użyć tych flag: `--no-template-channels`, `--no-lvl-roles`. Możesz je ze soba łączyć, o ile rozdzielisz je spacją. Kolejność nie ma znaczenia.');
         }
 
         // checks
@@ -47,23 +45,6 @@ export const refreshCmd: Command = {
 
         // base reply
         const baseReply = await api.reply('Poczekaj...');
-
-        // snapshots
-        if (!flags.includes('--no-snapshot-back-to-old-db')) {
-            if (!flags.includes('--force-old-api-when-not-available') && !(await tableExists('leveling', db) || await tableExists('economy', db))) {
-                try {
-                    baseReply.delete();
-                } catch {}
-                api.log.replyWarn(api, 'Nie wolno tak', 'Ta komenda nic nie zrobi. Stare tabele zostały wywalone, więc nie można backupować do nich na wypadek usunięcia tabeli users. Jednak aby to wymusić, należy użyć `--force-old-api-when-not-available`.')
-            } else {
-                    if (await tableExists('leveling', db) || await tableExists('economy', db)) {
-                    await snapshotUsersToLegacy(db);
-                    reloadedThings.push('- snapshoty do starego rodzaju tabel');
-                } else {
-                    failedThingsToReload.push('- snapshoty do starego rodzaju tabel (żadna ze starych tabel nie istnieje)');
-                }
-            }
-        }
 
         // template channels
         if (!flags.includes('--no-template-channels')) {

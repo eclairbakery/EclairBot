@@ -1,4 +1,4 @@
-import { db, sqlite } from '@/bot/db.js';
+import { db } from '@/bot/apis/db/bot-db.js';
 import { output } from '@/bot/logging.js';
 
 const EXPIRED_WARNS_CHECK_INTERVAL = 10 * 60 * 1000; // 10m in ms
@@ -32,14 +32,9 @@ export function initExpiredWarnsDeleter() {
 function checkLongTermWarns() {
     const now = Math.floor(Date.now() / 1000);
 
-    db.run(
+    db.runSql(
         'DELETE FROM warns WHERE expires_at < ?',
-        [now],
-        function(err) {
-            if (err) {
-                output.err(err);
-            }
-        }
+        [now]
     );
 }
 
@@ -49,14 +44,9 @@ export function scheduleWarnDeletion(warnId: number, expiresAt: number) {
 
     if (delay <= SHORT_TERM_THRESHOLD * 1000) {
         setTimeout(() => {
-            db.run(
+            db.runSql(
                 'DELETE FROM warns WHERE rowid = ?',
                 [warnId],
-                function(err) {
-                    if (err) {
-                        output.err(err);
-                    }
-                }
             );
         }, delay).unref();
     }
@@ -66,17 +56,8 @@ function restoreTimers() {
     const now = Math.floor(Date.now() / 1000);
     const threshold = now + SHORT_TERM_THRESHOLD;
 
-    db.all<WarnRow>(
+    db.selectMany<WarnRow>(
         'SELECT rowid, expires_at FROM warns WHERE expires_at BETWEEN ? AND ?',
         [now, threshold],
-        (err, rows) => {
-            if (err) {
-                output.err(err);
-                return;
-            }
-            rows.forEach(row => {
-                scheduleWarnDeletion(row.rowid, row.expires_at);
-            });
-        }
     );
 }

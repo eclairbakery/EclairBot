@@ -1,3 +1,5 @@
+console.log('Hi');
+
 // preparation & basic imports
 import { client } from '@/client.js';
 import { output as debug, ft } from '@/bot/logging.js';
@@ -47,14 +49,14 @@ import { commands } from '@/cmd/list.js';
 import actionsManager from '@/features/actions/index.js';
 import { getChannel } from './features/actions/channels/templateChannels.js';
 import { warnGivenLogAction } from './features/actions/mod/warn-given.js';
-import { performMitigations } from './bot/db.js';
+import { db } from './bot/apis/db/bot-db.js';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
     await debug.init();
     debug.log(`${ft.CYAN}Logged in.`);
-
-    await performMitigations();
+    await db.init();
+    debug.log(`Database initialized.`);
 
     if (!process.env.ANON_SAYS_WEBHOOK) {
         debug.warn('You should set the ANON_SAYS_WEBHOOK enviorment variable.\nOtherwise, the anonsays command will not work.\nThis webhook shall be in the general channel.');
@@ -63,7 +65,7 @@ client.once('clientReady', async () => {
         debug.warn('You should set the TENOR_API enviorment variable to a Tenor API key.\nOtherwise, the Tenor API-based commands will not work.');
     }
 
-    main();
+    await main();
 }); 
 
 // --------------- SETUP ---------------

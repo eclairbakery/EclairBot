@@ -1,6 +1,6 @@
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
-import { db } from '@/bot/db.js';
+import { db } from '@/bot/apis/db/bot-db.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { output } from '@/bot/logging.js';
@@ -28,29 +28,29 @@ export const topecoCmd: Command = {
     async execute(api) {
         const msg = api.msg;
 
-        db.all('SELECT * FROM users ORDER BY (bank_money + wallet_money) DESC LIMIT 12', [], async (err, rows: any[]) => {
-            if (err) {
-                output.err(err);
-                return api.log.replyError(msg, 'Błąd pobierania topki', 'Pytaj twórców biblioteki sqlite3...');
-            }
+        try {
+            const topUsers = await db.economy.getTopTotal(12);
 
-            if (!rows.length) {
+            if (!topUsers.length) {
                 return api.log.replyError(msg, 'Zero pieniędzy', 'Nie ma żadnego w bazie usera z hajsem :sob:');
             }
 
             let fields: dsc.APIEmbedField[] = [];
             let i = 0;
 
-            for (const row of rows) {
+            for (const user of topUsers) {
                 if (++i === 25) return;
 
                 try {
-                    const member = await msg.guild!.members.fetch(row.user_id);
+                    const member = await msg.guild!.members.fetch(user.id);
                     const userEcoRole = ecoRoles.filter(id => member.roles.cache.has(id)).at(-1);
 
                     fields.push({
                         name: `${i} » ${member.user.username}`,
-                        value: `${userEcoRole ? `<@&${userEcoRole}>` : 'Nowicjusz...'}\n${row.bank_money + row.wallet_money}**$**`,
+                        value: [
+                            `${userEcoRole ? `<@&${userEcoRole}>` : 'Nowicjusz...'}`,
+                            `${(await user.economy.getBalance()).wallet + (await user.economy.getBalance()).bank}**$**`,
+                        ].join('\n'),
                         inline: true
                     });
                 } catch {};
@@ -63,6 +63,9 @@ export const topecoCmd: Command = {
                         .setColor("#1ebfd5")
                 ]
             });
-        });
+        } catch (err) {
+            output.err(err);
+            return api.log.replyError(msg, 'Błąd pobierania topki', 'Pytaj twórców biblioteki sqlite3...');
+        }
     }
 };

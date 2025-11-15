@@ -4,8 +4,8 @@ import * as dsc from 'discord.js';
 import { Action, MagicSkipAllActions, MessageEventCtx, PredefinedActionEventTypes } from "../index.js";
 import { client } from "../../../client.js";
 import parseTimestamp from "@/util/parseTimestamp.js";
-import { db } from "@/bot/db.js";
 import { scheduleWarnDeletion } from "../../deleteExpiredWarns.js";
+import warn from "@/bot/apis/mod/warns.js";
 
 const userMessagesAntiSpamMap: Map<Snowflake, number[]> = new Map();
 let userRecentlyInTheList: Record<Snowflake, boolean> = {};
@@ -108,16 +108,13 @@ export const antiSpamAndAntiFlood: Action<MessageEventCtx> = {
                 } catch {}
                 await filterLog(msg, 'antispam/co ty odsigmiasz TM');
                 let expiresAt = Math.floor(Date.now() / 1000) + parseTimestamp('2d')!;
-                const result = await new Promise<{ lastID: number }>((resolve, reject) => {
-                    db.run(
-                        'INSERT INTO warns (user_id, moderator_id, reason_string, points, expires_at) VALUES (?, ?, ?, ?, ?)', [msg.author.id, msg.client.user!.id, 'nie spam', 1, expiresAt],
-                        function(err) {
-                            if (err) reject(err);
-                            else resolve({ lastID: this.lastID });
-                        }
-                    );
+                const result = await warn(msg.member!, {
+                    reason: 'nie spam',
+                    mod: client.user!.id,
+                    points: 1,
+                    expiresAt
                 });
-                scheduleWarnDeletion(result.lastID, expiresAt);
+                scheduleWarnDeletion(result.id, expiresAt);
                 return MagicSkipAllActions;
             }
 
@@ -126,16 +123,13 @@ export const antiSpamAndAntiFlood: Action<MessageEventCtx> = {
                 await (msg.channel as SendableChannel).send(`🚨 <@${msg.author.id}> za dużo floodu pozdrawiam`);
                 await filterLog(msg, 'antiflood/za dużo floodu TM');
                 let expiresAt = Math.floor(Date.now() / 1000) + parseTimestamp('2d')!;
-                const result = await new Promise<{ lastID: number }>((resolve, reject) => {
-                    db.run(
-                        'INSERT INTO warns (user_id, moderator_id, reason_string, points, expires_at) VALUES (?, ?, ?, ?, ?)', [msg.author.id, msg.client.user!.id, 'nie flooduj', 1, expiresAt],
-                        function(err) {
-                            if (err) reject(err);
-                            else resolve({ lastID: this.lastID });
-                        }
-                    );
+                const result = await warn(msg.member!, {
+                    reason: 'nie flooduj',
+                    mod: client.user!.id,
+                    points: 1,
+                    expiresAt
                 });
-                scheduleWarnDeletion(result.lastID, expiresAt);
+                scheduleWarnDeletion(result.id, expiresAt);
                 await msg.delete();
                 return MagicSkipAllActions;
             }

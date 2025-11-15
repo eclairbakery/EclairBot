@@ -1,6 +1,6 @@
 import { Command, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
-import { db } from '@/bot/db.js';
+import { db } from '@/bot/apis/db/bot-db.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
@@ -50,12 +50,7 @@ export const warnlistCmd: Command = {
             query += ' ORDER BY id DESC LIMIT ? OFFSET ?';
             params.push(limit, (page - 1) * limit);
 
-            return new Promise<any[]>((resolve, reject) => {
-                db.all(query, params, (err, rows) => {
-                    if (err) reject(err);
-                    else resolve(rows);
-                });
-            });
+            return db.selectMany(query, params);
         }
 
         async function renderPage(page: number) {
