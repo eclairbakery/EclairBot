@@ -57,6 +57,7 @@ import { moneyCmd } from './economy/money.js';
 import { enableCommandCmd } from './dev/enable-cmd.js';
 import { disableCommandCmd } from './dev/disable-cmd.js';
 import { buyCmd } from './economy/buy.js';
+import { refreshCmd } from './mod/refresh.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -76,7 +77,7 @@ export const commands: Map<Category, Command[]> = new Map([
             warnCmd, warnClearCmd, shitwarnCmd, warnlistCmd,
             muteCmd, unmuteCmd,
             banCmd, kickCmd, izolatkaCmd,
-            notifyCmd,
+            notifyCmd, refreshCmd
         ]
     ],
     [
