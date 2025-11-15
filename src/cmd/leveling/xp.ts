@@ -1,5 +1,5 @@
 import { cfg } from '@/bot/cfg.js';
-import { db } from '@/bot/db.js';
+import { db } from '@/bot/apis/db/bot-db.js';
 
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';

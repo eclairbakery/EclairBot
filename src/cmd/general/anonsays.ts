@@ -22,7 +22,7 @@ import {
 
 const cooldown: Record<Snowflake, boolean> = {};
 
-const anonSaysCmd: Command = {
+export const anonSaysCmd: Command = {
     name: "anonsays",
     aliases: ["say-anonymously"],
     description: {
@@ -163,5 +163,3 @@ const anonSaysCmd: Command = {
         });
     },
 };
-
-export default anonSaysCmd;

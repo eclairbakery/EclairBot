@@ -1,5 +1,4 @@
 import { cfg } from '@/bot/cfg.js';
-import { dbGet } from '@/util/dbUtils.js';
 
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';

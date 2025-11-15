@@ -1,11 +1,11 @@
 import sqlite from 'sqlite3';
 
-import { UserDataRaw, Warn, WarnRaw, Rep, RepRaw } from './db-defs.js';
-import { Balance, Cooldown, Cooldowns } from './db-defs.js';
+import type { UserDataRaw, Warn, WarnRaw, Rep, RepRaw } from './db-defs.js';
+import type { Balance, Cooldown, Cooldowns } from './db-defs.js';
 import { warnFromRaw, repFromRaw } from './db-defs.js';
 
-export { UserDataRaw, Warn, WarnRaw, Rep, RepRaw };
-export { Balance, Cooldown, Cooldowns };
+export type { UserDataRaw, Warn, WarnRaw, Rep, RepRaw };
+export type { Balance, Cooldown, Cooldowns };
 export { warnFromRaw, repFromRaw };
 
 import User from './user.js';

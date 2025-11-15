@@ -1,3 +1,5 @@
+console.log('Hi');
+
 // preparation & basic imports
 import { client } from '@/client.js';
 import { output as debug, ft } from '@/bot/logging.js';

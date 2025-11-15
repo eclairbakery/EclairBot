@@ -1,7 +1,8 @@
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 
-import { dbGet, dbRun } from '@/util/dbUtils.js';
+import { db } from '@/bot/apis/db/bot-db.js';
+
 import { getRandomFloat, getRandomInt } from '@/util/rand.js';
 
 import { Command, CommandArgumentWithUserMentionOrMsgReferenceValue, CommandFlags } from '@/bot/command.js';
@@ -50,7 +51,7 @@ async function tryRob(attackerId: string, targetId: string): Promise<{ ok: boole
     if (targetBalance.wallet < MIN_STEALABLE) {
         return { ok: false, amount: 0, success: false, reason: 'too_poor' };
     }
-    
+
     const success = getRandomFloat(0, 1) < BASE_SUCCESS_CHANCE;
     const percent = randomPercentBetween(MIN_PERCENT, MAX_PERCENT);
     const rawAmount = Math.floor(targetBalance.wallet * percent);
@@ -59,40 +60,40 @@ async function tryRob(attackerId: string, targetId: string): Promise<{ ok: boole
     const now = Date.now();
 
     try {
-        await dbRun('BEGIN IMMEDIATE TRANSACTION');
+        await db.runSql('BEGIN IMMEDIATE TRANSACTION');
 
         await attacker.economy.setCooldown('last_robbed', now);
 
         if (success && amount > 0) {
-            await dbRun(
+            await db.runSql(
                 `UPDATE users SET wallet_money = wallet_money - ? WHERE user_id = ? AND wallet_money >= ?`,
                 [amount, targetId, amount]
             );
 
-            const targetAfter = await dbGet(`SELECT wallet_money FROM users WHERE user_id = ?`, [targetId]);
+            const targetAfter = await db.selectOne(`SELECT wallet_money FROM users WHERE user_id = ?`, [targetId]);
             const targetAfterMoney = (targetAfter && typeof targetAfter.wallet_money === 'number') ? Number(targetAfter.wallet_money) : 0;
 
             if (targetAfterMoney === targetBalance.wallet) {
-                await dbRun('ROLLBACK');
+                await db.runSql('ROLLBACK');
                 return { ok: false, amount: 0, success: false, reason: 'target_update_failed' };
             }
 
-            await dbRun(
+            await db.runSql(
                 `UPDATE users SET wallet_money = wallet_money + ? WHERE user_id = ?`,
                 [amount, attackerId]
             );
 
-            await dbRun('COMMIT');
+            await db.runSql('COMMIT');
 
             const percentDone = Math.round((amount / targetBalance.wallet) * 100);
             return { ok: true, amount, success: true, percent: percentDone };
         } else {
-            await dbRun('COMMIT');
+            await db.runSql('COMMIT');
             return { ok: true, amount: 0, success: false, percent: 0 };
         }
     } catch (err) {
         output.err(err);
-        try { await dbRun('ROLLBACK'); } catch {}
+        try { await db.runSql('ROLLBACK'); } catch {}
         return { ok: false, reason: 'db_error' };
     }
 }

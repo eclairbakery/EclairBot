@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
 import { cfg } from "@/bot/cfg.js";
+import { db } from '@/bot/apis/db/bot-db.js';
 import { Command, CommandFlags } from "@/bot/command.js";
-import { dbGet, dbRun } from "@/util/dbUtils.js";
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { formatMoney } from '@/bot/apis/economy/money.js';
@@ -77,7 +77,7 @@ export const moneyCmd: Command = {
         const targetId = targetUser.id;
 
         try {
-            await dbRun('BEGIN TRANSACTION');
+            await db.runSql('BEGIN TRANSACTION');
 
             const user = new User(api.msg.author.id);
 
@@ -103,7 +103,7 @@ export const moneyCmd: Command = {
                 wallet: newMoney
             });
 
-            await dbRun('COMMIT');
+            await db.runSql('COMMIT');
 
             return msg.reply({
                 embeds: [
@@ -121,7 +121,7 @@ export const moneyCmd: Command = {
             });
         } catch (err) {
             output.err(err);
-            try { await dbRun('ROLLBACK'); } catch {}
+            try { await db.runSql('ROLLBACK'); } catch {}
             return api.log.replyError(msg, 'Błąd bazy danych', 'Operacja nie mogła zostać zakończona.');
         }
     },

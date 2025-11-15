@@ -1,5 +1,5 @@
 import { Command, CommandFlags } from '@/bot/command.js';
-import { db } from '@/bot/db.js';
+import { db } from '@/bot/apis/db/bot-db.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
@@ -40,12 +40,8 @@ export const warnClearCmd: Command = {
 
         const warnId = Number(warnIdArg.value);
 
-        db.get('SELECT * FROM warns WHERE id = ?', [warnId], (err, row) => {
-            if (err) {
-                output.warn(err);
-                return api.log.replyError(api.msg, 'Błąd bazy danych', 'Spróbuj ponownie później.');
-            }
-
+        try {
+            const row = await db.selectOne('SELECT * FROM warns WHERE id = ?', [warnId]);
             if (!row) {
                 return api.log.replyError(
                     api.msg,
@@ -54,34 +50,35 @@ export const warnClearCmd: Command = {
                 );
             }
 
-            db.run('DELETE FROM warns WHERE id = ?', [warnId], async (delErr) => {
-                if (delErr) {
-                    output.err(delErr);
-                    return api.log.replyError(api.msg, 'Błąd podczas usuwania', 'Spróbuj ponownie później.');
-                }
+            const delResult = await db.runSql('DELETE FROM warns WHERE id = ?', [warnId]);
+            if (!delResult.changes) {
+                return api.log.replyError(api.msg, 'Błąd podczas usuwania', 'Spróbuj ponownie później.');
+            }
 
-                const channel = await api.msg.guild?.channels.fetch(cfg.features.logs.channel);
-                if (!channel || !channel.isSendable()) return;
+            const channel = await api.msg.guild?.channels.fetch(cfg.features.logs.channel);
+            if (!channel || !channel.isSendable()) return;
 
-                channel.send({
-                    embeds: [
-                        new dsc.EmbedBuilder()
-                            .setAuthor({ name: 'EclairBOT' })
-                            .setColor(PredefinedColors.DarkAqua)
-                            .setTitle('Pozbyto się warna!')
-                            .setDescription(`Usunięto warna o ID \`${warnId}\`.`)
-                    ]
-                });
-
-                return api.reply({
-                    embeds: [
-                        new dsc.EmbedBuilder()
-                            .setTitle(':white_check_mark: Warn usunięty')
-                            .setDescription(`Warn o ID \`${warnId}\` został pomyślnie usunięty.`)
-                            .setColor(PredefinedColors.Green)
-                    ]
-                });
+            channel.send({
+                embeds: [
+                    new dsc.EmbedBuilder()
+                        .setAuthor({ name: 'EclairBOT' })
+                        .setColor(PredefinedColors.DarkAqua)
+                        .setTitle('Pozbyto się warna!')
+                        .setDescription(`Usunięto warna o ID \`${warnId}\`.`)
+                ]
             });
-        });
+
+            return api.reply({
+                embeds: [
+                    new dsc.EmbedBuilder()
+                        .setTitle(':white_check_mark: Warn usunięty')
+                        .setDescription(`Warn o ID \`${warnId}\` został pomyślnie usunięty.`)
+                        .setColor(PredefinedColors.Green)
+                ]
+            });
+        } catch (err) {
+            output.warn(err);
+            return api.log.replyError(api.msg, 'Błąd bazy danych', 'Spróbuj ponownie później.');
+        }
     }
 };

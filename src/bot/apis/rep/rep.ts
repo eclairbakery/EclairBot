@@ -1,9 +1,10 @@
 import * as dsc from 'discord.js';
-import { dbRun, dbAll, dbGet } from '@/util/dbUtils.js';
+
+import { db } from '../db/bot-db.js';
 
 import User from '@/bot/apis/db/user.js';
-import { Rep } from '@/bot/apis/db/db-defs.js';
-export { Rep };
+import type { Rep } from '@/bot/apis/db/db-defs.js';
+export type { Rep };
 
 export interface RepProportion {
     plus: number;
@@ -22,7 +23,7 @@ export async function getRepsGivenByUser(authorId: string): Promise<Rep[]> {
 
 /** @deprecated */
 export async function getLastRepGivenByUser(authorId: string): Promise<Rep | null> {
-    const row = await dbGet<Rep>(`
+    const row = await db.selectOne<Rep>(`
         SELECT * FROM reputation WHERE author_id = ?
         ORDER BY created_at DESC
         LIMIT 1
@@ -38,7 +39,7 @@ export async function getUserReps(userId: dsc.Snowflake): Promise<Rep[]> {
 /** @deprecated */
 /** @fixme this function is unsafe 'cause the internal database reputation table does not match the Rep declaration. */
 export async function getAllRepsList(): Promise<Rep[]> {
-    return dbAll<Rep>(`SELECT * FROM reputation`);
+    return db.selectMany<Rep>(`SELECT * FROM reputation`);
 }
 
 function buildRepsMap(reps: Rep[]): Map<dsc.Snowflake, Rep[]> {
@@ -131,7 +132,7 @@ function scaleTwoNumbers(a: number, b: number, newMax: number, threshold: number
 }
 
 async function deleteExpiredReps() {
-    return dbRun(`
+    return db.runSql(`
       DELETE FROM reputation
       WHERE createdAt <= datetime('now', '-7 days');
     `);

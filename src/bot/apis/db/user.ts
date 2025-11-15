@@ -1,7 +1,6 @@
 import sqlite from 'sqlite3';
 
-import { db } from '@/bot/db.js';
-import { dbRun, dbGet, dbAll, dbGetAll } from '@/util/dbUtils.js';
+import { db } from '@/bot/apis/db/bot-db.js';
 import { output } from '@/bot/logging.js';
 
 import { Warn, WarnRaw, Rep, RepRaw, Balance } from './db-defs.js';
@@ -16,7 +15,7 @@ export default class User {
     }
 
     async ensureExists(): Promise<void> {
-        dbRun(
+        db.runSql(
             `INSERT OR IGNORE INTO users (user_id) VALUES (?);`,
             [this.id]
         );
@@ -25,23 +24,23 @@ export default class User {
     /** -------- LEVELING -------- */
     readonly leveling = {
         getXP: async (): Promise<number> => {
-            const row = await dbGet(`SELECT xp FROM users WHERE user_id = ?`, [this.id]);
+            const row = await db.selectOne(`SELECT xp FROM users WHERE user_id = ?`, [this.id]);
             return row?.xp ?? 0;
         },
 
         addXP: async (amount: number) => {
             await this.ensureExists();
-            await dbRun(`UPDATE users SET xp = xp + ? WHERE user_id = ?`, [amount, this.id]);
+            await db.runSql(`UPDATE users SET xp = xp + ? WHERE user_id = ?`, [amount, this.id]);
         },
 
         setXP: async (value: number) => {
             await this.ensureExists();
-            await dbRun(`UPDATE users SET xp = ? WHERE user_id = ?`, [value, this.id]);
+            await db.runSql(`UPDATE users SET xp = ? WHERE user_id = ?`, [value, this.id]);
         },
 
         getEveryoneXPWithLimit: async (limit: number): Promise<{xp: number, user_id: string}[]> => {
             await this.ensureExists();
-            const rows = await dbGetAll(`SELECT xp, user_id FROM users ORDER BY xp DESC LIMIT ?`, [limit]) ?? [];
+            const rows = await db.selectMany(`SELECT xp, user_id FROM users ORDER BY xp DESC LIMIT ?`, [limit]) ?? [];
             return rows;
         },
     };
@@ -50,18 +49,17 @@ export default class User {
     readonly economy = {
         getBalance: async (): Promise<Balance> => {
             await this.ensureExists();
-            const row = await dbGet(
-                `SELECT * FROM users WHERE user_id = ?`,
+            const row = await db.selectOne<{ wallet_money: number; bank_money: number }>(
+                `SELECT wallet_money, bank_money FROM users WHERE user_id = ?`,
                 [this.id],
             );
             let result = { wallet: row?.wallet_money ?? 0, bank: row?.bank_money ?? 0 };
-            output.log(`balance for ${this.id}: \`${JSON.stringify(result, undefined, 0)}\``);
             return result;
         },
 
         setBalance: async (bal: Balance) => {
             await this.ensureExists();
-            await dbRun(
+            await db.runSql(
                 `UPDATE users
                  SET wallet_money = ?, bank_money = ?
                  WHERE user_id = ?`,
@@ -71,7 +69,7 @@ export default class User {
 
         addWalletMoney: async (amount: number) => {
             await this.ensureExists();
-            return dbRun(
+            return db.runSql(
                 `UPDATE users SET wallet_money = wallet_money + ? WHERE user_id = ?`,
                 [amount, this.id],
             );
@@ -79,7 +77,7 @@ export default class User {
 
         deductWalletMoney: async (amount: number) => {
             await this.ensureExists();
-            return dbRun(
+            return db.runSql(
                 `UPDATE users SET wallet_money = wallet_money - ? WHERE user_id = ?`,
                 [amount, this.id],
             );
@@ -87,7 +85,7 @@ export default class User {
 
         setWalletMoney: async (value: number) => {
             await this.ensureExists();
-            return dbRun(
+            return db.runSql(
                 `UPDATE users SET wallet_money = ? WHERE user_id = ?`,
                 [value, this.id],
             );
@@ -95,7 +93,7 @@ export default class User {
 
         addBankMoney: async (amount: number) => {
             await this.ensureExists();
-            return dbRun(
+            return db.runSql(
                 `UPDATE users SET bank_money = bank_money + ? WHERE user_id = ?`,
                 [amount, this.id],
             );
@@ -103,7 +101,7 @@ export default class User {
 
         deductBankMoney: async (amount: number) => {
             await this.ensureExists();
-            return dbRun(
+            return db.runSql(
                 `UPDATE users SET bank_money = bank_money - ? WHERE user_id = ?`,
                 [amount, this.id],
             );
@@ -111,7 +109,7 @@ export default class User {
 
         setBankMoney: async (value: number) => {
             await this.ensureExists();
-            return dbRun(
+            return db.runSql(
                 `UPDATE users SET bank_money = ? WHERE user_id = ?`,
                 [value, this.id],
             );
@@ -119,7 +117,7 @@ export default class User {
 
         depositToBank: async (amount: number) => {
             await this.ensureExists();
-            await dbRun(
+            await db.runSql(
                 `UPDATE users
                  SET wallet_money = wallet_money - ?, bank_money = bank_money + ?
                  WHERE user_id = ? AND wallet_money >= ?`,
@@ -129,7 +127,7 @@ export default class User {
 
         withdrawFromBank: async (amount: number) => {
             await this.ensureExists();
-            await dbRun(
+            await db.runSql(
                 `UPDATE users
                  SET bank_money = bank_money - ?, wallet_money = wallet_money + ?
                  WHERE user_id = ? AND bank_money >= ?`,
@@ -139,12 +137,12 @@ export default class User {
 
         setCooldown: async (field: 'last_worked' | 'last_robbed' | 'last_slutted' | 'last_crimed', timestamp: number) => {
             await this.ensureExists();
-            await dbRun(`UPDATE users SET ${field} = ? WHERE user_id = ?`, [timestamp, this.id]);
+            await db.runSql(`UPDATE users SET ${field} = ? WHERE user_id = ?`, [timestamp, this.id]);
         },
 
         getCooldowns: async (): Promise<Cooldowns> => {
             await this.ensureExists();
-            const row = await dbGet(
+            const row = await db.selectOne(
                 `SELECT last_worked, last_robbed, last_slutted, last_crimed
                  FROM users WHERE user_id = ?`,
                 [this.id]
@@ -163,7 +161,7 @@ export default class User {
     /** -------- REPUTATION -------- */
     readonly reputation = {
         give: async (targetId: string, type: '+rep' | '-rep', comment?: string) => {
-            return dbRun(
+            return db.runSql(
                 `INSERT INTO reputation (author_id, target_user_id, type, comment)
                  VALUES (?, ?, ?, ?)`,
                 [this.id, targetId, type, comment ?? null]
@@ -171,7 +169,7 @@ export default class User {
         },
 
         getReceived: async (): Promise<Rep[]> => {
-            const rawReps = await dbAll<RepRaw>(
+            const rawReps = await db.selectMany<RepRaw>(
                 `SELECT * FROM reputation WHERE target_user_id = ? ORDER BY created_at DESC`,
                 [this.id]
             );
@@ -179,7 +177,7 @@ export default class User {
         },
 
         getGiven: async (): Promise<Rep[]> => {
-            const rawReps = await dbAll<RepRaw>(
+            const rawReps = await db.selectMany<RepRaw>(
                 `SELECT * FROM reputation WHERE author_id = ? ORDER BY created_at DESC`,
                 [this.id]
             );
@@ -190,7 +188,7 @@ export default class User {
     /** -------- WARNS -------- */
     readonly warns = {
         add: async ({ moderatorId, reason, points, expiresAt }: Warn) => {
-            return dbRun(
+            return db.runSql(
                 `INSERT INTO warns (user_id, moderator_id, reason_string, points, expires_at)
                  VALUES (?, ?, ?, ?, ?)`,
                 [this.id, moderatorId, reason, points, expiresAt ?? null]
@@ -198,7 +196,7 @@ export default class User {
         },
 
         getAll: async (): Promise<Warn[]> => {
-            const rawWarns = await dbAll<WarnRaw>(
+            const rawWarns = await db.selectMany<WarnRaw>(
                 `SELECT * FROM warns WHERE user_id = ? ORDER BY id DESC`,
                 [this.id]
             );
@@ -207,7 +205,7 @@ export default class User {
 
         clearExpired: async () => {
             const now = Date.now();
-            return dbRun(
+            return db.runSql(
                 `DELETE FROM warns WHERE expires_at IS NOT NULL AND expires_at <= ?`,
                 [now]
             );

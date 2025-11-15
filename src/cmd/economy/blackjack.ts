@@ -3,8 +3,8 @@ import * as dsc from 'discord.js';
 import User from '@/bot/apis/db/user.js';
 
 import { PredefinedColors } from '@/util/color.js';
-import { dbGet, dbRun } from '@/util/dbUtils.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
+import { db } from '@/bot/apis/db/bot-db.js';
 import { cfg } from '@/bot/cfg.js';
 
 interface Card {
@@ -55,10 +55,10 @@ export const blackjackCmd: Command = {
         const player = new User(userId);
         const playerBalance = await player.economy.getBalance();
 
-        if (playerBalance.wallet < bet) 
+        if (playerBalance.wallet < bet)
             return api.log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
 
-    
+
         let playerHand: Card[] = [drawCard(), drawCard()];
         let dealerHand: Card[] = [drawCard(), drawCard()];
 
@@ -95,7 +95,7 @@ export const blackjackCmd: Command = {
             if (button.customId === 'hit') {
                 playerHand.push(drawCard());
                 if (calcHandValue(playerHand) > 21) {
-                    await dbRun('UPDATE economy SET money = money - ? WHERE user_id = ?', [bet, userId]);
+                    await db.runSql('UPDATE economy SET money = money - ? WHERE user_id = ?', [bet, userId]);
                     gameOver = true;
                     await button.update({
                         embeds: [

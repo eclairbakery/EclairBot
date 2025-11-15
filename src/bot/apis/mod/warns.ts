@@ -1,42 +1,36 @@
 import * as dsc from 'discord.js';
-import { db } from '@/bot/db.js';
+import { db } from '@/bot/apis/db/bot-db.js';
 import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { scheduleWarnDeletion } from '@/features/deleteExpiredWarns.js';
 import actionsManager from '@/features/actions/index.js';
 import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.js';
 
-export default function warn(
+export default async function warn(
     member: dsc.GuildMember,
     data: { reason: string; expiresAt: number | null; points: number; mod?: dsc.Snowflake; }
 ): Promise<{ id: number }> {
-    return new Promise((resolve, reject) => {
-        db.run(
-            'INSERT INTO warns (user_id, moderator_id, reason_string, points, expires_at) VALUES (?, ?, ?, ?, ?)',
-            [member.id, data.mod ?? null, data.reason, data.points, data.expiresAt],
-            function (err) {
-                if (err) {
-                    reject(err);
-                    return;
-                }
+    await db.ensureUserExists(member.id);
 
-                const warnId = this.lastID;
+    const result = await db.runSql(
+        'INSERT INTO warns (user_id, moderator_id, reason_string, points, expires_at) VALUES (?, ?, ?, ?, ?)',
+        [member.id, data.mod ?? null, data.reason, data.points, data.expiresAt]
+    );
 
-                if (data.expiresAt) {
-                    scheduleWarnDeletion(warnId, data.expiresAt);
-                }
+    const warnId = result.lastID!;
 
-                actionsManager.emit(OnWarnGiven, {
-                    id: warnId,
-                    user: member,
-                    moderator: data.mod,
-                    reason: data.reason,
-                    points: data.points,
-                    expiresAt: data.expiresAt ?? undefined
-                } satisfies WarnEventCtx);
+    if (data.expiresAt) {
+        scheduleWarnDeletion(warnId, data.expiresAt);
+    }
 
-                resolve({ id: warnId });
-            }
-        );
-    });
+    actionsManager.emit(OnWarnGiven, {
+        id: warnId,
+        user: member,
+        moderator: data.mod,
+        reason: data.reason,
+        points: data.points,
+        expiresAt: data.expiresAt ?? undefined
+    } satisfies WarnEventCtx);
+
+    return { id: warnId };
 }
