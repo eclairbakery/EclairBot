@@ -1,7 +1,7 @@
 import type { Database as SqliteDatabase } from 'sqlite3';
 import { output } from '../logging.js';
 
-const tableExists = (tableName: string, db: SqliteDatabase): Promise<boolean> => {
+export const tableExists = (tableName: string, db: SqliteDatabase): Promise<boolean> => {
     return new Promise((resolve, reject) => {
         db.get(`
             SELECT name FROM sqlite_master WHERE type='table' AND name = ?;
@@ -125,4 +125,54 @@ export async function mitigateToUsersTable(db: SqliteDatabase) {
     } catch (error) {
         output.err('usersTable: vulnerable, mitigation failed: ' + error);
     }
+}
+
+export async function snapshotUsersToLegacy(db: SqliteDatabase) {
+    const levelingExists = await tableExists('leveling', db);
+    const economyExists = await tableExists('economy', db);
+    const usersExists = await tableExists('economy', db);
+
+    if (!levelingExists && !economyExists) return false;
+    if (!usersExists) return false;
+
+    const usersData = await new Promise<any[]>((resolve, reject) => {
+        db.all('SELECT * FROM users', [], (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+        });
+    });
+
+    if (levelingExists) {
+        for (const row of usersData) {
+            await new Promise((resolve, reject) => {
+                db.run(`
+                    INSERT OR REPLACE INTO leveling (user_id, xp)
+                    VALUES (?, ?)
+                `, [row.user_id, row.xp || 0], (err) => err ? reject(err) : resolve(null));
+            });
+        }
+    }
+
+    if (economyExists) {
+        for (const row of usersData) {
+            await new Promise((resolve, reject) => {
+                db.run(`
+                    INSERT OR REPLACE INTO economy (user_id, money, bank_money, last_worked, last_robbed, last_slutted, last_crimed)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                `, [
+                    row.user_id,
+                    row.wallet_money || 0,
+                    row.bank_money || 0,
+                    row.last_worked || 0,
+                    row.last_robbed || 0,
+                    row.last_slutted || 0,
+                    row.last_crimed || 0,
+                ], (err) => err ? reject(err) : resolve(null));
+            });
+        }
+    }
+
+    output.log('snapshot: users table saved to legacy tables');
+
+    return true;
 }
