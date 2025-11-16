@@ -6,33 +6,26 @@ import { client } from "../../../client.js";
 import parseTimestamp from "@/util/parseTimestamp.js";
 import { scheduleWarnDeletion } from "../../deleteExpiredWarns.js";
 import warn from "@/bot/apis/mod/warns.js";
+import { sendLog } from "@/bot/apis/log/send-log.js";
+import { RarelyUsedColors } from "@/util/color.js";
 
 const userMessagesAntiSpamMap: Map<Snowflake, number[]> = new Map();
 let userRecentlyInTheList: Record<Snowflake, boolean> = {};
 
 async function filterLog(msg: dsc.Message, system: string) {
-    const channel = await msg.client.channels.fetch(cfg.features.logs.channel);
-    if (!channel?.isSendable()) return;
-    await channel.send({
-        content: '<@&1410323193763463188>',
-        embeds: [
-            new dsc.EmbedBuilder()
-                .setAuthor({
-                    name: 'EclairBOT'
-                })
-                .setColor(0xff0000)
-                .setTitle('Wiadomość została usunięta przez filtry anti-spam/anti-flood')
-                .setDescription(`Tu masz autora co nie: <@${msg.author.id}>\nA tu masz link co nie: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`)
-                .setFields([
-                    {
-                        name: 'Wiadomość',
-                        value: msg.content.slice(1, 1020)
-                    },
-                    {
-                        name: 'System moderacyjny',
-                        value: system
-                    }
-                ])
+    sendLog({
+        title: 'Wiadomość została usunięta przez filtry anti-spam/anti-flood',
+        description: `Tu masz autora co nie: <@${msg.author.id}>\nA tu masz link co nie: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`,
+        color: RarelyUsedColors.Red,
+        fields: [
+            {
+                name: 'Wiadomość',
+                value: msg.content.slice(1, 1020)
+            },
+            {
+                name: 'System moderacyjny',
+                value: system
+            }
         ]
     });
 }

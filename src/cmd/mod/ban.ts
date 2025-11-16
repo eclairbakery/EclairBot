@@ -6,6 +6,7 @@ import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import ban from '@/bot/apis/mod/bans.js';
+import { sendLog } from '@/bot/apis/log/send-log.js';
 
 const cmdCfg = cfg.commands.mod.ban;
 
@@ -55,18 +56,7 @@ export const banCmd: Command = {
         }
 
         try {
-            try {
-                await targetUser.send({
-                    embeds: [
-                        new dsc.EmbedBuilder()
-                            .setTitle('📢 Zostałeś zbanowany z serwera Piekarnia eklerki!')
-                            .setDescription(`To straszne wiem. Powód bana brzmi: ${reason}`)
-                            .setColor(PredefinedColors.Orange)
-                    ]
-                });
-            } catch {}
-
-            await ban(targetUser, { reason });
+            await ban(targetUser, { reason, mod: api.msg.author.id });
 
             await api.reply({
                 embeds: [
@@ -81,20 +71,6 @@ export const banCmd: Command = {
                         .setColor(PredefinedColors.Orange)
                 ]
             });
-
-            const logChannel = await api.msg.channel.client.channels.fetch(cfg.features.logs.channel);
-            if (logChannel?.isSendable()) {
-                return logChannel.send({
-                    embeds: [
-                        new dsc.EmbedBuilder()
-                            .setAuthor({ name: 'EclairBOT' })
-                            .setColor(PredefinedColors.DarkGrey)
-                            .setTitle('Zbanowano członka')
-                            .setDescription(`Użytkownik <@${targetUser.id}> (${targetUser.user.username}) został zbanowany z serwera przez <@${api.msg.author.id}>!`)
-                            .addFields([{ name: 'Powód', value: reason }])
-                    ]
-                });
-            }
         } catch (err) {
             debug.err(err);
             return api.log.replyError(api.msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że banujesz admina...');

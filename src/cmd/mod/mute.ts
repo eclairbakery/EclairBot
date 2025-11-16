@@ -9,6 +9,7 @@ import { Hour, Timestamp } from '@/util/parseTimestamp.js';
 
 import mute from '@/bot/apis/mod/muting.js';
 import { watchMute } from '@/bot/watchdog.js';
+import { sendLog } from '@/bot/apis/log/send-log.js';
 
 const cmdCfg = cfg.commands.mod.mute;
 
@@ -71,19 +72,12 @@ export const muteCmd: Command = {
             if (api.msg.member) watchMute(api.msg.member?.plainMember);
             await mute(targetUser, { reason, duration });
 
-            const logChannel = await api.msg.channel.client.channels.fetch(cfg.features.logs.channel);
-            if (logChannel != null && logChannel.isSendable()) {
-                logChannel.send({
-                    embeds: [
-                        new dsc.EmbedBuilder()
-                            .setAuthor({ name: 'EclairBOT' })
-                            .setColor(PredefinedColors.Purple)
-                            .setTitle('Nałożono kłódkę na buzię')
-                            .setDescription(`Użytkownik <@${targetUser.id}> został wyciszony na 24 godziny przez <@${api.msg.author.id}>.`)
-                            .addFields([{ name: 'Powód', value: reason }])
-                    ]
-                });
-            }
+            sendLog({
+                color: PredefinedColors.Purple,
+                title: 'Nałożono kłódkę na buzię',
+                description: `Użytkownik <@${targetUser.id}> został wyciszony na 24 godziny przez <@${api.msg.author.id}>.`,
+                fields: [{ name: 'Powód', value: reason }]
+            });
 
             return api.reply({
                 embeds: [

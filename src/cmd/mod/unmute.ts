@@ -4,6 +4,7 @@ import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
+import { sendLog } from '@/bot/apis/log/send-log.js';
 
 const cmdCfg = cfg.commands.mod.mute;
 
@@ -73,20 +74,13 @@ export const unmuteCmd: Command = {
                 await targetUser.roles.remove(muteRole, reason).catch(() => null);
             }
 
-            const channel = await api.msg.guild?.channels.fetch(cfg.features.logs.channel).catch(() => null);
-            if (channel && (channel as dsc.TextChannel).isSendable()) {
-                (channel as dsc.TextChannel).send({
-                    embeds: [
-                        new dsc.EmbedBuilder()
-                            .setAuthor({ name: 'EclairBOT' })
-                            .setColor(PredefinedColors.Pink)
-                            .setTitle('Odciszono użytkownika')
-                            .setDescription(`Użytkownik <@${targetUser.id}> został odciszony przez <@${api.msg.author.id}>.`)
-                            .addFields({ name: 'Powód', value: reason }),
-                    ],
-                });
-            }
-
+            sendLog({
+                title: 'Odciszono użytkownika',
+                description: `Użytkownik <@${targetUser.id}> został odciszony przez <@${api.msg.author.id}>.`,
+                fields: [{ name: 'Powód', value: reason }],
+                color: PredefinedColors.Pink
+            });
+            
             return api.reply({
                 embeds: [
                     new dsc.EmbedBuilder()

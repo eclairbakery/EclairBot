@@ -5,6 +5,7 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
 import { output } from '@/bot/logging.js';
+import { sendLog } from '@/bot/apis/log/send-log.js';
 
 const cmdCfg = cfg.commands.mod.warn;
 
@@ -55,17 +56,10 @@ export const warnClearCmd: Command = {
                 return api.log.replyError(api.msg, 'Błąd podczas usuwania', 'Spróbuj ponownie później.');
             }
 
-            const channel = await api.msg.guild?.channels.fetch(cfg.features.logs.channel);
-            if (!channel || !channel.isSendable()) return;
-
-            channel.send({
-                embeds: [
-                    new dsc.EmbedBuilder()
-                        .setAuthor({ name: 'EclairBOT' })
-                        .setColor(PredefinedColors.DarkAqua)
-                        .setTitle('Pozbyto się warna!')
-                        .setDescription(`Usunięto warna o ID \`${warnId}\`.`)
-                ]
+            sendLog({
+                color: PredefinedColors.DarkAqua,
+                title: 'Pozbyto się warna!',
+                description: `Usunięto warna o ID \`${warnId}\`.`
             });
 
             return api.reply({

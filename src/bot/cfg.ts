@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
 import JSON5 from 'json5';
 
-import { deepMerge } from '@/util/objects.js';
+import { deepMerge } from '@/util/objects/objects.js';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { output } from './logging.js';
 import { client } from '@/client.js';
@@ -27,6 +27,11 @@ interface ConfigEconomyShopItem {
     price: number;
     role: Snowflake;
 }
+
+interface ConfigTranslation {
+    input: string[] | string,
+    output: string
+};
 
 export interface Config {
     /* Whether the bot is enabled (The most useless configuration field I've ever seen...) */
@@ -429,6 +434,7 @@ export interface Config {
         moderation: {
             protectedRoles: dsc.Snowflake[]
         },
+        translations: ConfigTranslation[]
     }
 }
 
@@ -880,7 +886,8 @@ const defaultCfg: Config = {
         },
         moderation: {
             protectedRoles: []
-        }
+        },
+        translations: []
     },
 
     masterSecurity: {

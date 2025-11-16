@@ -37,4 +37,8 @@ export enum PredefinedColors {
     Pink              = 0xFFC0CB
 }
 
-export type Color = PredefinedColors | number;
+export enum RarelyUsedColors {
+    Red               = 0xff0000
+}
+
+export type Color = PredefinedColors | RarelyUsedColors | number;

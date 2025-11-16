@@ -68,7 +68,7 @@ export const kickCmd: Command = {
                 });
             } catch {}
 
-            await kick(targetUser, { reason });
+            await kick(targetUser, { reason, mod: api.msg.author.id });
 
             await api.reply({
                 embeds: [
@@ -83,20 +83,6 @@ export const kickCmd: Command = {
                         .setColor(PredefinedColors.Orange)
                 ]
             });
-
-            const logChannel = await api.msg.channel.client.channels.fetch(cfg.features.logs.channel);
-            if (logChannel?.isSendable()) {
-                logChannel.send({
-                    embeds: [
-                        new dsc.EmbedBuilder()
-                            .setAuthor({ name: 'EclairBOT' })
-                            .setColor(PredefinedColors.DarkGrey)
-                            .setTitle('Wywalono członka')
-                            .setDescription(`Użytkownik <@${targetUser.id}> (${targetUser.user.username}) został wyrzucony z serwera przez <@${api.msg.author.id}>!`)
-                            .addFields([{ name: 'Powód', value: reason }])
-                    ]
-                });
-            }
         } catch (err) {
             debug.err(err);
             return api.log.replyError(api.msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że kickujesz admina...');
