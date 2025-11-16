@@ -101,8 +101,8 @@ export interface CommandMessageAPI {
         moderation: {
             warn: (data: { reason: string; expiresAt: number; points: number; }) => Promise<any>;
             mute: (data: { reason: string; duration: number; }) => Promise<any>;
-            kick: (data: { reason: string; }) => Promise<any>;
-            ban:  (data: { reason: string; expiresAt: number; }) => Promise<any>;
+            kick: (data: { reason: string; mod: dsc.Snowflake; }) => Promise<any>;
+            ban:  (data: { reason: string; expiresAt: number; mod: dsc.Snowflake; }) => Promise<any>;
         }
         plainMember: dsc.GuildMember;
     };

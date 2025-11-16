@@ -1,4 +1,4 @@
-import { prettyPrint } from "@/util/objects.js";
+import { prettyPrint } from "@/util/objects/objects.js";
 
 export default function debugLog(...values: any[]) {
     process.stderr.write('DEBUG: ');

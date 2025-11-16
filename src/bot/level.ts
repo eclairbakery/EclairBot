@@ -7,7 +7,7 @@ import { client } from '@/client.js';
 import { mkProgressBar } from '@/util/progressbar.js';
 import { output } from './logging.js';
 import User from './apis/db/user.js';
-import { findLowerClosestKey } from '@/util/findLowerClosestKey.js';
+import { findLowerClosestKey } from '@/util/objects/findLowerClosestKey.js';
 
 export const OnSetXpEvent = actionsManager.mkEvent('OnSetXpEvent');
 export interface XpEventCtx {

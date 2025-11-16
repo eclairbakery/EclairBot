@@ -2,7 +2,7 @@ import { cfg } from '@/bot/cfg.js';
 import { Command, CommandFlags } from '@/bot/command.js';
 import * as dsc from 'discord.js';
 import * as log from '../../util/log.js';
-import { deepMerge } from '@/util/objects.js';
+import { deepMerge } from '@/util/objects/objects.js';
 import { client } from '@/client.js';
 import { output } from '@/bot/logging.js';
 import { db } from '@/bot/apis/db/bot-db.js';
