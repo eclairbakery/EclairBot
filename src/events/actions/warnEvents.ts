@@ -12,5 +12,6 @@ export interface WarnEventCtx {
     moderator?: dsc.Snowflake;
     reason: string;
     points: number;
+    previousPoints?: number;
     expiresAt?: number;
 };

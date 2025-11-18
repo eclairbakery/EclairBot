@@ -432,7 +432,13 @@ export interface Config {
             }
         },
         moderation: {
-            protectedRoles: dsc.Snowflake[]
+            protectedRoles: dsc.Snowflake[];
+            warnAutoActions: {
+                type: 'mute' | 'kick' | 'ban';
+                duration?: number;
+                reason: string;
+                activationPointsNumber: number;
+            }[];
         },
         translations: ConfigTranslation[]
     }
@@ -885,7 +891,8 @@ const defaultCfg: Config = {
             }
         },
         moderation: {
-            protectedRoles: []
+            protectedRoles: [],
+            warnAutoActions: []
         },
         translations: []
     },
