@@ -6,6 +6,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
 import { output } from '@/bot/logging.js';
 import { sendLog } from '@/bot/apis/log/send-log.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const cmdCfg = cfg.commands.mod.warn;
 
@@ -64,7 +65,7 @@ export const warnClearCmd: Command = {
 
             return api.reply({
                 embeds: [
-                    new dsc.EmbedBuilder()
+                    new ReplyEmbed()
                         .setTitle(':white_check_mark: Warn usunięty')
                         .setDescription(`Warn o ID \`${warnId}\` został pomyślnie usunięty.`)
                         .setColor(PredefinedColors.Green)

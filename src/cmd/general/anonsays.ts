@@ -1,3 +1,4 @@
+import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.js";
 import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 import { client } from "@/client.js";
@@ -136,7 +137,7 @@ export const anonSaysCmd: Command = {
             if (modChan?.isSendable() && sent) {
                 await modChan.send({
                     embeds: [
-                        new EmbedBuilder()
+                        new ReplyEmbed()
                             .setDescription(`https://discord.com/channels/${guild.id}/${sent.channel_id}/${sent.id} jest wyslane przez <@${userId}>`)
                             .setTitle('Anonimowa wiadomość')
                             .setColor(PredefinedColors.Grey)

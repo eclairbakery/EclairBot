@@ -7,6 +7,7 @@ import { cfg } from '@/bot/cfg.js';
 
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const shitwarnCmd: Command = {
     name: 'shitwarn',
@@ -97,7 +98,7 @@ export const shitwarnCmd: Command = {
             reason = cfg.customization.modTexts.warningWatchdogReason;
         }
 
-        const embed = new dsc.EmbedBuilder()
+        const embed = new ReplyEmbed()
             .setTitle(`📢 ${cfg.customization.modTexts.shitwarnHeader.replace('<mention>', targetUser.user.username)}`)
             .setDescription(cfg.customization.modTexts.warnDescription.replace('<points>', `${points}`))
             .addFields(

@@ -3,6 +3,7 @@ import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const cmdCfg = cfg.commands.mod.warn;
 
@@ -42,7 +43,7 @@ export const clearCmd: Command = {
         if (!amount || amount < 1) {
             return api.reply({
                 embeds: [
-                    new dsc.EmbedBuilder()
+                    new ReplyEmbed()
                         .setTitle('Hej!')
                         .setDescription('Pierwszy argument to liczba wiadomości do usunięcia!')
                         .setColor(PredefinedColors.Red),
@@ -66,7 +67,7 @@ export const clearCmd: Command = {
 
         await api.reply({
             embeds: [
-                new dsc.EmbedBuilder()
+                new ReplyEmbed()
                     .setTitle('Już!')
                     .setDescription(`Usunąłem ${amount} wiadomości${who ? ` od ${who.user.tag}` : ''}.`)
                     .setColor(PredefinedColors.YellowGreen),

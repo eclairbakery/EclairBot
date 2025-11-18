@@ -7,6 +7,7 @@ import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import ban from '@/bot/apis/mod/bans.js';
 import { sendLog } from '@/bot/apis/log/send-log.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const cmdCfg = cfg.commands.mod.ban;
 
@@ -60,7 +61,7 @@ export const banCmd: Command = {
 
             await api.reply({
                 embeds: [
-                    new dsc.EmbedBuilder()
+                    new ReplyEmbed()
                         .setTitle(`📢 ${targetUser.user.username} został zbanowany!`)
                         .setDescription(`Multikonto? Już po nim... Wkurzający chłop? Uciszony na zawsze... Ktokolwiek? Nie może wbić, chyba że zrobi alta...`)
                         .addFields(

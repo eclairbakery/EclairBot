@@ -8,6 +8,11 @@ import ban from "@/bot/apis/mod/bans.js";
 import { commands } from "@/cmd/list.js";
 import * as log from '@/util/log.js';
 import User from "@/bot/apis/db/user.js";
+import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.js";
+
+function makeOptions(options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions): any {
+    return options;
+}
 
 export async function makeCommandApi(commandObj: Command, argsRaw: string[], context: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction; cmd?: Command }): Promise<CommandAPI> {
     const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, context);
@@ -29,7 +34,7 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
                 id: (context.interaction?.user.id ?? context.msg?.author.id)!,
                 plainUser: (context.interaction?.user ?? context.msg?.author)!
             },
-            reply: context.interaction ? ((options) => context.interaction!.editReply(options as any)) : ((options) => context.msg!.reply(options as any)),
+            reply: context.interaction ? ((options) => context.interaction!.editReply(makeOptions(options))) : ((options) => context.msg!.reply(makeOptions(options) as any)),
             channel: context.interaction?.channel ?? context.msg!.channel,
             member: rawMember ? 
             {
@@ -55,7 +60,7 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
         },
 
         // misc
-        reply: context.interaction ? ((options) => context.interaction!.editReply(options as any)) : ((options) => context.msg!.reply(options as any)),
+        reply: context.interaction ? ((options) => context.interaction!.editReply(makeOptions(options))) : ((options) => context.msg!.reply(makeOptions(options))),
         commands: commands,
         log,
         executor: new User(((context.interaction?.member as dsc.GuildMember) ?? context.msg?.member)!.id),

@@ -6,6 +6,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { db } from '@/bot/apis/db/bot-db.js';
 import { cfg } from '@/bot/cfg.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 interface Card {
     name: string;
@@ -68,9 +69,9 @@ export const blackjackCmd: Command = {
 
         let gameOver = false;
 
-        const getEmbed = (hideDealer = true): dsc.EmbedBuilder => {
+        const getEmbed = (hideDealer = true): ReplyEmbed => {
             const dealerShown = hideDealer ? `${dealerHand[0].name} ❓` : handToString(dealerHand);
-            return new dsc.EmbedBuilder()
+            return new ReplyEmbed()
                 .setTitle(cfg.customization.economyTexts.blackjack.title)
                 .setColor(PredefinedColors.Green)
                 .addFields(

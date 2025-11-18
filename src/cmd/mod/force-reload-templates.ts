@@ -6,6 +6,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import actionsManager, { OnForceReloadTemplates } from '../../events/actions/templatesEvents.js';
 import fmtEmoji from '@/util/fmtEmoji.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const forceReloadTemplatesCmd: Command = {
     name: 'force-reload-templates',
@@ -28,7 +29,7 @@ export const forceReloadTemplatesCmd: Command = {
 
         await api.reply({
             embeds: [
-                new dsc.EmbedBuilder()
+                new ReplyEmbed()
                     .setTitle('Przeladowano wszystkie template channels!')
                     .setDescription(`Teraz wszystko powinno być aktualne! a jeśli nie jest to już nie mój problem ${fmtEmoji(cfg.emoji.idkEmoji)}`)
                     .setColor(PredefinedColors.Aqua)

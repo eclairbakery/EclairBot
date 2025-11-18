@@ -9,6 +9,7 @@ import findCommand from '@/util/cmd/findCommand.js';
 import { Category } from '@/bot/command.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import fmtEmoji from '@/util/fmtEmoji.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const manCmd: Command = {
     name: 'man',
@@ -117,7 +118,7 @@ export const manCmd: Command = {
             command.permissions.allowedRoles!.includes(role.id)
         );
 
-        const embed = new dsc.EmbedBuilder()
+        const embed = new ReplyEmbed()
             .setTitle(':loudspeaker: Instrukcja')
             .setColor(category.color)
             .setDescription(

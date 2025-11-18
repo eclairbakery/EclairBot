@@ -2,6 +2,7 @@ import { PredefinedColors, Color } from '@/util/color.js';
 import { SendableChannel } from '../defs.js';
 
 import * as dsc from 'discord.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export interface Replyable {
     reply:
@@ -26,7 +27,7 @@ function getEmbed(type: LogType, title: string, desc: string) {
         [LogType.Error]:   { emoji: '💔', color: PredefinedColors.Red    }
     };
 
-    return new dsc.EmbedBuilder()
+    return new ReplyEmbed()
             .setTitle(`${settings[type].emoji} ${title}`)
             .setColor(settings[type].color)
             .setAuthor({ name: 'EclairBOT' })

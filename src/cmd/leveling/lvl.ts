@@ -6,6 +6,7 @@ import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { xpToLevel, levelToXp, mkLvlProgressBar } from '@/bot/level.js';
 import { output } from '@/bot/logging.js';
 import User from '@/bot/apis/db/user.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const lvlCmd: Command = {
     name: 'lvl',
@@ -38,7 +39,7 @@ export const lvlCmd: Command = {
             const user = new User(who.id);
             const row = await user.leveling.getXP();
 
-            const embed = new dsc.EmbedBuilder()
+            const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Blue)
                 .setTitle(`📊 Poziom użytkownika`)
                 .setDescription(

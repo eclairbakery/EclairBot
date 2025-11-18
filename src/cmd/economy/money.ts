@@ -6,6 +6,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { formatMoney } from '@/util/math/format.js';
 import User from '@/bot/apis/db/user.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const moneyCmd: Command = {
     name: 'money',
@@ -107,7 +108,7 @@ export const moneyCmd: Command = {
 
             return msg.reply({
                 embeds: [
-                    new dsc.EmbedBuilder()
+                    new ReplyEmbed()
                         .setColor(PredefinedColors.Green)
                         .setTitle('Operacja zakończona!')
                         .setDescription([

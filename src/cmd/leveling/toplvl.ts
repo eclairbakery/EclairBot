@@ -7,6 +7,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandFlags } from '@/bot/command.js';
 import { output } from '@/bot/logging.js';
 import User from '@/bot/apis/db/user.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 function calculateLevel(xp: number, levelDivider: number): number {
     return Math.floor(
@@ -67,10 +68,10 @@ export const toplvlCmd: Command = {
 
             await msg.reply({
                 embeds: [
-                    new dsc.EmbedBuilder()
+                    new ReplyEmbed()
                         .setColor("#1ebfd5")
                         .setImage("https://cdn.discordapp.com/attachments/1404396223934369844/1404397238578577491/toplvl_image.png?ex=689b0a5a&is=6899b8da&hm=eac2a0db46bfad2dd34fa1ef8dbf9b918e46913229f7b1a9c470d952982787e8&"),
-                    new dsc.EmbedBuilder()
+                    new ReplyEmbed()
                         .setFields(fields)
                         .setColor("#1ebfd5")
                         .setFooter({

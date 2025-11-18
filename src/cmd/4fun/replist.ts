@@ -7,6 +7,7 @@ import { Command, CommandFlags } from "@/bot/command.js";
 import { getUserReps, getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
 import { PredefinedColors } from '@/util/color.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const DefaultLimit = 10;
 
@@ -72,7 +73,7 @@ export const replistCmd: Command = {
 
         return api.reply({
             embeds: [
-                new dsc.EmbedBuilder()
+                new ReplyEmbed()
                     .setTitle(`Lista opini użytkownika ${api.msg.member?.plainMember.displayName ?? api.msg.author.plainUser.username}`)
                     .setDescription('No ten, tu masz liste:')
                     .setFields(fields)

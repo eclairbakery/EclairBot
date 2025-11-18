@@ -8,6 +8,7 @@ import { getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
 import { getTopRep } from '@/bot/apis/rep/top.js';
 import { PredefinedColors } from '@/util/color.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const DefaultCount = 6;
 
@@ -65,10 +66,10 @@ export const toprepCmd: Command = {
 
         return api.reply({
             embeds: [
-                new dsc.EmbedBuilder()
+                new ReplyEmbed()
                     .setColor(PredefinedColors.Cyan)
                     .setDescription('-# eklerka dalej nie zrobił obrazka na top reputacji'),
-                new dsc.EmbedBuilder()
+                new ReplyEmbed()
                     .setColor(PredefinedColors.Cyan)
                     .setFields(fields)
             ]

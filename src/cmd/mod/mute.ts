@@ -10,6 +10,7 @@ import { Hour, Timestamp } from '@/util/parseTimestamp.js';
 import mute from '@/bot/apis/mod/muting.js';
 import { watchMute } from '@/bot/watchdog.js';
 import { sendLog } from '@/bot/apis/log/send-log.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const cmdCfg = cfg.commands.mod.mute;
 
@@ -81,7 +82,7 @@ export const muteCmd: Command = {
 
             return api.reply({
                 embeds: [
-                    new dsc.EmbedBuilder()
+                    new ReplyEmbed()
                         .setTitle(`📢 Na ${targetUser.user.username} przymusowo nałożono kłódkę na buzię!`)
                         .setDescription(`Ciekawe czy wyjdzie z serwera... A, racja! Mogłem tego nie mówić.`)
                         .addFields(

@@ -5,6 +5,7 @@ import { PredefinedColors } from "@/util/color.js";
 import { output } from "@/bot/logging.js";
 import User from "@/bot/apis/db/user.js";
 import { formatMoney } from '@/util/math/format.js';
+import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.js";
 
 export const buyCmd: Command = {
     name: "buy",
@@ -79,7 +80,7 @@ export const buyCmd: Command = {
                 }
             }
 
-            const embed = new dsc.EmbedBuilder()
+            const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Green)
                 .setTitle("Zakup udany!")
                 .setDescription(`Kupiłeś **${item.name}** za **${formatMoney(item.price)}**.\n${item.description}`);

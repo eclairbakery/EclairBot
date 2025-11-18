@@ -4,6 +4,7 @@ import { db } from '@/bot/apis/db/bot-db.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { output } from '@/bot/logging.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 let ecoRoles = [
     "1235548306550161451"
@@ -58,7 +59,7 @@ export const topecoCmd: Command = {
 
             return msg.reply({
                 embeds: [
-                    new dsc.EmbedBuilder()
+                    new ReplyEmbed()
                         .setFields(fields)
                         .setColor("#1ebfd5")
                 ]

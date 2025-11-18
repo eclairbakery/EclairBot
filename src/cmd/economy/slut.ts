@@ -7,6 +7,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { formatMoney } from '@/util/math/format.js';
 import User from '@/bot/apis/db/user.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const COOLDOWN_MS = 2 * 60 * 1000;
 const WORK_AMOUNT_MIN = 500;
@@ -68,7 +69,7 @@ export const slutCmd: Command = {
             if (!result.ok) {
                 const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);
 
-                const embed = new dsc.EmbedBuilder()
+                const embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Yellow)
                     .setTitle('Chwila przerwy!')
                     .setDescription(`Ktoś tam Ci każe czekać **${waitSeconds}** sekund zanim znowu popr*cujesz, żebyś nie naspamił komendami w chuja hajsu...`);
@@ -76,15 +77,15 @@ export const slutCmd: Command = {
                 return api.reply({ embeds: [embed] });
             }
 
-            let embed: dsc.EmbedBuilder;
+            let embed: ReplyEmbed;
 
             if (win) {
-                embed = new dsc.EmbedBuilder()
+                embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Blue)
                     .setTitle('Yay!')
                     .setDescription(`Praca dorywcza dała Ci *prawie* darmowe **${formatMoney(amount)}**!`);
             } else {
-                embed = new dsc.EmbedBuilder()
+                embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Red)
                     .setTitle('Niestety, nie tym razem...')
                     .setDescription(`Straciłeś **${formatMoney(amount)}**!`);
@@ -94,7 +95,7 @@ export const slutCmd: Command = {
         } catch (error) {
             output.err(error);
 
-            const embed = new dsc.EmbedBuilder()
+            const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Red)
                 .setTitle('Błąd')
                 .setDescription('Coś się złego odwaliło z tą ekonomią...')

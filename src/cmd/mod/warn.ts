@@ -9,6 +9,7 @@ import {output as debug} from '@/bot/logging.js';
 import warn from '@/bot/apis/mod/warns.js';
 import parseTimestamp, { Timestamp } from '@/util/parseTimestamp.js';
 import clamp from '@/util/math/clamp.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const warnCmd: Command = {
     name: 'warn',
@@ -117,7 +118,7 @@ export const warnCmd: Command = {
             return api.log.replyError(api.msg, 'Błąd bazy danych', 'Nie udało się zapisać warna');
         }
 
-        const embed = new dsc.EmbedBuilder()
+        const embed = new ReplyEmbed()
             .setTitle(`📢 ${cfg.customization.modTexts.warnHeader.replace('<mention>', targetUser.user.username)}`)
             .setDescription(cfg.customization.modTexts.warnDescription.replace('<points>', `${points}`))
             .addFields(

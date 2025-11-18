@@ -6,6 +6,7 @@ import { Command, CommandFlags } from "@/bot/command.js";
 import {output as debug} from '@/bot/logging.js';
 import { getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 function getReputationDescription(user: dsc.GuildMember, reputation: Reputation): string {
     let firstSentence: string = '', secondSentence: string = '', thirdSentence: string = '';
@@ -83,7 +84,7 @@ export const reputationCmd: Command = {
 
         const userReputation = await getUserReputation(user.user.id);
         debug.log(userReputation);
-        const embed = new dsc.EmbedBuilder()
+        const embed = new ReplyEmbed()
             .setAuthor({ name: user.nickname ?? user.user.username, iconURL: user.displayAvatarURL({ size: 128 }) })
             .setTitle(`Reputacja użytkownika ${user.displayName}`)
             .setDescription(getReputationDescription(user, userReputation))

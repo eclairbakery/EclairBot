@@ -3,6 +3,7 @@ import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 import { PredefinedColors } from "@/util/color.js";
 import { APIEmbedField, EmbedBuilder } from "discord.js";
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const shopCmd: Command = {
     name: 'shop',
@@ -29,7 +30,7 @@ export const shopCmd: Command = {
         });
         api.reply({
             embeds: [
-                new EmbedBuilder()
+                new ReplyEmbed()
                     .setTitle('💳 Sklep')
                     .setDescription('Aktualnie to jeszcze nie możesz nic kupić, ale możesz popatrzeć co mamy...')
                     .addFields(fields)

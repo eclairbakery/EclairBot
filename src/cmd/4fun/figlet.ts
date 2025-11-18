@@ -7,6 +7,7 @@ import { Command, CommandFlags } from '@/bot/command.js';
 import figlet from 'figlet';
 import debugLog from '@/util/debugLog.js';
 import { text } from 'node:stream/consumers';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 function tokenize(input: string): string[] {
     let result: string[] = [];
@@ -180,7 +181,7 @@ export const figletCmd: Command = {
         const result = renderFigletWrappedString(words, font, 40);
 
         return api.reply({
-            embeds: [new dsc.EmbedBuilder().setTitle('Wynik').setDescription(`\`\`\`${result}\`\`\``)],
+            embeds: [new ReplyEmbed().setTitle('Wynik').setDescription(`\`\`\`${result}\`\`\``)],
         });
     },
 };

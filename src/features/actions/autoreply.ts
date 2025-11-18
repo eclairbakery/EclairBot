@@ -1,3 +1,4 @@
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 import { Action, PredefinedActionEventTypes, ActionCallback, ConstraintCallback, MagicSkipAllActions } from './index.js';
 import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx } from './index.js';
 import { PredefinedActionCallbacks, PredefinedActionConstraints } from './index.js';
@@ -15,7 +16,7 @@ export type AutoReplyGetMessageCallback = (msg: dsc.Message) => (string | dsc.Me
 
 export interface AutoReplyOptions {
     activationOptions: AutoReplyActivationOption[];
-    reply: (string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.EmbedBuilder) | AutoReplyGetMessageCallback;
+    reply: (string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.EmbedBuilder | ReplyEmbed) | AutoReplyGetMessageCallback;
     additionalConstraints?: ConstraintCallback<MessageEventCtx>[];
     additionalCallbacks?: ActionCallback<MessageEventCtx>[];
     shallEndActionsLoop?: boolean

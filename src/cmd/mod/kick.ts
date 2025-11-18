@@ -6,6 +6,7 @@ import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import kick from '@/bot/apis/mod/kicks.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const cmdCfg = cfg.commands.mod.kick;
 
@@ -60,7 +61,7 @@ export const kickCmd: Command = {
             try {
                 await targetUser.send({
                     embeds: [
-                        new dsc.EmbedBuilder()
+                        new ReplyEmbed()
                             .setTitle('📢 Zostałeś wywalony z serwera Piekarnia eklerki!')
                             .setDescription(`To straszne wiem. Powód kicka brzmi: ${reason}`)
                             .setColor(PredefinedColors.Orange)
@@ -72,7 +73,7 @@ export const kickCmd: Command = {
 
             await api.reply({
                 embeds: [
-                    new dsc.EmbedBuilder()
+                    new ReplyEmbed()
                         .setTitle(`📢 ${targetUser.user.username} został wywalony!`)
                         .setDescription(`Ukróciłem jego zagrania! Miejmy nadzieję, że nie wbije znowu...`)
                         .addFields(

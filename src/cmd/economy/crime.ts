@@ -7,6 +7,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { cfg } from '@/bot/cfg.js';
 import User from '@/bot/apis/db/user.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const WORK_AMOUNT_MIN = cfg.features.economy.commandSettings.crime.minimumCrimeAmount;
 const WORK_AMOUNT_MAX = cfg.features.economy.commandSettings.crime.maximumCrimeAmount;
@@ -60,7 +61,7 @@ export const crimeCmd: Command = {
 
     async execute(api) {
         if (((await api.executor.economy.getBalance()).wallet ?? 0) <= 100) {
-            const embed = new dsc.EmbedBuilder()
+            const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.DarkBlue)
                 .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.crimeNotAllowedHeader)
                 .setDescription(cfg.customization.economyTexts.workSlutOrCrime.crime.crimeNotAllowedText);
@@ -75,14 +76,14 @@ export const crimeCmd: Command = {
 
             if (!result.ok) {
                 const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);
-                const embed = new dsc.EmbedBuilder()
+                const embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Yellow)
                     .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.waitTextHeader)
                     .setDescription(cfg.customization.economyTexts.workSlutOrCrime.crime.waitTextDescription.replaceAll('<seconds>', String(waitSeconds)));
                 return api.reply({ embeds: [embed] });
             }
 
-            const embed = new dsc.EmbedBuilder()
+            const embed = new ReplyEmbed()
                 .setColor(win ? PredefinedColors.Blue : PredefinedColors.Red)
                 .setTitle(win ? cfg.customization.economyTexts.workSlutOrCrime.crime.winHeader : cfg.customization.economyTexts.workSlutOrCrime.crime.loseHeader)
                 .setDescription((win
@@ -94,7 +95,7 @@ export const crimeCmd: Command = {
 
         } catch (error) {
             output.err(error);
-            const embed = new dsc.EmbedBuilder()
+            const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Red)
                 .setTitle('Błąd')
                 .setDescription('Coś się złego odwaliło z tą ekonomią...')

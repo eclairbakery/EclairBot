@@ -7,6 +7,7 @@ import { EmbedBuilder, GuildTextBasedChannel, PermissionsBitField, Snowflake } f
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import sleep from "@/util/sleep.js";
+import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.js";
 
 export const basicMsgCreateActions: Action<MessageEventCtx> = {
     constraints: [() => true],
@@ -72,7 +73,7 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
 
                 const quotedMsg = await channel.messages.fetch(messageId);
 
-                const embed = new EmbedBuilder()
+                const embed = new ReplyEmbed()
                     .setAuthor({
                         name: quotedMsg.author.tag,
                         iconURL: quotedMsg.author.displayAvatarURL(),

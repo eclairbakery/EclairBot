@@ -4,6 +4,7 @@ import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { scheduleWarnDeletion } from '@/features/deleteExpiredWarns.js';
 import { sendLog } from '../log/send-log.js';
+import { ReplyEmbed } from '../translations/reply-embed.js';
 
 export default async function ban(
     member: dsc.GuildMember,
@@ -12,7 +13,7 @@ export default async function ban(
     try {
         await member.send({
             embeds: [
-                new dsc.EmbedBuilder()
+                new ReplyEmbed()
                     .setTitle('📢 Zostałeś zbanowany z serwera Piekarnia eklerki!')
                     .setDescription(`To straszne wiem. Powód bana brzmi: ${data.reason}`)
                     .setColor(PredefinedColors.Orange)

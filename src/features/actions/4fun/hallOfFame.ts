@@ -3,6 +3,7 @@ import { output } from "@/bot/logging.js";
 import sleep from "@/util/sleep.js";
 import * as dsc from 'discord.js';
 import { Action, PredefinedActionEventTypes, ReactionEventCtx } from "../index.js";
+import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.js";
 
 let alreadyInHallOfFame: dsc.Snowflake[] = [];
 
@@ -40,7 +41,7 @@ export const hallOfFameAction: Action<ReactionEventCtx> = {
                 if (!channel.isTextBased()) return;
                 if (alreadyInHallOfFame.includes(msg.id)) return;
                 alreadyInHallOfFame.push(msg.id);
-                const embed = new dsc.EmbedBuilder()
+                const embed = new ReplyEmbed()
                     .setAuthor({name: 'EclairBOT'})
                     .setColor(`#${Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, "0")}`)
                     .setTitle(`:gem: ${msg.author?.username} dostał się na Hall of Fame!`)

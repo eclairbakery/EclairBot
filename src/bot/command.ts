@@ -5,6 +5,7 @@ import { Timestamp } from '@/util/parseTimestamp.js';
 export { Category };
 import type * as log from '@/util/log.js';
 import type User from './apis/db/user.js';
+import type { ReplyEmbed } from './apis/translations/reply-embed.js';
 
 export enum CommandFlags {
     None = 0,

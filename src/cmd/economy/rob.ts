@@ -9,6 +9,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { cfg } from '@/bot/cfg.js';
 import User from '@/bot/apis/db/user.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const COOLDOWN_MS = 5 * 60 * 1000;
 const BASE_SUCCESS_CHANCE = 0.5;
@@ -134,7 +135,7 @@ export const robCmd: Command = {
             if (!result.ok) {
                 if (result.wait) {
                     const waitSeconds = Math.ceil(result.wait / 1000);
-                    const embed = new dsc.EmbedBuilder()
+                    const embed = new ReplyEmbed()
                         .setColor(PredefinedColors.Yellow)
                         .setTitle(cfg.customization.economyTexts.robbing.waitHeader)
                         .setDescription(cfg.customization.economyTexts.robbing.waitText.replaceAll('<seconds>', String(waitSeconds)));
@@ -142,7 +143,7 @@ export const robCmd: Command = {
                 }
 
                 if (result.reason === 'too_poor') {
-                    const embed = new dsc.EmbedBuilder()
+                    const embed = new ReplyEmbed()
                         .setColor(PredefinedColors.Yellow)
                         .setTitle('Cel jest zbyt biedny')
                         .setDescription(`<@${target.id}> ma za mało pieniędzy (mniej niż ${MIN_STEALABLE} dolarów).`);
@@ -152,7 +153,7 @@ export const robCmd: Command = {
                 return api.log.replyError(msg, 'Coś poszło nie tak...', 'Spróbuj ponownie później.');
             }
 
-            const embed = new dsc.EmbedBuilder()
+            const embed = new ReplyEmbed()
                 .setColor(result.success ? PredefinedColors.Green : PredefinedColors.Red)
                 .setTitle(result.success ? 'TAAAAAAAAAAAAAAAAK!' : 'System ochrony w banku się włączył.')
                 .setDescription(result.success

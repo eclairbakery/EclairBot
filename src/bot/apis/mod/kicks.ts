@@ -4,6 +4,7 @@ import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { scheduleWarnDeletion } from '@/features/deleteExpiredWarns.js';
 import { sendLog } from '../log/send-log.js';
+import { ReplyEmbed } from '../translations/reply-embed.js';
 
 export default async function kick(
     member: dsc.GuildMember,
@@ -12,7 +13,7 @@ export default async function kick(
     try {
         await member.send({
             embeds: [
-                new dsc.EmbedBuilder()
+                new ReplyEmbed()
                     .setTitle('📢 Zostałeś wywalony z serwera Piekarnia eklerki!')
                     .setDescription(`To straszne wiem. Powód kicka brzmi: ${data.reason}`)
                     .setColor(PredefinedColors.Orange)

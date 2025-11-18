@@ -5,6 +5,7 @@ import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const warnlistCmd: Command = {
     name: 'warnlist',
@@ -78,7 +79,7 @@ export const warnlistCmd: Command = {
                 });
             }
 
-            const embed = new dsc.EmbedBuilder()
+            const embed = new ReplyEmbed()
                 .setTitle(`:loudspeaker: Warny ${targetUser ? `dla ${targetUser.user.username}` : 'na serwerze'}`)
                 .setFields(fields)
                 .setColor(PredefinedColors.Blurple)

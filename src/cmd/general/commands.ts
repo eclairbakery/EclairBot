@@ -7,6 +7,7 @@ import canExecuteCmd from '@/util/cmd/canExecuteCmd.js';
 
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const commandsCmd: Command = {
     name: 'commands',
@@ -56,7 +57,7 @@ export const commandsCmd: Command = {
             }
         }
 
-        const embed = new dsc.EmbedBuilder()
+        const embed = new ReplyEmbed()
             .setTitle('📢 Moje komendy, władzco!')
             .setDescription('O to lista komend podzielona na kategorie! A, no i o czywiście by nie śmiecić to sie nie wyświetlają komendy do których nie masz uprawnień.')
             .setColor(PredefinedColors.Cyan);

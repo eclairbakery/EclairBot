@@ -1,3 +1,4 @@
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 import { cfg } from '@/bot/cfg.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
@@ -84,7 +85,7 @@ export const fandomCmd: Command = {
         if (fandom) {
             return msg.reply({
                 embeds: [
-                    new dsc.EmbedBuilder()
+                    new ReplyEmbed()
                         .setAuthor({ name: 'EclairBOT' })
                         .setTitle(fandom.title)
                         .setDescription(fandom.extract)
@@ -97,7 +98,7 @@ export const fandomCmd: Command = {
 
         return msg.reply({
             embeds: [
-                new dsc.EmbedBuilder()
+                new ReplyEmbed()
                     .setAuthor({ name: 'EclairBOT' })
                     .setTitle(cfg.customization.uncategorized.fandomArticleNotFoundHeader)
                     .setDescription(cfg.customization.uncategorized.fandomArticleNotFoundText)

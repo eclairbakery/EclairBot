@@ -5,6 +5,7 @@ import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { formatMoney } from '@/util/math/format.js';
 import { output } from '@/bot/logging.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const balCmd: Command = {
     name: 'bal',
@@ -40,7 +41,7 @@ export const balCmd: Command = {
 
             await api.reply({
                 embeds: [
-                    new dsc.EmbedBuilder()
+                    new ReplyEmbed()
                         .setTitle('📊 Twoje pieniądze')
                         .setDescription([
                             `Konto jest ${!isIndebted ? 'warte' : 'zadłużone o'} ${formatMoney(Math.abs(balance.wallet + balance.bank))}.`,

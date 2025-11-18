@@ -23,6 +23,7 @@ import { PredefinedColors } from '@/util/color.js';
 import User from '@/bot/apis/db/user.js';
 import { handleError } from './helpers/errorHandler.js';
 import { makeCommandApi } from './helpers/makeCommandApi.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 function waitForButton(interaction: dsc.Message, buttonId: string, time = 15000) {
     return new Promise((resolve, reject) => {
@@ -92,7 +93,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 
     if (commandObj.flags & CommandFlags.Unsafe) {
         const reply = await msg.reply({ embeds: [
-            new dsc.EmbedBuilder()
+            new ReplyEmbed()
                 .setColor(PredefinedColors.Red)
                 .setTitle('Potwierdź, że chcesz uruchomić tą komendę!')
                 .setDescription('Została ona oznaczona jako potencjalnie niebezpieczna i może wywołać nieodwracalne skutki. Upewnij się, iż na pewno jest ona dobrze użyta i nie ma żadnych błędów w argumentach.')

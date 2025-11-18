@@ -5,6 +5,7 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { sendLog } from '@/bot/apis/log/send-log.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const cmdCfg = cfg.commands.mod.mute;
 
@@ -83,7 +84,7 @@ export const unmuteCmd: Command = {
             
             return api.reply({
                 embeds: [
-                    new dsc.EmbedBuilder()
+                    new ReplyEmbed()
                         .setTitle(`📢 ${targetUser.user.username} został odmutowany!`)
                         .setDescription('Tylko nie spam chatu i przestrzegaj regulaminu... I guess...')
                         .setColor(PredefinedColors.Purple),

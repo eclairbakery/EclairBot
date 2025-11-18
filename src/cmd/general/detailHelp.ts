@@ -8,6 +8,7 @@ import canExecuteCmd from '@/util/cmd/canExecuteCmd.js';
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 function buildSelectMenu(commands: Map<Category, Command[]>): dsc.StringSelectMenuBuilder {
     return new dsc.StringSelectMenuBuilder()
@@ -23,8 +24,8 @@ function buildSelectMenu(commands: Map<Category, Command[]>): dsc.StringSelectMe
         );
 }
 
-function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: string[] = []): dsc.EmbedBuilder {
-    const embed = new dsc.EmbedBuilder()
+function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: string[] = []): ReplyEmbed {
+    const embed = new ReplyEmbed()
         .setTitle(`${category.emoji} ${category.name}`)
         .setDescription(category.longDesc)
         .setColor(category.color);
@@ -79,7 +80,7 @@ export const detailHelpCmd: Command = {
             const selectMenu = buildSelectMenu(commands);
             const row = new dsc.ActionRowBuilder<dsc.StringSelectMenuBuilder>().addComponents(selectMenu);
 
-            const introEmbed = new dsc.EmbedBuilder()
+            const introEmbed = new ReplyEmbed()
                 .setTitle('📢 Moje komendy, władzco!')
                 .setDescription('Wybierz kategorię z menu poniżej, aby zobaczyć jej komendy!')
                 .setColor(PredefinedColors.Cyan);
@@ -147,7 +148,7 @@ export const detailHelpCmd: Command = {
             }
         }
 
-        const introEmbed = new dsc.EmbedBuilder()
+        const introEmbed = new ReplyEmbed()
             .setTitle('📢 Moje komendy, władzco!')
             .setDescription('O to lista komend podzielona na kategorie!')
             .setColor(PredefinedColors.Cyan);

@@ -6,6 +6,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { output } from '@/bot/logging.js';
 import User from '@/bot/apis/db/user.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const COOLDOWN_MS = 10 * 1000;
 const WORK_AMOUNT_MIN = 50;
@@ -64,7 +65,7 @@ export const workCmd: Command = {
             if (!result.ok) {
                 const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);
 
-                const embed = new dsc.EmbedBuilder()
+                const embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Yellow)
                     .setTitle('Chwila przerwy!')
                     .setDescription(`Ktoś tam Ci każe czekać **${waitSeconds}** sekund zanim znowu popr*cujesz, żebyś nie naspamił komendami w chuja hajsu...`);
@@ -72,7 +73,7 @@ export const workCmd: Command = {
                 return api.reply({ embeds: [embed] });
             }
 
-            const embed = new dsc.EmbedBuilder()
+            const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Blue)
                 .setTitle('Yay!')
                 .setDescription(`Zarobiłeś **${amount}** dolarów!`);
@@ -81,7 +82,7 @@ export const workCmd: Command = {
         } catch (error) {
             output.err(error);
 
-            const embed = new dsc.EmbedBuilder()
+            const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Red)
                 .setTitle('Błąd')
                 .setDescription('Coś się złego odwaliło z tą ekonomią...')
