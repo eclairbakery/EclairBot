@@ -42,7 +42,7 @@ export const warnGivenLogAction: Action<WarnEventCtx> = {
 
             for (const action of triggeredActions) {
                 if (action.type === "mute") {
-                    await mute(member, { duration: action.duration ?? (24 * Hour), reason: action.reason });
+                    await mute(member, { duration: action.duration ?? (24 * Hour * 1000), reason: action.reason });
                 } else if (action.type === "kick") {
                     await kick(member, {reason: action.reason, mod: client.user!.id});
                 } else if (action.type === "ban") {

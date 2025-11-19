@@ -71,7 +71,7 @@ export const muteCmd: Command = {
 
         try {
             if (api.msg.member) watchMute(api.msg.member?.plainMember);
-            await mute(targetUser, { reason, duration });
+            await mute(targetUser, { reason, duration: (duration ?? 1) * 1000 });
 
             sendLog({
                 color: PredefinedColors.Purple,
