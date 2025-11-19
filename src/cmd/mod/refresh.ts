@@ -7,10 +7,10 @@ export const refreshCmd: Command = {
     name: 'refresh',
     aliases: [],
     description: {
-        main: 'Jeśli uważasz że template channels się nie przeładowały i pokazują błędne dane to... mylisz się! eclair bot jest idealny. A tak serio to tą komendą możesz wymusić reload',
-        short: 'Wymusza przeładowanie wszystkich template channels',
+        main: 'Jeśli uważasz że coś się schrzaniło albo jesteś po restorze z wcześniejszej bazy danych, możesz to odpalić.',
+        short: 'Wymusza przeładowanie wszystkiego.',
     },
-    flags: CommandFlags.Important,
+    flags: CommandFlags.Important | CommandFlags.Unsafe,
 
     expectedArgs: [
         {
