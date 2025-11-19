@@ -8,6 +8,7 @@ import { client } from "@/client.js";
 import { OnWarnGiven, WarnEventCtx } from "@/events/actions/warnEvents.js";
 import { Action } from "@/features/actions/index.js";
 import { PredefinedColors } from "@/util/color.js";
+import { Hour } from "@/util/parseTimestamp.js";
 import * as dsc from 'discord.js';
 
 export const warnGivenLogAction: Action<WarnEventCtx> = {
@@ -41,7 +42,7 @@ export const warnGivenLogAction: Action<WarnEventCtx> = {
 
             for (const action of triggeredActions) {
                 if (action.type === "mute") {
-                    await mute(member, { duration: action.duration, reason: action.reason });
+                    await mute(member, { duration: action.duration ?? 24 * Hour, reason: action.reason });
                 } else if (action.type === "kick") {
                     await kick(member, {reason: action.reason, mod: client.user!.id});
                 } else if (action.type === "ban") {
