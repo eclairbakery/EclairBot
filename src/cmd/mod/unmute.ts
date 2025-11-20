@@ -19,7 +19,7 @@ export const unmuteCmd: Command = {
     flags: CommandFlags.Important,
 
     expectedArgs: [
-        { name: 'user-mention-or-reference-msg-author', type: 'string', description: 'Komu unmute chcesz dać?', optional: false },
+        { name: 'user', type: 'user-mention-or-reference-msg-author', description: 'Komu unmute chcesz dać?', optional: false },
         {
             name: 'reason',
             type: 'string',
