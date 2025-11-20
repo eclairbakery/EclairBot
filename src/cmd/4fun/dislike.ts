@@ -3,8 +3,9 @@ import * as log from '@/util/log.js';
 
 import { Command, CommandFlags } from "@/bot/command.js";
 
-import { addRep, getLastRepGivenByUser, getUserReputationProportion, } from '@/bot/apis/rep/rep.js';
+import { getLastRepGivenByUser, getUserReputationProportion, } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar } from '@/util/progressbar.js';
+import User from '@/bot/apis/db/user.js';
 
 export const subRepCmd: Command = {
     name: 'dislike',
@@ -37,7 +38,7 @@ export const subRepCmd: Command = {
 
     async execute(api) {
         const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
-        const comment = api.getTypedArg('comment', 'trailing-string').value as string | null;
+        const comment = api.getTypedArg('comment', 'trailing-string')?.value;
 
         if (api.msg.author.id == targetUser.id) {
             return api.log.replyWarn(api.msg, 'Halo!', 'Nie mozesz modyfikować swoich punktów reputacji!');
@@ -59,7 +60,7 @@ export const subRepCmd: Command = {
         }
 
         const oldRepProportion = await getUserReputationProportion(targetUser.id);
-        await addRep(api.msg.author.id, targetUser.id, comment, '-rep');
+        await new User(api.msg.author.id).reputation.give(targetUser.id, '-rep', comment);
         const newRepProportion = await getUserReputationProportion(targetUser.id);
 
         const embed = log.getSuccessEmbed(

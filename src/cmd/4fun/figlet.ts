@@ -159,7 +159,7 @@ export const figletCmd: Command = {
 
     async execute(api) {
         const font = /*api.getArg('font').value as string ??*/ 'Standard';
-        const textArg = api.getArg('text').value as string;
+        const textArg = api.getTypedArg('text', 'trailing-string').value as string;
 
         const text
             = textArg == 'hubix'

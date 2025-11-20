@@ -3,6 +3,7 @@ import { SendableChannel } from '../defs.js';
 
 import * as dsc from 'discord.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { t } from '@/bot/apis/translations/translate.js';
 
 export interface Replyable {
     reply:
@@ -35,23 +36,23 @@ function getEmbed(type: LogType, title: string, desc: string) {
 }
 
 export function getErrorEmbed(title: string, desc: string) {
-    return getEmbed(LogType.Error, title, desc);
+    return getEmbed(LogType.Error, t(title), t(desc));
 }
 
 export function getWarnEmbed(title: string, desc: string) {
-    return getEmbed(LogType.Warn, title, desc);
+    return getEmbed(LogType.Warn, t(title), t(desc));
 }
 
 export function getInfoEmbed(title: string, desc: string) {
-    return getEmbed(LogType.Info, title, desc);
+    return getEmbed(LogType.Info, t(title), t(desc));
 }
 
 export function getSuccessEmbed(title: string, desc: string) {
-    return getEmbed(LogType.Success, title, desc);
+    return getEmbed(LogType.Success, t(title), t(desc));
 }
 
 export function getTipEmbed(title: string, desc: string) {
-    return getEmbed(LogType.Tip, title, desc);
+    return getEmbed(LogType.Tip, t(title), t(desc));
 }
 
 

@@ -118,8 +118,6 @@ export interface CommandMessageAPI {
 export interface CommandAPI {
     // ---- ARGS ----
     args: CommandValuableArgument[];
-    /** @deprecated */
-    getArg: (name: string) => CommandValuableArgument;
     getTypedArg<T extends CommandArgType>(name: string, type: T): Extract<CommandValuableArgument, { type: T }>;
 
     // ---- MSGS ----

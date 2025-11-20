@@ -14,10 +14,10 @@ import {
 } from "@/bot/command.js";
 import * as dsc from 'discord.js';
 import parseTimestamp from "@/util/parseTimestamp.js";
-import { getBalance } from '@/bot/apis/economy/apis.js';
 import { output } from '@/bot/logging.js';
 import { ArgMustBeSomeTypeError, MissingRequiredArgError } from "../defs/errors.js";
 import { parseMentionsFromStrings } from "./mentions.js";
+import User from "@/bot/apis/db/user.js";
 
 export async function parseArgs(
     rawArgs: string[],
@@ -63,8 +63,8 @@ loop:
         case 'number': {
             if ((raw?.normalize('NFKC').trim().toLowerCase() ?? '') === 'all' && (context?.cmd?.flags ?? CommandFlags.None) == CommandFlags.Economy) {
                 let x = context?.interaction?.user.id ?? context?.msg?.author.id ?? "someone";
-                const balance = await getBalance(x);
-                parsedArgs.push({ ...decl, value: balance.money } as CommandArgumentWithNumberValue);
+                const balance = await new User(x).economy.getBalance();
+                parsedArgs.push({ ...decl, value: balance.wallet } as CommandArgumentWithNumberValue);
                 break;
             }
             const rawIsNumber = /^-?\d+(\.\d+)?$/.test(raw ?? '');

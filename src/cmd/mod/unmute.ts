@@ -19,7 +19,7 @@ export const unmuteCmd: Command = {
     flags: CommandFlags.Important,
 
     expectedArgs: [
-        { name: 'user', type: 'string', description: 'Komu unmute chcesz dać?', optional: false },
+        { name: 'user-mention-or-reference-msg-author', type: 'string', description: 'Komu unmute chcesz dać?', optional: false },
         {
             name: 'reason',
             type: 'string',
@@ -36,25 +36,8 @@ export const unmuteCmd: Command = {
     },
 
     async execute(api) {
-        let targetUser: dsc.GuildMember | null = null;
-        let reason = '';
-
-        const userArg = api.getArg('user')?.value;
-        const reasonArg = api.args.find((a) => a.name === 'reason')?.value as string | undefined;
-
-        if (api.referenceMessage) {
-            targetUser = api.referenceMessage.member!.plainMember;
-            reason = reasonArg ?? '';
-        } else if (userArg) {
-            const mention = (userArg as string).match(/^<@!?(\d+)>$/);
-            const userId = mention ? mention[1] : /^\d+$/.test(userArg as string) ? (userArg as string) : null;
-
-            if (userId) {
-                targetUser = await api.msg.guild?.members.fetch(userId).catch(() => null) ?? null;
-            }
-
-            reason = reasonArg ?? '';
-        }
+        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')!.value!;
+        let reason = api.args.find((a) => a.name === 'reason')?.value as string | undefined;
 
         if (!targetUser) {
             return api.log.replyError(api.msg, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);

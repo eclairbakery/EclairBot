@@ -194,6 +194,14 @@ export default class User {
             );
             return rawReps.map(repFromRaw);
         },
+
+        getAll: async (): Promise<Rep[]> => {
+            const rawReps = await db.selectMany<RepRaw>(
+                `SELECT * FROM reputation`,
+                [this.id]
+            );
+            return rawReps.map(repFromRaw);
+        }
     };
 
     /** -------- WARNS -------- */

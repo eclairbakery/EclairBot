@@ -24,7 +24,6 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
     return {
         // -- args --
         args: parsedArgs,
-        getArg: (name) => parsedArgs.find(a => a.name === name)!,
         getTypedArg: (name, type) => parsedArgs.find(a => a.name === name && a.type === type)! as any,
 
         // -- command message api --

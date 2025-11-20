@@ -67,7 +67,7 @@ export const notifyCmd: Command = {
 
     async execute(api: CommandAPI) {
         const msg = api.msg;
-        const typeArg = api.getArg('type')?.value as string;
+        const typeArg = api.getTypedArg('type', 'string')?.value as string;
 
         if (!typeArg) return msg.reply('Musisz podać typ pingu!');
 

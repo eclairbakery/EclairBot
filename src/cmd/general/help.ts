@@ -120,7 +120,7 @@ export const quickHelpCmd: Command = {
             });
         };
 
-        const argCategory = api.getArg('category') as any;
+        const argCategory = api.getTypedArg('category', 'string') as any;
 
         if (!argCategory || !argCategory.value) {
             await sendInteractiveMenu();

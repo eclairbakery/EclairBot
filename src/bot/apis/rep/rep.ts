@@ -1,46 +1,15 @@
 import * as dsc from 'discord.js';
 
-import { db } from '../db/bot-db.js';
+import { db, repFromRaw } from '../db/bot-db.js';
 
 import User from '@/bot/apis/db/user.js';
-import type { Rep } from '@/bot/apis/db/db-defs.js';
+import type { Rep, RepRaw } from '@/bot/apis/db/db-defs.js';
 export type { Rep };
 
 export interface RepProportion {
     plus: number;
     sub: number;
 };
-
-/** @deprecated */
-export async function addRep(authorId: string, targetUserId: string, comment: string | null, type: '+rep' | '-rep') {
-    return new User(authorId).reputation.give(targetUserId, type, comment ?? undefined);
-}
-
-/** @deprecated */
-export async function getRepsGivenByUser(authorId: string): Promise<Rep[]> {
-    return new User(authorId).reputation.getGiven();
-}
-
-/** @deprecated */
-export async function getLastRepGivenByUser(authorId: string): Promise<Rep | null> {
-    const row = await db.selectOne<Rep>(`
-        SELECT * FROM reputation WHERE author_id = ?
-        ORDER BY created_at DESC
-        LIMIT 1
-    `, [authorId]);
-    return row ?? null;
-}
-
-/** @deprecated */
-export async function getUserReps(userId: dsc.Snowflake): Promise<Rep[]> {
-    return new User(userId).reputation.getReceived();
-}
-
-/** @deprecated */
-/** @fixme this function is unsafe 'cause the internal database reputation table does not match the Rep declaration. */
-export async function getAllRepsList(): Promise<Rep[]> {
-    return db.selectMany<Rep>(`SELECT * FROM reputation`);
-}
 
 function buildRepsMap(reps: Rep[]): Map<dsc.Snowflake, Rep[]> {
     const map: Map<dsc.Snowflake, Rep[]> = new Map();
@@ -197,7 +166,7 @@ export function computeReputationScales(repScores: Map<dsc.Snowflake, number>): 
 export async function getUserReputation(userId: dsc.Snowflake): Promise<Reputation> {
     await deleteExpiredReps();
 
-    const reps = await getAllRepsList();
+    const reps = await new User(userId).reputation.getAll();
 
     const repScores = computeReputationScores(reps);
     if (!repScores.has(userId)) {
@@ -209,4 +178,13 @@ export async function getUserReputation(userId: dsc.Snowflake): Promise<Reputati
     const repProportion = await getUserReputationProportion(userId);
 
     return { repScore, repScale, repProportion };
+}
+
+export async function getLastRepGivenByUser(authorId: string): Promise<Rep | null> {
+    const row = await db.selectOne<RepRaw>(`
+        SELECT * FROM reputation WHERE author_id = ?
+        ORDER BY created_at DESC
+        LIMIT 1
+    `, [authorId]);
+    return row ? repFromRaw(row) : null;
 }

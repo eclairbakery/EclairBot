@@ -4,10 +4,10 @@ import util from 'node:util';
 
 import { Command, CommandFlags } from "@/bot/command.js";
 
-import { getUserReps, getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
 import { PredefinedColors } from '@/util/color.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import User from '@/bot/apis/db/user.js';
 
 const DefaultLimit = 10;
 
@@ -44,7 +44,7 @@ export const replistCmd: Command = {
         const user = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
         const limit = api.getTypedArg('limit', 'number').value as number | null ?? DefaultLimit;
 
-        const userReps = await getUserReps(user.id);
+        const userReps = await new User(user.id).reputation.getReceived();
 
         let fields: dsc.APIEmbedField[] = [];
         let i = 1;

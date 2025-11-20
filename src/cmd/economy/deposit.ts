@@ -1,5 +1,4 @@
 import User from "@/bot/apis/db/user.js";
-import { getBalance, updateBalance } from "@/bot/apis/economy/apis.js";
 import { formatMoney } from '@/util/math/format.js';
 import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags, CommandAPI } from "@/bot/command.js";
