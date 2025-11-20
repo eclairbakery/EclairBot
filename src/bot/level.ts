@@ -59,7 +59,7 @@ export async function addLvlRole(guild: dsc.Guild, newLevel: number, user: dsc.S
         if (member) {
             for (const roleId of lvlRoles) {
                 try {
-                    if (member.roles.cache.has(roleId)) {
+                    if (member.roles.cache.has(roleId) && roleId !== milestoneRoleId) {
                         await member.roles.remove(roleId);
                     }
                 } catch (err) {
@@ -67,7 +67,7 @@ export async function addLvlRole(guild: dsc.Guild, newLevel: number, user: dsc.S
                 }
             }
             try {
-                await member.roles.add(milestoneRoleId);
+                if (!member.roles.cache.has(milestoneRoleId)) await member.roles.add(milestoneRoleId);
             } catch (err: any) {
                 output.warn(err);
             }
