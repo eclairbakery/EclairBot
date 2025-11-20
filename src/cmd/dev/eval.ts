@@ -13,6 +13,8 @@ setTimeout(() => {
     canEval = true;
 }, 61 * 1000);
 
+type AsynchronicFunction = () => PromiseLike<any>;
+
 export const evalCmd: Command = {
     name: 'eval',
     description: {
@@ -32,6 +34,8 @@ export const evalCmd: Command = {
     },
 
     async execute(api) {
+        const AsyncFunction = Object.getPrototypeOf(async function() {}).constructor satisfies AsynchronicFunction;
+
         const code = api.getTypedArg('code', 'trailing-string')?.value as string;
         if (code.includes('process.exit')) {
             return api.reply(cfg.customization.evalWarnings.unsafeEval);
@@ -53,7 +57,7 @@ export const evalCmd: Command = {
             await api.log.replyTip(api.msg, 'Ten kod może nie zadziałać!', warn);
         }
         try {
-            const result = await (new Function("api", "db", "client", "debug", canEval ? code : 'return false;'))(api, db, client, output);
+            const result = await (new AsyncFunction("api", "db", "client", "debug", "cfg", canEval ? code : 'return false;'))(api, db, client, output, cfg);
             return api.reply(`wynik twojej super komendy:\n\`\`\`${String(result).replace('`', '\`')}\`\`\``);
         } catch (err) {
             return api.reply(`❌ niepowodzenie:\n\`\`\`${err}\`\`\``);
