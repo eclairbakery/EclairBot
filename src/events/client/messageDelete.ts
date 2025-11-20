@@ -6,7 +6,7 @@ import * as dsc from 'discord.js';
 export function registerMsgDeleteDscEvents(client: dsc.Client) {
     client.on('messageDelete', async (msg) => {
         sendLog({
-            title: 'Nowy kanał na piekarnii!',
+            title: 'W internecie nic nie ginie!',
             description: `Wiadomość https://discord.com/channels/${msg.guildId??'unknown'}/${msg.channelId??'unknown'}/${msg.id??'unknown'}, użytkownika <@${msg.author?.id}> została właśnie usunięta!`,
             color: PredefinedColors.Red,
             fields: [

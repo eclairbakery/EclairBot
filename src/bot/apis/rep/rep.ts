@@ -103,7 +103,7 @@ function scaleTwoNumbers(a: number, b: number, newMax: number, threshold: number
 async function deleteExpiredReps() {
     return db.runSql(`
       DELETE FROM reputation
-      WHERE createdAt <= datetime('now', '-7 days');
+      WHERE created_at <= datetime('now', '-7 days');
     `);
 }
 
