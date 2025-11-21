@@ -60,7 +60,7 @@ export const plusRepCmd: Command = {
         }
 
         const oldRepProportion = await getUserReputationProportion(targetUser.id);
-        await new User(api.msg.author.id).reputation.give(targetUser.id, '+rep', comment);
+        await api.executor.reputation.give(targetUser.id, '+rep', comment);
         const newRepProportion = await getUserReputationProportion(targetUser.id);
 
         const embed = log.getSuccessEmbed(

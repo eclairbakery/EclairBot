@@ -80,7 +80,7 @@ export const moneyCmd: Command = {
         try {
             await db.runSql('BEGIN TRANSACTION');
 
-            const user = new User(api.msg.author.id);
+            const user = api.executor;
 
             const row = await user.economy.getBalance();
             const currentMoney = row && typeof row.wallet === 'number' ? Number(row.wallet) : 0;

@@ -1,4 +1,4 @@
-import { Command, CommandAPI } from "@/bot/command.js";
+import { Command, CommandAPI, CommandMessageAPI } from "@/bot/command.js";
 import { parseArgs } from "./argumentParser.js";
 import * as dsc from 'discord.js';
 import mute from "@/bot/apis/mod/muting.js";
@@ -9,9 +9,38 @@ import { commands } from "@/cmd/list.js";
 import * as log from '@/util/log.js';
 import User from "@/bot/apis/db/user.js";
 import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.js";
+import { t } from "@/bot/apis/translations/translate.js";
+import { deepMerge } from "@/util/objects/objects.js";
 
-function makeOptions(options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions): any {
-    return options;
+type FirstArg<T> =
+    T extends { (...args: infer A): any } ?
+        A extends [infer F, ...any[]] ? F : never :
+    T extends { call(this: any, ...args: infer A): any } ?
+        A extends [any, infer F, ...any[]] ? F : never :
+    T extends { apply(this: any, args: infer A): any } ?
+        A extends [infer Arr] ?
+            Arr extends [infer F, ...any[]] ? F : never
+        : never :
+    T extends abstract new (...args: infer A) => any ?
+        A extends [infer F, ...any[]] ? F : never :
+    never;
+
+type ContentReply<T> = T & {content: string;};
+
+function makeOptions(options: FirstArg<CommandMessageAPI['reply']>): any {
+    switch (typeof options) {
+        case "string":
+            return t(options);
+        
+        case "object":
+            let opts = options as ContentReply<typeof options>;
+            if (opts.content) return deepMerge(opts, {
+                content: t(opts.content)
+            });
+    
+        default:
+            return options;
+    }
 }
 
 export async function makeCommandApi(commandObj: Command, argsRaw: string[], context: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction; cmd?: Command }): Promise<CommandAPI> {

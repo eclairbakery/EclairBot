@@ -64,7 +64,7 @@ export const toplvlCmd: Command = {
                 }
             }
 
-            const serverXP = await (new User(api.msg.author.id)).leveling.getTotalServerXP();
+            const serverXP = await api.executor.leveling.getTotalServerXP();
 
             await msg.reply({
                 embeds: [

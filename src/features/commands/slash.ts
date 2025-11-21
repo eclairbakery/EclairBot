@@ -15,7 +15,7 @@ import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import User from '@/bot/apis/db/user.js';
 import { handleError } from './helpers/errorHandler.js';
 import { makeCommandApi } from './helpers/makeCommandApi.js';
-import { makeSlashCommandDesc, makeSlashCommandOptionDesc } from './helpers/makeSlashCommandOptionDesc.js';
+import { makeSlashCommandDesc, makeSlashCommandOptionDesc } from './helpers/makeSlashCommandDescs.js';
 
 client.on('interactionCreate', async (int: Interaction) => {
     if (!int.isChatInputCommand()) return;

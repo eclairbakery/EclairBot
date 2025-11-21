@@ -3,23 +3,50 @@ import { cfg } from "@/bot/cfg.js";
 export type TranslateableObject = {[key: string | number | symbol] : any} | any[];
 export type Translateable = TranslateableObject | string | number;
 
-function translatePatternToRegex(input: string): RegExp {
-    const escaped = input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = escaped.replace("\\[\\*\\]", ".*");
-    return new RegExp(`^${regex}$`, "i");
+function translatePatternToRegex(input: string): { regex: RegExp, groups: number } {
+    let escaped = input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    let groups = 0;
+    escaped = escaped.replace(/\\\[\\\*\\\*\\\]/g, () => {
+        groups++;
+        return "(.*)";
+    });
+    escaped = escaped.replace(/\\\[\\\*\\\]/g, ".*");
+
+    const regex = new RegExp(`^${escaped}$`, "i");
+
+    return { regex, groups };
 }
 
 function translateString(what: string) {
     const translation = cfg.features.translations.find((val) => {
-        if (typeof val.input === "string") {
-            const regex = translatePatternToRegex(val.input);
+        const inputs = typeof val.input === "string" ? [val.input] : val.input;
+
+        return inputs.some((pattern: string) => {
+            const { regex } = translatePatternToRegex(pattern);
             return regex.test(what);
-        } else {
-            return val.input.some((str: string) => translatePatternToRegex(str).test(what));
-        }
+        });
     });
 
     if (!translation) return what;
+
+    const inputs = typeof translation.input === "string" ? [translation.input] : translation.input;
+
+    for (const pattern of inputs) {
+        const { regex, groups } = translatePatternToRegex(pattern);
+        const match = what.match(regex);
+
+        if (match) {
+            let output = translation.output;
+
+            for (let i = 1; i <= groups; i++) {
+                output = output.replace(new RegExp(`\\$${i}`, "g"), match[i] ?? "");
+            }
+
+            return output;
+        }
+    }
+
     return translation.output;
 }
 
