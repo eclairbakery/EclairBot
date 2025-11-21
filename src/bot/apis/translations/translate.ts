@@ -3,8 +3,22 @@ import { cfg } from "@/bot/cfg.js";
 export type TranslateableObject = {[key: string | number | symbol] : any} | any[];
 export type Translateable = TranslateableObject | string | number;
 
+function translatePatternToRegex(input: string): RegExp {
+    const escaped = input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = escaped.replace("\\[\\*\\]", ".*");
+    return new RegExp(`^${regex}$`, "i");
+}
+
 function translateString(what: string) {
-    const translation = cfg.features.translations.find((val) => (typeof val.input === 'string') ? (val.input == what) : (val.input.includes(what)));
+    const translation = cfg.features.translations.find((val) => {
+        if (typeof val.input === "string") {
+            const regex = translatePatternToRegex(val.input);
+            return regex.test(what);
+        } else {
+            return val.input.some((str: string) => translatePatternToRegex(str).test(what));
+        }
+    });
+
     if (!translation) return what;
     return translation.output;
 }
