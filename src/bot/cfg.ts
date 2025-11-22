@@ -324,6 +324,32 @@ export interface Config {
             fandomDefaultQueryText: string;
             fandomArticleNotFoundHeader: string;
             fandomArticleNotFoundText: string;
+        },
+        watchdogTexts: {
+            fatalHeader: string;
+            suspiciousHeader: string;
+            descStart: string;
+            descEnd: {
+                reputation: string;
+                pingSorry: string;
+                floodSorry: string;
+            },
+            newBotsAddition: {
+                gayBotSentence: string;
+                firstSentence: string;
+                secondSentence: string;
+                remReason: string;
+            },
+            susThings: {
+                freshAccount: string;
+                youngAccount: string;
+                noAvatar: string;
+                susName: string;
+                gayBot: string;
+                raid: string;
+                similarUsername: string;
+                defaultIssue: string;
+            }
         }
     };
 
@@ -723,6 +749,32 @@ const defaultCfg: Config = {
             robbing: {
                 waitHeader: 'Chwila przerwy!',
                 waitText: `Musisz poczekać **<seconds> sekund** zanim spróbujesz znowu okraść kogoś.`
+            }
+        },
+        watchdogTexts: {
+            fatalHeader: 'Podejmij działania na temat użytkownika <user>!',
+            suspiciousHeader: `<user> może być podejrzany.`,
+            descStart: `Nastąpiły te problemy z tym użytkownikiem:\n\n`,
+            descEnd: {
+                reputation: '\n\nWyliczyłem i ma <score> punktów reputacji.',
+                floodSorry: 'A! Co prawda nie spingowałem, ale sorki za mały flood.',
+                pingSorry: `A i sorry za ping...`
+            },
+            newBotsAddition: {
+                firstSentence: 'dodawanie botów jest wyłączone w konfiguracji',
+                secondSentence: 'aby dodać innego bota, włącz cfg.masterSecurity.allowNewBots',
+                gayBotSentence: 'a i btw to jest zacznijTO więc i tak bym go wywalił bo jest gejem',
+                remReason: 'zasada cfg.masterSecurity.allowNewBots nie pozwala na dodawanie nowych botów'
+            },
+            susThings: {
+                defaultIssue: 'Ma trust score mniejszy od domyślnego.',
+                similarUsername: `Nick podobny do innego niedawnego użytkownika: <user>`,
+                raid: `Wykryto masowe dołączenia nowych członków - <count> w bliskim do siebie czasie.`,
+                gayBot: 'Nikt go tu nie chce, wywalać StartIT w tej chwili!',
+                susName: 'Ma jakiś nick z adresem url, losowymi znakami unicode, invite do serwera, reklamą na Discord Nitro i/lub ruską domeną.',
+                noAvatar: 'Konto nie ma avatara (ciekawe).',
+                freshAccount: 'Konto jest naprawdę świeże (młodsze niż tydzień).',
+                youngAccount: 'Konto jest dziwnie młode (młodsze niż miesiąc).'
             }
         },
         uncategorized: {

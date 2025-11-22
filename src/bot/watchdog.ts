@@ -42,8 +42,8 @@ async function logAlarming(description: string, fatal: boolean, mem: dsc.GuildMe
                     name: 'EclairBOT'
                 })
                 .setColor(fatal ? PredefinedColors.Red : PredefinedColors.Yellow)
-                .setTitle('❌ ' + (fatal ? `Podejmij działania na temat użytkownika ${mem.user.username}!` : `${mem.user.username} może być podejrzany.`))
-                .setDescription(`Nastąpiły te problemy z tym użytkownikiem:\n\n${description}\n\nWyliczyłem i ma ${score} punktów reputacji. ${fatal ? `A i sorry za ping...` : 'A! Co prawda nie spingowałem, ale sorki za mały flood.'}`)
+                .setTitle('❌ ' + (fatal ? cfg.customization.watchdogTexts.fatalHeader.replaceAll('<user>', mem.user.username) : cfg.customization.watchdogTexts.suspiciousHeader.replaceAll('<user>', mem.user.username)))
+                .setDescription(`${cfg.customization.watchdogTexts.descStart}${description}${cfg.customization.watchdogTexts.descEnd.reputation.replaceAll('<score>', score.toString())} ${fatal ? cfg.customization.watchdogTexts.descEnd.pingSorry : cfg.customization.watchdogTexts.descEnd.floodSorry}`)
         ],
         content: fatal ? '@here' : undefined
     });
@@ -51,7 +51,7 @@ async function logAlarming(description: string, fatal: boolean, mem: dsc.GuildMe
 
 export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'kicked'> {
     let defaultTrustScore = 5;
-    let trustScore = (defaultTrustScore - 1) + 1; // javascript i dont want references
+    let trustScore = defaultTrustScore;
 
     let fatal = false;
     let issues: string[] = [];
@@ -76,13 +76,13 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
     if (!cfg.masterSecurity.allowNewBots && mem.user.bot) {
         const notifyChan = await client.channels.fetch(cfg.channels.mod.eclairBotAlerts);
         if (notifyChan && notifyChan.isSendable()) {
-            await notifyChan.send('dodawanie botów jest wyłączone w konfiguracji')
-            await notifyChan.send('aby dodać innego bota, włącz cfg.masterSecurity.allowNewBots');
-            if (mem.user.id == '572906387382861835') await notifyChan.send('a i btw to jest zacznijTO więc i tak bym go wywalił bo jest gejem');
+            await notifyChan.send(cfg.customization.watchdogTexts.newBotsAddition.firstSentence)
+            await notifyChan.send(cfg.customization.watchdogTexts.newBotsAddition.secondSentence);
+            if (mem.user.id == '572906387382861835') await notifyChan.send(cfg.customization.watchdogTexts.newBotsAddition.gayBotSentence);
         } else {
             debug.warn('New bot joined, but cannot find the channel to notify everyone about it.');
         }
-        await mem.kick('zasada cfg.masterSecurity.allowNewBots nie pozwala na dodawanie nowych botów');
+        await mem.kick(cfg.customization.watchdogTexts.newBotsAddition.remReason);
         return 'kicked';
     }
 
@@ -90,41 +90,41 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
     const now = new Date();
     const accountAge = (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
     if (accountAge < 30) {
-        issues.push('Konto jest dziwnie młode (młodsze niż miesiąc).');
+        issues.push(cfg.customization.watchdogTexts.susThings.youngAccount);
         trustScore -= 2;
     }
     if (accountAge < 7) {
-        issues.push('Konto jest naprawdę świeże (młodsze niż tydzień).');
+        issues.push(cfg.customization.watchdogTexts.susThings.freshAccount);
         trustScore -= 5;
     }
 
     if (!mem.user.avatar) {
         trustScore -= 1;
-        issues.push('Konto nie ma avatara (ciekawe).');
+        issues.push(cfg.customization.watchdogTexts.susThings.noAvatar);
     }
 
     const susWords = ["free nitro", "discord.gg", "http://", "https://", ".ru", "▒", "░"];
     if (susWords.some(w => (mem.user.username.toLowerCase().includes(w)) || mem.user.displayName.toLowerCase().includes(w))) {
         trustScore -= 1;
-        issues.push('Ma jakiś nick z adresem url, losowymi znakami unicode, invite do serwera, reklamą na Discord Nitro i/lub ruską domeną.');
+        issues.push(cfg.customization.watchdogTexts.susThings.susName);
     }
 
     if (mem.user.id == '572906387382861835') {
         trustScore -= 3;
-        issues.push('Nikt go tu nie chce, wywalać StartIT w tej chwili!');
+        issues.push(cfg.customization.watchdogTexts.susThings.gayBot);
     }
 
     recentJoins.push({ id: mem.id, joinedAt: Date.now(), username: mem.user.username });
     const windowStart = Date.now() - cfg.masterSecurity.massJoinWindow;
     const recent = recentJoins.filter(e => e.joinedAt > windowStart);
     if (recent.length >= cfg.masterSecurity.massJoinThreshold) {
-        issues.push(`Wykryto masowe dołączenia nowych członków - ${recent.length} w bliskim do siebie czasie.`);
+        issues.push(cfg.customization.watchdogTexts.susThings.raid.replaceAll('<count>', recent.length.toString()));
         trustScore -= 3;
     }
 
     for (const prev of recent.filter(e => e.id !== mem.id)) {
         if (levenshtein(prev.username.toLowerCase(), mem.user.username.toLowerCase()) <= cfg.masterSecurity.similarityThreshold) {
-            issues.push(`Nick podobny do innego niedawnego użytkownika: ${prev.username}`);
+            issues.push(cfg.customization.watchdogTexts.susThings.similarUsername.replaceAll('<user>', prev.username));
             trustScore -= 2;
         }
     }
@@ -133,7 +133,7 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
         if (trustScore <= 0) {
             fatal = true;
         }
-        issues.push('Ma trust score mniejszy od domyślnego.');
+        issues.push(cfg.customization.watchdogTexts.susThings.defaultIssue);
 
         let issuesString = '';
         issues.forEach((issue) => {
