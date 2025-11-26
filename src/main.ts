@@ -3,8 +3,6 @@ import * as dotenv from 'dotenv';
 import { ft, output } from "./bot/output.js";
 import { eclairBotVersion } from "./bot/defaults/version.js";
 
-console.log('Hi');
-
 async function main() {
     // set up basics
     dotenv.config({
