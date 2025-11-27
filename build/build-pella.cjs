@@ -35,7 +35,7 @@ async function main() {
             external: ['discord.js', '@discordjs/voice', '@distube/ytdl-core', 'figlet'],
             outfile: path.join(OUTDIR, 'app.js'),
             alias: {
-                '@': path.resolve(__dirname, 'src'),
+                '@': path.resolve(__dirname, '../src'),
             },
         })
         console.log('Build succeeded.')
