@@ -7,16 +7,8 @@ import { TextDecoder, TextEncoder } from "node:util";
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
 
-// =======================================================
-//  ORIGINAL WRITERS
-// =======================================================
-
 const origStdoutWrite = process.stdout.write.bind(process.stdout);
 const origStderrWrite = process.stderr.write.bind(process.stderr);
-
-// =======================================================
-//  OUTPUT NAMESPACE
-// =======================================================
 
 export namespace output {
     export namespace colors {
@@ -38,7 +30,8 @@ export namespace output {
         return text.trimEnd();
     }
 
-    export function decorate(level: "LOG" | "WARN" | "ERR", color: string, text: string) {
+    export function decorate(level: "LOG" | "WRN" | "ERR", color: string, text: string) {
+        const label = level.padEnd(5, " ");
         return text
             .split("\n")
             .map((line) => `${colors.RESET}[${color} ${level} ${colors.RESET}] ${line}${colors.RESET}`)
@@ -134,7 +127,7 @@ export namespace output {
 
     export function warn(msg: any, ...args: any[]) {
         const data = format(msg, ...args);
-        const pref = decorate("WARN", colors.YELLOW, data);
+        const pref = decorate("WRN", colors.YELLOW, data);
 
         process.stdout.write(pref + " --object-logged\n");
         send("stdwarn", data);

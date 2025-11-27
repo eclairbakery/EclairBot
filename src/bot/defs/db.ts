@@ -25,16 +25,6 @@ export interface Warn {
     expiresAt: number | null;
 }
 
-export function warnFromRaw(raw: WarnRaw): Warn {
-    return {
-        id: raw.id,
-        moderatorId: raw.moderator_id,
-        reason: raw.reason_string,
-        points: raw.points,
-        expiresAt: raw.expires_at,
-    };
-}
-
 export interface RepRaw {
     id: number;
     created_at: string;
@@ -51,17 +41,6 @@ export interface Rep {
     targetUserId: string;
     comment: string | null;
     type: '+rep' | '-rep';
-}
-
-export function repFromRaw(raw: RepRaw): Rep {
-    return {
-        id: raw.id,
-        createdAt: raw.created_at,
-        authorId: raw.author_id,
-        targetUserId: raw.target_user_id,
-        comment: raw.comment,
-        type: raw.type,
-    };
 }
 
 export interface Balance {

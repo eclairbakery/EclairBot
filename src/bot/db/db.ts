@@ -2,7 +2,7 @@ import sqlite from 'sqlite3';
 
 import type { UserDataRaw, Warn, WarnRaw, Rep, RepRaw } from '../defs/db.js';
 import type { Balance, Cooldown, Cooldowns } from '../defs/db.js';
-import { warnFromRaw, repFromRaw } from '../defs/db.js';
+import { repFromRaw, warnFromRaw } from './raws.js';
 
 export type { UserDataRaw, Warn, WarnRaw, Rep, RepRaw };
 export type { Balance, Cooldown, Cooldowns };
