@@ -5,7 +5,7 @@ import { output } from '@/bot/output.js';
 
 import { Warn, WarnRaw, Rep, RepRaw, Balance } from '../defs/db.js';
 import { Cooldowns, Cooldown } from '../defs/db.js';
-import { repFromRaw, warnFromRaw } from '../defs/db.js';
+import { repFromRaw, warnFromRaw } from '../db/raws.js';
 
 export default class User {
     readonly id: string;

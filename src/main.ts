@@ -20,8 +20,15 @@ async function main() {
 
     // set up logging
     await output.init();
-    output.log('EclairBOT is online!');
-    output.log(`  version: EclairBOT ${eclairBotVersion.version} ${eclairBotVersion.codename}\n  branch: ${eclairBotVersion.branch}`);
+
+    // log basic info
+    output.log(
+        [
+            'EclairBOT is online!',
+            `version: EclairBOT ${eclairBotVersion.version} ${eclairBotVersion.codename}`,
+            `branch: ${eclairBotVersion.branch}`
+        ].join('\n  ')
+    );
 
     // check optional envs
     if (!process.env.TENOR_API_KEY) {

@@ -2,13 +2,8 @@ import { GuildTextBasedChannel } from "discord.js";
 import util from "node:util";
 import cfg from "@/bot/cfg.js";
 import { client } from "@/bot/client.js";
-import { TextDecoder, TextEncoder } from "node:util";
 
-const decoder = new TextDecoder();
-const encoder = new TextEncoder();
-
-const origStdoutWrite = process.stdout.write.bind(process.stdout);
-const origStderrWrite = process.stderr.write.bind(process.stderr);
+type Nullable<T> = T | undefined | null;
 
 export namespace output {
     export namespace colors {
@@ -18,28 +13,26 @@ export namespace output {
         export const CYAN   = "\x1b[36m";
     }
 
-    let stdoutChannel: GuildTextBasedChannel | undefined;
-    let stderrChannel: GuildTextBasedChannel | undefined;
-    let stdwarnChannel: GuildTextBasedChannel | undefined;
+    let stdoutChannel: Nullable<GuildTextBasedChannel>;
+    let stderrChannel: Nullable<GuildTextBasedChannel>;
+    let stdwarnChannel: Nullable<GuildTextBasedChannel>;
 
     function format(raw: any, ...args: any[]): string {
-        let text = util.format(
+        return util.format(
             typeof raw === "object" ? JSON.stringify(raw, null, 2) : raw,
             ...args
-        );
-        return text.trimEnd();
+        ).trimEnd();
     }
 
     export function decorate(level: "LOG" | "WRN" | "ERR", color: string, text: string) {
-        const label = level.padEnd(5, " ");
         return text
             .split("\n")
-            .map((line) => `${colors.RESET}[${color} ${level} ${colors.RESET}] ${line}${colors.RESET}`)
+            .map(line => `${colors.RESET}[${color} ${level} ${colors.RESET}] ${line}${colors.RESET}`)
             .join("\n");
     }
 
     async function send(where: "stdout" | "stderr" | "stdwarn", msg: string) {
-        let target: GuildTextBasedChannel | undefined;
+        let target;
 
         if (where === "stdout") target = stdoutChannel;
         if (where === "stderr") target = stderrChannel;
@@ -52,97 +45,49 @@ export namespace output {
                 `at ${where}:\n\`\`\`ansi\n${msg.replace(/```/g, "`[second char]`")}\n\`\`\``
             );
         } catch (e) {
-            origStderrWrite(String(e) + "\n");
+            console.error("Failed to send log to Discord:", e);
         }
     }
+
     export async function init() {
         try {
-            stdoutChannel  = await client.channels.fetch(cfg.channels.logs.stdout) as GuildTextBasedChannel;
-            stderrChannel  = await client.channels.fetch(cfg.channels.logs.stderr) as GuildTextBasedChannel;
-            stdwarnChannel = await client.channels.fetch(cfg.channels.logs.stdwarn) as GuildTextBasedChannel;
+            stdoutChannel  = client.channels.cache.has(cfg.channels.logs.stdout) ? await client.channels.fetch(cfg.channels.logs.stdout) as GuildTextBasedChannel : null;
+            stderrChannel  = client.channels.cache.has(cfg.channels.logs.stderr) ? await client.channels.fetch(cfg.channels.logs.stderr) as GuildTextBasedChannel : null;
+            stdwarnChannel = client.channels.cache.has(cfg.channels.logs.stdwarn) ? await client.channels.fetch(cfg.channels.logs.stdwarn) as GuildTextBasedChannel : null;
 
-            if (stdoutChannel == null)  throw new Error('channel stdout is null');
-            if (stderrChannel == null)  throw new Error('channel stderr is null');
-            if (stdwarnChannel == null) throw new Error('channel stdwrn is null');
+            if (!stdoutChannel)  throw new Error("stdout channel missing");
+            if (!stderrChannel)  throw new Error("stderr channel missing");
+            if (!stdwarnChannel) throw new Error("stdwarn channel missing");
 
-            process.stdout.write = function (chunk: any, encoding?: any, callback?: any): boolean {
-                let clean: string | Uint8Array;
-
-                if (typeof chunk === "string") {
-                    const trimmed = chunk.trimEnd();
-                    if (!trimmed.endsWith("--object-logged")) {
-                        output.forward(trimmed);
-                    }
-                    clean = chunk.replace(/--object-logged/g, "");
-                } else if (chunk instanceof Uint8Array) {
-                    let str = decoder.decode(chunk);
-                    const trimmed = str.trimEnd();
-                    if (!trimmed.endsWith("--object-logged")) {
-                        output.forward(trimmed);
-                    }
-                    str = str.replace(/--object-logged/g, "");
-                    clean = encoder.encode(str);
-                } else {
-                    clean = chunk;
-                }
-
-                return origStdoutWrite(clean, encoding, callback);
-            };
-
-            process.stderr.write = function (chunk: any, encoding?: any, callback?: any): boolean {
-                let clean: string | Uint8Array;
-
-                if (typeof chunk === "string") {
-                    const trimmed = chunk.trimEnd();
-                    if (!trimmed.endsWith("--object-logged")) {
-                        output.forward(trimmed);
-                    }
-                    clean = chunk.replace(/--object-logged/g, "");
-                } else if (chunk instanceof Uint8Array) {
-                    let str = decoder.decode(chunk);
-                    const trimmed = str.trimEnd();
-                    if (!trimmed.endsWith("--object-logged")) {
-                        output.forward(trimmed);
-                    }
-                    str = str.replace(/--object-logged/g, "");
-                    clean = encoder.encode(str);
-                } else {
-                    clean = chunk;
-                }
-
-                return origStderrWrite(clean, encoding, callback);
-            };
         } catch (e) {
-            origStderrWrite(`Log init failed: ${e}\n`);
+            console.error(decorate("WRN", ft.RED, "Log init failed: " + JSON.stringify(e, null, 4)));
         }
     }
 
     export function log(msg: any, ...args: any[]) {
         const data = format(msg, ...args);
-        const pref = decorate("LOG", colors.CYAN, data);
-
-        process.stdout.write(pref + " --object-logged\n");
+        const decorated = decorate("LOG", colors.CYAN, data);
+        console.log(decorated);
         send("stdout", data);
     }
 
     export function warn(msg: any, ...args: any[]) {
         const data = format(msg, ...args);
-        const pref = decorate("WRN", colors.YELLOW, data);
-
-        process.stdout.write(pref + " --object-logged\n");
+        const decorated = decorate("WRN", colors.YELLOW, data);
+        console.warn(decorated);
         send("stdwarn", data);
     }
 
     export function err(msg: any, ...args: any[]) {
         const data = format(msg, ...args);
-        const pref = decorate("ERR", colors.RED, data);
-
-        process.stdout.write(pref + " --object-logged\n");
+        const decorated = decorate("ERR", colors.RED, data);
+        console.error(decorated);
         send("stderr", data);
     }
 
-    export function forward(raw: string) {
-        send("stdout", raw);
+    export function forward(text: string) {
+        console.log(text);
+        send("stdout", text);
     }
 }
 
