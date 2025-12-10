@@ -5,7 +5,7 @@ export const defaultCfg: BotConfig = {
         logs: {
             stdout: "1419323394440167555",
             stderr: "1419323609419092019",
-            stdwarn: "1435307953660887101"
+            stdwarn: "1448385153364656189"
         }
     }
 };
