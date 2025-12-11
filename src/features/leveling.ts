@@ -113,8 +113,6 @@ export namespace leveling {
         const prevLvl = xpToLevel(prevXp);
         const newLvl = xpToLevel(newXp);
 
-        console.log(`user ${uid} - xp: ${newXp}, prev: ${prevXp}`);
-
         await u.leveling.setXP(newXp);
 
         const g = client.guilds.cache.first()!;
