@@ -113,6 +113,8 @@ export namespace leveling {
         const prevLvl = xpToLevel(prevXp);
         const newLvl = xpToLevel(newXp);
 
+        console.log(`user ${uid} - xp: ${newXp}, prev: ${prevXp}`);
+
         await u.leveling.setXP(newXp);
 
         const g = client.guilds.cache.first()!;
@@ -126,25 +128,39 @@ export namespace leveling {
         }
     };
 
-    export const setLevel = async (xp: number, uid: Snowflake, changed: boolean) => {
-        await applyLevelSet(uid, xp, changed);
+    export const setXP = async (uid: Snowflake, xp: number, changedByAdmin: boolean) => {
+        await applyLevelSet(uid, xp, changedByAdmin);
     };
 
-    export const addLevel = async (uid: Snowflake, delta: number, changed: boolean) => {
-        const u = new User(uid);
-        const current = await u.leveling.getXP();
-        const lvl = xpToLevel(current);
-        const target = lvl + delta;
-        const xpNeeded = levelToXp(target);
-        await applyLevelSet(uid, xpNeeded, changed);
+    export const addXP = async (uid: Snowflake, xpDelta: number, changedByAdmin: boolean) => {
+        const User = (await import("@/bot/db/user.js")).default;
+        const user = new User(uid);
+        const currentXP = await user.leveling.getXP();
+        await applyLevelSet(uid, currentXP + xpDelta, changedByAdmin);
     };
 
-    export const removeLevel = async (uid: Snowflake, delta: number, changed: boolean) => {
-        const u = new User(uid);
-        const current = await u.leveling.getXP();
-        const lvl = xpToLevel(current);
-        const target = Math.max(1, lvl - delta);
-        const xpNeeded = levelToXp(target);
-        await applyLevelSet(uid, xpNeeded, changed);
+    export const removeXP = async (uid: Snowflake, xpDelta: number, changedByAdmin: boolean) => {
+        const User = (await import("@/bot/db/user.js")).default;
+        const user = new User(uid);
+        const currentXP = await user.leveling.getXP();
+        await applyLevelSet(uid, Math.max(0, currentXP - xpDelta), changedByAdmin);
     };
+
+    export const registerMsgCreateEvent = (discordClient: dsc.Client) => {
+        discordClient.on('messageCreate', (msg) => {
+            if (cfg.features.leveling.excludedChannels.includes(msg.channelId as Snowflake)) return;
+
+            // amount
+            let amount = cfg.features.leveling.xpPerMessage;
+            if (msg.attachments.size > 0 && msg.content.length > 5) amount = Math.floor(amount * 1.5);
+            if (msg.content.length > 100) amount = Math.floor(amount * 1.2);
+
+            // events
+            if (cfg.features.leveling.currentEvent.enabled && cfg.features.leveling.currentEvent.channels.includes(msg.channelId as Snowflake)) {
+                amount = Math.floor(amount * cfg.features.leveling.currentEvent.multiplier);
+            }
+
+            leveling.addXP(msg.author.id as Snowflake, amount, false);
+        })
+    }
 }

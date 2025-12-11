@@ -42,6 +42,24 @@ export interface BotConfig {
              * new level are sent.
              */
             levelChannel: Snowflake;
+            /**
+             * The current event happening on specific channels
+             * giving the user the ability to earn more there.
+             */
+            currentEvent: {
+                enabled: boolean;
+                channels: Snowflake[];
+                multiplier: number;
+            },
+            /**
+             * All the channels where the user is not eligible
+             * to earn level.
+             */
+            excludedChannels: Snowflake[];
+            /**
+             * Base XP amount a user gets for one message
+             */
+            xpPerMessage: number;
         }
     }
 }``

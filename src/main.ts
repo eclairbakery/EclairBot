@@ -2,6 +2,8 @@ import { client, clientLogin } from "./bot/client.js";
 import * as dotenv from 'dotenv';
 import { ft, output } from "./bot/output.js";
 import { eclairBotVersion } from "./bot/defaults/version.js";
+import { leveling } from "./features/leveling.js";
+import { db } from "./bot/db/db.js";
 
 async function main() {
     // set up basics
@@ -34,6 +36,12 @@ async function main() {
     if (!process.env.TENOR_API_KEY) {
         output.warn(`${ft.RED}You shall set an TENOR_API_KEY enviorment variable${ft.RESET}\nOtherwise any commands using Tenor API (mostly gifs) will not work.`);
     }
+
+    // db set up
+    db.init();
+
+    // leveling set up
+    leveling.registerMsgCreateEvent(client);
 }
 
 main();

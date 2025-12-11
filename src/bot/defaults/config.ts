@@ -26,6 +26,13 @@ export const defaultCfg: BotConfig = {
                 100: '1390802440739356762'
             },
             levelChannel: '1235592947831930993',
+            currentEvent: {
+                enabled: false,
+                channels: [],
+                multiplier: 2
+            },
+            xpPerMessage: 4,
+            excludedChannels: []
         }
     }
 };
