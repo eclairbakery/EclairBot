@@ -4,6 +4,7 @@ node_modules
 package-lock.json
 .env
 *.db
+*.db-journal
 **/.nvim
 bundle.js*
 bot/eclairai-db.json

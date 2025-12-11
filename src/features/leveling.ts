@@ -19,7 +19,7 @@ export namespace leveling {
     };
 
     const mention = (u: dsc.User, ping: boolean = cfg.features.leveling.shallPingWhenNewLevel) => {
-        return ping ? `<@${u.id}>` : `**${u.displayName.replace("**", "\\*\\*")}`;
+        return ping ? `<@${u.id}>` : `**${u.displayName.replace("**", "\\*\\*")}**`;
     };
 
     const renderProgress = (xp: number, div: number, len: number = 10) => {
