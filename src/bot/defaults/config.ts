@@ -33,6 +33,11 @@ export const defaultCfg: BotConfig = {
             },
             xpPerMessage: 4,
             excludedChannels: []
+        },
+        quoteBot: {
+            excludedCategories: ['1235552673978388560', '1419322858659905566', '1407377025437798442'],
+            excludedChannels: ['1235641912241819669'],
+            strictlyExcludedChannels: ['1290327060970995812']
         }
     }
 };

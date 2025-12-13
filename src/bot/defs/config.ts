@@ -60,6 +60,17 @@ export interface BotConfig {
              * Base XP amount a user gets for one message
              */
             xpPerMessage: number;
-        }
+        },
+        /** Quote bot configuration */
+        quoteBot: {
+            excludedChannels: string[],
+            strictlyExcludedChannels: string[],
+            excludedCategories: string[]
+        },
+        /** Translations */
+        translations: {
+            input: string[] | string,
+            output: string
+        }[],
     }
 }``
