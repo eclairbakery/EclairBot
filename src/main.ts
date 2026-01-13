@@ -50,6 +50,7 @@ import actionsManager from '@/features/actions/index.js';
 import { getChannel } from './features/actions/channels/templateChannels.js';
 import { warnGivenLogAction } from './features/actions/mod/warn-given.js';
 import { db } from './bot/apis/db/bot-db.js';
+import { filterGeneralAction } from './features/actions/others/filterGeneral.js';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -81,6 +82,7 @@ function setUpActions() {
         welcomeNewUserAction,
         sayGoodbyeAction,
         // automod & anti-spam with anti-flood
+        filterGeneralAction,
         ...AutoModRules.all(),
         antiSpamAndAntiFlood,
         // msg-specific actions
