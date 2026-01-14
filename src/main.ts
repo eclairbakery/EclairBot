@@ -134,11 +134,11 @@ async function main() {
         let availableMemory = process.availableMemory();
         if (processHeap > availableMemory - 25000000) {
             debug.warn(`Low on memory.\nUsing: ${processHeap} of ${availableMemory} available memory.\nEclairBOT will attempt to restart if this situation occurs more than 6 times in the next 10 seconds.`);
-        }
-        memoryIssuesTimes++;
-        if (memoryIssuesTimes == 10) {
-            debug.log(`Attempting to restart EclairBOT to free up memory.`);
-            process.exit(1); // start.hosting-only.js should catch this
+            memoryIssuesTimes++;
+            if (memoryIssuesTimes == 10) {
+                debug.log(`Attempting to restart EclairBOT to free up memory.`);
+                process.exit(1); // start.hosting-only.js should catch this
+            }
         }
     }, 500);
 
