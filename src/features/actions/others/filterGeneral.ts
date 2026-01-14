@@ -21,7 +21,7 @@ export const filterGeneralAction: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
     constraints: [
         (msg) => {
-            return cfg.features.generalFiltering.enabled;
+            return cfg.features.generalFiltering.enabled && !msg.author.bot;
         },
         (msg) => {
             return msg.member!.roles.cache.has('1460741066050506852') ? Skip : Ok;
