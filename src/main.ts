@@ -126,12 +126,25 @@ async function main() {
     setUpActions();
     setUpEvents();
 
+    let memoryIssuesTimes = 0;
+
     setInterval(() => {
         if (!process.memoryUsage || !process.availableMemory) return;
-        if (process.memoryUsage().heapUsed > process.availableMemory() - 25000000) {
-            debug.warn('High on memory!');
+        let processHeap = process.memoryUsage().heapUsed;
+        let availableMemory = process.availableMemory();
+        if (processHeap > availableMemory - 25000000) {
+            debug.warn(`Low on memory.\nUsing: ${processHeap} of ${availableMemory} available memory.\nEclairBOT will attempt to restart if this situation occurs more than 6 times in the next 10 seconds.`);
+        }
+        memoryIssuesTimes++;
+        if (memoryIssuesTimes == 10) {
+            debug.log(`Attempting to restart EclairBOT to free up memory.`);
+            process.exit(1); // start.hosting-only.js should catch this
         }
     }, 500);
+
+    setInterval(() => {
+        memoryIssuesTimes = 0;
+    }, 10_000);
 
     if (cfg.general.databaseBackups.enabled) {
         setInterval(async () => {

@@ -1,39 +1,28 @@
 import { cfg } from "@/bot/cfg.js";
 import { Action, MessageEventCtx, Ok, PredefinedActionEventTypes, Skip } from "../index.js";
 
-const substanceRegex = new RegExp(
-    "\\b(" +
-    "snus(y|a|em|ik|iki|ow)?|" +
-    "white\\s?fox|" +
-    "velo|" +
-    "siberia|" +
-    "epok|" +
-    "nikotyn(a|owy|ie)?|" +
-    "papieros(y|a|ow)?|" +
-    "e-?papieros(y)?|" +
-    "vape(y|m|owac)?|" +
-    "joint(y|a)?|" +
-    "ziol(o|a)?|" +
-    "traw(a|y|a)?|" +
-    "alkohol|" +
-    "piw(o|a|em)?|" +
-    "wod(k|ka|ki|a)?" +
-    ")\\b",
-    "i"
-);
+function normalizeContent(input: string): string {
+    return input
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[@4€31!|05$7+289]/g, c => cfg.features.generalFiltering.leet_map[c] ?? c);
+}
 
 function mentionsSubstances(content: string): boolean {
-    return substanceRegex.test(
-        content
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-    );
+    return new RegExp(
+        cfg.features.generalFiltering.regex.regex, 
+        cfg.features.generalFiltering.regex.flags
+    )
+    .test(normalizeContent(content));
 }
 
 export const filterGeneralAction: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
     constraints: [
+        (msg) => {
+            return cfg.features.generalFiltering.enabled;
+        },
         (msg) => {
             return msg.member!.roles.cache.has('1460741066050506852') ? Skip : Ok;
         },
