@@ -60,7 +60,7 @@ export const warnCmd: Command = {
         let points = api.getTypedArg('points', 'number')?.value as number ?? 1;
         let reason = api.getTypedArg('reason', 'trailing-string')?.value as string ?? '';
         const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null;
-        let expiresAt = (duration != null ? Math.floor(Date.now() / 1000) + duration : null) ?? parseTimestamp('24h');
+        let expiresAt = (duration != null ? Math.floor(Date.now() / 1000) + duration : null) ?? (Math.floor(Date.now() / 1000) + parseTimestamp('24h')!);
 
         debug.log('Warn command args:', { targetUser, points, reason });
 
@@ -120,7 +120,7 @@ export const warnCmd: Command = {
 
         const embed = new ReplyEmbed()
             .setTitle(`📢 ${cfg.customization.modTexts.warnHeader.replace('<mention>', targetUser.user.username).replace('<mod>', api.msg.author.plainUser.username)}`)
-            .setDescription(cfg.customization.modTexts.warnDescription.replace('<points>', `${points}`).replace('<duration>', `<t:${expiresAt}:R`))
+            .setDescription(cfg.customization.modTexts.warnDescription.replace('<points>', `${points}`).replace('<duration>', `<t:${expiresAt}:R>`))
             .setColor(PredefinedColors.Orange);
 
         await api.reply({ embeds: [embed] });
