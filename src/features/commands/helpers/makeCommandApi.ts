@@ -44,7 +44,7 @@ function stringifyEmbed(embed: dsc.APIEmbed): string {
 }
 
 function makeOptions(options: FirstArg<CommandMessageAPI['reply']>): any {
-    let result: any;
+    let result: dsc.MessageReplyOptions;
 
     switch (typeof options) {
         case "string":
@@ -53,9 +53,9 @@ function makeOptions(options: FirstArg<CommandMessageAPI['reply']>): any {
 
         case "object":
             let opts = options as ContentReply<typeof options>;
-            result = opts.content
+            result = (opts.content
                 ? deepMerge(opts, { content: t(opts.content) })
-                : opts;
+                : opts) as any
             break;
 
         default:
@@ -75,6 +75,10 @@ function makeOptions(options: FirstArg<CommandMessageAPI['reply']>): any {
         result.content = result.content
             ? `${result.content}\n\n${embedText}`
             : embedText;
+        
+        result.allowedMentions = {
+            parse: []
+        };
 
         delete result.embeds;
     }
