@@ -45,35 +45,45 @@ export function mkLvlProgressBar(xp: number, levelDivider: number, totalLength: 
     return `${mkProgressBar(progressXp, neededXp, totalLength)} ${progressXp}/${neededXp}xp`;
 }
 
-export async function addLvlRole(guild: dsc.Guild, newLevel: number, user: dsc.Snowflake) {
+export async function addLvlRole(
+    guild: dsc.Guild,
+    newLevel: number,
+    user: dsc.Snowflake
+): Promise<boolean> {
+
     const milestones = cfg.features.leveling.milestoneRoles || {};
-    const milestoneRoleId: string | null = milestones[findLowerClosestKey(milestones, newLevel)] ?? null;
-    if (milestoneRoleId != null) {
-        let member: dsc.GuildMember;
-        try {
-            member = await guild.members.fetch(user);
-        } catch (err) {
-            output.warn(err);
-            return milestoneRoleId;
-        }
-        if (member) {
-            for (const roleId of lvlRoles) {
-                try {
-                    if (member.roles.cache.has(roleId) && roleId !== milestoneRoleId) {
-                        await member.roles.remove(roleId);
-                    }
-                } catch (err) {
-                    output.log(`Failed to remove role ${roleId}:`, err);
-                }
-            }
+    const milestoneRoleId = milestones[findLowerClosestKey(milestones, newLevel)];
+    if (!milestoneRoleId) return false;
+
+    let member: dsc.GuildMember;
+    try {
+        member = await guild.members.fetch(user);
+    } catch (err) {
+        output.warn(err);
+        return false;
+    }
+
+    if (member.roles.cache.has(milestoneRoleId)) {
+        return false;
+    }
+
+    for (const roleId of lvlRoles) {
+        if (roleId !== milestoneRoleId && member.roles.cache.has(roleId)) {
             try {
-                if (!member.roles.cache.has(milestoneRoleId)) await member.roles.add(milestoneRoleId);
-            } catch (err: any) {
-                output.warn(err);
+                await member.roles.remove(roleId);
+            } catch (err) {
+                output.log(`Failed to remove role ${roleId}:`, err);
             }
         }
     }
-    return milestoneRoleId;
+
+    try {
+        await member.roles.add(milestoneRoleId);
+        return true;
+    } catch (err) {
+        output.warn(err);
+        return false;
+    }
 }
 
 export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
@@ -111,13 +121,13 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
     await user.leveling.addXP(amount);
 
     if (newLevel > prevLevel) {
-        let milestoneRoleId = await addLvlRole(msg.guild!, newLevel, msg.author.id);
+        let gotNewRole = await addLvlRole(msg.guild!, newLevel, msg.author.id);
 
         const channelLvl = await msg.client.channels.fetch(cfg.features.leveling.levelChannel);
         if (!channelLvl || !channelLvl.isSendable()) return;
 
         let content = `${getMention(msg.member!)} wbił poziom ${newLevel}! Wow co za osiągnięcie!`;
-        if (milestoneRoleId) content += 'I btw nową rolę zdobyłeś!';
+        if (gotNewRole) content += 'I btw nową rolę zdobyłeś!';
         channelLvl.send(content);
     }
 }
