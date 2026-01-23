@@ -320,7 +320,8 @@ export const defaultCfg: Config = {
             fandomDefaultQueryText: 'Zlew00',
             fandomArticleNotFoundHeader: 'Nie znaleziono...',
             fandomArticleNotFoundText: 'Niestety czegoś takiego na fandomie nie ma... Może jest na Wikipedii?'
-        }
+        },
+        stringifyEmbed: false
     },
 
     features: {

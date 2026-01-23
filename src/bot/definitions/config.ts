@@ -319,7 +319,8 @@ export interface Config {
                 similarUsername: string;
                 defaultIssue: string;
             }
-        }
+        },
+        stringifyEmbed: boolean
     };
 
     masterSecurity: {

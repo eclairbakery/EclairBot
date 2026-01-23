@@ -11,6 +11,7 @@ import User from "@/bot/apis/db/user.js";
 import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.js";
 import { t } from "@/bot/apis/translations/translate.js";
 import { deepMerge } from "@/util/objects/objects.js";
+import { cfg } from "@/bot/cfg.js";
 
 type FirstArg<T> =
     T extends { (...args: infer A): any } ?
@@ -27,20 +28,58 @@ type FirstArg<T> =
 
 type ContentReply<T> = T & {content: string;};
 
+function stringifyEmbed(embed: dsc.APIEmbed): string {
+    let out: string[] = [];
+
+    if (embed.title) out.push(`**${embed.title}**`);
+    if (embed.description) out.push(embed.description);
+
+    if (embed.fields?.length) {
+        for (const field of embed.fields) {
+            out.push(`\n**${field.name}**\n${field.value}`);
+        }
+    }
+
+    return out.join('\n');
+}
+
 function makeOptions(options: FirstArg<CommandMessageAPI['reply']>): any {
+    let result: any;
+
     switch (typeof options) {
         case "string":
-            return t(options);
-        
+            result = { content: t(options) };
+            break;
+
         case "object":
             let opts = options as ContentReply<typeof options>;
-            if (opts.content) return deepMerge(opts, {
-                content: t(opts.content)
-            });
-    
+            result = opts.content
+                ? deepMerge(opts, { content: t(opts.content) })
+                : opts;
+            break;
+
         default:
-            return options;
+            result = options;
     }
+
+    if (cfg.customization.stringifyEmbed && result?.embeds?.length) {
+        const embedText = result.embeds
+            .map((e: any) => {
+                if (typeof e?.toJSON === 'function') {
+                    return stringifyEmbed(e.toJSON());
+                }
+                return stringifyEmbed(e);
+            })
+            .join('\n\n');
+
+        result.content = result.content
+            ? `${result.content}\n\n${embedText}`
+            : embedText;
+
+        delete result.embeds;
+    }
+
+    return result;
 }
 
 export async function makeCommandApi(commandObj: Command, argsRaw: string[], context: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction; cmd?: Command }): Promise<CommandAPI> {
