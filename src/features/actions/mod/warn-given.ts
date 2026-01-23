@@ -28,7 +28,7 @@ export const warnGivenLogAction: Action<WarnEventCtx> = {
                     },
                     {
                         name: 'Wygasa',
-                        value: ctx.expiresAt?.toString() ?? 'nigdy'
+                        value: ctx.expiresAt ? `<t:${ctx.expiresAt?.toString()}:R>` : 'nigdy'
                     }
                 ]
             }, [cfg.channels.mod.warnings]);
