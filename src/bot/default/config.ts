@@ -215,8 +215,8 @@ export const defaultCfg: Config = {
             havingMentalProblemsByWarningYourselfText: 'Czemu ty chcesz sobie dać warna? Co jest z tobą nie tak... Zabrać cię do szpitala zdrowia psychicznego czy co ja mam zrobić...',
             warningEclairBotReason: 'nei warnuje sie istoty wyższej panie',
             warningWatchdogReason: 'co prawda nie jest istotą wyższą watchdog, ale my sie lubimy. dam ci w zamian warna. nice try',
-            warnHeader: 'Masz warna, <mention>!',
-            warnDescription: 'Właśnie dostałeś darmoweeego warna (punktów: <points>)!',
+            warnHeader: '<mention> dostał warna od <mod>!',
+            warnDescription: 'Warn w skrócie ma <points> punktów i skończy się <duration>.',
             shitwarnHeader: 'Masz shitwarna/fake-warna, <mention>!',
             noTargetSpecifiedHeader: 'Nie podano celu',
             noTargetSpecifiedText: 'Kolego co ty myślisz że ja się sam domyślę, komu ty to chcesz zrobić? Zgadłeś - nie domyślę się. Więc bądź tak miły i podaj użytkownika, dla którego odpalasz tą komendę.'

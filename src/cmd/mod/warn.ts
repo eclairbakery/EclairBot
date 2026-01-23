@@ -60,7 +60,7 @@ export const warnCmd: Command = {
         let points = api.getTypedArg('points', 'number')?.value as number ?? 1;
         let reason = api.getTypedArg('reason', 'trailing-string')?.value as string ?? '';
         const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null;
-        let expiresAt = duration != null ? Math.floor(Date.now() / 1000) + duration : null;
+        let expiresAt = (duration != null ? Math.floor(Date.now() / 1000) + duration : null) ?? parseTimestamp('24h');
 
         debug.log('Warn command args:', { targetUser, points, reason });
 
@@ -119,19 +119,9 @@ export const warnCmd: Command = {
         }
 
         const embed = new ReplyEmbed()
-            .setTitle(`📢 ${cfg.customization.modTexts.warnHeader.replace('<mention>', targetUser.user.username)}`)
-            .setDescription(cfg.customization.modTexts.warnDescription.replace('<points>', `${points}`))
-            .addFields(
-                { name: 'Moderator', value: `<@${api.msg.author.id}>`, inline: true },
-                { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
-                { name: 'Powód', value: reason, inline: false },
-                { name: 'Punkty', value: points.toString(), inline: true },
-            )
+            .setTitle(`📢 ${cfg.customization.modTexts.warnHeader.replace('<mention>', targetUser.user.username).replace('<mod>', api.msg.author.plainUser.username)}`)
+            .setDescription(cfg.customization.modTexts.warnDescription.replace('<points>', `${points}`).replace('<duration>', `<t:${expiresAt}:R`))
             .setColor(PredefinedColors.Orange);
-
-        if (duration) {
-            embed.addFields({ name: 'Wygasa', value: `<t:${expiresAt}:R>`, inline: false });
-        }
 
         await api.reply({ embeds: [embed] });
     }
