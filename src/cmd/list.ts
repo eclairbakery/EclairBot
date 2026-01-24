@@ -18,7 +18,6 @@ import { muteCmd } from '@/cmd/mod/mute.js';
 import { unmuteCmd } from '@/cmd/mod/unmute.js';
 import { clearCmd } from '@/cmd/mod/clear.js';
 import { forceReloadTemplatesCmd } from '@/cmd/mod/force-reload-templates.js';
-import { notifyCmd } from '@/cmd/mod/ping.js';
 import { warnClearCmd } from '@/cmd/mod/warn-clear.js';
 
 import { workCmd } from '@/cmd/economy/work.js';
@@ -50,7 +49,6 @@ import { figletCmd } from '@/cmd/4fun/figlet.js';
 import { restartCmd } from '@/cmd/dev/restart.js';
 import { evalCmd } from '@/cmd/dev/eval.js';
 import { configurationCommand } from './dev/configuration.js';
-import { anonSaysCmd } from './general/anonsays.js';
 import { moneyCmd } from './economy/money.js';
 import { enableCommandCmd } from './dev/enable-cmd.js';
 import { disableCommandCmd } from './dev/disable-cmd.js';
@@ -65,7 +63,7 @@ export const commands: Map<Category, Command[]> = new Map([
             manCmd,
             bannerCmd, pfpCmd,
             siemaCmd, randsiteCmd,
-            wikiCmd, fandomCmd, anonSaysCmd
+            wikiCmd, fandomCmd
         ]
     ],
     [
@@ -75,7 +73,7 @@ export const commands: Map<Category, Command[]> = new Map([
             warnCmd, warnClearCmd, warnlistCmd,
             muteCmd, unmuteCmd,
             banCmd, kickCmd,
-            notifyCmd, refreshCmd
+            refreshCmd
         ]
     ],
     [

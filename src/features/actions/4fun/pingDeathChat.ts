@@ -3,9 +3,7 @@ import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.js';
 
-let eclairPing = true;
 let deathChatTimeout: NodeJS.Timeout;
-let eclairTimeout: NodeJS.Timeout;
 
 export interface PingAPI {
     roleId: `${number}`;
@@ -34,63 +32,6 @@ export const pings: Record<string, PingAPI> = {
         ],
         automatic: true,
         automaticWaitUntilLastMsgInterval: cfg.commands.mod.ping.deathChatRenewInterval
-    },
-    'eclairnews': {
-        roleId: '1402756114394644620',
-        questions: null,
-        automatic: false,
-        automaticWaitUntilLastMsgInterval: cfg.commands.mod.ping.eclairNewsRenewInterval
-    }
-};
-
-export const notifyCmd: Command = {
-    name: 'notify',
-    aliases: ['mention-ping'],
-    description: {
-        main: 'Siema... Chcesz pingować? No ok, to komenda dla ciebie.',
-        short: 'Pinguje jakiś ping.'
-    },
-    flags: CommandFlags.Important,
-    expectedArgs: [
-        {
-            name: 'type',
-            type: 'string',
-            optional: false,
-            description: 'Podaj typ pingu: death-chat, eclairnews'
-        }
-    ],
-    permissions: {
-        allowedRoles: cfg.commands.mod.ping.allowedRoles,
-        allowedUsers: [],
-        discordPerms: []
-    },
-
-    async execute(api: CommandAPI) {
-        const msg = api.msg;
-        const typeArg = api.getTypedArg('type', 'string')?.value as string;
-
-        if (!typeArg) return msg.reply('Musisz podać typ pingu!');
-
-        const pingConfig = pings[typeArg];
-        if (!pingConfig) return msg.reply('Nieznany typ pingu!');
-
-        if (pingConfig.automatic) {
-            return msg.reply('Ten ping jest zaautomatyzowany i nie można go wywołać ręcznie.');
-        }
-
-        if (!pingConfig.automatic) {
-            if (typeArg === 'eclairnews') {
-                if (!eclairPing) return msg.reply('Za szybko! Odczekaj chwilę przed kolejnym pingiem.');
-
-                clearTimeout(eclairTimeout);
-                eclairPing = false;
-                eclairTimeout = setTimeout(() => { eclairPing = true; }, pingConfig.automaticWaitUntilLastMsgInterval);
-
-                if (msg.channel.isSendable()) {
-                    msg.channel.send(`<@&${pingConfig.roleId}>`);
-                }
-            }
-        }
     }
 };
 

@@ -7,6 +7,7 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 
+/** @deprecated */
 async function getGIF(searchTerm: string): Promise<string> {
     const apiKey = process.env.TENOR_API;
     const url = `https://tenor.googleapis.com/v2/search?q=${searchTerm}&key=${apiKey}&limit=1&random=true&media_filter=minimal`;
@@ -28,7 +29,7 @@ async function getGIF(searchTerm: string): Promise<string> {
         };
 
         if (json.results && json.results.length > 0) {
-            return json.results[0].media_formats.gif.url;
+            return `[gif z tenora](${json.results[0].media_formats.gif.url})\n**niestety google przestaje wspierać te api więc eb przestanie w lipcu wysyłać gify :wilted_rose:**`;
         } else if (json.error?.message == "API key not valid. Please pass a valid API key.") {
             return cfg.customization.uncategorized.gifWrongApiKey;
         } else {
@@ -40,6 +41,7 @@ async function getGIF(searchTerm: string): Promise<string> {
     }
 }
 
+/** @deprecated */
 export const catCmd: Command = {
     name: 'cat',
     aliases: ['kot'],
@@ -47,7 +49,7 @@ export const catCmd: Command = {
         main: 'Lubisz koty? Jakże pięknie się składa. Możemy Ci pokazać losowego kota.',
         short: 'Pokazuje losowego kota',
     },
-    flags: CommandFlags.None | CommandFlags.WorksInDM,
+    flags: CommandFlags.None | CommandFlags.WorksInDM | CommandFlags.Deprecated,
 
     expectedArgs: [],
 
@@ -62,13 +64,14 @@ export const catCmd: Command = {
     }
 };
 
+/** @deprecated */
 export const dogCmd: Command = {
     name: 'dog',
     description: {
         main: 'Ohhh... dasz mi karmę? Chcesz zobaczyć moją słodką mordkę? To ja, piesek.',
         short: 'Pokazuje losowego psa',
     },
-    flags: CommandFlags.None | CommandFlags.WorksInDM,
+    flags: CommandFlags.None | CommandFlags.WorksInDM | CommandFlags.Deprecated,
 
     expectedArgs: [],
 
@@ -85,13 +88,14 @@ export const dogCmd: Command = {
     }
 };
 
+/** @deprecated */
 export const animalCmd: Command = {
     name: 'animal',
     description: {
         main: 'Chcesz do ZOO? Mamy ZOO w domu. ZOO w domu: [wpisz jakiego gifa chcesz]',
         short: 'Pokazuje losowego zwierza',
     },
-    flags: CommandFlags.None | CommandFlags.WorksInDM,
+    flags: CommandFlags.None | CommandFlags.WorksInDM | CommandFlags.Deprecated,
 
     expectedArgs: [],
 
@@ -108,13 +112,14 @@ export const animalCmd: Command = {
     }
 };
 
+/** @deprecated */
 export const parrotCmd: Command = {
     name: 'parrot',
     description: {
         main: 'Pokazuje losową papugę czy coś!',
         short: 'Pokazuje losową papugę!',
     },
-    flags: CommandFlags.None | CommandFlags.WorksInDM,
+    flags: CommandFlags.None | CommandFlags.WorksInDM | CommandFlags.Deprecated,
 
     expectedArgs: [],
 

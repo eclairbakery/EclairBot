@@ -31,7 +31,7 @@ import { antiSpamAndAntiFlood } from '@/features/actions/mod/anti-spam-flood.js'
 import { basicMsgCreateActions } from '@/features/actions/others/basicMsgCreateActions.js';
 import { registerTemplateChannels } from '@/features/actions/channels/registerTemplateChannels.js';
 import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher, watchRoleChanges } from './bot/watchdog.js';
-import { actionPing } from '@/cmd/mod/ping.js';
+import { actionPing } from '@/features/actions/4fun/pingDeathChat.js';
 import { hallOfFameAction } from './features/actions/4fun/hallOfFame.js';
 
 // events
@@ -59,9 +59,6 @@ client.once('clientReady', async () => {
     await db.init();
     debug.log(`Database initialized.`);
 
-    if (!process.env.ANON_SAYS_WEBHOOK) {
-        debug.warn('You should set the ANON_SAYS_WEBHOOK enviorment variable.\nOtherwise, the anonsays command will not work.\nThis webhook shall be in the general channel.');
-    }
     if (!process.env.TENOR_API) {
         debug.warn('You should set the TENOR_API enviorment variable to a Tenor API key.\nOtherwise, the Tenor API-based commands will not work.');
     }
