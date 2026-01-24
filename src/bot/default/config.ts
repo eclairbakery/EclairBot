@@ -195,6 +195,7 @@ export const defaultCfg: Config = {
             default: 'block',
             allow: [channelsCfg.other.economy, channelsCfg.mod.modCommands],
         },
+        preferShortenedEmbeds: [channelsCfg.general.general]
     },
 
     unfilteredRelated: {
