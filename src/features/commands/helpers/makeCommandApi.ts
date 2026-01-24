@@ -86,7 +86,7 @@ function makeOptions(options: FirstArg<CommandMessageAPI['reply']>): any {
     return result;
 }
 
-export async function makeCommandApi(commandObj: Command, argsRaw: string[], context: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction; cmd?: Command }): Promise<CommandAPI> {
+export async function makeCommandApi(commandObj: Command, argsRaw: string[], context: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction; cmd?: Command; invokedviaalias: string }): Promise<CommandAPI> {
     const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, context);
     const rawMember =
         context.msg?.member ??
@@ -138,6 +138,7 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
         channel: context.interaction?.channel ?? context.msg!.channel,
         guild: context.interaction?.guild ?? context.msg?.guild ?? undefined,
 
-        preferShortenedEmbeds: cfg.blockCommands.preferShortenedEmbeds.includes((context.interaction?.channel ?? context.msg!.channel!).id)
+        preferShortenedEmbeds: cfg.blockCommands.preferShortenedEmbeds.includes((context.interaction?.channel ?? context.msg!.channel!).id),
+        invokedViaAlias: context.invokedviaalias
     };
 }

@@ -1,13 +1,9 @@
 import { Category, Command } from '@/bot/command.js';
 
-import { detailHelpCmd } from '@/cmd/general/detailHelp.js';
-import { quickHelpCmd } from '@/cmd/general/help.js';
+import { helpCmd } from '@/cmd/general/help.js';
 import { commandsCmd } from '@/cmd/general/commands.js';
 import { manCmd } from '@/cmd/general/man.js';
-import { siemaCmd } from '@/cmd/general/siema.js';
-import { randsiteCmd } from '@/cmd/general/randsite.js';
 import { pfpCmd } from '@/cmd/general/pfp.js';
-import { fandomCmd } from '@/cmd/general/fandom.js';
 import { bannerCmd } from '@/cmd/general/banner.js';
 
 import { warnCmd } from '@/cmd/mod/warn.js';
@@ -59,11 +55,10 @@ export const commands: Map<Category, Command[]> = new Map([
     [
         Category.General,
         [
-            detailHelpCmd, quickHelpCmd, commandsCmd,
+            helpCmd, commandsCmd,
             manCmd,
             bannerCmd, pfpCmd,
-            siemaCmd, randsiteCmd,
-            wikiCmd, fandomCmd
+            wikiCmd
         ]
     ],
     [

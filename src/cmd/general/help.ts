@@ -24,7 +24,7 @@ function buildSelectMenu(commands: Map<Category, Command[]>): dsc.StringSelectMe
         );
 }
 
-function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: string[] = []): ReplyEmbed {
+function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: string[] = [], isQuick: boolean): ReplyEmbed {
     const embed = new ReplyEmbed()
         .setTitle(`${category.emoji} ${category.name}`)
         .setDescription(category.longDesc)
@@ -42,7 +42,15 @@ function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: st
 
         embed.addFields([{
             name: '',
-            value: `**:star: ${cfg.general.prefix}${formattedName}:** ${cmd.description.short}`,
+            value: `**:star: ${cfg.general.prefix}${formattedName}:** ${isQuick ? cmd.description.short : cmd.description.main}`,
+            inline: false,
+        }]);
+    }
+
+    if (blockedCmds.length >= cmds.length) {
+        embed.addFields([{
+            name: '',
+            value: `W tej kategorii nic nie ma. Lub jest przestrzała.`,
             inline: false,
         }]);
     }
@@ -50,11 +58,11 @@ function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: st
     return embed;
 }
 
-export const quickHelpCmd: Command = {
+export const helpCmd: Command = {
     name: 'help',
-    aliases: ['quick-help'],
+    aliases: ['quick-help', 'detail-help'],
     description: {
-        main: 'Pokazuje losowe komendy z bota wraz z krótkimi opisami, by w końcu nauczyć Twojego zapyziałego mózgu jego używania.',
+        main: 'Pokazuje losowe komendy z bota wraz z opisami, by w końcu nauczyć Twojego zapyziałego mózgu jego używania.',
         short: 'Lista komend',
     },
     flags: CommandFlags.None,
@@ -84,8 +92,10 @@ export const quickHelpCmd: Command = {
                 .setTitle('📢 Moje komendy, władzco!')
                 .setDescription(
                     'Wybierz kategorię z menu poniżej, aby zobaczyć jej komendy! ' +
-                    'Plus, używasz uproszczonej wersji `help`. ' +
-                    'Użyj `detail-help`/`man`, jak serio się chcesz komend nauczyć...'
+                    api.invokedViaAlias !== 'detail-help'
+                        ? ('Plus, używasz uproszczonej wersji `help`. ' +
+                        'Użyj `detail-help`/`man`, jak serio się chcesz komend nauczyć...')
+                        : ''
                 )
                 .setColor(PredefinedColors.Cyan);
 
@@ -109,7 +119,7 @@ export const quickHelpCmd: Command = {
                 }
 
                 const cmds = commands.get(chosenCategory) ?? [];
-                const embed = buildCategoryEmbed(chosenCategory, cmds);
+                const embed = buildCategoryEmbed(chosenCategory, cmds, undefined, api.invokedViaAlias !== 'detail-help');
                 await interaction.update({ embeds: [embed], components: [row] });
             });
 
@@ -149,6 +159,7 @@ export const quickHelpCmd: Command = {
             for (const cmd of cmds) {
                 if (!canExecuteCmd(cmd, msg.member!.plainMember)) blockedCmds.push(cmd.name);
                 else if (!findCmdConfResolvable(cmd.name).enabled) blockedCmds.push(cmd.name);
+                else if (cmd.flags & CommandFlags.Deprecated) blockedCmds.push(cmd.name); 
             }
         }
 
@@ -160,13 +171,13 @@ export const quickHelpCmd: Command = {
         const allEmbeds = [introEmbed];
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
-            allEmbeds.push(buildCategoryEmbed(category, cmds, blockedCmds));
+            allEmbeds.push(buildCategoryEmbed(category, cmds, blockedCmds, api.invokedViaAlias !== 'detail-help'));
         }
 
         if (blockedCmds.length > 0) {
             introEmbed.addFields({
                 name: ':confused: Mała informacja na początek!',
-                value: `Pominąłem niektóre komendy, ponieważ nie możesz ich użyć. Te komendy to: ${blockedCmds.join(', ')}.`
+                value: `Pominąłem niektóre komendy, ponieważ nie możesz ich użyć lub są przestarzałe. Te komendy to: ${blockedCmds.join(', ')}.`
             });
         }
 

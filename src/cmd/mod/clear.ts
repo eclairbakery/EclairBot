@@ -62,10 +62,10 @@ export const clearCmd: Command = {
             await channel.bulkDelete(filtered, true);
         } else {
             const fetched = await channel.messages.fetch({ limit: amount + 1 });
-            await channel.bulkDelete(fetched.filter(m => m.id !== api.msg.author.id), true);
+            await channel.bulkDelete(fetched, true);
         }
 
-        await api.reply({
+        if (api.channel.isSendable()) await api.channel.send({
             embeds: [
                 new ReplyEmbed()
                     .setTitle('Już!')

@@ -139,6 +139,7 @@ export interface CommandAPI {
     channel: dsc.Channel | dsc.GuildChannel;
     executor: User;
     preferShortenedEmbeds: boolean;
+    invokedViaAlias: string;
 }
 
 export interface Command {

@@ -45,7 +45,7 @@ client.on('interactionCreate', async (int: Interaction) => {
 
     try {
         const argsRaw = cmdObj.expectedArgs.map(arg => int.options.getString(arg.name) ?? '');
-        await cmdObj.execute(await makeCommandApi(cmdObj, argsRaw, {interaction: int, cmd: cmdObj, guild: int.guild ?? undefined}));
+        await cmdObj.execute(await makeCommandApi(cmdObj, argsRaw, {interaction: int, cmd: cmdObj, guild: int.guild ?? undefined, invokedviaalias: int.commandName}));
 
     } catch (err) {
         handleError(err, { reply: (options: any) => int.editReply(options as any), });

@@ -129,7 +129,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         await commandObj.execute(await makeCommandApi(commandObj, argsRaw, {
             msg,
             guild: msg.guild ?? undefined,
-            cmd: commandObj
+            cmd: commandObj,
+            invokedviaalias: cmdName
         }));
     } catch (err) {
         handleError(err, msg);
