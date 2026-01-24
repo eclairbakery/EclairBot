@@ -18,9 +18,10 @@ export enum CommandFlags {
     // command flags: other command blocking
     WorksInDM = 1 << 3,
     Unsafe = 1 << 4,
+    Deprecated = 1 << 5,
 
     // command flags: slash cmds specific
-    Ephemeral = 1 << 5,
+    Ephemeral = 1 << 6,
 };
 
 export type CommandPermissionResolvable = 'administrator' | 'mute' | 'kick' | 'ban';
@@ -92,6 +93,7 @@ export type CommandValuableArgument =
     ;;
 
 export interface CommandMessageAPI {
+    /** @deprecated */
     content: string;
     author: {
         id: dsc.Snowflake;
@@ -135,7 +137,8 @@ export interface CommandAPI {
     log: typeof log;
     guild?: dsc.Guild;
     channel: dsc.Channel | dsc.GuildChannel;
-    executor: User
+    executor: User;
+    preferShortenedEmbeds: boolean;
 }
 
 export interface Command {

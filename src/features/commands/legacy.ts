@@ -83,20 +83,27 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         return;
     }
 
-    const row = new dsc.ActionRowBuilder()
-    .addComponents(
-        new dsc.ButtonBuilder()
-        .setCustomId('confirm')
-        .setLabel('Potwierdzam')
-        .setStyle(dsc.ButtonStyle.Danger)
-    );
+    if (
+        (commandObj.flags & CommandFlags.Unsafe) ||
+        (commandObj.flags & CommandFlags.Deprecated)
+    ) {
+        const row = new dsc.ActionRowBuilder()
+        .addComponents(
+            new dsc.ButtonBuilder()
+            .setCustomId('confirm')
+            .setLabel('Tak, uruchom')
+            .setStyle(dsc.ButtonStyle.Danger)
+        );
 
-    if (commandObj.flags & CommandFlags.Unsafe) {
         const reply = await msg.reply({ embeds: [
             new ReplyEmbed()
                 .setColor(PredefinedColors.Red)
-                .setTitle('Potwierdź, że chcesz uruchomić tą komendę!')
-                .setDescription('Została ona oznaczona jako potencjalnie niebezpieczna i może wywołać nieodwracalne skutki. Upewnij się, iż na pewno jest ona dobrze użyta i nie ma żadnych błędów w argumentach.')
+                .setTitle('Czy na pewno chcesz uruchomić tą komendę?')
+                .setDescription(`Została ona oznaczona jako ${
+                    ((commandObj.flags & CommandFlags.Unsafe) && (commandObj.flags & CommandFlags.Deprecated))
+                        ? 'potencjalnie niebezpieczna i przestarzała'
+                        : (commandObj.flags & CommandFlags.Deprecated) ? 'przestarzała' : 'potencjalnie niebezpieczna'
+                }.`)
         ], components: [row.toJSON()] });
 
         try {

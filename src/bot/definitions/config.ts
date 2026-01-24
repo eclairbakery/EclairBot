@@ -105,6 +105,7 @@ export interface Config {
         fullExceptImportant: BlockCommandsRules;
         spammy: BlockCommandsRules;
         economy: BlockCommandsRules;
+        preferShortenedEmbeds: string[]
     };
 
     emoji: {

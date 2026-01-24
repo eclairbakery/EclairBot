@@ -8,6 +8,7 @@ import actionsManager, { OnForceReloadTemplates } from '../../events/actions/tem
 import fmtEmoji from '@/util/fmtEmoji.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
+/** @deprecated */
 export const forceReloadTemplatesCmd: Command = {
     name: 'force-reload-templates',
     aliases: [],
@@ -15,7 +16,7 @@ export const forceReloadTemplatesCmd: Command = {
         main: 'Jeśli uważasz że template channels się nie przeładowały i pokazują błędne dane to... mylisz się! eclair bot jest idealny. A tak serio to tą komendą możesz wymusić reload',
         short: 'Wymusza przeładowanie wszystkich template channels',
     },
-    flags: CommandFlags.Important,
+    flags: CommandFlags.Important | CommandFlags.Deprecated,
 
     expectedArgs: [],
     permissions: {

@@ -15,7 +15,6 @@ import { kickCmd } from '@/cmd/mod/kick.js';
 import { banCmd } from '@/cmd/mod/ban.js';
 import { warnlistCmd } from '@/cmd/mod/warnlist.js';
 import { izolatkaCmd } from '@/cmd/mod/izolatka.js';
-import { shitwarnCmd } from '@/cmd/mod/shitwarn.js';
 import { muteCmd } from '@/cmd/mod/mute.js';
 import { unmuteCmd } from '@/cmd/mod/unmute.js';
 import { clearCmd } from '@/cmd/mod/clear.js';
@@ -74,7 +73,7 @@ export const commands: Map<Category, Command[]> = new Map([
         Category.Mod,
         [
             forceReloadTemplatesCmd, clearCmd,
-            warnCmd, warnClearCmd, shitwarnCmd, warnlistCmd,
+            warnCmd, warnClearCmd, warnlistCmd,
             muteCmd, unmuteCmd,
             banCmd, kickCmd, izolatkaCmd,
             notifyCmd, refreshCmd
