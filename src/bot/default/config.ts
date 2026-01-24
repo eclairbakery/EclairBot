@@ -524,7 +524,6 @@ export const defaultCfg: Config = {
     masterSecurity: {
         trustNewMembers: false,
         fuckNewMembers: false,
-        fuckNewMembersLight: false,
         minimumAccountAge: 3,
         massJoinWindow: 10 * 60 * 1000,
         massJoinThreshold: 5,

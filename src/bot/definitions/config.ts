@@ -329,8 +329,6 @@ export interface Config {
         trustNewMembers: boolean;
         /** if enabled, bot will kick out every new member */
         fuckNewMembers: boolean;
-        /** lighter version of cfg.masterSecurity.fuckNewMembers which moves users to the isolation cell instead */
-        fuckNewMembersLight: boolean;
         /** minimum account age in days, can be set to 0 to disable this check */
         minimumAccountAge: number;
         massJoinWindow: number;
