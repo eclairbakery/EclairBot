@@ -38,7 +38,6 @@ async function resolveUserFromContext(
 
     if (raw) {
         const id = getSnowflake(raw);
-        console.log('id: ' + id + ' while raw is ' + raw);
         if (!id) return null;
         return resolveMember(guild, id);
     }
