@@ -47,7 +47,7 @@ function buildCategoryEmbed(category: Category, cmds: Command[], blockedCmds: st
         }]);
     }
 
-    if (blockedCmds.length >= cmds.length) {
+    if (!embed.toJSON().fields || !embed.toJSON().fields![0]) {
         embed.addFields([{
             name: '',
             value: `W tej kategorii nic nie ma. Lub jest przestrzała.`,
