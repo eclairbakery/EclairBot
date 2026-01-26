@@ -48,6 +48,7 @@ import actionsManager from '@/features/actions/index.js';
 import { getChannel } from './features/actions/channels/templateChannels.js';
 import { warnGivenLogAction } from './features/actions/mod/warn-given.js';
 import { db } from './bot/apis/db/bot-db.js';
+import { setUpStatusGenerator } from './util/generateStatusQuote.js';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -105,7 +106,7 @@ function setUpEvents() {
 
 // --------------- MAIN ---------------
 async function main() {
-    
+    setUpStatusGenerator();
     initExpiredWarnsDeleter();
     setUpActions();
     setUpEvents();
