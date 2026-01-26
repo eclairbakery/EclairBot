@@ -1,4 +1,5 @@
-console.log('Hi');
+performance.mark('code_start');
+console.log('Welcome to EclairBOT!');
 
 // preparation & basic imports
 import { client } from '@/client.js';
@@ -52,6 +53,8 @@ import { setUpStatusGenerator } from './util/generateStatusQuote.js';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
+    performance.mark('client_ready_start');
+
     await debug.init();
     debug.log(`${ft.CYAN}Logged in.`);
     await db.init();
@@ -60,6 +63,9 @@ client.once('clientReady', async () => {
     if (!process.env.TENOR_API) {
         debug.warn('You should set the TENOR_API enviorment variable to a Tenor API key.\nOtherwise, the Tenor API-based commands will not work.');
     }
+
+    performance.mark('client_ready_end');
+    performance.measure('client_ready', 'client_ready_start', 'client_ready_end');
 
     await main();
 }); 
@@ -106,6 +112,8 @@ function setUpEvents() {
 
 // --------------- MAIN ---------------
 async function main() {
+    performance.mark('main_executed_start');
+
     setUpStatusGenerator();
     initExpiredWarnsDeleter();
     setUpActions();
@@ -157,6 +165,14 @@ async function main() {
             }
         }, cfg.general.databaseBackups.interval);
     }
+
+    performance.mark('main_executed_end');
+    performance.measure('main_executed', 'main_executed_start', 'main_executed_end');
 }
 
-(async function () { await client.login(process.env.TOKEN); })();
+(async function () {
+    performance.mark('code_late_start');
+    await client.login(process.env.TOKEN); 
+    performance.mark('code_late_end');
+    performance.measure('logged_in', 'code_late_start', 'code_late_end');
+})();
