@@ -214,7 +214,6 @@ export interface Config {
             havingMentalProblemsByWarningYourselfHeader: string;
             havingMentalProblemsByWarningYourselfText: string;
             warningEclairBotReason: string;
-            warningWatchdogReason: string;
             warnHeader: string;
             shitwarnHeader: string;
             warnDescription: string;
@@ -406,12 +405,6 @@ export interface Config {
             stderr: dsc.Snowflake;
             stdwarn: dsc.Snowflake;
         };
-        ai: {
-            enabled: boolean;
-            channel: dsc.Snowflake;
-            notAllowedCharacters: string[];
-            bannedSequences: string[];
-        };
         economy: {
             shop: ConfigEconomyShopItem[];
             currencySign: string;
@@ -436,10 +429,5 @@ export interface Config {
             }[];
         },
         translations: ConfigTranslation[],
-        generalFiltering: {
-            regex: RegexExpressionDefinition,
-            enabled: boolean,
-            leet_map: Record<string, string>
-        }
     }
 }

@@ -215,7 +215,6 @@ export const defaultCfg: Config = {
             havingMentalProblemsByWarningYourselfHeader: 'Bro co ty odpierdalasz?',
             havingMentalProblemsByWarningYourselfText: 'Czemu ty chcesz sobie dać warna? Co jest z tobą nie tak... Zabrać cię do szpitala zdrowia psychicznego czy co ja mam zrobić...',
             warningEclairBotReason: 'nei warnuje sie istoty wyższej panie',
-            warningWatchdogReason: 'co prawda nie jest istotą wyższą watchdog, ale my sie lubimy. dam ci w zamian warna. nice try',
             warnHeader: '<mention> dostał warna od <mod>!',
             warnDescription: 'Warn w skrócie ma <points> punktów i skończy się <duration>.',
             shitwarnHeader: 'Masz shitwarna/fake-warna, <mention>!',
@@ -417,12 +416,6 @@ export const defaultCfg: Config = {
             stderr: channelsCfg.eclairbot.stderr,
             stdwarn: channelsCfg.eclairbot.stdwarn
         },
-        ai: {
-            enabled: false,
-            channel: '1276271917665484801',
-            notAllowedCharacters: [':', '#', '!', '&', '*'],
-            bannedSequences: ['@here', '@everyone', 'choler', 'chuj', 'debil', 'fiucie', 'fiut', 'fuck', 'gówn', 'hitler', 'ja pierdole', 'ja pierdolę', 'jeba', 'jebany', 'jebi', 'jprdl', 'kurwa', 'kutas', 'niger', 'nigger', 'penis', 'pierdol', 'porn', 'putin', 'rucha', 'skibidi', 'skibidi toilet', 'spierdalaj', 'toilet', 'wypierdalaj', 'zapierdalaj'],
-        },
         economy: {
             shop: [
                 {
@@ -478,47 +471,7 @@ export const defaultCfg: Config = {
             protectedRoles: [],
             warnAutoActions: []
         },
-        translations: [],
-        generalFiltering: {
-            enabled: true,
-            leet_map: {
-                "@": "a",
-                "4": "a",
-                "€": "e",
-                "3": "e",
-                "1": "i",
-                "!": "i",
-                "|": "i",
-                "0": "o",
-                "5": "s",
-                "$": "s",
-                "7": "t",
-                "+": "t",
-                "2": "z",
-                "8": "b",
-                "9": "g"
-            },
-            regex: {
-                regex: "\\b(" +
-                    "snus(y|a|em|ik|iki|ow)?|" +
-                    "white\\s?fox|" +
-                    "velo|" +
-                    "siberia|" +
-                    "epok|" +
-                    "nikotyn(a|owy|ie)?|" +
-                    "papieros(y|a|ow)?|" +
-                    "e-?papieros(y)?|" +
-                    "vape(y|m|owac)?|" +
-                    "joint(y|a)?|" +
-                    "ziol(o|a)?|" +
-                    "traw(a|y|a)?|" +
-                    "alkohol|" +
-                    "piw(o|a|em)?|" +
-                    "wod(k|ka|ki|a)?" +
-                    ")\\b",
-                flags: "i"
-            }
-        }
+        translations: []
     },
 
     masterSecurity: {

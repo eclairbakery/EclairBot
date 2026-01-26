@@ -306,4 +306,14 @@ export async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.Per
     }
 }
 
+export function setUpWatchdog() {
+    client.on('roleCreate', (newRole: dsc.Role) => {
+        watchRoleChanges(newRole, newRole.permissions.toArray());
+    });
+    
+    client.on('roleUpdate', (oldRole: dsc.Role, newRole: dsc.Role) => {
+        watchRoleChanges(newRole, newRole.permissions.toArray().filter(p => !oldRole.permissions.toArray().includes(p)));
+    });
+}
+
 export {channelAddWatcher, channelDeleteWatcher, onWarnGivenWatcher, onMuteGivenWatcher};

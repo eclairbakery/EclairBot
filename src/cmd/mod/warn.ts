@@ -100,12 +100,6 @@ export const warnCmd: Command = {
             targetUser = api.msg.member!.plainMember;
         }
 
-        if (targetUser.id === '1409902422108934226') {
-            points = 2;
-            reason = cfg.customization.modTexts.warningWatchdogReason;
-            targetUser = api.msg.member!.plainMember;
-        }
-
         try {
             await warn(targetUser, {
                 reason,
@@ -118,11 +112,26 @@ export const warnCmd: Command = {
             return api.log.replyError(api.msg, 'Błąd bazy danych', 'Nie udało się zapisać warna');
         }
 
+        if (!api.preferShortenedEmbeds) {
+
         const embed = new ReplyEmbed()
             .setTitle(`📢 ${cfg.customization.modTexts.warnHeader.replace('<mention>', targetUser.user.username).replace('<mod>', api.msg.author.plainUser.username)}`)
             .setDescription(cfg.customization.modTexts.warnDescription.replace('<points>', `${points}`).replace('<duration>', `<t:${expiresAt}:R>`))
             .setColor(PredefinedColors.Orange);
 
         await api.reply({ embeds: [embed] });
+
+        } else {
+
+        await api.reply({
+            embeds: [
+                new ReplyEmbed()
+                    .setTitle('📢 Użytkownik dostał warna')
+                    .setColor(PredefinedColors.Orange)
+                    .setDescription(`Udało się. To tyle. Więcej na <#${cfg.channels.mod.warnings}>`)
+            ]
+        });
+
+        }
     }
 };

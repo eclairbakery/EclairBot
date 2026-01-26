@@ -23,14 +23,13 @@ import { cfg } from './bot/cfg.js';
 import AutoModRules from '@/features/actions/mod/automod.js';
 import { initExpiredWarnsDeleter } from '@/features/deleteExpiredWarns.js';
 import { welcomeNewUserAction, sayGoodbyeAction } from '@/features/actions/others/welcomer.js';
-import { eclairAIAction } from '@/features/actions/others/eclairai.js';
 import { countingChannelAction } from '@/features/actions/4fun/countingChannel.js';
 import { lastLetterChannelAction } from '@/features/actions/4fun/lastLetterChannel.js';
 import { mediaChannelAction } from '@/features/actions/4fun/mediaChannelAction.js';
 import { antiSpamAndAntiFlood } from '@/features/actions/mod/anti-spam-flood.js';
 import { basicMsgCreateActions } from '@/features/actions/others/basicMsgCreateActions.js';
 import { registerTemplateChannels } from '@/features/actions/channels/registerTemplateChannels.js';
-import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher, watchRoleChanges } from './bot/watchdog.js';
+import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher, setUpWatchdog } from './bot/watchdog.js';
 import { actionPing } from '@/features/actions/4fun/pingDeathChat.js';
 import { hallOfFameAction } from './features/actions/4fun/hallOfFame.js';
 
@@ -43,14 +42,12 @@ import { registerMsgDeleteDscEvents } from './events/client/messageDelete.js';
 // commands
 import * as slashCommands from '@/features/commands/slash.js';
 import * as legacyCommands from '@/features/commands/legacy.js';
-import { commands } from '@/cmd/list.js';
 
 // misc
 import actionsManager from '@/features/actions/index.js';
 import { getChannel } from './features/actions/channels/templateChannels.js';
 import { warnGivenLogAction } from './features/actions/mod/warn-given.js';
 import { db } from './bot/apis/db/bot-db.js';
-import { filterGeneralAction } from './features/actions/others/filterGeneral.js';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -79,7 +76,6 @@ function setUpActions() {
         welcomeNewUserAction,
         sayGoodbyeAction,
         // automod & anti-spam with anti-flood
-        filterGeneralAction,
         ...AutoModRules.all(),
         antiSpamAndAntiFlood,
         // msg-specific actions
@@ -87,7 +83,6 @@ function setUpActions() {
         mediaChannelAction,
         countingChannelAction,
         lastLetterChannelAction,
-        eclairAIAction,
         // hall of fame
         hallOfFameAction,
         // additional features
@@ -98,15 +93,6 @@ function setUpActions() {
     slashCommands.init();
     legacyCommands.init();
     actionsManager.registerEvents(client);
-
-    // will be moved
-    client.on('roleCreate', (newRole: dsc.Role) => {
-        watchRoleChanges(newRole, newRole.permissions.toArray());
-    });
-
-    client.on('roleUpdate', (oldRole: dsc.Role, newRole: dsc.Role) => {
-        watchRoleChanges(newRole, newRole.permissions.toArray().filter(p => !oldRole.permissions.toArray().includes(p)));
-    });
 }
 
 function setUpEvents() {
@@ -114,11 +100,12 @@ function setUpEvents() {
     registerChannelDeleteDscEvents(client);
     registerMsgEditDscEvents(client);
     registerMsgDeleteDscEvents(client);
+    setUpWatchdog();
 }
 
 // --------------- MAIN ---------------
 async function main() {
-    client.user!.setActivity({ type: dsc.ActivityType.Watching, name: 'was 😈', state: '(tak jak watchdog kiedyś)' });
+    
     initExpiredWarnsDeleter();
     setUpActions();
     setUpEvents();
@@ -132,7 +119,7 @@ async function main() {
         if (processHeap > availableMemory - 25000000) {
             debug.warn(`Low on memory.\nUsing: ${processHeap} of ${availableMemory} available memory.\nEclairBOT will attempt to restart if this situation occurs more than 6 times in the next 10 seconds.`);
             memoryIssuesTimes++;
-            if (memoryIssuesTimes == 10) {
+            if (memoryIssuesTimes == 6) {
                 debug.log(`Attempting to restart EclairBOT to free up memory.`);
                 process.exit(1); // start.hosting-only.js should catch this
             }
