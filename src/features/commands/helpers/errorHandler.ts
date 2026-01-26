@@ -53,7 +53,7 @@ export function handleError(err: any, msg: log.Replyable) {
 
         return log.replyError(
             msg, 'Błąd!',
-            `Wystąpił błąd podczas wykonywania komendy: \`${String(err).replaceAll('`', '\`')}\`.`
+            `Wystąpił błąd podczas wykonywania komendy: \`${String(err).replaceAll('\n', '').replaceAll('`', '\`')}\`.`
                 + ` To nie powinno się stać! Proszę o powiadomienie o tym właścicieli bota... a jak nie... ||To nic się nie stanie 🤗||`
         );
     }
