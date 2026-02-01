@@ -24,7 +24,6 @@ import User from '@/bot/apis/db/user.js';
 import { handleError } from './helpers/errorHandler.js';
 import { makeCommandApi } from './helpers/makeCommandApi.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
-import { addCommandPerformanceEntry } from './helpers/commandPerformance.js';
 
 function waitForButton(interaction: dsc.Message, buttonId: string, time = 15000) {
     return new Promise((resolve, reject) => {
@@ -126,8 +125,6 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         return;
     }
 
-    const start_executing = Date.now();
-
     try {
         await commandObj.execute(await makeCommandApi(commandObj, argsRaw, {
             msg,
@@ -138,10 +135,6 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     } catch (err) {
         handleError(err, msg);
     }
-
-    const end_executing = Date.now();
-
-    addCommandPerformanceEntry(start_executing, end_executing);
 }
 
 export function init() {

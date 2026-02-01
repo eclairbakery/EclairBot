@@ -106,7 +106,7 @@ export const wikiCmd: Command = {
 
         const json = await fetched.json() as WikiSummaryResponse;
 
-        if (json.description?.includes('strona ujednoznaczniająca')) {
+        if (json.description?.includes('strona ujednoznaczniająca') || json.description?.includes('may refer to')) {
             const titles = await getDisambiguationTitles(json.title);
             return msg.reply({
                 embeds: [{
@@ -115,6 +115,38 @@ export const wikiCmd: Command = {
                     description: `${cfg.customization.uncategorized.wikiDisambiguationPageText}\n${titles.join(', ')}`,
                     url: json.content_urls.desktop.page,
                     color: PredefinedColors.Cyan
+                }]
+            });
+        }
+
+        const allin1 = (json.description ?? '') + (json.titles.normalized);
+
+        if (
+            (allin1.includes('seks') || allin1.includes('sex') || allin1.includes('porn')) &&
+            msg.channel.id !== cfg.unfilteredRelated.unfilteredChannel
+        ) {
+            return msg.reply({
+                embeds: [{
+                    author: { name: 'EclairBOT' },
+                    title: 'Weź się lecz 🥀',
+                    description: `Zastanawia mnie bardzo dlaczego interesują cię tak nieludzkie hasła. Pewnie w twojej okolicy jest jakiś psycholog, który udzieli ci wsparcia. Dobra, co ja piszę... Po prostu przestań się tym interesować, a jak nie możesz to idź na <#${cfg.unfilteredRelated.unfilteredChannel}> i nie narażaj innych na te treści`,
+                    url: json.content_urls.desktop.page,
+                    color: PredefinedColors.DarkOrange
+                }]
+            });
+        }
+
+        if (
+            (allin1.includes('dsc.gg') || allin1.includes('discord.com/invite') || allin1.includes('discord.gg')) &&
+            msg.channel.id !== cfg.unfilteredRelated.unfilteredChannel
+        ) {
+            return msg.reply({
+                embeds: [{
+                    author: { name: 'EclairBOT' },
+                    title: 'Weź się lecz 🥀',
+                    description: `Jak już się reklamujesz Wikipedią to na <#${cfg.unfilteredRelated.unfilteredChannel}> plz.`,
+                    url: json.content_urls.desktop.page,
+                    color: PredefinedColors.DarkOrange
                 }]
             });
         }

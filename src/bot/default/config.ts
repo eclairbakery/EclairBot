@@ -117,24 +117,6 @@ export const defaultCfg: Config = {
     roles: rolesCfg,
     channels: channelsCfg,
     channelsConfiguration: {
-        channelNameWatchdog: [
-            {
-                name: {
-                    name: 'general',
-                    emoji: '💬',
-                    leaveSpaces: false
-                },
-                id: '1264971505662689311'
-            },
-            {
-                name: {
-                    name: 'offtopic',
-                    emoji: '👤',
-                    leaveSpaces: false
-                },
-                id: '1392567715407073402'
-            },
-        ],
         characters: {
             beforeEmoji: '﹝',
             afterEmoji: '﹞'
@@ -145,7 +127,6 @@ export const defaultCfg: Config = {
 
     general: {
         prefix: 'sudo ',
-        switchToProgrammingChance: 0.2,
         databaseBackups: {
             enabled: true,
             msg: '🗄️ automatyczny backup masz tutaj',
@@ -314,7 +295,7 @@ export const defaultCfg: Config = {
             wikiUnknownArticleHeader: 'Tego artykułu nie ma na Wikipedii!',
             wikiUnknownArticleText: 'Wiem, to niemożliwe...',
             wikiIsNotFandomHeader: 'Ta komenda nie jest do tego!',
-            wikiIsNotFandomText: 'Rzeczy takie jak `eklerka`, `aurorOS`, `piekarnia eklerki`, `gorciu`, `maqix`, itd. nie są na wikipedii... Ale **są na fandomie**, więc możesz użyć komendy fandom!',
+            wikiIsNotFandomText: 'Rzeczy takie jak `eklerka`, `aurorOS`, `piekarnia eklerki`, `gorciu`, `maqix`, itd. nie są na wikipedii... Po prostu nie spodziewaj się, że jest to wiki serwera.',
             wikiDisambiguationPageHeader: 'Doprecyzuj!',
             wikiDisambiguationPageText: 'Natrafiłeś na stronę ujednoznaczniającą. Ona wyświetla różne znaczenia wyrazu...',
             fandomDefaultQueryText: 'Zlew00',
@@ -397,13 +378,7 @@ export const defaultCfg: Config = {
                 enabled: false,
                 channels: [ channelsCfg.dev.programming ],
                 multiplier: 2
-            },
-            generalLevelBoost: {
-                enabled: true,
-                boostTimeInMinutes: 2,
-                generalActivityMeterRefreshInMinutes: 5
-            },
-            multipliers: []
+            }
         },
         hallOfFame: {
             channel: '1392128976574484592',

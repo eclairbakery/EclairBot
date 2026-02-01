@@ -2,7 +2,7 @@ import * as dsc from 'discord.js';
 import { Snowflake } from '../../../defs.js';
 import { PredefinedActionEventTypes } from '../index.js';
 import { OnForceReloadTemplates } from '../../../events/actions/templatesEvents.js';
-import { addTemplateChannel, getChannel, makeNameGuard } from './templateChannels.js';
+import { addTemplateChannel, getChannel } from './templateChannels.js';
 import { makeChannelName } from '@/util/makeChannelName.js';
 import { cfg } from '@/bot/cfg.js';
 
@@ -51,10 +51,5 @@ export async function registerTemplateChannels(client: dsc.Client) {
             const bans = await guild.bans.fetch();
             return makeChannelName({emoji: '🚫', name: `Bany: ${bans.size} ludzi`, leaveSpaces: true});
         },
-    });
-
-
-    cfg.channelsConfiguration.channelNameWatchdog.forEach((channelNameConfig) => {
-        makeNameGuard(channelNameConfig.id, channelNameConfig.name); 
     });
 }

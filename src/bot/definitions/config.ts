@@ -10,8 +10,6 @@ export interface Config {
         /* General configuration for the bot */
         prefix: string;
 
-        switchToProgrammingChance: number;
-
         databaseBackups: {
             enabled: boolean;
             interval: number;
@@ -97,7 +95,6 @@ export interface Config {
         };
         /** can be null if none (default: -) */
         spaceReplacement: string | null;
-        channelNameWatchdog: {name: ChannelName, id: dsc.Snowflake}[];
     };
 
     blockCommands: {
@@ -384,15 +381,6 @@ export interface Config {
                 channels: dsc.Snowflake[];
                 multiplier: number;
             },
-            generalLevelBoost: {
-                enabled: boolean,
-                boostTimeInMinutes: number,
-                generalActivityMeterRefreshInMinutes: number
-            },
-            multipliers: {
-                role: dsc.Snowflake;
-                multiplier: number;
-            } [];
         };
         hallOfFame: {
             enabled: boolean;

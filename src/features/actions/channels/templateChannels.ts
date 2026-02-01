@@ -51,16 +51,3 @@ export function mkTemplateChannelUpdateAction({ channel, updateOnEvents, format,
 export function addTemplateChannel(options: TemplateChannel) {
     actionsManager.addAction(mkTemplateChannelUpdateAction(options));
 }
-
-export async function makeNameGuard(channelId: string, channelName: ChannelName) {
-    addTemplateChannel({
-        channel: await getChannel(channelId, client) as dsc.GuildChannel,
-        updateOnEvents: [
-            PredefinedActionEventTypes.OnChannelUpdate,
-            OnForceReloadTemplates
-        ],
-        format() {
-            return makeChannelName(channelName);
-        }
-    })
-}
