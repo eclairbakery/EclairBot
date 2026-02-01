@@ -29,3 +29,8 @@ export interface RegexExpressionDefinition {
     regex: string,
     flags: `i` | undefined
 }
+
+export interface ConfigCommandARgumentRulesForNumbers {
+    allowInfinity: boolean,
+    onlyIntegers: boolean,
+}

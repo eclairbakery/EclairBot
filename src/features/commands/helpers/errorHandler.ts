@@ -1,8 +1,18 @@
 import * as log from '@/util/log.js';
-import { ArgMustBeSomeTypeError, ArgParseError, MissingRequiredArgError } from '../defs/errors.js';
+import { ArgMustBeSomeTypeError, ArgParseError, ArgViolatesRules, MissingRequiredArgError } from '../defs/errors.js';
 import { output } from '@/bot/logging.js';
 import { formatArgType } from './argTypeFormat.js';
 import { DiscordAPIError } from 'discord.js';
+import { CommandViolatedRule } from '@/bot/command.js';
+
+function handleViolatedRule(v: CommandViolatedRule) {
+    switch (v) {
+        case 'used_infinity':
+            return 'podał nieskończonność jako argument';
+        case 'non_int_passed':
+            return 'podał coś co nie jest intem jako argument';
+    }
+}
 
 export function handleError(err: any, msg: log.Replyable) {
     if (err instanceof ArgParseError) {
@@ -17,6 +27,12 @@ export function handleError(err: any, msg: log.Replyable) {
                 msg, 'Błąd!',
                 `No ten, jest problem! Ta komenda **oczekiwała argumentu ${err.argName}** który powinien być ${formatArgType(err.argType)}`
                     + ` ale oczywście jesteś pacanem i **nie podałeś oczekiwanego formatu!** Nic tylko gratulować.`,
+            );
+        } else if (err instanceof ArgViolatesRules) {
+            return log.replyError(
+                msg, 'Błąd',
+                `No ten, jest problem! Ta komenda **oczekiwała argumentu ${err.argName}** który powinien być ${formatArgType(err.argType)}`
+                    + ` ale oczywście jesteś pacanem, który nadużył mojego zaufania i **${handleViolatedRule(err.violatedRules)}**!`
             );
         } else {
             return log.replyError(

@@ -1,6 +1,6 @@
 import { ChannelName } from '@/util/makeChannelName.js';
 import * as dsc from 'discord.js';
-import { BlockCommandsRules, ConfigEconomyShopItem, ConfigTranslation, Emoji, RegexExpressionDefinition } from './config-subtypes.js';
+import { BlockCommandsRules, ConfigCommandARgumentRulesForNumbers, ConfigEconomyShopItem, ConfigTranslation, Emoji, RegexExpressionDefinition } from './config-subtypes.js';
 
 export interface Config {
     /* Whether the bot is enabled (The most useless configuration field I've ever seen...) */
@@ -9,6 +9,14 @@ export interface Config {
     general: {
         /* General configuration for the bot */
         prefix: string;
+
+        commandHandling: {
+            arguments: {
+                number: ConfigCommandARgumentRulesForNumbers & {
+                    commandOverrides: Record<string, ConfigCommandARgumentRulesForNumbers>
+                }
+            }
+        },
 
         databaseBackups: {
             enabled: boolean;

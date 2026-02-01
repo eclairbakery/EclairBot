@@ -127,6 +127,15 @@ export const defaultCfg: Config = {
 
     general: {
         prefix: 'sudo ',
+        commandHandling: {
+            arguments: {
+                number: {
+                    allowInfinity: false,
+                    onlyIntegers: true,
+                    commandOverrides: {}
+                }
+            }
+        },
         databaseBackups: {
             enabled: true,
             msg: '🗄️ automatyczny backup masz tutaj',

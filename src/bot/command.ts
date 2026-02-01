@@ -34,6 +34,8 @@ export type CommandArgType =
     | 'timestamp'
     | 'number';
 
+export type CommandViolatedRule = 'used_infinity' | 'non_int_passed';
+
 export interface CommandArgument {
     name: string;
     description: string;

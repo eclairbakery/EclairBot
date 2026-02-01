@@ -1,7 +1,8 @@
 import * as dsc from 'discord.js';
 import { Command, CommandArgument, CommandFlags, CommandValuableArgument } from "@/bot/command.js";
 import User from "@/bot/apis/db/user.js";
-import { ArgMustBeSomeTypeError, MissingRequiredArgError } from "../defs/errors.js";
+import { ArgMustBeSomeTypeError, ArgViolatesRules, MissingRequiredArgError } from "../defs/errors.js";
+import { cfg } from '@/bot/cfg.js';
 
 const SNOWFLAKE_REGEX = /^\d{17,20}$/;
 
@@ -95,6 +96,18 @@ export async function parseArgs(
                 } else {
                     const num = Number(raw.replace(',', '.'));
                     if (isNaN(num)) throw new ArgMustBeSomeTypeError(decl.name, "number");
+                    if (
+                        (num == Infinity || num == -Infinity) &&
+                        !cfg.general.commandHandling.arguments.number.allowInfinity
+                    ) {
+                        throw new ArgViolatesRules(decl.name, "number", 'used_infinity');
+                    }
+                    if (
+                        !Number.isInteger(num) &&
+                        cfg.general.commandHandling.arguments.number.onlyIntegers
+                    ) {
+                        throw new ArgViolatesRules(decl.name, "number", 'non_int_passed');
+                    }
                     parsed.push({ ...decl, value: num } as any);
                 }
                 break;
