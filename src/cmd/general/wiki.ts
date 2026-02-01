@@ -119,7 +119,7 @@ export const wikiCmd: Command = {
             });
         }
 
-        const allin1 = (json.description ?? '') + (json.titles.normalized);
+        const allin1 = ((json.description ?? '') + (json.titles.normalized)).toLowerCase();
 
         if (
             (allin1.includes('seks') || allin1.includes('sex') || allin1.includes('porn')) &&
@@ -130,7 +130,7 @@ export const wikiCmd: Command = {
                     author: { name: 'EclairBOT' },
                     title: 'Weź się lecz 🥀',
                     description: `Zastanawia mnie bardzo dlaczego interesują cię tak nieludzkie hasła. Pewnie w twojej okolicy jest jakiś psycholog, który udzieli ci wsparcia. Dobra, co ja piszę... Po prostu przestań się tym interesować, a jak nie możesz to idź na <#${cfg.unfilteredRelated.unfilteredChannel}> i nie narażaj innych na te treści`,
-                    url: json.content_urls.desktop.page,
+                    url: 'https://www.redirectionprogram.com/pl/',
                     color: PredefinedColors.DarkOrange
                 }]
             });
@@ -145,7 +145,7 @@ export const wikiCmd: Command = {
                     author: { name: 'EclairBOT' },
                     title: 'Weź się lecz 🥀',
                     description: `Jak już się reklamujesz Wikipedią to na <#${cfg.unfilteredRelated.unfilteredChannel}> plz.`,
-                    url: json.content_urls.desktop.page,
+                    url: 'https://www.reklama.pl/',
                     color: PredefinedColors.DarkOrange
                 }]
             });
