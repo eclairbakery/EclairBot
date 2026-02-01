@@ -50,7 +50,6 @@ import { enableCommandCmd } from './dev/enable-cmd.js';
 import { disableCommandCmd } from './dev/disable-cmd.js';
 import { buyCmd } from './economy/buy.js';
 import { refreshCmd } from './mod/refresh.js';
-import { ebinfoCmd } from './dev/ebinfo.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -94,7 +93,7 @@ export const commands: Map<Category, Command[]> = new Map([
         Category.DevelopersOnly,
         [
             evalCmd, restartCmd, configurationCommand,
-            enableCommandCmd, disableCommandCmd, ebinfoCmd
+            enableCommandCmd, disableCommandCmd, 
         ],
     ],
     [
