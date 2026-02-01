@@ -53,6 +53,13 @@ export function handleError(err: any, msg: log.Replyable) {
                         msg, 'Błąd!',
                         'Niestety wystąpił problem dotyczący długości wiadomości. Prawdopodobnie twoja komenda zrobiła coś, że output wyszedł za długi dla Discorda.'
                     );
+                } else if (
+                    err.message.includes('NUMBER_TYPE_COERCE')
+                ) {
+                    return log.replyError(
+                        msg, 'Błąd!',
+                        'Discord nie przyjmuje az tak dużych liczb. Raczej nie wie, że istnieje coś takiego jak typ `bigint`.'
+                    );
                 } else if (err.code == 50013 || err.code == 50001) {
                     return log.replyError(
                         msg, 'Błąd!',
