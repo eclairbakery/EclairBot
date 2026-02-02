@@ -95,10 +95,7 @@ export interface CommandAPI {
 
     // ---- INVOKER -----
     invoker: {
-        user: {
-            id: dsc.Snowflake;
-            plainUser: dsc.User;
-        };
+        user: dsc.User;
         member?: dsc.GuildMember;
         id: dsc.Snowflake;
     };

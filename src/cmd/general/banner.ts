@@ -32,7 +32,7 @@ export const bannerCmd: Command = {
 
     async execute(api) {
         const member = api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue;
-        const user = member.value?.user ?? api.invoker.user.plainUser;
+        const user = member.value?.user ?? api.invoker.user;
 
         const fetchedUser = await user.fetch();
 

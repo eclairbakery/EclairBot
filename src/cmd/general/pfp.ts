@@ -30,7 +30,7 @@ export const pfpCmd: Command = {
     },
 
     execute(api) {
-        const user = (api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue).value?.user ?? api.invoker.user.plainUser;
+        const user = (api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue).value?.user ?? api.invoker.user;
         api.reply({content: 'Tu masz profilowe i nie marudź:', files: [user.displayAvatarURL()]});
     },
 };

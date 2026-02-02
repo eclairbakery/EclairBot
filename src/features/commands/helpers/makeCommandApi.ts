@@ -99,10 +99,7 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
 
         // -- invoker --
         invoker: {
-            user: {
-                id: (context.interaction?.user.id ?? context.msg?.author.id)!,
-                plainUser: (context.interaction?.user ?? context.msg?.author)!
-            },
+            user: (context.interaction?.user ?? context.msg?.author)!,
             member: rawMember,
             id: (context.interaction?.user.id ?? context.msg?.author.id)!,
         },

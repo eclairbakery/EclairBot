@@ -94,7 +94,7 @@ export const warnCmd: Command = {
 
         points = clamp(cfg.commands.mod.warn.minPoints, points, cfg.commands.mod.warn.maxPoints);
 
-        if (targetUser.id === api.invoker.user.plainUser.client.user?.id) {
+        if (targetUser.id === api.invoker.user.client.user?.id) {
             points = 2;
             reason = cfg.customization.modTexts.warningEclairBotReason;
             targetUser = api.invoker.member!;
@@ -115,7 +115,7 @@ export const warnCmd: Command = {
         if (!api.preferShortenedEmbeds) {
 
         const embed = new ReplyEmbed()
-            .setTitle(`📢 ${cfg.customization.modTexts.warnHeader.replace('<mention>', targetUser.user.username).replace('<mod>', api.invoker.user.plainUser.username)}`)
+            .setTitle(`📢 ${cfg.customization.modTexts.warnHeader.replace('<mention>', targetUser.user.username).replace('<mod>', api.invoker.user.username)}`)
             .setDescription(cfg.customization.modTexts.warnDescription.replace('<points>', `${points}`).replace('<duration>', `<t:${expiresAt}:R>`))
             .setColor(PredefinedColors.Orange);
 

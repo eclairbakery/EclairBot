@@ -33,7 +33,7 @@ export const lvlCmd: Command = {
 
     async execute(api: CommandAPI) {
         const userArg = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | null;
-        const who = userArg?.user ?? api.invoker.user.plainUser;
+        const who = userArg?.user ?? api.invoker.user;
 
         try {
             const user = new User(who.id);

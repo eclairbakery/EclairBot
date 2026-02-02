@@ -73,7 +73,7 @@ export const replistCmd: Command = {
         return api.reply({
             embeds: [
                 new ReplyEmbed()
-                    .setTitle(`Lista opini użytkownika ${api.invoker.member?.displayName ?? api.invoker.user.plainUser.username}`)
+                    .setTitle(`Lista opini użytkownika ${api.invoker.member?.displayName ?? api.invoker.user.username}`)
                     .setDescription('No ten, tu masz liste:')
                     .setFields(fields)
                     .setColor(PredefinedColors.Cyan)
