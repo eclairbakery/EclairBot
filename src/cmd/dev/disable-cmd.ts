@@ -19,7 +19,6 @@ export const disableCommandCmd: Command = {
     ],
     flags: CommandFlags.Important | CommandFlags.Unsafe,
     permissions: {
-        discordPerms: [],
         allowedRoles: cfg.devPerms.allowedRoles,
         allowedUsers: cfg.devPerms.allowedUsers,
     },
@@ -37,6 +36,6 @@ export const disableCommandCmd: Command = {
 
         saveConfigurationChanges();
 
-        api.log.replySuccess(api.msg, 'Udało się!', `Wyłączono komendę **${name}**!`);
+        api.log.replySuccess(api, 'Udało się!', `Wyłączono komendę **${name}**!`);
     }
 };

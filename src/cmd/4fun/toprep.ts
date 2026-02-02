@@ -32,14 +32,13 @@ export const toprepCmd: Command = {
     permissions: {
         allowedUsers: null,
         allowedRoles: null,
-        discordPerms: null,
     },
 
     async execute(api) {
         const count = api.getTypedArg('count', 'number').value as number | null ?? DefaultCount;
 
         if (count > 18) {
-            return api.log.replyError(api.msg, 'Ej nie przesadzaj!', 'Nie pozwole ci więcej niż 18 pól bo zrobi się flood!');
+            return api.log.replyError(api, 'Ej nie przesadzaj!', 'Nie pozwole ci więcej niż 18 pól bo zrobi się flood!');
         }
 
         const top = await getTopRep(50);
@@ -50,7 +49,7 @@ export const toprepCmd: Command = {
         for (const [userID, repScale] of top) {
             if (i > count) break;
 
-            const user = await api.msg.guild?.members.fetch(userID).catch(() => null);
+            const user = await api.guild?.members.fetch(userID).catch(() => null);
             if (user == null) continue;
 
             const rep = await getUserReputation(userID);

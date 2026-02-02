@@ -25,20 +25,18 @@ export const toplvlCmd: Command = {
     flags: CommandFlags.None,
 
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: [],
     },
     expectedArgs: [],
 
     async execute(api) {
-        const { msg } = api;
-
         try {
             const rows = await api.executor.leveling.getEveryoneXPWithLimit(50);
 
             if (rows.length == 0) {
-                await msg.reply('Nie ma żadnego w bazie poziomu :sob:');
+                await api.reply('Nie ma żadnego w bazie poziomu :sob:');
             }
 
             const fields: dsc.APIEmbedField[] = [];
@@ -48,7 +46,7 @@ export const toplvlCmd: Command = {
                 if (++i > 12) break;
 
                 try {
-                    const member = await msg.guild?.members.fetch(row.user_id);
+                    const member = await api.guild?.members.fetch(row.user_id);
                     if (!member) { i--; continue; }
 
                     const userLvlRole = lvlRoles.filter(id => member.roles.cache.has(id)).at(-1);
@@ -66,7 +64,7 @@ export const toplvlCmd: Command = {
 
             const serverXP = await api.executor.leveling.getTotalServerXP();
 
-            await msg.reply({
+            await api.reply({
                 embeds: [
                     new ReplyEmbed()
                         .setColor("#1ebfd5")
@@ -81,7 +79,7 @@ export const toplvlCmd: Command = {
             });
         } catch (err) {
             output.err(err);
-            await msg.reply('❌ Wystąpił błąd podczas pobierania topu poziomów.');
+            await api.reply('❌ Wystąpił błąd podczas pobierania topu poziomów.');
         }
     },
 };

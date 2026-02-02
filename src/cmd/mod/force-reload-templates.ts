@@ -20,7 +20,7 @@ export const forceReloadTemplatesCmd: Command = {
 
     expectedArgs: [],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: null,
     },

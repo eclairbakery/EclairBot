@@ -68,7 +68,6 @@ export const helpCmd: Command = {
     flags: CommandFlags.None,
 
     permissions: {
-        discordPerms: null,
         allowedRoles: null,
         allowedUsers: [],
     },
@@ -82,7 +81,7 @@ export const helpCmd: Command = {
     ],
 
     async execute(api: CommandAPI) {
-        const { msg, commands } = api;
+        const { commands } = api;
 
         const sendInteractiveMenu = async () => {
             const selectMenu = buildSelectMenu(commands);
@@ -99,7 +98,7 @@ export const helpCmd: Command = {
                 )
                 .setColor(PredefinedColors.Cyan);
 
-            const replyMsg = await msg.reply({ embeds: [introEmbed], components: [row] });
+            const replyMsg = await api.reply({ embeds: [introEmbed], components: [row] });
 
             const collector = replyMsg.createMessageComponentCollector({
                 componentType: dsc.ComponentType.StringSelect,
@@ -107,7 +106,7 @@ export const helpCmd: Command = {
             });
 
             collector.on('collect', async (interaction: dsc.StringSelectMenuInteraction) => {
-                if (interaction.user.id !== msg.author.id) {
+                if (interaction.user.id !== api.invoker.id) {
                     await interaction.reply({ content: 'To menu nie jest dla Ciebie!', flags: ["Ephemeral"] });
                     return;
                 }
@@ -146,7 +145,7 @@ export const helpCmd: Command = {
             for (const val of values) {
                 const category = Category.fromString(val);
                 if (!category) {
-                    api.log.replyError(msg, 'Nieznana kategoria', `Nie znam kategorii ${val}. Czy możesz powtórzyć?`);
+                    api.log.replyError(api, 'Nieznana kategoria', `Nie znam kategorii ${val}. Czy możesz powtórzyć?`);
                     return;
                 }
                 categoriesToShow.add(category);
@@ -157,7 +156,7 @@ export const helpCmd: Command = {
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
-                if (!canExecuteCmd(cmd, msg.member!.plainMember)) blockedCmds.push(cmd.name);
+                if (!canExecuteCmd(cmd, api.invoker.member!.plainMember)) blockedCmds.push(cmd.name);
                 else if (!findCmdConfResolvable(cmd.name).enabled) blockedCmds.push(cmd.name);
                 else if (cmd.flags & CommandFlags.Deprecated) blockedCmds.push(cmd.name); 
             }
@@ -181,6 +180,6 @@ export const helpCmd: Command = {
             });
         }
 
-        await msg.reply({ embeds: allEmbeds });
+        await api.reply({ embeds: allEmbeds });
     },
 };

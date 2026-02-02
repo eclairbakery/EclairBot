@@ -44,7 +44,7 @@ export const muteCmd: Command = {
         },
     ],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers,
     },
@@ -56,27 +56,27 @@ export const muteCmd: Command = {
         let expiresAt = duration != null ? Math.floor(Date.now() / 1000) + duration : null;
 
         if (!targetUser) {
-            return api.log.replyError(api.msg, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
+            return api.log.replyError(api, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
         }
 
         if (!reason && cmdCfg.reasonRequired) {
-            return api.log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+            return api.log.replyError(api, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
         } else if (!reason) {
             reason = cfg.customization.modTexts.defaultReason;
         }
 
         if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
-            return api.log.replyError(api.msg, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
+            return api.log.replyError(api, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
         }
 
         try {
-            if (api.msg.member) watchMute(api.msg.member?.plainMember);
+            if (api.invoker.member) watchMute(api.invoker.member?.plainMember);
             await mute(targetUser, { reason, duration: (duration ?? 1) * 1000 });
 
             sendLog({
                 color: PredefinedColors.Purple,
                 title: 'Nałożono kłódkę na buzię',
-                description: `Użytkownik <@${targetUser.id}> został wyciszony na 24 godziny przez <@${api.msg.author.id}>.`,
+                description: `Użytkownik <@${targetUser.id}> został wyciszony na 24 godziny przez <@${api.invoker.id}>.`,
                 fields: [{ name: 'Powód', value: reason }]
             });
 
@@ -86,7 +86,7 @@ export const muteCmd: Command = {
                         .setTitle(`📢 Na ${targetUser.user.username} przymusowo nałożono kłódkę na buzię!`)
                         .setDescription(`Ciekawe czy wyjdzie z serwera... A, racja! Mogłem tego nie mówić.`)
                         .addFields(
-                            { name: 'Moderator', value: `<@${api.msg.author.id}>`, inline: true },
+                            { name: 'Moderator', value: `<@${api.invoker.id}>`, inline: true },
                             { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
 
                             { name: 'Powód', value: reason, inline: false },
@@ -97,7 +97,7 @@ export const muteCmd: Command = {
             });
         } catch (err) {
             debug.err(err);
-            return api.log.replyError(api.msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że mutujesz admina...');
+            return api.log.replyError(api, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że mutujesz admina...');
         }
     }
 };

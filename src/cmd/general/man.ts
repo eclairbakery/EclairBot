@@ -29,7 +29,7 @@ export const manCmd: Command = {
     ],
     aliases: [],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: [],
     },
@@ -58,7 +58,6 @@ export const manCmd: Command = {
                         permissions: {
                             allowedRoles: [],
                             allowedUsers: [],
-                            discordPerms: []
                         },
                         execute() {},
                     },
@@ -71,7 +70,7 @@ export const manCmd: Command = {
 
         if (!cmdName) {
             return api.log.replyError(
-                api.msg,
+                api,
                 'Nie tędy droga...',
                 'No nie wiem jak ty, ale ja bym wolał, żeby man opisywał funkcje, które już znasz.\nDokładne logi błędu:\n```What manual page do you want?\nFor example, try \'man man\'.```'
             );
@@ -81,7 +80,7 @@ export const manCmd: Command = {
 
         if (!found) {
             return api.log.replyError(
-                api.msg,
+                api,
                 'Nie tędy droga...',
                 `Tak w ogóle, to wiesz, że nawet nie ma takiej komendy?\nDokładne logi błędu:\n\`\`\`No manual entry for ${cmdName}\`\`\``
             );
@@ -90,7 +89,7 @@ export const manCmd: Command = {
         const { command, category } = found;
 
         if (!findCmdConfResolvable(command.name).enabled) {
-            return api.log.replyWarn(api.msg, 'Ta komenda jest wyłączona.', "Nie dowiesz się o niej nic, dopóki nie zostanie włączona.");
+            return api.log.replyWarn(api, 'Ta komenda jest wyłączona.', "Nie dowiesz się o niej nic, dopóki nie zostanie włączona.");
         }
 
         const formattedArgs = command.expectedArgs.map((arg) => `**${arg.name}**: ${arg.description}`);
@@ -112,9 +111,9 @@ export const manCmd: Command = {
 
         const canUseCommand =
         command.permissions.allowedRoles != null &&
-        api.msg.member?.plainMember &&
-        api.msg.member?.plainMember.roles &&
-        api.msg.member?.plainMember.roles.cache.some((role: any) =>
+        api.invoker.member?.plainMember &&
+        api.invoker.member?.plainMember.roles &&
+        api.invoker.member?.plainMember.roles.cache.some((role: any) =>
             command.permissions.allowedRoles!.includes(role.id)
         );
 

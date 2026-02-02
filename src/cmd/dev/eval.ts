@@ -28,7 +28,6 @@ export const evalCmd: Command = {
     ],
     aliases: ['exec'],
     permissions: {
-        discordPerms: [],
         allowedRoles: cfg.devPerms.allowedRoles,
         allowedUsers: cfg.devPerms.allowedUsers,
     },
@@ -54,7 +53,7 @@ export const evalCmd: Command = {
             warns.push(cfg.customization.evalWarnings.wait);
         }
         for (const warn of warns) {
-            await api.log.replyTip(api.msg, 'Ten kod może nie zadziałać!', warn);
+            await api.log.replyTip(api, 'Ten kod może nie zadziałać!', warn);
         }
         try {
             const result = await (new AsyncFunction("api", "db", "client", "debug", "cfg", canEval ? code : 'return false;'))(api, db, client, output, cfg);

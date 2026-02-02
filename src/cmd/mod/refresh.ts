@@ -21,7 +21,7 @@ export const refreshCmd: Command = {
         }
     ],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: null,
     },

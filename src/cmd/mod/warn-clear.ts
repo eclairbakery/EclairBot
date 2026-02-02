@@ -28,7 +28,7 @@ export const warnClearCmd: Command = {
         }
     ],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: []
     },
@@ -37,7 +37,7 @@ export const warnClearCmd: Command = {
         const warnIdArg = api.getTypedArg('id', 'number');
 
         if (!warnIdArg || isNaN(Number(warnIdArg.value))) {
-            return api.log.replyError(api.msg, 'Nieprawidłowe ID', 'Podaj numer ID warna do usunięcia.');
+            return api.log.replyError(api, 'Nieprawidłowe ID', 'Podaj numer ID warna do usunięcia.');
         }
 
         const warnId = Number(warnIdArg.value);
@@ -46,7 +46,7 @@ export const warnClearCmd: Command = {
             const row = await db.selectOne('SELECT * FROM warns WHERE id = ?', [warnId]);
             if (!row) {
                 return api.log.replyError(
-                    api.msg,
+                    api,
                     'Nie znaleziono',
                     `Jak masz warnlist, co nie? No to masz tam w nawiasie ID. Te ID potrzebujemy.`
                 );
@@ -54,7 +54,7 @@ export const warnClearCmd: Command = {
 
             const delResult = await db.runSql('DELETE FROM warns WHERE id = ?', [warnId]);
             if (!delResult.changes) {
-                return api.log.replyError(api.msg, 'Błąd podczas usuwania', 'Spróbuj ponownie później.');
+                return api.log.replyError(api, 'Błąd podczas usuwania', 'Spróbuj ponownie później.');
             }
 
             sendLog({
@@ -73,7 +73,7 @@ export const warnClearCmd: Command = {
             });
         } catch (err) {
             output.warn(err);
-            return api.log.replyError(api.msg, 'Błąd bazy danych', 'Spróbuj ponownie później.');
+            return api.log.replyError(api, 'Błąd bazy danych', 'Spróbuj ponownie później.');
         }
     }
 };

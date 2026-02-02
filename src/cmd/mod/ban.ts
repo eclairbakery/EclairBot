@@ -35,7 +35,7 @@ export const banCmd: Command = {
         }
     ],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers
     },
@@ -45,19 +45,19 @@ export const banCmd: Command = {
         const reason = reasonArg?.trim() || (cmdCfg.reasonRequired ? null : cfg.customization.modTexts.defaultReason);
 
         if (!targetUser) {
-            return api.log.replyError(api.msg, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
+            return api.log.replyError(api, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
         }
 
         if (!reason) {
-            return api.log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+            return api.log.replyError(api, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
         }
 
         if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
-            return api.log.replyError(api.msg, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
+            return api.log.replyError(api, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
         }
 
         try {
-            await ban(targetUser, { reason, mod: api.msg.author.id });
+            await ban(targetUser, { reason, mod: api.invoker.id });
 
             await api.reply({
                 embeds: [
@@ -65,7 +65,7 @@ export const banCmd: Command = {
                         .setTitle(`📢 ${targetUser.user.username} został zbanowany!`)
                         .setDescription(`Multikonto? Już po nim... Wkurzający chłop? Uciszony na zawsze... Ktokolwiek? Nie może wbić, chyba że zrobi alta...`)
                         .addFields(
-                            { name: 'Moderator', value: `<@${api.msg.author.id}>`, inline: true },
+                            { name: 'Moderator', value: `<@${api.invoker.id}>`, inline: true },
                             { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
                             { name: 'Powód', value: reason, inline: false }
                         )
@@ -74,7 +74,7 @@ export const banCmd: Command = {
             });
         } catch (err) {
             debug.err(err);
-            return api.log.replyError(api.msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że banujesz admina...');
+            return api.log.replyError(api, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że banujesz admina...');
         }
     }
 };

@@ -15,7 +15,7 @@ export const shopCmd: Command = {
     flags: CommandFlags.Economy,
     expectedArgs: [],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: null
     },

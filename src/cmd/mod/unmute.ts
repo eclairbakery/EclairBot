@@ -30,22 +30,22 @@ export const unmuteCmd: Command = {
         },
     ],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers,
     },
 
     async execute(api) {
         const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')!.value!;
-        let reason = api.args.find((a) => a.name === 'reason')?.value as string | undefined;
+        let reason = api.getTypedArg('reason', "string")?.value;
 
         if (!targetUser) {
-            return api.log.replyError(api.msg, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
+            return api.log.replyError(api, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
         }
 
         if (!reason) {
             if (cmdCfg.reasonRequired) {
-                return api.log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+                return api.log.replyError(api, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
             }
             reason = cfg.customization.modTexts.defaultReason;
         }
@@ -53,14 +53,14 @@ export const unmuteCmd: Command = {
         try {
             await targetUser.timeout(null, reason).catch(() => null);
 
-            const muteRole = api.msg.guild?.roles.cache.find((r) => r.name.toLowerCase().includes('zamknij ryj'));
+            const muteRole = api.guild?.roles.cache.find((r) => r.name.toLowerCase().includes('zamknij ryj'));
             if (muteRole) {
                 await targetUser.roles.remove(muteRole, reason).catch(() => null);
             }
 
             sendLog({
                 title: 'Odciszono użytkownika',
-                description: `Użytkownik <@${targetUser.id}> został odciszony przez <@${api.msg.author.id}>.`,
+                description: `Użytkownik <@${targetUser.id}> został odciszony przez <@${api.invoker.id}>.`,
                 fields: [{ name: 'Powód', value: reason }],
                 color: PredefinedColors.Pink
             });
@@ -75,7 +75,7 @@ export const unmuteCmd: Command = {
             });
         } catch (err) {
             output.err(err);
-            return api.log.replyError(api.msg, 'Błąd', 'Nie udało się odciszyć użytkownika. Sprawdź permisje.');
+            return api.log.replyError(api, 'Błąd', 'Nie udało się odciszyć użytkownika. Sprawdź permisje.');
         }
     },
 };

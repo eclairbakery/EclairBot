@@ -17,7 +17,7 @@ export const balCmd: Command = {
     flags: CommandFlags.Economy,
 
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: [],
     },
@@ -31,7 +31,7 @@ export const balCmd: Command = {
     ],
 
     async execute(api: CommandAPI) {
-        const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member!.plainMember;
+        const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.invoker.member!.plainMember;
 
         const user = new User(who.id);
 
@@ -54,7 +54,7 @@ export const balCmd: Command = {
             });
         } catch (err) {
             output.err(err);
-            api.log.replyError(api.msg, 'Błąd pobierania balansu', 'Coś poszło nie tak z bazą danych.');
+            api.log.replyError(api, 'Błąd pobierania balansu', 'Coś poszło nie tak z bazą danych.');
         }
     }
 };

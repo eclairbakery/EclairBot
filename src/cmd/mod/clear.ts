@@ -31,7 +31,7 @@ export const clearCmd: Command = {
         }
     ],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers,
     },
@@ -51,12 +51,12 @@ export const clearCmd: Command = {
             });
         }
 
-        const channel = api.msg.channel as dsc.TextChannel;
+        const channel = api.channel as dsc.TextChannel;
 
         if (who) {
             const fetched = await channel.messages.fetch({ limit: 100 });
             const filtered = fetched
-                .filter(m => m.author.id === who.id && m.id !== api.msg.author.id)
+                .filter(m => m.author.id === who.id && m.id !== api.invoker.id)
                 .first(amount);
 
             await channel.bulkDelete(filtered, true);

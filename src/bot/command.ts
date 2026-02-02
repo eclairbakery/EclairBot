@@ -5,7 +5,6 @@ import { Timestamp } from '@/util/parseTimestamp.js';
 export { Category };
 import type * as log from '@/util/log.js';
 import type User from './apis/db/user.js';
-import type { ReplyEmbed } from './apis/translations/reply-embed.js';
 
 export enum CommandFlags {
     None = 0,
@@ -19,12 +18,7 @@ export enum CommandFlags {
     WorksInDM = 1 << 3,
     Unsafe = 1 << 4,
     Deprecated = 1 << 5,
-
-    // command flags: slash cmds specific
-    Ephemeral = 1 << 6,
 };
-
-export type CommandPermissionResolvable = 'administrator' | 'mute' | 'kick' | 'ban';
 
 export type CommandArgType =
     | 'string' | 'trailing-string'
@@ -94,41 +88,24 @@ export type CommandValuableArgument =
     | CommandArgumentWithUserMentionOrMsgReferenceValue
     ;;
 
-export interface CommandMessageAPI {
-    /** @deprecated */
-    content: string;
-    author: {
-        id: dsc.Snowflake;
-        plainUser: dsc.User;
-    };
-    member?: {
-        id: dsc.Snowflake;
-        moderation: {
-            warn: (data: { reason: string; expiresAt: number; points: number; }) => Promise<any>;
-            mute: (data: { reason: string; duration: number; }) => Promise<any>;
-            kick: (data: { reason: string; mod: dsc.Snowflake; }) => Promise<any>;
-            ban:  (data: { reason: string; expiresAt: number; mod: dsc.Snowflake; }) => Promise<any>;
-        }
-        plainMember: dsc.GuildMember;
-    };
-    reply:
-        (options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions)
-        => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;
-
-    guild?: dsc.Guild;
-    channel: dsc.Channel | dsc.GuildChannel
-};
-
 export interface CommandAPI {
-    // ---- ARGS ----
-    args: CommandValuableArgument[];
+    // ---- COMMAND INFO ----
     getTypedArg<T extends CommandArgType>(name: string, type: T): Extract<CommandValuableArgument, { type: T }>;
+    invokedViaAlias: string;
 
-    // ---- MSGS ----
-    msg: CommandMessageAPI;
-    referenceMessage?: CommandMessageAPI;
-    plainInteraction?: dsc.ChatInputCommandInteraction;
-    plainMessage?: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>;
+    // ---- INVOKER -----
+    invoker: {
+        user: {
+            id: dsc.Snowflake;
+            plainUser: dsc.User;
+        };
+        member?: {
+            id: dsc.Snowflake;
+            plainMember: dsc.GuildMember;
+        };
+        id: dsc.Snowflake;
+    };
+    executor: User;
 
     // ---- QUICK FUNCTIONS ----
     reply: (options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions)
@@ -139,9 +116,7 @@ export interface CommandAPI {
     log: typeof log;
     guild?: dsc.Guild;
     channel: dsc.Channel | dsc.GuildChannel;
-    executor: User;
     preferShortenedEmbeds: boolean;
-    invokedViaAlias: string;
 }
 
 export interface Command {
@@ -160,8 +135,6 @@ export interface Command {
     expectedArgs: CommandArgument[];
     /** WARNING: SETTING ANY VALUE TO NULL WILL MAKE EVERYONE POSSIBLE TO USE THIS COMMAND, if you want to skip something and don't let them use the command, use the empty array */
     permissions: {
-        /** the first thing that grants you permissions to use this command, here specify the discord permission; global perm not for the channel */
-        discordPerms: CommandPermissionResolvable[] | null;
         /** the second thing in order, here you specify the snowflakes of the roles you'll use to grant permissions */
         allowedRoles: dsc.Snowflake[] | null;
         /** the last thing, allowed users */
@@ -170,5 +143,3 @@ export interface Command {
     /** The execute function */
     execute: (api: CommandAPI) => any | PromiseLike<any>;
 }
-
-const xd: `${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${`${string}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}`}` = '';

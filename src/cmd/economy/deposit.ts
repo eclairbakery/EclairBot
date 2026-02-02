@@ -14,7 +14,7 @@ export const depositCmd: Command = {
     },
     flags: CommandFlags.Economy,
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: [],
     },
@@ -29,7 +29,7 @@ export const depositCmd: Command = {
     async execute(api: CommandAPI) {
         const amount = api.getTypedArg('amount', 'number')?.value as number;
         if (isNaN(amount) || amount <= 0) {
-            return api.log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
+            return api.log.replyError(api, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
         }
 
         const user = api.executor;
@@ -37,7 +37,7 @@ export const depositCmd: Command = {
 
         try {
             if (userBalance.wallet < amount) {
-                return api.log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
+                return api.log.replyError(api, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
             }
 
             await user.economy.depositToBank(amount);
@@ -53,7 +53,7 @@ export const depositCmd: Command = {
             );
         } catch (err) {
             output.err(err);
-            api.log.replyError(api.msg, 'Błąd depozytu', 'Coś poszło nie tak z bazą danych.');
+            api.log.replyError(api, 'Błąd depozytu', 'Coś poszło nie tak z bazą danych.');
         }
     }
 };

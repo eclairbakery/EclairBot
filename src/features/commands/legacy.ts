@@ -8,7 +8,7 @@ import mute from "@/bot/apis/mod/muting.js";
 import warn from "@/bot/apis/mod/warns.js";
 
 import { cfg } from "@/bot/cfg.js";
-import { CommandAPI, CommandFlags, CommandMessageAPI } from "@/bot/command.js";
+import { CommandAPI, CommandFlags } from "@/bot/command.js";
 import { client } from "@/client.js";
 import { commands } from "@/cmd/list.js";
 

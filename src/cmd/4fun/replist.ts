@@ -37,7 +37,6 @@ export const replistCmd: Command = {
     permissions: {
         allowedUsers: null,
         allowedRoles: null,
-        discordPerms: null,
     },
 
     async execute(api) {
@@ -52,7 +51,7 @@ export const replistCmd: Command = {
         for (const rep of userReps) {
             if (i > limit) break;
 
-            const author = await api.msg.guild?.members.fetch(rep.authorId);
+            const author = await api.guild?.members.fetch(rep.authorId);
             if (author == null) continue;
 
             fields.push({
@@ -74,7 +73,7 @@ export const replistCmd: Command = {
         return api.reply({
             embeds: [
                 new ReplyEmbed()
-                    .setTitle(`Lista opini użytkownika ${api.msg.member?.plainMember.displayName ?? api.msg.author.plainUser.username}`)
+                    .setTitle(`Lista opini użytkownika ${api.invoker.member?.plainMember.displayName ?? api.invoker.user.plainUser.username}`)
                     .setDescription('No ten, tu masz liste:')
                     .setFields(fields)
                     .setColor(PredefinedColors.Cyan)

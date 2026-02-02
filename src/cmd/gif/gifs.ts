@@ -54,7 +54,6 @@ export const catCmd: Command = {
     expectedArgs: [],
 
     permissions: {
-        discordPerms: [],
         allowedRoles: null,
         allowedUsers: null
     },
@@ -78,7 +77,6 @@ export const dogCmd: Command = {
     aliases: ['kot'],
 
     permissions: {
-        discordPerms: [],
         allowedRoles: null,
         allowedUsers: null
     },
@@ -101,7 +99,6 @@ export const animalCmd: Command = {
 
     aliases: ['zwierz', 'zwierzęcie'],
     permissions: {
-        discordPerms: [],
         allowedRoles: null,
         allowedUsers: null
     },
@@ -125,7 +122,6 @@ export const parrotCmd: Command = {
 
     aliases: [],
     permissions: {
-        discordPerms: [],
         allowedRoles: null,
         allowedUsers: null
     },

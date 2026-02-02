@@ -2,12 +2,9 @@ import * as dsc from 'discord.js';
 import { cfg } from './cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { client } from '@/client.js';
-import {output as debug, ft} from '@/bot/logging.js';
-import { Action, ChannelEventCtx, MessageEventCtx, Ok, PredefinedActionEventTypes, UserEventCtx } from '@/features/actions/index.js';
-import { getChannel } from '@/features/actions/channels/templateChannels.js';
-import sleep from '@/util/sleep.js';
+import { output as debug } from '@/bot/logging.js';
+import { Action, PredefinedActionEventTypes, UserEventCtx } from '@/features/actions/index.js';
 import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.js';
-import { CommandMessageAPI, CommandPermissionResolvable } from './command.js';
 import { ReplyEmbed } from './apis/translations/reply-embed.js';
 
 const recentJoins: { id: string; joinedAt: number; username: string }[] = [];

@@ -34,7 +34,7 @@ export const kickCmd: Command = {
         }
     ],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers
     },
@@ -44,15 +44,15 @@ export const kickCmd: Command = {
         let reason = api.getTypedArg('reason', 'trailing-string').value as string || null;
 
         if (!targetUser) {
-            return api.log.replyError(api.msg, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyślę komu ty chcesz dać kopniaka? Użycie: odpowiedzi na wiadomość lub !kick <@user> <powód>');
+            return api.log.replyError(api, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyślę komu ty chcesz dać kopniaka? Użycie: odpowiedzi na wiadomość lub !kick <@user> <powód>');
         }
 
         if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
-            return api.log.replyError(api.msg, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
+            return api.log.replyError(api, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
         }
 
         if (!reason && cmdCfg.reasonRequired) {
-            return api.log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+            return api.log.replyError(api, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
         } else if (!reason) {
             reason = cfg.customization.modTexts.defaultReason;
         }
@@ -69,7 +69,7 @@ export const kickCmd: Command = {
                 });
             } catch {}
 
-            await kick(targetUser, { reason, mod: api.msg.author.id });
+            await kick(targetUser, { reason, mod: api.invoker.id });
 
             await api.reply({
                 embeds: [
@@ -77,7 +77,7 @@ export const kickCmd: Command = {
                         .setTitle(`📢 ${targetUser.user.username} został wywalony!`)
                         .setDescription(`Ukróciłem jego zagrania! Miejmy nadzieję, że nie wbije znowu...`)
                         .addFields(
-                            { name: 'Moderator', value: `<@${api.msg.author.id}>`, inline: true },
+                            { name: 'Moderator', value: `<@${api.invoker.id}>`, inline: true },
                             { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
                             { name: 'Powód', value: reason, inline: false }
                         )
@@ -86,7 +86,7 @@ export const kickCmd: Command = {
             });
         } catch (err) {
             debug.err(err);
-            return api.log.replyError(api.msg, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że kickujesz admina...');
+            return api.log.replyError(api, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że kickujesz admina...');
         }
     }
 };

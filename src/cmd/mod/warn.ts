@@ -50,7 +50,7 @@ export const warnCmd: Command = {
     ],
 
     permissions: {
-        discordPerms: null,
+
         allowedRoles: cfg.commands.mod.warn.allowedRoles,
         allowedUsers: cfg.commands.mod.warn.allowedUsers
     },
@@ -66,27 +66,27 @@ export const warnCmd: Command = {
 
         if (!targetUser) {
             return api.log.replyError(
-                api.msg,
+                api,
                 cfg.customization.modTexts.noTargetSpecifiedHeader,
                 cfg.customization.modTexts.noTargetSpecifiedText
             );
         }
 
         if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
-            return api.log.replyError(api.msg, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
+            return api.log.replyError(api, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
         }
 
         if (!reason) {
             if (cfg.commands.mod.warn.reasonRequired) {
-                return api.log.replyError(api.msg, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+                return api.log.replyError(api, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
             } else {
                 reason = cfg.customization.modTexts.defaultReason;
             }
         }
 
-        if (targetUser.id === api.msg.author.id) {
+        if (targetUser.id === api.invoker.id) {
             return api.log.replyError(
-                api.msg,
+                api,
                 cfg.customization.modTexts.havingMentalProblemsByWarningYourselfHeader,
                 cfg.customization.modTexts.havingMentalProblemsByWarningYourselfText,
             );
@@ -94,10 +94,10 @@ export const warnCmd: Command = {
 
         points = clamp(cfg.commands.mod.warn.minPoints, points, cfg.commands.mod.warn.maxPoints);
 
-        if (targetUser.id === api.msg.author.plainUser.client.user?.id) {
+        if (targetUser.id === api.invoker.user.plainUser.client.user?.id) {
             points = 2;
             reason = cfg.customization.modTexts.warningEclairBotReason;
-            targetUser = api.msg.member!.plainMember;
+            targetUser = api.invoker.member!.plainMember;
         }
 
         try {
@@ -105,17 +105,17 @@ export const warnCmd: Command = {
                 reason,
                 expiresAt: expiresAt ?? null,
                 points,
-                mod: api.msg.author.id
+                mod: api.invoker.id
             });
         } catch (err) {
             debug.err(err);
-            return api.log.replyError(api.msg, 'Błąd bazy danych', 'Nie udało się zapisać warna');
+            return api.log.replyError(api, 'Błąd bazy danych', 'Nie udało się zapisać warna');
         }
 
         if (!api.preferShortenedEmbeds) {
 
         const embed = new ReplyEmbed()
-            .setTitle(`📢 ${cfg.customization.modTexts.warnHeader.replace('<mention>', targetUser.user.username).replace('<mod>', api.msg.author.plainUser.username)}`)
+            .setTitle(`📢 ${cfg.customization.modTexts.warnHeader.replace('<mention>', targetUser.user.username).replace('<mod>', api.invoker.user.plainUser.username)}`)
             .setDescription(cfg.customization.modTexts.warnDescription.replace('<points>', `${points}`).replace('<duration>', `<t:${expiresAt}:R>`))
             .setColor(PredefinedColors.Orange);
 
