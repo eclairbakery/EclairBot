@@ -31,7 +31,7 @@ export const balCmd: Command = {
     ],
 
     async execute(api: CommandAPI) {
-        const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.invoker.member!.plainMember;
+        const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.invoker.member;
 
         const user = new User(who.id);
 

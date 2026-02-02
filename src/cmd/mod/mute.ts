@@ -70,7 +70,7 @@ export const muteCmd: Command = {
         }
 
         try {
-            if (api.invoker.member) watchMute(api.invoker.member?.plainMember);
+            if (api.invoker.member) watchMute(api.invoker.member!);
             await mute(targetUser, { reason, duration: (duration ?? 1) * 1000 });
 
             sendLog({

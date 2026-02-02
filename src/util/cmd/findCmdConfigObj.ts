@@ -10,8 +10,6 @@ type CommandConfigResolvable = {
     [key: string]: any;
 };
 
-type CommandCategory = Record<string, CommandConfigResolvable>;
-
 export function findCmdConfResolvable(commandName: string): CommandConfigResolvable {
     const commands = cfg.commands;
 

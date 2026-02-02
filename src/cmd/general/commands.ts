@@ -66,7 +66,7 @@ export const commandsCmd: Command = {
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
-                if (!canExecuteCmd(cmd, api.invoker.member!.plainMember)) blockedCmds.push(cmd.name);
+                if (!canExecuteCmd(cmd, api.invoker.member!)) blockedCmds.push(cmd.name);
             }
         }
 
@@ -82,7 +82,7 @@ export const commandsCmd: Command = {
             for (let i = 0; i < cmds.length; i++) {
                 const cmd = cmds[i];
 
-                if (!canExecuteCmd(cmd, api.invoker.member!.plainMember)) {
+                if (!canExecuteCmd(cmd, api.invoker.member!)) {
                     continue;
                 }
 

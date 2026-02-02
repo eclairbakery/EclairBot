@@ -156,7 +156,7 @@ export const helpCmd: Command = {
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
-                if (!canExecuteCmd(cmd, api.invoker.member!.plainMember)) blockedCmds.push(cmd.name);
+                if (!canExecuteCmd(cmd, api.invoker.member!)) blockedCmds.push(cmd.name);
                 else if (!findCmdConfResolvable(cmd.name).enabled) blockedCmds.push(cmd.name);
                 else if (cmd.flags & CommandFlags.Deprecated) blockedCmds.push(cmd.name); 
             }

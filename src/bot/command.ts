@@ -99,10 +99,7 @@ export interface CommandAPI {
             id: dsc.Snowflake;
             plainUser: dsc.User;
         };
-        member?: {
-            id: dsc.Snowflake;
-            plainMember: dsc.GuildMember;
-        };
+        member?: dsc.GuildMember;
         id: dsc.Snowflake;
     };
     executor: User;

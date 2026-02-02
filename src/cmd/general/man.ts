@@ -111,9 +111,9 @@ export const manCmd: Command = {
 
         const canUseCommand =
         command.permissions.allowedRoles != null &&
-        api.invoker.member?.plainMember &&
-        api.invoker.member?.plainMember.roles &&
-        api.invoker.member?.plainMember.roles.cache.some((role: any) =>
+        api.invoker.member &&
+        api.invoker.member.roles &&
+        api.invoker.member.roles.cache.some((role: any) =>
             command.permissions.allowedRoles!.includes(role.id)
         );
 

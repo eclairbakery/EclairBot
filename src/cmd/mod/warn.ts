@@ -97,7 +97,7 @@ export const warnCmd: Command = {
         if (targetUser.id === api.invoker.user.plainUser.client.user?.id) {
             points = 2;
             reason = cfg.customization.modTexts.warningEclairBotReason;
-            targetUser = api.invoker.member!.plainMember;
+            targetUser = api.invoker.member!;
         }
 
         try {

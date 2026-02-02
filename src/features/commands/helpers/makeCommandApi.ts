@@ -103,13 +103,8 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
                 id: (context.interaction?.user.id ?? context.msg?.author.id)!,
                 plainUser: (context.interaction?.user ?? context.msg?.author)!
             },
-            member: rawMember ? 
-            {
-                id: rawMember!.id,
-                plainMember: rawMember!
-            }
-            : undefined,
-            id: (context.interaction?.user.id ?? context.msg?.author.id)!
+            member: rawMember,
+            id: (context.interaction?.user.id ?? context.msg?.author.id)!,
         },
 
         // misc
