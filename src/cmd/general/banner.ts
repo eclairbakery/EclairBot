@@ -25,14 +25,14 @@ export const bannerCmd: Command = {
     ],
     aliases: ['baner'],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: null
     },
 
     async execute(api) {
         const member = api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue;
-        const user = member.value?.user ?? api.msg.author.plainUser;
+        const user = member.value?.user ?? api.invoker.user;
 
         const fetchedUser = await user.fetch();
 

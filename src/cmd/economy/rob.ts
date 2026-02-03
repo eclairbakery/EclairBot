@@ -108,8 +108,7 @@ export const robCmd: Command = {
 
     permissions: {
         allowedRoles: null,
-        allowedUsers: null,
-        discordPerms: []
+        allowedUsers: null
     },
     expectedArgs: [
         {
@@ -121,16 +120,15 @@ export const robCmd: Command = {
     ],
     aliases: [],
     execute: async (api) => {
-        const msg = api.msg;
         const targetArg = api.getTypedArg('user', 'user-mention-or-reference-msg-author') as CommandArgumentWithUserMentionOrMsgReferenceValue;
 
-        if (!targetArg?.value) return msg.reply('Musisz oznaczyć osobę, którą chcesz okraść!');
+        if (!targetArg?.value) return api.reply('Musisz oznaczyć osobę, którą chcesz okraść!');
         const target = targetArg.value;
 
-        if (target.id === msg.author.id) return msg.reply('Nie możesz okraść samego siebie!');
+        if (target.id === api.invoker.id) return api.reply('Nie możesz okraść samego siebie!');
 
         try {
-            const result = await tryRob(msg.author.id, target.id);
+            const result = await tryRob(api.invoker.id, target.id);
 
             if (!result.ok) {
                 if (result.wait) {
@@ -139,7 +137,7 @@ export const robCmd: Command = {
                         .setColor(PredefinedColors.Yellow)
                         .setTitle(cfg.customization.economyTexts.robbing.waitHeader)
                         .setDescription(cfg.customization.economyTexts.robbing.waitText.replaceAll('<seconds>', String(waitSeconds)));
-                    return msg.reply({ embeds: [embed] });
+                    return api.reply({ embeds: [embed] });
                 }
 
                 if (result.reason === 'too_poor') {
@@ -147,10 +145,10 @@ export const robCmd: Command = {
                         .setColor(PredefinedColors.Yellow)
                         .setTitle('Cel jest zbyt biedny')
                         .setDescription(`<@${target.id}> ma za mało pieniędzy (mniej niż ${MIN_STEALABLE} dolarów).`);
-                    return msg.reply({ embeds: [embed] });
+                    return api.reply({ embeds: [embed] });
                 }
 
-                return api.log.replyError(msg, 'Coś poszło nie tak...', 'Spróbuj ponownie później.');
+                return api.log.replyError(api, 'Coś poszło nie tak...', 'Spróbuj ponownie później.');
             }
 
             const embed = new ReplyEmbed()
@@ -161,10 +159,10 @@ export const robCmd: Command = {
                     : `Nie udało Ci się nic ukraść od <@${target.id}>!`
                 );
 
-            return msg.reply({ embeds: [embed] });
+            return api.reply({ embeds: [embed] });
         } catch (error) {
             output.err(error);
-            return api.log.replyError(msg, 'Coś się odwaliło...', 'Proszę, pytaj sqlite3 a nie mnie obwiniasz.');
+            return api.log.replyError(api, 'Coś się odwaliło...', 'Proszę, pytaj sqlite3 a nie mnie obwiniasz.');
         }
     }
 };

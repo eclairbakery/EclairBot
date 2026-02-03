@@ -33,18 +33,17 @@ export const plusRepCmd: Command = {
     permissions: {
         allowedUsers: null,
         allowedRoles: null,
-        discordPerms: null,
     },
 
     async execute(api) {
         const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
         const comment = api.getTypedArg('comment', 'trailing-string')?.value;
 
-        if (api.msg.author.id == targetUser.id) {
-            return api.log.replyWarn(api.msg, 'Halo!', 'Nie mozesz modyfikować swoich punktów reputacji!');
+        if (api.invoker.id == targetUser.id) {
+            return api.log.replyWarn(api, 'Halo!', 'Nie mozesz modyfikować swoich punktów reputacji!');
         }
 
-        const lastRepGivenByUser = await getLastRepGivenByUser(api.msg.author.id);
+        const lastRepGivenByUser = await getLastRepGivenByUser(api.invoker.id);
         if (lastRepGivenByUser != null) {
             const createdAt = new Date(lastRepGivenByUser.createdAt);
 
@@ -53,7 +52,7 @@ export const plusRepCmd: Command = {
 
             if (now < nextAvailable) {
                 return api.log.replyWarn(
-                    api.msg, 'Halo!',
+                    api, 'Halo!',
                     `Możesz oceniać użytkowników co 24h ale ten czas jeszcze nie miną! Będziesz mógł oceniać dopiero <t:${Math.floor(nextAvailable.getTime() / 1000)}:R>`
                 );
             }

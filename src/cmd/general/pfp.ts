@@ -25,13 +25,12 @@ export const pfpCmd: Command = {
         }
     ],
     permissions: {
-        discordPerms: [],
         allowedRoles: null,
         allowedUsers: null,
     },
 
     execute(api) {
-        const user = (api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue).value?.user ?? api.msg.author.plainUser;
+        const user = (api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue).value?.user ?? api.invoker.user;
         api.reply({content: 'Tu masz profilowe i nie marudź:', files: [user.displayAvatarURL()]});
     },
 };

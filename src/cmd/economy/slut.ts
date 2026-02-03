@@ -55,7 +55,7 @@ export const slutCmd: Command = {
 
     expectedArgs: [],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: [],
     },
@@ -64,7 +64,7 @@ export const slutCmd: Command = {
         try {
             let amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
             let win = Math.random() < PERCENTAGE;
-            const result = await trySlut(api.msg.author.id, amount, win);
+            const result = await trySlut(api.invoker.id, amount, win);
 
             if (!result.ok) {
                 const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);

@@ -51,7 +51,7 @@ export const workCmd: Command = {
     flags: CommandFlags.Economy,
 
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: null,
     },
@@ -60,7 +60,7 @@ export const workCmd: Command = {
     async execute(api: CommandAPI) {
         try {
             const amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
-            const result = await tryWork(api.msg.author.id, amount);
+            const result = await tryWork(api.invoker.id, amount);
 
             if (!result.ok) {
                 const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);

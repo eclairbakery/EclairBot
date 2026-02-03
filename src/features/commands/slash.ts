@@ -40,7 +40,7 @@ client.on('interactionCreate', async (int: Interaction) => {
 
     const isBlocked = isCommandBlockedOnChannel(cmdObj, int.channelId, int.guild ? false : true);
     await int.deferReply({
-        flags: (!!(isBlocked || (cmdObj.flags & CommandFlags.Ephemeral))) ? ["Ephemeral"] : []
+        flags: isBlocked ? ["Ephemeral"] : []
     });
 
     try {

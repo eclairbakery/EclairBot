@@ -20,20 +20,18 @@ export const topecoCmd: Command = {
     flags: CommandFlags.None,
 
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: []
     },
     expectedArgs: [],
 
     async execute(api) {
-        const msg = api.msg;
-
         try {
             const topUsers = await db.economy.getTopTotal(12);
 
             if (!topUsers.length) {
-                return api.log.replyError(msg, 'Zero pieniędzy', 'Nie ma żadnego w bazie usera z hajsem :sob:');
+                return api.log.replyError(api, 'Zero pieniędzy', 'Nie ma żadnego w bazie usera z hajsem :sob:');
             }
 
             let fields: dsc.APIEmbedField[] = [];
@@ -43,7 +41,7 @@ export const topecoCmd: Command = {
                 if (++i === 25) return;
 
                 try {
-                    const member = await msg.guild!.members.fetch(user.id);
+                    const member = await api.guild!.members.fetch(user.id);
                     const userEcoRole = ecoRoles.filter(id => member.roles.cache.has(id)).at(-1);
 
                     fields.push({
@@ -57,7 +55,7 @@ export const topecoCmd: Command = {
                 } catch {};
             }
 
-            return msg.reply({
+            return api.reply({
                 embeds: [
                     new ReplyEmbed()
                         .setFields(fields)
@@ -66,7 +64,7 @@ export const topecoCmd: Command = {
             });
         } catch (err) {
             output.err(err);
-            return api.log.replyError(msg, 'Błąd pobierania topki', 'Pytaj twórców biblioteki sqlite3...');
+            return api.log.replyError(api, 'Błąd pobierania topki', 'Pytaj twórców biblioteki sqlite3...');
         }
     }
 };

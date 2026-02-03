@@ -154,7 +154,6 @@ export const figletCmd: Command = {
     permissions: {
         allowedUsers: null,
         allowedRoles: null,
-        discordPerms: null
     },
 
     async execute(api) {
@@ -171,7 +170,7 @@ export const figletCmd: Command = {
         const availableFonts = await figletFonts();
         if (!availableFonts.includes(font)) {
             return api.log.replyError(
-                api.msg,
+                api,
                 'Nieznana czcionka!',
                 `Nie znam czionki o nazwie ${font}.\n**Spróbuj tak:** ${fmtArr(availableFonts)}`,
             );

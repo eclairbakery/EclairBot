@@ -18,10 +18,6 @@ export function initExpiredWarnsDeleter() {
             EXPIRED_WARNS_CHECK_INTERVAL
         );
 
-        process.on('SIGINT', () => {
-            clearInterval(interval);
-        });
-
         return interval;
     } catch (error) {
         output.err( error);

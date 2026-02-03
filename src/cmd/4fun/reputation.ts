@@ -76,7 +76,6 @@ export const reputationCmd: Command = {
     permissions: {
         allowedRoles: null,
         allowedUsers: null,
-        discordPerms: null,
     },
 
     async execute(api) {

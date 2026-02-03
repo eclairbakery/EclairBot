@@ -53,8 +53,7 @@ export const crimeCmd: Command = {
 
     permissions: {
         allowedRoles: null,
-        allowedUsers: null,
-        discordPerms: []
+        allowedUsers: null
     },
     expectedArgs: [],
     aliases: [],
@@ -72,7 +71,7 @@ export const crimeCmd: Command = {
             const amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
             const win = Math.random() < PERCENTAGE;
 
-            const result = await trySlut(api.msg.author.id, amount, win);
+            const result = await trySlut(api.invoker.id, amount, win);
 
             if (!result.ok) {
                 const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);

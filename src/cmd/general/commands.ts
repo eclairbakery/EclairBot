@@ -27,7 +27,6 @@ export const commandsCmd: Command = {
     ],
     aliases: ['cmds', 'komendy'],
     permissions: {
-        discordPerms: [],
         allowedRoles: null,
         allowedUsers: null,
     },
@@ -35,14 +34,28 @@ export const commandsCmd: Command = {
     async execute(api) {
         const commands = api.commands;
         let categoriesToShow: Set<Category> = new Set();
-        if (api.args.length == 0 || !api.args[0]!.value || (api.args[0]?.value as string).includes('all')) {
+
+        const categoriesArg = api.getTypedArg("categories", "string");
+
+        if (
+            !categoriesArg ||
+            !categoriesArg.value ||
+            categoriesArg.value.includes("all")
+        ) {
             categoriesToShow = new Set([...commands.keys()]);
         } else {
-            const categoriesList = (api.args[0]!.value as string).split(',').map(s => s.trim().toLowerCase());
+            const categoriesList = categoriesArg.value
+                .split(",")
+                .map(s => s.trim().toLowerCase());
+
             for (const arg of categoriesList) {
                 const category = Category.fromString(arg);
                 if (!category) {
-                    api.log.replyError(api.msg, 'Nieznana kategoria', `Nie znam kategori ${arg}. Czy możesz powtórzyć?`);
+                    api.log.replyError(
+                        api,
+                        "Nieznana kategoria",
+                        `Nie znam kategori ${arg}. Czy możesz powtórzyć?`
+                    );
                     return;
                 }
                 categoriesToShow.add(category);
@@ -53,7 +66,7 @@ export const commandsCmd: Command = {
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
-                if (!canExecuteCmd(cmd, api.msg.member!.plainMember)) blockedCmds.push(cmd.name);
+                if (!canExecuteCmd(cmd, api.invoker.member!)) blockedCmds.push(cmd.name);
             }
         }
 
@@ -69,7 +82,7 @@ export const commandsCmd: Command = {
             for (let i = 0; i < cmds.length; i++) {
                 const cmd = cmds[i];
 
-                if (!canExecuteCmd(cmd, api.msg.member!.plainMember)) {
+                if (!canExecuteCmd(cmd, api.invoker.member!)) {
                     continue;
                 }
 

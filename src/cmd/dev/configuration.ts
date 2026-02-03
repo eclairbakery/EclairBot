@@ -24,7 +24,6 @@ export const configurationCommand: Command = {
     ],
     flags: CommandFlags.Important | CommandFlags.Unsafe,
     permissions: {
-        discordPerms: [],
         allowedRoles: cfg.devPerms.allowedRoles,
         allowedUsers: cfg.devPerms.allowedUsers,
     },

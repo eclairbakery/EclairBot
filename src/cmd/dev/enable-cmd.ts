@@ -19,7 +19,6 @@ export const enableCommandCmd: Command = {
     ],
     flags: CommandFlags.Important,
     permissions: {
-        discordPerms: [],
         allowedRoles: cfg.devPerms.allowedRoles,
         allowedUsers: cfg.devPerms.allowedUsers,
     },
@@ -37,6 +36,6 @@ export const enableCommandCmd: Command = {
 
         saveConfigurationChanges();
 
-        api.log.replySuccess(api.msg, 'Udało się!', `Włączono komendę **${name}**!`);
+        api.log.replySuccess(api, 'Udało się!', `Włączono komendę **${name}**!`);
     }
 };

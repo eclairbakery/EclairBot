@@ -14,7 +14,6 @@ export const restartCmd: Command = {
     expectedArgs: [],
     aliases: [],
     permissions: {
-        discordPerms: [],
         allowedRoles: cfg.devPerms.allowedRoles,
         allowedUsers: cfg.devPerms.allowedUsers,
     },

@@ -67,22 +67,20 @@ export const wikiCmd: Command = {
     ],
     permissions: {
         allowedRoles: null,
-        allowedUsers: null,
-        discordPerms: []
+        allowedUsers: null
     },
     execute: async (api: CommandAPI) => {
-        const msg = api.msg;
         const rawQuery = api.getTypedArg('query', 'trailing-string')?.value as string;
 
         const query =
             rawQuery == 'hubix' ? 'pedał'
             : rawQuery
 
-        if (!query) return msg.reply('Musisz podać, czego szukasz na Wikipedii!');
+        if (!query) return api.reply('Musisz podać, czego szukasz na Wikipedii!');
 
         const lowerQuery = query.toLowerCase();
         if (['auroros', 'eklerka', 'piekarnia eklerki', 'gorciu', 'maqix'].some(bad => lowerQuery.includes(bad))) {
-            return msg.reply({
+            return api.reply({
                 embeds: [{
                     author: { name: 'EclairBOT' },
                     title: cfg.customization.uncategorized.wikiIsNotFandomHeader,
@@ -94,7 +92,7 @@ export const wikiCmd: Command = {
 
         const fetched = await downloadFromWikipedia(['pl', 'simple', 'en'], [query]);
         if (!fetched || !fetched.ok) {
-            return msg.reply({
+            return api.reply({
                 embeds: [{
                     author: { name: 'EclairBOT' },
                     title: cfg.customization.uncategorized.wikiUnknownArticleHeader,
@@ -108,7 +106,7 @@ export const wikiCmd: Command = {
 
         if (json.description?.includes('strona ujednoznaczniająca') || json.description?.includes('may refer to')) {
             const titles = await getDisambiguationTitles(json.title);
-            return msg.reply({
+            return api.reply({
                 embeds: [{
                     author: { name: 'EclairBOT' },
                     title: cfg.customization.uncategorized.wikiDisambiguationPageHeader,
@@ -123,9 +121,9 @@ export const wikiCmd: Command = {
 
         if (
             (allin1.includes('seks') || allin1.includes('sex') || allin1.includes('porn')) &&
-            msg.channel.id !== cfg.unfilteredRelated.unfilteredChannel
+            api.channel.id !== cfg.unfilteredRelated.unfilteredChannel
         ) {
-            return msg.reply({
+            return api.reply({
                 embeds: [{
                     author: { name: 'EclairBOT' },
                     title: 'Weź się lecz 🥀',
@@ -138,9 +136,9 @@ export const wikiCmd: Command = {
 
         if (
             (allin1.includes('dsc.gg') || allin1.includes('discord.com/invite') || allin1.includes('discord.gg')) &&
-            msg.channel.id !== cfg.unfilteredRelated.unfilteredChannel
+            api.channel.id !== cfg.unfilteredRelated.unfilteredChannel
         ) {
-            return msg.reply({
+            return api.reply({
                 embeds: [{
                     author: { name: 'EclairBOT' },
                     title: 'Weź się lecz 🥀',
@@ -151,7 +149,7 @@ export const wikiCmd: Command = {
             });
         }
 
-        return msg.reply({
+        return api.reply({
             embeds: [{
                 author: { name: 'EclairBOT' },
                 title: json.titles.normalized,

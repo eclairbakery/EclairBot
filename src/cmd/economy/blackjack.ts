@@ -42,22 +42,22 @@ export const blackjackCmd: Command = {
     },
     flags: CommandFlags.Economy,
 
-    permissions: { discordPerms: null, allowedRoles: null, allowedUsers: null },
+    permissions: { allowedRoles: null, allowedUsers: null },
     expectedArgs: [{ name: 'amount', description: 'O ile gramy?', optional: false, type: 'number' }],
 
     async execute(api: CommandAPI) {
         const betArg = api.getTypedArg('amount', 'number');
         const bet = betArg?.value as number;
         if (!bet || bet <= 0) {
-            return api.log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
+            return api.log.replyError(api, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
         }
 
-        const userId = api.msg.author.id;
+        const userId = api.invoker.id;
         const player = api.executor;
         const playerBalance = await player.economy.getBalance();
 
         if (playerBalance.wallet < bet)
-            return api.log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
+            return api.log.replyError(api, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
 
 
         let playerHand: Card[] = [drawCard(), drawCard()];

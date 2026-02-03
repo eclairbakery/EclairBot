@@ -18,7 +18,7 @@ export const xpCmd: Command = {
     flags: CommandFlags.None | CommandFlags.Unsafe,
 
     permissions: {
-        discordPerms: null,
+
         allowedRoles: cfg.features.leveling.canChangeXP,
         allowedUsers: [],
     },
@@ -50,13 +50,13 @@ export const xpCmd: Command = {
     ],
 
     async execute(api: CommandAPI) {
-        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.msg.member!.plainMember;
+        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.invoker.member;
         const actionStr = api.getTypedArg('action', 'string')?.value as string;
         let amount = api.getTypedArg('amount', 'number')?.value as number;
         const affect = api.getTypedArg('affect', 'string')?.value as string ?? 'levels';
 
         if (!targetUser || !actionStr || amount === undefined) {
-            return api.log.replyError(api.msg, 'Niepoprawne argumenty', 'Sprawdź składnię komendy i spróbuj ponownie.');
+            return api.log.replyError(api, 'Niepoprawne argumenty', 'Sprawdź składnię komendy i spróbuj ponownie.');
         }
 
         let shouldLeveler = affect === 'levels';
@@ -65,7 +65,7 @@ export const xpCmd: Command = {
         }
 
         if (actionStr != 'set' && actionStr != 'add' && actionStr != 'delete') {
-            return api.log.replyError(api.msg, 'Nie poprawna akcja', 'Argument `action` powinien być `set`, `add` lub `delete`!');
+            return api.log.replyError(api, 'Nie poprawna akcja', 'Argument `action` powinien być `set`, `add` lub `delete`!');
         }
         const action = actionStr as 'set' | 'add' | 'delete';
 
@@ -73,15 +73,15 @@ export const xpCmd: Command = {
             await actionsManager.emit(OnSetXpEvent, {
                 userID: targetUser.id,
                 user: targetUser,
-                guild: api.msg?.guild,
+                guild: api.guild,
                 action: action,
                 amount: amount,
             });
 
-            api.log.replySuccess(api.msg, 'Udało się!', `Wykonałem akcję na użytkowniku **${targetUser.user.tag}**`);
+            api.log.replySuccess(api, 'Udało się!', `Wykonałem akcję na użytkowniku **${targetUser.user.tag}**`);
         } catch (err) {
             output.err(err);
-            api.log.replyError(api.msg, 'Błąd wykonania', 'Coś poszło nie tak podczas modyfikacji XP/levela.');
+            api.log.replyError(api, 'Błąd wykonania', 'Coś poszło nie tak podczas modyfikacji XP/levela.');
         }
     },
 };

@@ -44,13 +44,11 @@ export const moneyCmd: Command = {
         },
     ],
     permissions: {
-        discordPerms: [],
         allowedRoles: [cfg.roles.headAdmin, cfg.roles.eclair25],
         allowedUsers: []
     },
 
     async execute(api) {
-        const msg = api.msg;
         const rawAction = api.getTypedArg('action', 'string')?.value!;
         const rawAmount = api.getTypedArg('amount', 'string')?.value!;
         const rawLocation = (api.getTypedArg('location', 'string')?.value) || 'wallet';
@@ -60,20 +58,20 @@ export const moneyCmd: Command = {
         const location = rawLocation?.toLowerCase();
 
         if (!['add', 'set', 'remove'].includes(action)) {
-            return api.log.replyError(api.msg, 'Nieprawidłowa akcja.', 'Użyj `add`, `set` lub `remove`.');
+            return api.log.replyError(api, 'Nieprawidłowa akcja.', 'Użyj `add`, `set` lub `remove`.');
         }
 
         if (!['wallet', 'bank'].includes(location)) {
-            return api.log.replyError(api.msg, 'Nieprawidłowa lokalizacja', 'Możesz użyć `wallet` lub `bank`.');
+            return api.log.replyError(api, 'Nieprawidłowa lokalizacja', 'Możesz użyć `wallet` lub `bank`.');
         }
 
         const parsed = Number(rawAmount);
         if (!Number.isFinite(parsed) || isNaN(parsed)) {
-            return api.log.replyError(api.msg, 'Nieprawidłowa kwota', 'Podaj poprawną liczbę.');
+            return api.log.replyError(api, 'Nieprawidłowa kwota', 'Podaj poprawną liczbę.');
         }
 
         const amount = Math.floor(parsed);
-        if (amount < 0) return api.log.replyError(api.msg, 'Nieprawidłowa kwota', 'Nie może być ona ujemna.');
+        if (amount < 0) return api.log.replyError(api, 'Nieprawidłowa kwota', 'Nie może być ona ujemna.');
 
         const targetId = targetUser.id;
 
@@ -106,7 +104,7 @@ export const moneyCmd: Command = {
 
             await db.runSql('COMMIT');
 
-            return msg.reply({
+            return api.reply({
                 embeds: [
                     new ReplyEmbed()
                         .setColor(PredefinedColors.Green)
@@ -123,7 +121,7 @@ export const moneyCmd: Command = {
         } catch (err) {
             output.err(err);
             try { await db.runSql('ROLLBACK'); } catch {}
-            return api.log.replyError(msg, 'Błąd bazy danych', 'Operacja nie mogła zostać zakończona.');
+            return api.log.replyError(api, 'Błąd bazy danych', 'Operacja nie mogła zostać zakończona.');
         }
     },
 };

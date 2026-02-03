@@ -26,13 +26,11 @@ export const buyCmd: Command = {
     ],
 
     permissions: {
-        discordPerms: [],
         allowedRoles: null,
         allowedUsers: null
     },
 
     async execute(api) {
-        const msg = api.msg;
         const itemName = api.getTypedArg("item", "trailing-string")?.value ?? "";
         const normalized = itemName.trim().toLowerCase();
 
@@ -49,7 +47,7 @@ export const buyCmd: Command = {
         }
 
         try {
-            const userId = msg.author.id;
+            const userId = api.invoker.id;
             const user = api.executor;
             const userBalance = await user.economy.getBalance();
 
@@ -72,8 +70,8 @@ export const buyCmd: Command = {
             user.economy.deductWalletMoney(item.price);
 
             if (item.role) {
-                const role = msg.guild?.roles.cache.get(item.role);
-                const member = msg.guild?.members.cache.get(userId);
+                const role =   api.guild?.roles.cache.get(item.role);
+                const member = api.guild?.members.cache.get(userId);
 
                 if (role && member) {
                     await member.roles.add(role).catch(() => {});
@@ -85,7 +83,7 @@ export const buyCmd: Command = {
                 .setTitle("Zakup udany!")
                 .setDescription(`Kupiłeś **${item.name}** za **${formatMoney(item.price)}**.\n${item.description}`);
 
-            return msg.reply({ embeds: [embed] });
+            return api.reply({ embeds: [embed] });
         } catch (err) {
             output.err(err);
 

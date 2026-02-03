@@ -26,14 +26,14 @@ export const lvlCmd: Command = {
         }
     ],
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: null,
     },
 
     async execute(api: CommandAPI) {
         const userArg = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | null;
-        const who = userArg?.user ?? api.msg.author.plainUser;
+        const who = userArg?.user ?? api.invoker.user;
 
         try {
             const user = new User(who.id);

@@ -12,7 +12,7 @@ export const withdrawCmd: Command = {
     },
     flags: CommandFlags.Economy,
     permissions: {
-        discordPerms: null,
+
         allowedRoles: null,
         allowedUsers: [],
     },
@@ -31,10 +31,10 @@ export const withdrawCmd: Command = {
             let amount = amountArg.toLowerCase() === "all" ? row.bank : parseInt(amountArg);
 
             if (isNaN(amount) || amount <= 0) {
-                return api.log.replyError(api.msg, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
+                return api.log.replyError(api, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
             }
             if (row.bank < amount) {
-                return api.log.replyError(api.msg, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.bankBalanceNotSufficientText);
+                return api.log.replyError(api, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.bankBalanceNotSufficientText);
             }
 
             row.bank -= amount;
@@ -44,7 +44,7 @@ export const withdrawCmd: Command = {
             return api.log.replySuccess(api, 'Udało się!', `Wypłacono ${amount}$ z banku.\nNowy stan:\n- ${row.bank}$ w banku\n- ${row.wallet}$ w portfelu.`);
         } catch (err) {
             output.err(err);
-            api.log.replyError(api.msg, 'Błąd wypłaty', 'Coś poszło nie tak z bazą danych.');
+            api.log.replyError(api, 'Błąd wypłaty', 'Coś poszło nie tak z bazą danych.');
         }
     }
 };

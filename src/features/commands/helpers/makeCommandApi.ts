@@ -1,4 +1,4 @@
-import { Command, CommandAPI, CommandMessageAPI } from "@/bot/command.js";
+import { Command, CommandAPI } from "@/bot/command.js";
 import { parseArgs } from "./argumentParser.js";
 import * as dsc from 'discord.js';
 import mute from "@/bot/apis/mod/muting.js";
@@ -43,7 +43,7 @@ function stringifyEmbed(embed: dsc.APIEmbed): string {
     return out.join('\n');
 }
 
-function makeOptions(options: FirstArg<CommandMessageAPI['reply']>): any {
+function makeOptions(options: FirstArg<CommandAPI['reply']>): any {
     let result: dsc.MessageReplyOptions;
 
     switch (typeof options) {
@@ -95,39 +95,13 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
 
     return {
         // -- args --
-        args: parsedArgs,
         getTypedArg: (name, type) => parsedArgs.find(a => a.name === name && a.type === type)! as any,
 
-        // -- command message api --
-        msg: {
-            content: context.interaction?.commandName ?? context.msg?.content ?? 'who knows',
-            author: {
-                id: (context.interaction?.user.id ?? context.msg?.author.id)!,
-                plainUser: (context.interaction?.user ?? context.msg?.author)!
-            },
-            reply: context.interaction ? ((options) => context.interaction!.editReply(makeOptions(options))) : ((options) => context.msg!.reply(makeOptions(options) as any)),
-            channel: context.interaction?.channel ?? context.msg!.channel,
-            member: rawMember ? 
-            {
-                id: rawMember!.id,
-                moderation: {
-                    warn(data) {
-                        return warn(rawMember!, data);
-                    },
-                    mute(data) {
-                        return mute(rawMember!, data);
-                    },
-                    kick(data) {
-                        return kick(rawMember!, data);
-                    },
-                    ban(data) {
-                        return ban(rawMember!, data);
-                    },
-                },
-                plainMember: rawMember!
-            }
-            : undefined,
-            guild: context.interaction?.guild ?? context.msg?.guild ?? undefined
+        // -- invoker --
+        invoker: {
+            user: (context.interaction?.user ?? context.msg?.author)!,
+            member: rawMember,
+            id: (context.interaction?.user.id ?? context.msg?.author.id)!,
         },
 
         // misc

@@ -28,7 +28,6 @@ export const warnlistCmd: Command = {
     permissions: {
         allowedRoles: cfg.commands.mod.warn.allowedRoles,
         allowedUsers: [],
-        discordPerms: [],
     },
 
     async execute(api) {
@@ -103,7 +102,7 @@ export const warnlistCmd: Command = {
 
         let render = await renderPage(currentPage);
         if (!render) {
-            return api.log.replyError(api.msg, 'Brak wyników', targetUser
+            return api.log.replyError(api, 'Brak wyników', targetUser
                 ? `Nie znaleziono żadnych warnów dla ${targetUser.user.username}.`
                 : 'Nie ma żadnych warnów w bazie.');
         }
@@ -115,7 +114,7 @@ export const warnlistCmd: Command = {
 
         const collector = msg.createMessageComponentCollector({
             time: 60_000,
-            filter: (i) => i.user.id === api.msg.author.id
+            filter: (i) => i.user.id === api.invoker.id
         });
 
         collector.on('collect', async (interaction) => {
