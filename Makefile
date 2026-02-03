@@ -1,13 +1,12 @@
-all:
-	npm run build
+all: jsbuild 
+
+dev:
+	npm start
 
 depconfig:
 	npm install
 	npm audit
 	npm audit fix
-
-dev:
-	npm start
 
 jsbuild:
 	npx tsc

@@ -1,25 +1,23 @@
 {
     "name": "eclairbot",
     "version": "1.0.0",
-    "description": "The Eclair bot",
+    "description": "The EclairBot",
     "keywords": [
         "eclairbakery"
     ],
-    "homepage": "https://github.com/eclairbakery/Ecliarbot#readme",
+    "homepage": "https://github.com/eclairbakery/EclairBot#readme",
     "bugs": {
-        "url": "https://github.com/eclairbakery/Ecliarbot/issues"
+        "url": "https://github.com/eclairbakery/EclairBot/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/eclairbakery/Ecliarbot.git"
+        "url": "git+https://github.com/eclairbakery/EclairBot.git"
     },
     "license": "GPL-3.0-or-later",
     "author": "EclairBakery contributors",
     "type": "module",
     "main": "dist/main",
     "scripts": {
-        "dev": "nodemon",
-        "build": "node build-pella.cjs",
         "start": "tsc && tsc-alias && node dist/main.js"
     },
     "devDependencies": {
