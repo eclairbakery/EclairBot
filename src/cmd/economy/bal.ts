@@ -17,7 +17,6 @@ export const balCmd: Command = {
     flags: CommandFlags.Economy,
 
     permissions: {
-
         allowedRoles: null,
         allowedUsers: [],
     },

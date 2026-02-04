@@ -1,10 +1,6 @@
 import * as dsc from 'discord.js';
-import * as log from '@/util/log.js';
-import util from 'node:util';
-
 import { Command, CommandFlags } from "@/bot/command.js";
 
-import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
 import { PredefinedColors } from '@/util/color.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 import User from '@/bot/apis/db/user.js';

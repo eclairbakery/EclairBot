@@ -5,7 +5,6 @@ import { PredefinedColors } from '@/util/color.js';
 import capitalizeFirst from '@/util/capitalizeFirst.js';
 import canExecuteCmd from '@/util/cmd/canExecuteCmd.js';
 
-import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
@@ -164,7 +163,12 @@ export const helpCmd: Command = {
 
         const introEmbed = new ReplyEmbed()
             .setTitle('📢 Moje komendy, władzco!')
-            .setDescription('O to lista komend podzielona na kategorie!')
+            .setDescription('O to lista komend podzielona na kategorie!' + 
+                api.invokedViaAlias !== 'detail-help'
+                    ? ('Plus, używasz uproszczonej wersji `help`. ' +
+                    'Użyj `detail-help`/`man`, jak serio się chcesz komend nauczyć...')
+                    : ''
+            )
             .setColor(PredefinedColors.Cyan);
 
         const allEmbeds = [introEmbed];

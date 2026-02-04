@@ -1,12 +1,9 @@
-import * as log from '@/util/log.js';
-import * as dsc from 'discord.js';
 import * as chars from '@/util/chars.js';
 
 import { Command, CommandFlags } from '@/bot/command.js';
 
 import figlet from 'figlet';
 import debugLog from '@/util/debugLog.js';
-import { text } from 'node:stream/consumers';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 function tokenize(input: string): string[] {
@@ -23,15 +20,6 @@ function tokenize(input: string): string[] {
     }
     if (current != '') result.push(current);
     return result;
-}
-
-function renderFiglet(text: string, font: string = 'Standard'): Promise<string> {
-    return new Promise((resolve, reject) => {
-        figlet.text(text, { font }, (err, result) => {
-            if (err || !result) reject(err);
-            else resolve(result);
-        });
-    });
 }
 
 function figletFonts(): Promise<string[]> {

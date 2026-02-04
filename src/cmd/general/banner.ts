@@ -1,11 +1,7 @@
 import { Command, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
-import { cfg } from '@/bot/cfg.js';
 
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
-
-import { PredefinedColors } from '@/util/color.js';
-import capitalizeFirst from '@/util/capitalizeFirst.js';
 
 export const bannerCmd: Command = {
     name: 'banner',
@@ -25,7 +21,6 @@ export const bannerCmd: Command = {
     ],
     aliases: ['baner'],
     permissions: {
-
         allowedRoles: null,
         allowedUsers: null
     },

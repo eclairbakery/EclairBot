@@ -51,7 +51,6 @@ export const workCmd: Command = {
     flags: CommandFlags.Economy,
 
     permissions: {
-
         allowedRoles: null,
         allowedUsers: null,
     },

@@ -2,7 +2,7 @@ import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import {output as debug} from '@/bot/logging.js';
 
-import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags, CommandPermissions } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import ban from '@/bot/apis/mod/bans.js';
@@ -34,11 +34,8 @@ export const banCmd: Command = {
             optional: !cmdCfg.reasonRequired,
         }
     ],
-    permissions: {
-
-        allowedRoles: cmdCfg.allowedRoles,
-        allowedUsers: cmdCfg.allowedUsers
-    },
+    permissions: CommandPermissions.fromCommandConfig(cmdCfg),
+    
     execute: async (api: CommandAPI) => {
         const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
         const reasonArg = api.getTypedArg('reason', 'trailing-string').value as string;

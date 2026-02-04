@@ -1,6 +1,5 @@
-import { Command, CommandFlags } from '@/bot/command.js';
+import { Command, CommandFlags, CommandPermissions } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
-import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
@@ -29,11 +28,7 @@ export const unmuteCmd: Command = {
             optional: !cmdCfg.reasonRequired
         },
     ],
-    permissions: {
-
-        allowedRoles: cmdCfg.allowedRoles,
-        allowedUsers: cmdCfg.allowedUsers,
-    },
+    permissions: CommandPermissions.fromCommandConfig(cmdCfg),
 
     async execute(api) {
         const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')!.value!;

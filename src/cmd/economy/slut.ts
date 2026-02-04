@@ -55,7 +55,6 @@ export const slutCmd: Command = {
 
     expectedArgs: [],
     permissions: {
-
         allowedRoles: null,
         allowedUsers: [],
     },

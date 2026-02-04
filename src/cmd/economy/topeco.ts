@@ -20,7 +20,6 @@ export const topecoCmd: Command = {
     flags: CommandFlags.None,
 
     permissions: {
-
         allowedRoles: null,
         allowedUsers: []
     },

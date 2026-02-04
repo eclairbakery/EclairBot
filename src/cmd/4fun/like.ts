@@ -5,7 +5,6 @@ import { Command, CommandFlags } from "@/bot/command.js";
 
 import { getLastRepGivenByUser, getUserReputationProportion } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar } from '@/util/progressbar.js';
-import User from '@/bot/apis/db/user.js';
 
 export const plusRepCmd: Command = {
     name: 'like',

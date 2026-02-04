@@ -8,7 +8,6 @@ import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.js';
 import { ReplyEmbed } from './apis/translations/reply-embed.js';
 
 const recentJoins: { id: string; joinedAt: number; username: string }[] = [];
-const recentWarns: { id: string; givenAt: number; givenTo: dsc.Snowflake; givenFrom: dsc.Snowflake }[] = [];
 
 function levenshtein(a: string, b: string): number {
     const matrix: number[][] = [];

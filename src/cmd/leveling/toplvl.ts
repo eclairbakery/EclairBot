@@ -1,12 +1,9 @@
 import { cfg } from '@/bot/cfg.js';
 import { lvlRoles } from '@/bot/level.js';
-import { db } from '@/bot/apis/db/bot-db.js';
 
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandFlags } from '@/bot/command.js';
 import { output } from '@/bot/logging.js';
-import User from '@/bot/apis/db/user.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 function calculateLevel(xp: number, levelDivider: number): number {
@@ -25,7 +22,6 @@ export const toplvlCmd: Command = {
     flags: CommandFlags.None,
 
     permissions: {
-
         allowedRoles: null,
         allowedUsers: [],
     },

@@ -3,7 +3,7 @@ import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
-import { xpToLevel, levelToXp, mkLvlProgressBar } from '@/bot/level.js';
+import { xpToLevel, mkLvlProgressBar } from '@/bot/level.js';
 import { output } from '@/bot/logging.js';
 import User from '@/bot/apis/db/user.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
@@ -26,7 +26,6 @@ export const lvlCmd: Command = {
         }
     ],
     permissions: {
-
         allowedRoles: null,
         allowedUsers: null,
     },

@@ -3,8 +3,6 @@ import { PredefinedColors } from '@/util/color.js';
 
 import { cfg } from '@/bot/cfg.js';
 
-import * as dsc from 'discord.js';
-
 interface WikiSummaryResponse {
     type: string;
     title: string;

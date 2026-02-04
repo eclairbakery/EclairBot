@@ -1,6 +1,5 @@
 import { cfg } from '@/bot/cfg.js';
 import { Command, CommandFlags } from '@/bot/command.js';
-import * as dsc from 'discord.js';
 import { canEval } from './eval.js';
 import { output } from '@/bot/logging.js';
 

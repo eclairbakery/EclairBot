@@ -2,9 +2,6 @@ import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
 
-import * as log from '@/util/log.js';
-import * as dsc from 'discord.js';
-
 import findCommand from '@/util/cmd/findCommand.js';
 import { Category } from '@/bot/command.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
@@ -29,7 +26,6 @@ export const manCmd: Command = {
     ],
     aliases: [],
     permissions: {
-
         allowedRoles: null,
         allowedUsers: [],
     },

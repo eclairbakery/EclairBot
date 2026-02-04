@@ -1,6 +1,6 @@
 import { cfg, saveConfigurationChanges } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
-import { findCmdConfigLocation, findCmdConfResolvable } from "@/util/cmd/findCmdConfigObj.js";
+import { findCmdConfigLocation } from "@/util/cmd/findCmdConfigObj.js";
 
 export const disableCommandCmd: Command = {
     name: 'cmd-disable',

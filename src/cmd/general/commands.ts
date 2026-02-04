@@ -5,7 +5,6 @@ import { PredefinedColors } from '@/util/color.js';
 import capitalizeFirst from '@/util/capitalizeFirst.js';
 import canExecuteCmd from '@/util/cmd/canExecuteCmd.js';
 
-import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 

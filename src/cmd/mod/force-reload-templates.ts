@@ -1,6 +1,3 @@
-import { db } from '@/bot/apis/db/bot-db.js';
-import * as log from '@/util/log.js';
-import * as dsc from 'discord.js';
 import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
@@ -20,7 +17,6 @@ export const forceReloadTemplatesCmd: Command = {
 
     expectedArgs: [],
     permissions: {
-
         allowedRoles: null,
         allowedUsers: null,
     },

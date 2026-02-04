@@ -2,7 +2,7 @@ import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 import { PredefinedColors } from '@/util/color.js';
-import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
+import { Command, CommandAPI, CommandFlags, CommandPermissions } from '@/bot/command.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const cmdCfg = cfg.commands.mod.warn;
@@ -30,11 +30,7 @@ export const clearCmd: Command = {
             description: 'Opcjonalnie, usuń wiadomości tylko tego użytkownika',
         }
     ],
-    permissions: {
-
-        allowedRoles: cmdCfg.allowedRoles,
-        allowedUsers: cmdCfg.allowedUsers,
-    },
+    permissions: CommandPermissions.fromCommandConfig(cmdCfg),
 
     async execute(api: CommandAPI) {
         const amount = api.getTypedArg('amount', 'number')?.value as number;

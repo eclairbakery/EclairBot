@@ -1,5 +1,4 @@
-import User from "@/bot/apis/db/user.js";
-import { Command, CommandAPI, CommandFlags } from "@/bot/command.js";
+import { Command, CommandAPI, CommandFlags, CommandPermissions } from "@/bot/command.js";
 import { addLvlRole, xpToLevel } from "@/bot/level.js";
 import actionsManager, { OnForceReloadTemplates } from "@/events/actions/templatesEvents.js";
 
@@ -20,11 +19,7 @@ export const refreshCmd: Command = {
             optional: true
         }
     ],
-    permissions: {
-
-        allowedRoles: null,
-        allowedUsers: null,
-    },
+    permissions: CommandPermissions.devOnly(),
 
     async execute(api: CommandAPI) {
         // define constants & variables

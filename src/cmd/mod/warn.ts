@@ -1,8 +1,7 @@
-import { Command, CommandFlags } from '@/bot/command.js';
+import { Command, CommandFlags, CommandPermissions } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
 
-import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import {output as debug} from '@/bot/logging.js';
 
@@ -49,11 +48,7 @@ export const warnCmd: Command = {
         }
     ],
 
-    permissions: {
-
-        allowedRoles: cfg.commands.mod.warn.allowedRoles,
-        allowedUsers: cfg.commands.mod.warn.allowedUsers
-    },
+    permissions: CommandPermissions.fromCommandConfig(cfg.commands.mod.warn),
 
     async execute(api) {
         let targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember | undefined;

@@ -1,10 +1,8 @@
 import * as dsc from 'discord.js';
-import * as log from '@/util/log.js';
-import util from 'node:util';
 
 import { Command, CommandFlags } from "@/bot/command.js";
 
-import { getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
+import { getUserReputation } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
 import { getTopRep } from '@/bot/apis/rep/top.js';
 import { PredefinedColors } from '@/util/color.js';

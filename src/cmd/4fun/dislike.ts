@@ -5,14 +5,13 @@ import { Command, CommandFlags } from "@/bot/command.js";
 
 import { getLastRepGivenByUser, getUserReputationProportion, } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar } from '@/util/progressbar.js';
-import User from '@/bot/apis/db/user.js';
 
 export const subRepCmd: Command = {
     name: 'dislike',
     aliases: ['-rep', 'subrep', 'sub-rep', 'repsub', 'rep-sub'],
     description: {
         main: 'Tym poleceniem możesz pokazać danej osobie że jej nie lubisz, jest wkurwiająca, lub uprzykrza życie innym, odejmując jej punkty reputacji!',
-        short: 'Dodaje punkty reputacji danej osobie',
+        short: 'Odejmuje punkty reputacji danej osobie',
     },
     flags: CommandFlags.None,
 

@@ -12,7 +12,6 @@ export const withdrawCmd: Command = {
     },
     flags: CommandFlags.Economy,
     permissions: {
-
         allowedRoles: null,
         allowedUsers: [],
     },

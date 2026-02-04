@@ -1,4 +1,4 @@
-import { cfg, overrideCfg, Config, saveConfigurationChanges } from "@/bot/cfg.js";
+import { cfg, overrideCfg, saveConfigurationChanges } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 
 export const configurationCommand: Command = {

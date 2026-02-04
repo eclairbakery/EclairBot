@@ -14,7 +14,6 @@ export const depositCmd: Command = {
     },
     flags: CommandFlags.Economy,
     permissions: {
-
         allowedRoles: null,
         allowedUsers: [],
     },

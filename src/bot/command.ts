@@ -5,6 +5,7 @@ import { Timestamp } from '@/util/parseTimestamp.js';
 export { Category };
 import type * as log from '@/util/log.js';
 import type User from './apis/db/user.js';
+import { cfg } from './cfg.js';
 
 export enum CommandFlags {
     None = 0,
@@ -136,4 +137,34 @@ export interface Command {
     };
     /** The execute function */
     execute: (api: CommandAPI) => any | PromiseLike<any>;
+}
+
+export namespace CommandPermissions {
+    export function everyone(): Command['permissions'] {
+        return {
+            allowedRoles: null,
+            allowedUsers: null,
+        };
+    }
+
+    export function none(): Command['permissions'] {
+        return {
+            allowedRoles: [],
+            allowedUsers: []
+        }
+    }
+
+    export function devOnly(): Command['permissions'] {
+        return {
+            allowedRoles: [ ...cfg.devPerms.allowedRoles ],
+            allowedUsers: [ ...cfg.devPerms.allowedUsers ]
+        };
+    }
+
+    export function fromCommandConfig<T extends Command['permissions']>(cfg: T): Command['permissions'] {
+        return {
+            allowedRoles: cfg.allowedRoles,
+            allowedUsers: cfg.allowedUsers
+        };
+    }
 }

@@ -1,6 +1,4 @@
 import * as dsc from 'discord.js';
-import * as log from '@/util/log.js';
-import util from 'node:util';
 
 import { Command, CommandFlags } from "@/bot/command.js";
 import {output as debug} from '@/bot/logging.js';

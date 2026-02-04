@@ -1,8 +1,7 @@
 import * as dsc from 'discord.js';
-import * as log from '@/util/log.js';
 import {output as debug} from '@/bot/logging.js';
 
-import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Hour, Timestamp } from '@/util/parseTimestamp.js';
@@ -44,7 +43,6 @@ export const muteCmd: Command = {
         },
     ],
     permissions: {
-
         allowedRoles: cmdCfg.allowedRoles,
         allowedUsers: cmdCfg.allowedUsers,
     },
