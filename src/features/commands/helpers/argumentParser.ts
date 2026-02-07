@@ -58,25 +58,7 @@ export async function parseArgs(
     for (const decl of declaredArgs) {
         let raw = rawArgs[argIndex];
         const { type } = decl;
-
-        if (raw === undefined || raw === null) {
-            if (type === "user-mention-or-reference-msg-author" && context.msg) {
-                const refId = context.msg.reference?.messageId;
-                let member: dsc.GuildMember | null = null;
-                
-                if (refId) {
-                    const refMsg = await context.msg.channel.messages.fetch(refId).catch(() => null);
-                    if (refMsg) member = await resolveMember(context.msg.guild!, refMsg.author.id);
-                }
-                
-                parsed.push({ ...decl, value: member ?? context.msg.member } as CommandValuableArgument);
-                continue; 
-            }
-
-            if (!decl.optional) throw new MissingRequiredArgError(decl.name, type);
-            parsed.push({ ...decl, value: undefined } as any);
-            continue;
-        }
+        let skipInc = false;
 
         switch (type) {
             case "string":
@@ -115,8 +97,33 @@ export async function parseArgs(
 
             case "user-mention":
             case "user-mention-or-reference-msg-author": {
-                const member = await resolveUserFromContext(raw, context);
-                if (!member) throw new ArgMustBeSomeTypeError(decl.name, "user-mention");
+                let member: dsc.GuildMember | null = null;
+
+                if (raw) {
+                    member = await resolveUserFromContext(raw, context);
+                    
+                    if (!member && type === "user-mention") {
+                        throw new ArgMustBeSomeTypeError(decl.name, "user-mention");
+                    }
+                }
+
+                if (!member && type === "user-mention-or-reference-msg-author" && context.msg) {
+                    const refId = context.msg.reference?.messageId;
+                    
+                    if (refId) {
+                        const refMsg = await context.msg.channel.messages.fetch(refId).catch(() => null);
+                        if (refMsg) {
+                            member = await resolveMember(context.msg.guild!, refMsg.author.id);
+                        }
+                    }
+                    
+                    if (!member) member = context.msg.member;
+                }
+
+                if (!member) {
+                    throw new ArgMustBeSomeTypeError(decl.name, "user-mention");
+                }
+
                 parsed.push({ ...decl, value: member } as any);
                 break;
             }
@@ -141,7 +148,7 @@ export async function parseArgs(
                 parsed.push({ ...decl, value: raw } as any);
         }
 
-        argIndex++;
+        if (!skipInc) argIndex++;
     }
 
     return parsed;
