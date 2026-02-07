@@ -8,7 +8,6 @@ const SNOWFLAKE_REGEX = /^\d{17,20}$/;
 
 function getSnowflake(input: string): string | null {
     if (!input) return null;
-    // Wyciąga ID z formatu <@!123>, <@123>, <#123>, <@&123> lub czyste ID
     const match = input.match(/\d{17,20}/);
     return match ? match[0] : null;
 }
