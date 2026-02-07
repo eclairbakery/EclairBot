@@ -68,6 +68,7 @@ export const toprepCmd: Command = {
                     .setDescription('-# eklerka dalej nie zrobił obrazka na top reputacji'),
                 new ReplyEmbed()
                     .setColor(PredefinedColors.Cyan)
+                    .setDescription('Najlepsi w grę reputacji')
                     .setFields(fields)
             ]
         });
