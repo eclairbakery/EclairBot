@@ -198,7 +198,7 @@ export default class User {
         getAll: async (): Promise<Rep[]> => {
             const rawReps = await db.selectMany<RepRaw>(
                 `SELECT * FROM reputation`,
-                [this.id]
+                []
             );
             return rawReps.map(repFromRaw);
         }
