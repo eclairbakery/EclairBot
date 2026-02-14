@@ -40,8 +40,7 @@ async function logAlarming(description: string, fatal: boolean, mem: dsc.GuildMe
                 .setColor(fatal ? PredefinedColors.Red : PredefinedColors.Yellow)
                 .setTitle('❌ ' + (fatal ? cfg.customization.watchdogTexts.fatalHeader.replaceAll('<user>', mem.user.username) : cfg.customization.watchdogTexts.suspiciousHeader.replaceAll('<user>', mem.user.username)))
                 .setDescription(`${cfg.customization.watchdogTexts.descStart}${description}${cfg.customization.watchdogTexts.descEnd.reputation.replaceAll('<score>', score.toString())} ${fatal ? cfg.customization.watchdogTexts.descEnd.pingSorry : cfg.customization.watchdogTexts.descEnd.floodSorry}`)
-        ],
-        content: fatal ? '@here' : undefined
+        ]
     });
 }
 
