@@ -1,10 +1,6 @@
 import { Command, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js'
 
-import * as log from '@/util/log.js';
-import * as dsc from 'discord.js';
-
-import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 
 /** @deprecated */
@@ -36,7 +32,7 @@ async function getGIF(searchTerm: string): Promise<string> {
             return cfg.customization.uncategorized.gifNotFound;
         }
     } catch (error) {
-        output.warn('Błąd podczas pobierania GIFa: ' + error);
+        output.warn('GIF download error: ' + error);
         return cfg.customization.uncategorized.gifErrorString;
     }
 }
@@ -74,7 +70,7 @@ export const dogCmd: Command = {
 
     expectedArgs: [],
 
-    aliases: ['kot'],
+    aliases: ['pies'],
 
     permissions: {
         allowedRoles: null,
@@ -82,7 +78,7 @@ export const dogCmd: Command = {
     },
 
     async execute(api) {
-        api.reply(await getGIF('parrot'));
+        api.reply(await getGIF('dog'));
     }
 };
 
