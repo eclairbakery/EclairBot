@@ -26,6 +26,11 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
                 return;
             }
 
+            // easter egg
+            if (msg.content.trim().toLowerCase() == 'eb') {
+                msg.channel.send("https://i.iplsc.com/000AA4EQC5P4FTX6-C0.jpeg");
+            }
+
             // quote bot
             await (async function () {
                 if (msg.author.bot) return;
