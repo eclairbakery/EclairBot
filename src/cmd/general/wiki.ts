@@ -115,38 +115,6 @@ export const wikiCmd: Command = {
             });
         }
 
-        const allin1 = ((json.description ?? '') + (json.titles.normalized)).toLowerCase();
-
-        if (
-            (allin1.includes('seks') || allin1.includes('sex') || allin1.includes('porn')) &&
-            api.channel.id !== cfg.unfilteredRelated.unfilteredChannel
-        ) {
-            return api.reply({
-                embeds: [{
-                    author: { name: 'EclairBOT' },
-                    title: 'Weź się lecz 🥀',
-                    description: `Zastanawia mnie bardzo dlaczego interesują cię tak nieludzkie hasła. Pewnie w twojej okolicy jest jakiś psycholog, który udzieli ci wsparcia. Dobra, co ja piszę... Po prostu przestań się tym interesować, a jak nie możesz to idź na <#${cfg.unfilteredRelated.unfilteredChannel}> i nie narażaj innych na te treści`,
-                    url: 'https://www.redirectionprogram.com/pl/',
-                    color: PredefinedColors.DarkOrange
-                }]
-            });
-        }
-
-        if (
-            (allin1.includes('dsc.gg') || allin1.includes('discord.com/invite') || allin1.includes('discord.gg')) &&
-            api.channel.id !== cfg.unfilteredRelated.unfilteredChannel
-        ) {
-            return api.reply({
-                embeds: [{
-                    author: { name: 'EclairBOT' },
-                    title: 'Weź się lecz 🥀',
-                    description: `Jak już się reklamujesz Wikipedią to na <#${cfg.unfilteredRelated.unfilteredChannel}> plz.`,
-                    url: 'https://www.reklama.pl/',
-                    color: PredefinedColors.DarkOrange
-                }]
-            });
-        }
-
         return api.reply({
             embeds: [{
                 author: { name: 'EclairBOT' },

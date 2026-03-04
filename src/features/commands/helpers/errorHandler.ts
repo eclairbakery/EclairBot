@@ -70,7 +70,9 @@ export function handleError(err: any, msg: log.Replyable) {
                         msg, 'Błąd!',
                         'Komenda próbuje operować na wiadomości, której nie ma lub została usunięta.'
                     );
-                }
+                } 
+            } else if (err.message.includes('fetch failed')) {
+                return log.replyError(msg, 'Błąd', 'Ktoś wyłączył internet w bocie 💔');
             }
         }
 
