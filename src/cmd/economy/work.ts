@@ -13,7 +13,7 @@ const WORK_AMOUNT_MIN = 50;
 const WORK_AMOUNT_MAX = 300;
 
 async function canWork(userId: string): Promise<{ can: boolean; wait?: number }> {
-    const row = await (new User(userId)).economy.getCooldowns();
+    const row = await (new User(userId)).cooldowns.get();
     const now = Date.now();
 
     if (!row) return { can: true };
@@ -36,7 +36,7 @@ async function tryWork(userId: string, amount: number): Promise<{ ok: boolean; w
     const now = Date.now();
 
     await (new User(userId)).economy.addWalletMoney(amount);
-    await (new User(userId)).economy.setCooldown('last_worked', now);
+    await (new User(userId)).cooldowns.set('work', now);
 
     return { ok: true };
 }

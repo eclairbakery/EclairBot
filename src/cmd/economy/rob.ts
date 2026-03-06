@@ -19,7 +19,7 @@ const MIN_STEALABLE = 50;
 
 async function canRob(userId: string): Promise<{ can: boolean; wait?: number }> {
     const user = new User(userId);
-    const cooldowns = await user.economy.getCooldowns();
+    const cooldowns = await user.cooldowns.get();
 
     const now = Date.now();
     if (cooldowns.lastRobbed == null) return { can: true };
@@ -62,7 +62,7 @@ async function tryRob(attackerId: string, targetId: string): Promise<{ ok: boole
     try {
         await db.runSql('BEGIN IMMEDIATE TRANSACTION');
 
-        await attacker.economy.setCooldown('last_robbed', now);
+        await attacker.cooldowns.set('rob', now);
 
         if (success && amount > 0) {
             await db.runSql(

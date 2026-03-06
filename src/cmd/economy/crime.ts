@@ -14,7 +14,7 @@ const WORK_AMOUNT_MAX = cfg.features.economy.commandSettings.crime.maximumCrimeA
 const PERCENTAGE = cfg.features.economy.commandSettings.crime.successRatio;
 
 async function canSlut(userId: string): Promise<{ can: boolean; wait?: number }> {
-    const row = await (new User(userId)).economy.getCooldowns();
+    const row = await (new User(userId)).cooldowns.get();
     const now = Date.now();
 
     if (!row) return { can: true };
@@ -38,7 +38,7 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
 
     if (success) await (new User(userId)).economy.addWalletMoney(amount);
             else await (new User(userId)).economy.deductWalletMoney(amount);
-    await (new User(userId)).economy.setCooldown('last_crimed', now);
+    await (new User(userId)).cooldowns.set('crime', now);
 
     return { ok: true };
 }

@@ -48,6 +48,7 @@ import actionsManager from '@/features/actions/index.js';
 import { getChannel } from './features/actions/channels/templateChannels.js';
 import { warnGivenLogAction } from './features/actions/mod/warn-given.js';
 import { db } from './bot/apis/db/bot-db.js';
+import * as email from '@/bot/apis/email/mail.js';
 import { setUpStatusGenerator } from './util/generateStatusQuote.js';
 
 // --------------- INIT ---------------
@@ -56,6 +57,8 @@ client.once('clientReady', async () => {
     debug.log(`${ft.CYAN}Logged in.`);
     await db.init();
     debug.log(`Database initialized.`);
+    await email.init();
+    debug.log(`Email initialized.`);
 
     if (!process.env.TENOR_API) {
         debug.warn('You should set the TENOR_API enviorment variable to a Tenor API key.\nOtherwise, the Tenor API-based commands will not work.');
@@ -117,7 +120,8 @@ async function main() {
         if (!process.memoryUsage || !process.availableMemory) return;
         let processHeap = process.memoryUsage().heapUsed;
         let availableMemory = process.availableMemory();
-        if (processHeap > availableMemory - 25000000) {
+        const treshold = 25 * 1024 * 1024; // 25MB
+        if (processHeap > availableMemory - treshold) {
             debug.warn(`Low on memory.\nUsing: ${processHeap} of ${availableMemory} available memory.\nEclairBOT will attempt to restart if this situation occurs more than 6 times in the next 10 seconds.`);
             memoryIssuesTimes++;
             if (memoryIssuesTimes == 6) {

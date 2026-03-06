@@ -7,6 +7,7 @@ export interface UserDataRaw {
     last_robbed: number;
     last_slutted: number;
     last_crimed: number;
+    last_email_sent: number;
 }
 
 export interface WarnRaw {
@@ -72,10 +73,11 @@ export interface Balance {
 export type Cooldown = number | null;
 
 export interface Cooldowns {
-    lastWorked:  Cooldown;
-    lastRobbed:  Cooldown;
-    lastSlutted: Cooldown;
-    lastCrimed:  Cooldown;
+    lastWorked:    Cooldown;
+    lastRobbed:    Cooldown;
+    lastSlutted:   Cooldown;
+    lastCrimed:    Cooldown;
+    lastEmailSent: Cooldown;
 };
 
 

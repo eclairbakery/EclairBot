@@ -15,7 +15,7 @@ const WORK_AMOUNT_MAX = 1600;
 const PERCENTAGE = 0.6;
 
 async function canSlut(userId: string): Promise<{ can: boolean; wait?: number }> {
-    const row = await (new User(userId)).economy.getCooldowns();
+    const row = await (new User(userId)).cooldowns.get();
     const now = Date.now();
 
     if (!row) return { can: true };
@@ -39,7 +39,7 @@ async function trySlut(userId: string, amount: number, success: boolean): Promis
 
     if (success) await (new User(userId)).economy.addWalletMoney(amount);
                  else await (new User(userId)).economy.deductWalletMoney(amount);
-    await (new User(userId)).economy.setCooldown('last_slutted', now);
+    await (new User(userId)).cooldowns.set('slut', now);
 
     return { ok: true };
 }

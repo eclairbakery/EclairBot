@@ -1,11 +1,18 @@
-import sqlite from 'sqlite3';
-
 import { db } from '@/bot/apis/db/bot-db.js';
-import { output } from '@/bot/logging.js';
 
 import { Warn, WarnRaw, Rep, RepRaw, Balance } from './db-defs.js';
-import { Cooldowns, Cooldown } from './db-defs.js';
+import { Cooldowns } from './db-defs.js';
 import { repFromRaw, warnFromRaw } from './db-defs.js';
+
+const CooldownMap = {
+    work:  { col: 'last_worked',     prop: 'lastWorked' },
+    rob:   { col: 'last_robbed',     prop: 'lastRobbed' },
+    slut:  { col: 'last_slutted',    prop: 'lastSlutted' },
+    crime: { col: 'last_crimed',     prop: 'lastCrimed' },
+    email: { col: 'last_email_sent', prop: 'lastEmailSent' },
+} as const;
+
+type CooldownKey = keyof typeof CooldownMap;
 
 export default class User {
     readonly id: string;
@@ -145,28 +152,49 @@ export default class User {
                 [amount, amount, this.id, amount]
             );
         },
+    };
 
-        setCooldown: async (field: 'last_worked' | 'last_robbed' | 'last_slutted' | 'last_crimed', timestamp: number) => {
+    /** -------- COOLDOWNS -------- */
+    readonly cooldowns = {
+        set: async (field: CooldownKey, timestamp: number) => {
+            const fieldData = CooldownMap[field];
             await this.ensureExists();
-            await db.runSql(`UPDATE users SET ${field} = ? WHERE user_id = ?`, [timestamp, this.id]);
+            await db.runSql(`UPDATE users SET ${fieldData.col} = ? WHERE user_id = ?`, [timestamp, this.id]);
         },
 
-        getCooldowns: async (): Promise<Cooldowns> => {
+        get: async (): Promise<Cooldowns> => {
             await this.ensureExists();
-            const row = await db.selectOne(
-                `SELECT last_worked, last_robbed, last_slutted, last_crimed
-                 FROM users WHERE user_id = ?`,
+            const cols = Object.values(CooldownMap).map(v => v.col).join(', ');
+            const row = await db.selectOne<any>(
+                `SELECT ${cols} FROM users WHERE user_id = ?`,
                 [this.id]
             );
-            if (row == null) return { lastWorked: null, lastRobbed: null, lastSlutted: null, lastCrimed: null };
-
-            return {
-                lastWorked:  row.last_worked ?? null,
-                lastRobbed:  row.last_robbed ?? null,
-                lastSlutted: row.last_slutted ?? null,
-                lastCrimed:  row.last_crimed ?? null,
-            };
+            
+            const result = {} as any;
+            for (const key of Object.keys(CooldownMap)) {
+                const k = key as CooldownKey;
+                result[CooldownMap[k].prop] = row?.[CooldownMap[k].col] ?? null;
+            }
+            return result as Cooldowns;
         },
+
+        check: async (field: CooldownKey, cooldownMs: number) => {
+            const cds = await this.cooldowns.get();
+            const last = cds[CooldownMap[field].prop] ?? 0;
+            const now = Date.now();
+            const diff = now - last;
+
+            if (diff < cooldownMs) {
+                const remainingMs = cooldownMs - diff;
+                return {
+                    can: false,
+                    waitMs: remainingMs,
+                    waitSec: Math.ceil(remainingMs / 1000),
+                };
+            }
+
+            return { can: true, waitMs: 0, waitSec: 0 };
+        }
     };
 
     /** -------- REPUTATION -------- */
