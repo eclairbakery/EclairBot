@@ -36,7 +36,7 @@ export const sendEmailCmd: Command = {
         const receiver = api.getTypedArg('receiver', 'string')?.value!;
         const contentArg = api.getTypedArg('content', 'trailing-string')?.value!;
 
-        const invoker = new User(api.invoker.id);
+        const invoker = api.executor;
         
         const COOLDOWN_MS = 10 * 60 * 1000;
         const check = await invoker.cooldowns.check('email', COOLDOWN_MS);
@@ -54,7 +54,7 @@ export const sendEmailCmd: Command = {
         try {
             email.sendMessage({
                 receiver: receiver,
-                subject: 'Eclair Mail 1.0',
+                subject: 'Wiadomość od ' + api.invoker.user.displayName,
                 content: contentArg,
             });
 
