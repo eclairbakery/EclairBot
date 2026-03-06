@@ -102,6 +102,11 @@ export interface CommandAPI {
     };
     executor: User;
 
+    raw: {
+        msg?: dsc.Message;
+        interaction?: dsc.CommandInteraction;
+    };
+
     // ---- QUICK FUNCTIONS ----
     reply: (options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions)
         => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;

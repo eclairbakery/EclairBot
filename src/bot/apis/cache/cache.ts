@@ -50,3 +50,13 @@ export async function load<T>(box: string, key: string): Promise<T | undefined> 
     const json = await readBox(boxpath);
     return json[key] as T | undefined;
 }
+
+export async function del(box: string, key: string) {
+    const boxpath = getBoxFilepath(box);
+
+    const json = await readBox(boxpath);
+    delete json[key];
+
+    await fs.writeFile(boxpath, JSON.stringify(json));
+
+}

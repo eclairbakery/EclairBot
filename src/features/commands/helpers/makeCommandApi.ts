@@ -112,6 +112,11 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
         channel: context.interaction?.channel ?? context.msg!.channel,
         guild: context.interaction?.guild ?? context.msg?.guild ?? undefined,
 
+        raw: {
+            msg: context.msg,
+            interaction: context.interaction,
+        },
+
         preferShortenedEmbeds: cfg.blockCommands.preferShortenedEmbeds.includes((context.interaction?.channel ?? context.msg!.channel!).id),
         invokedViaAlias: context.invokedviaalias
     };

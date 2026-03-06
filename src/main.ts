@@ -43,12 +43,16 @@ import { registerMsgDeleteDscEvents } from './events/client/messageDelete.js';
 import * as slashCommands from '@/features/commands/slash.js';
 import * as legacyCommands from '@/features/commands/legacy.js';
 
+import * as email from '@/bot/apis/email/mail.js';
+import * as cache from '@/bot/apis/cache/cache.js';
+
+import * as log from '@/util/log.js';
+
 // misc
 import actionsManager from '@/features/actions/index.js';
 import { getChannel } from './features/actions/channels/templateChannels.js';
 import { warnGivenLogAction } from './features/actions/mod/warn-given.js';
 import { db } from './bot/apis/db/bot-db.js';
-import * as email from '@/bot/apis/email/mail.js';
 import { setUpStatusGenerator } from './util/generateStatusQuote.js';
 
 // --------------- INIT ---------------
@@ -134,6 +138,21 @@ async function main() {
     setInterval(() => {
         memoryIssuesTimes = 0;
     }, 10_000);
+
+
+    try {
+        const messageId = await cache.load<string>('session', 'last-restart-command-message-id');
+        const channelId = await cache.load<string>('session', 'last-restart-command-channel-id');
+        if (messageId != undefined && channelId != undefined) {
+            await cache.del('session', 'last-restart-command-message-id');
+            await cache.del('session', 'last-restart-command-channel-id');
+
+            const channel = await client.channels.fetch(channelId) as dsc.TextChannel;
+            const message = await channel.messages.fetch(messageId);
+
+            log.replySuccess(message, 'Restart Zakończony', 'EclairBot pomyślnie się zrestartował i jest znowu gotowy do działania!');
+        }
+    } catch {}
 
     if (cfg.general.databaseBackups.enabled) {
         setInterval(async () => {

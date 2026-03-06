@@ -3,6 +3,8 @@ import { Command, CommandFlags } from '@/bot/command.js';
 import { canEval } from './eval.js';
 import { output } from '@/bot/logging.js';
 
+import * as cache from '@/bot/apis/cache/cache.js';
+
 export const restartCmd: Command = {
     name: 'restart',
     description: {
@@ -23,6 +25,11 @@ export const restartCmd: Command = {
         }
         output.log('Issued restart. This will work due to the behaviour of Pterodactyl Daemon.');
         await api.reply(cfg.customization.evalWarnings.gonnaRestart);
+        
+        if (api.raw.msg) {
+            cache.store('session', 'last-restart-command-message-id', api.raw.msg?.id);
+            cache.store('session', 'last-restart-command-channel-id', api.channel?.id);
+        }
         process.exit(1);
     },
 };

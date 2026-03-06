@@ -2,25 +2,19 @@ import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import {output as debug} from '@/bot/logging.js';
 
-import ban from "@/bot/apis/mod/bans.js";
-import kick from "@/bot/apis/mod/kicks.js";
-import mute from "@/bot/apis/mod/muting.js";
-import warn from "@/bot/apis/mod/warns.js";
+import { cfg } from '@/bot/cfg.js';
+import { CommandAPI, CommandFlags } from '@/bot/command.js';
+import { commands } from '@/cmd/list.js';
 
-import { cfg } from "@/bot/cfg.js";
-import { CommandAPI, CommandFlags } from "@/bot/command.js";
-import { client } from "@/client.js";
-import { commands } from "@/cmd/list.js";
+import canExecuteCmd from '@/util/cmd/canExecuteCmd.js';
+import findCommand from '@/util/cmd/findCommand.js';
 
-import canExecuteCmd from "@/util/cmd/canExecuteCmd.js";
-import findCommand from "@/util/cmd/findCommand.js";
-
-import { parseArgs } from "./helpers/argumentParser.js";
 import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.js';
-import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import actionsManager, { PredefinedActionEventTypes } from '../actions/index.js';
+
+import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import { PredefinedColors } from '@/util/color.js';
-import User from '@/bot/apis/db/user.js';
+
 import { handleError } from './helpers/errorHandler.js';
 import { makeCommandApi } from './helpers/makeCommandApi.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
