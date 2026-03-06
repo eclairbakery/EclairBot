@@ -15,7 +15,7 @@ function getCacheDir(): string {
     return path.join('/', 'tmp', 'eb-cache');
 }
 
-export async function initCache() {
+export async function init() {
     await fs.mkdir(getCacheDir(), { recursive: true });
 }
 

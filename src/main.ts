@@ -63,6 +63,8 @@ client.once('clientReady', async () => {
     debug.log(`Database initialized.`);
     await email.init();
     debug.log(`Email initialized.`);
+    await cache.init();
+    debug.log(`Cache initialized.`);
 
     if (!process.env.TENOR_API) {
         debug.warn('You should set the TENOR_API enviorment variable to a Tenor API key.\nOtherwise, the Tenor API-based commands will not work.');
@@ -138,7 +140,6 @@ async function main() {
     setInterval(() => {
         memoryIssuesTimes = 0;
     }, 10_000);
-
 
     try {
         const messageId = await cache.load<string>('session', 'last-restart-command-message-id');
