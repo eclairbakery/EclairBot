@@ -3,7 +3,28 @@ import { Command, CommandFlags } from "@/bot/command.js";
 
 import * as email from '@/bot/apis/email/mail.js';
 
-import User from '@/bot/apis/db/user.js';
+function parseEmailMessage(input: string): { subject: string, content: string } {
+    let index = -1;
+
+    for (let i = 0; i < input.length; i++) {
+        if (input[i] == ":" && input[i - 1] != "\\") {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        return { subject: '', content: input.replace(/\\:/g, ":") };
+    }
+
+    let subject = input.slice(0, index);
+    let content = input.slice(index + 1);
+
+    subject = subject.replace(/\\:/g, ":").trim();
+    content = content.replace(/\\:/g, ":").trim();
+
+    return { subject, content };
+}
 
 export const sendEmailCmd: Command = {
     name: 'send-email',
@@ -36,10 +57,8 @@ export const sendEmailCmd: Command = {
         const receiver = api.getTypedArg('receiver', 'string')?.value!;
         const contentArg = api.getTypedArg('content', 'trailing-string')?.value!;
 
-        const invoker = api.executor;
-        
         const COOLDOWN_MS = 10 * 60 * 1000;
-        const check = await invoker.cooldowns.check('email', COOLDOWN_MS);
+        const check = await api.executor.cooldowns.check('email', COOLDOWN_MS);
 
         if (!check.can) {
             return api.log.replyError(
@@ -51,18 +70,37 @@ export const sendEmailCmd: Command = {
 
         const now = Date.now();
 
+        let msg = await api.log.replyTip(api, 'Wysyłanie... ', 'Poczekaj, to chwile potrwa!');
+
         try {
-            email.sendMessage({
+            let { subject, content } = parseEmailMessage(contentArg);
+            if (subject == '') {
+                subject = `Wiadomość od ${api.invoker.user.displayName}`;
+            }
+            if (content == '') {
+                return msg.edit({
+                    embeds: [api.log.getErrorEmbed('Błędna wiadomość', 'Nie możesz wysłać pustego emaila!')],
+                });
+            }
+
+            await email.sendMessage({
                 receiver: receiver,
-                subject: 'Wiadomość od ' + api.invoker.user.displayName,
-                content: contentArg,
+                subject: subject,
+                content: content,
             });
 
-            await invoker.cooldowns.set('email', now);
+            await api.executor.cooldowns.set('email', now);
 
-            api.log.replySuccess(api, 'Udało się!', `Wysłalem emaila do ${receiver}!`);
+            msg.edit({
+                embeds: [api.log.getSuccessEmbed('Udało się!', `Wysłalem emaila do ${receiver}!`)],
+            });
         } catch (err) {
-            api.log.replyError(api, 'Zjebało się!', `Jak zawsze coś się jebie z tym emailem wina tuska i tych calych internetów.\nerror: ${err}`);
+            msg.edit({
+                embeds: [api.log.getErrorEmbed(
+                    'Zjebało się!',
+                    `Jak zawsze coś się jebie z tym emailem wina tuska i tych calych internetów.\nKod błędu: ${err}`
+                )],
+            });
         }
     }
 };
