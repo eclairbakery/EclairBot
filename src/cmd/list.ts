@@ -48,7 +48,7 @@ import { configurationCommand } from './dev/configuration.js';
 import { moneyCmd } from './economy/money.js';
 import { enableCommandCmd } from './dev/enable-cmd.js';
 import { disableCommandCmd } from './dev/disable-cmd.js';
-import { sendEmailCmd } from './dev/send-email.js';
+import { sendEmailCmd } from './general/send-email.js';
 import { buyCmd } from './economy/buy.js';
 import { refreshCmd } from './mod/refresh.js';
 
@@ -59,7 +59,7 @@ export const commands: Map<Category, Command[]> = new Map([
             helpCmd, commandsCmd,
             manCmd,
             bannerCmd, pfpCmd,
-            wikiCmd
+            wikiCmd, sendEmailCmd
         ]
     ],
     [
@@ -94,8 +94,7 @@ export const commands: Map<Category, Command[]> = new Map([
         Category.DevelopersOnly,
         [
             evalCmd, restartCmd, configurationCommand,
-            enableCommandCmd, disableCommandCmd, 
-            sendEmailCmd,
+            enableCommandCmd, disableCommandCmd,
         ],
     ],
     [
