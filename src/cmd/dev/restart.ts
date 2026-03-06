@@ -27,8 +27,8 @@ export const restartCmd: Command = {
         await api.reply(cfg.customization.evalWarnings.gonnaRestart);
         
         if (api.raw.msg) {
-            cache.store('session', 'last-restart-command-message-id', api.raw.msg?.id);
-            cache.store('session', 'last-restart-command-channel-id', api.channel?.id);
+            await cache.store('session', 'last-restart-command-message-id', api.raw.msg?.id);
+            await cache.store('session', 'last-restart-command-channel-id', api.channel?.id);
         }
         process.exit(1);
     },
