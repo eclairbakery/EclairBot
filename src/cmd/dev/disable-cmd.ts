@@ -1,4 +1,4 @@
-import { cfg, saveConfigurationChanges } from "@/bot/cfg.js";
+import { cfg, overrideCfg, saveConfigurationChanges } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 import { findCmdConfCategory } from "@/util/cmd/findCmdConfigObj.js";
 
@@ -31,10 +31,9 @@ export const disableCommandCmd: Command = {
             return api.log.replyError(api, 'Błąd', `Nie znaleziono komendy **${name}**!`);
         }
 
-        cfg.commands[cat] ??= {};
-        cfg.commands[cat][name] ??= cfg.defaultCommandConfig;
-        cfg.commands[cat][name].enabled = false;
-
+        overrideCfg!.commands![cat] ??= {};
+        overrideCfg!.commands![cat][name] ??= cfg.defaultCommandConfig;
+        overrideCfg!.commands![cat][name].enabled = false;
         saveConfigurationChanges();
 
         api.log.replySuccess(api, 'Udało się!', `Wyłączono komendę **${name}**!`);

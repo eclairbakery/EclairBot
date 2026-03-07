@@ -1,4 +1,4 @@
-import User from "../db/user.js";
+import User, { CooldownCheckResult } from "../db/user.js";
 import * as dsc from 'discord.js';
 import { CommandArgType, CommandValuableArgument } from "./arguments.js";
 import { Category } from "@/bot/categories.js";
@@ -28,6 +28,8 @@ export interface CommandAPI {
     // ---- FUNCTIONS ----
     reply: (options: string | dsc.MessagePayload | dsc.MessageReplyOptions | dsc.MessageReplyOptions | dsc.InteractionEditReplyOptions)
         => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;
+
+    checkCooldown: (field: string, cooldownMs: number) => Promise<CooldownCheckResult>;
 
     // ---- EXTERNAL DATA ----
     commands: Map<Category, Command[]>;

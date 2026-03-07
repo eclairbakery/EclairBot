@@ -20,6 +20,14 @@ export function saveConfigurationChanges() {
     writeFileSync('bot/config.js', `(${JSON5.stringify(overrideCfg, null, 4)})`, 'utf-8');
 }
 
+export function getCommandOverride(category: string, commandName: string): any {
+    if (!overrideCfg.commands) (overrideCfg as any).commands = {};
+    const cmds = overrideCfg.commands as any;
+    cmds[category] ??= {};
+    cmds[category][commandName] ??= {};
+    return cmds[category][commandName];
+}
+
 function makeConfig(): Config {
     overrideCfg = readConfigurationChanges();
     return deepMerge(defaultCfg, overrideCfg);

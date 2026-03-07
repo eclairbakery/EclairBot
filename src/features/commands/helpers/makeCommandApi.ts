@@ -12,6 +12,7 @@ import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.js";
 import { t } from "@/bot/apis/translations/translate.js";
 import { deepMerge } from "@/util/objects/objects.js";
 import { cfg } from "@/bot/cfg.js";
+import { findCmdConfResolvable } from "@/util/cmd/findCmdConfigObj.js";
 
 type FirstArg<T> =
     T extends { (...args: infer A): any } ?
@@ -93,6 +94,8 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
         (context.interaction?.member as dsc.GuildMember) ??
         null;
 
+    const user = new User(((context.interaction?.member as dsc.GuildMember) ?? context.msg?.member)!.id);
+
     return {
         // -- args --
         getTypedArg: (name, type) => parsedArgs.find(a => a.name === name && a.type === type)! as any,
@@ -108,9 +111,22 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
         reply: context.interaction ? ((options) => context.interaction!.editReply(makeOptions(options))) : ((options) => context.msg!.reply(makeOptions(options))),
         commands: commands,
         log,
-        executor: new User(((context.interaction?.member as dsc.GuildMember) ?? context.msg?.member)!.id),
+        executor: user,
         channel: context.interaction?.channel ?? context.msg!.channel,
         guild: context.interaction?.guild ?? context.msg?.guild ?? undefined,
+
+        checkCooldown: async (field: any, cooldownMs: number) => {
+            const config = findCmdConfResolvable(commandObj.name);
+
+            if (config.cooldownBypassUsers?.includes(user.id)) return { can: true };
+            if (rawMember && config.cooldownBypassRoles) {
+                if (rawMember.roles.cache.some(r => config.cooldownBypassRoles!.includes(r.id))) {
+                    return { can: true };
+                }
+            }
+
+            return await user.cooldowns.check(field, cooldownMs);
+        },
 
         raw: {
             msg: context.msg,
