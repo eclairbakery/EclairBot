@@ -2,6 +2,7 @@ import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 
 import * as email from '@/bot/apis/email/mail.js';
+import { db } from "@/bot/apis/db/bot-db.js";
 
 function parseEmailMessage(input: string): { subject: string, content: string } {
     let index = -1;
@@ -68,20 +69,30 @@ export const sendEmailCmd: Command = {
             );
         }
 
+        const drow = await db.selectOne(
+            "SELECT 1 FROM email_security WHERE enabled_domain = ? LIMIT 1",
+            [
+                receiver.split('@')[1] ?? 'hashcat.dev'
+            ]
+        );
+
+        if (!drow) {
+            return await api.log.replyWarn(api, "Niestety nie...", "Tej domeny nie ma na whiteliście. Nie możesz więc do niej wysyłać maili. Wiem, szkoda... ALE UWAGA! Jest jedna opcja. Możesz utworzyć konto pocztowe na tej domenie i wysłać wiadomość do `theeclairbot@gmail.com`, aby permamentnie dodać ją do whitelisty.");
+        }
+
         const now = Date.now();
 
         let msg = await api.log.replyTip(api, 'Wysyłanie... ', 'Poczekaj, to chwile potrwa!');
 
         try {
             let { subject, content } = parseEmailMessage(contentArg);
-            if (subject == '') {
-                subject = `Wiadomość od ${api.invoker.user.displayName}`;
-            }
+            subject = `Wiadomość od ${api.invoker.user.displayName}: ${(subject == '') ? "brak tematu" : subject}`; 
             if (content == '') {
                 return msg.edit({
                     embeds: [api.log.getErrorEmbed('Błędna wiadomość', 'Nie możesz wysłać pustego emaila!')],
                 });
             }
+            content = `Ta wiadomość została wysłana automatycznie przez bota Discord na skutek wykonania komendy \`${cfg.general.prefix} ${api.invokedViaAlias}\` przez użytkownika Discord @${api.invoker.user.username} (id: ${api.invoker.id}).\n\n${content}`; 
 
             await email.sendMessage({
                 receiver: receiver,

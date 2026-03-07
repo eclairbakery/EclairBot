@@ -60,6 +60,11 @@ export class BotDatabase {
                 comment TEXT,
                 type TEXT NOT NULL CHECK(type IN ('+rep', '-rep'))
             );
+
+            CREATE TABLE IF NOT EXISTS email_security (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                enabled_domain TEXT NOT NULL
+            );
         `);
     }
 
