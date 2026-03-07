@@ -1,18 +1,14 @@
-import { Command, CommandAPI } from "@/bot/command.js";
-import { parseArgs } from "./argumentParser.js";
 import * as dsc from 'discord.js';
-import mute from "@/bot/apis/mod/muting.js";
-import warn from "@/bot/apis/mod/warns.js";
-import kick from "@/bot/apis/mod/kicks.js";
-import ban from "@/bot/apis/mod/bans.js";
-import { commands } from "@/cmd/list.js";
 import * as log from '@/util/log.js';
-import User from "@/bot/apis/db/user.js";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.js";
-import { t } from "@/bot/apis/translations/translate.js";
-import { deepMerge } from "@/util/objects/objects.js";
-import { cfg } from "@/bot/cfg.js";
-import { findCmdConfResolvable } from "@/util/cmd/findCmdConfigObj.js";
+
+import User from '@/bot/apis/db/user.js';
+
+import { Command, CommandAPI } from '@/bot/command.js';
+import { parseArgs } from './argumentParser.js';
+import { t } from '@/bot/apis/translations/translate.js';
+import { deepMerge } from '@/util/objects/objects.js';
+import { cfg } from '@/bot/cfg.js';
+import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 
 type FirstArg<T> =
     T extends { (...args: infer A): any } ?
@@ -48,11 +44,11 @@ function makeOptions(options: FirstArg<CommandAPI['reply']>): any {
     let result: dsc.MessageReplyOptions;
 
     switch (typeof options) {
-        case "string":
+        case 'string':
             result = { content: t(options) };
             break;
 
-        case "object":
+        case 'object':
             let opts = options as ContentReply<typeof options>;
             result = (opts.content
                 ? deepMerge(opts, { content: t(opts.content) })

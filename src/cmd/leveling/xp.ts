@@ -1,9 +1,9 @@
-import { cfg } from '@/bot/cfg.js';
-
 import * as dsc from 'discord.js';
+import actionsManager from '@/features/actions/index.js';
+
+import { cfg } from '@/bot/cfg.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { levelToXp, OnSetXpEvent } from '@/bot/level.js';
-import actionsManager from '@/features/actions/index.js';
 import { output } from '@/bot/logging.js';
 
 export const xpCmd: Command = {

@@ -1,13 +1,12 @@
-import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 import {output as debug} from '@/bot/logging.js';
 
 import { Command, CommandAPI, CommandFlags, CommandPermissions } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
-import ban from '@/bot/apis/mod/bans.js';
-import { sendLog } from '@/bot/apis/log/send-log.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+
+import ban from '@/bot/apis/mod/bans.js';
 
 const cmdCfg = cfg.commands.mod.ban;
 

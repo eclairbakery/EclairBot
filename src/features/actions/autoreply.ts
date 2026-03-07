@@ -1,7 +1,7 @@
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 import { Action, PredefinedActionEventTypes, ActionCallback, ConstraintCallback, MagicSkipAllActions } from './index.js';
-import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx } from './index.js';
-import { PredefinedActionCallbacks, PredefinedActionConstraints } from './index.js';
+import { MessageEventCtx } from './index.js';
+import { PredefinedActionConstraints } from './index.js';
 
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';

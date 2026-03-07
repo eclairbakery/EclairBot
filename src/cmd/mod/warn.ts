@@ -3,7 +3,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
 
 import * as dsc from 'discord.js';
-import {output as debug} from '@/bot/logging.js';
+import { output } from '@/bot/logging.js';
 
 import warn from '@/bot/apis/mod/warns.js';
 import parseTimestamp, { Timestamp } from '@/util/parseTimestamp.js';
@@ -57,7 +57,7 @@ export const warnCmd: Command = {
         const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null;
         let expiresAt = (duration != null ? Math.floor(Date.now() / 1000) + duration : null) ?? (Math.floor(Date.now() / 1000) + parseTimestamp('24h')!);
 
-        debug.log('Warn command args:', { targetUser, points, reason });
+        output.log('Warn command args:', { targetUser, points, reason });
 
         if (!targetUser) {
             return api.log.replyError(
@@ -103,7 +103,7 @@ export const warnCmd: Command = {
                 mod: api.invoker.id
             });
         } catch (err) {
-            debug.err(err);
+            output.err(err);
             return api.log.replyError(api, 'Błąd bazy danych', 'Nie udało się zapisać warna');
         }
 

@@ -1,9 +1,9 @@
-import { cfg } from "@/bot/cfg.js";
-import { output } from "@/bot/logging.js";
-import sleep from "@/util/sleep.js";
+import { cfg } from '@/bot/cfg.js';
+import { output } from '@/bot/logging.js';
+import sleep from '@/util/sleep.js';
 import * as dsc from 'discord.js';
-import { Action, PredefinedActionEventTypes, ReactionEventCtx } from "../index.js";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.js";
+import { Action, PredefinedActionEventTypes, ReactionEventCtx } from '../index.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 let alreadyInHallOfFame: dsc.Snowflake[] = [];
 
@@ -28,7 +28,7 @@ export const hallOfFameAction: Action<ReactionEventCtx> = {
             const count = reaction.count;
             const emoji = reaction.emoji.name;
 
-            if ((emoji === "⭐" || emoji === "💎" || emoji === "🔥") && count === 3 && cfg.features.hallOfFame.eligibleChannels.includes(msg.channelId)) {
+            if ((emoji === '⭐' || emoji === '💎' || emoji === '🔥') && count === 3 && cfg.features.hallOfFame.eligibleChannels.includes(msg.channelId)) {
                 if (!cfg.features.hallOfFame.enabled) {
                     const response = await reaction.message.reply('hall of fame jest wyłączony/zaarchiwizowany btw');
                     await sleep(1000);
@@ -43,7 +43,7 @@ export const hallOfFameAction: Action<ReactionEventCtx> = {
                 alreadyInHallOfFame.push(msg.id);
                 const embed = new ReplyEmbed()
                     .setAuthor({name: 'EclairBOT'})
-                    .setColor(`#${Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, "0")}`)
+                    .setColor(`#${Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, '0')}`)
                     .setTitle(`:gem: ${msg.author?.username} dostał się na Hall of Fame!`)
                     .setDescription(`Super ważna informacja, wiem. Link: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`)
                     .setFields([
@@ -59,12 +59,12 @@ export const hallOfFameAction: Action<ReactionEventCtx> = {
                     .setFooter({ text: `Wysłano w ${(msg.channel as any)?.name ?? 'Polsce'}` });
                 if (msg.attachments.size > 0) {
                     const first = msg.attachments.first();
-                    if (first?.contentType?.startsWith("image/")) {
+                    if (first?.contentType?.startsWith('image/')) {
                         embed.setImage(first.url);
                     } else {
                         embed.addFields({
-                            name: "Załączniki",
-                            value: msg.attachments.map(a => `[${a.name}](${a.url})`).join("\n"),
+                            name: 'Załączniki',
+                            value: msg.attachments.map(a => `[${a.name}](${a.url})`).join('\n'),
                         });
                     }
                 }

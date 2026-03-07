@@ -5,8 +5,9 @@ import { Command, CommandArgumentWithUserMentionOrMsgReferenceValue, CommandFlag
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { cfg } from '@/bot/cfg.js';
-import User from '@/bot/apis/db/user.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+
+import User from '@/bot/apis/db/user.js';
 
 const CooldownMs = 5 * 60 * 1000;
 const BaseSuccessChance = 0.5;

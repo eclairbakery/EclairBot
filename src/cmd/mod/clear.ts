@@ -1,6 +1,6 @@
-import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
-import * as log from '@/util/log.js';
+import { cfg } from '@/bot/cfg.js';
+
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags, CommandPermissions } from '@/bot/command.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';

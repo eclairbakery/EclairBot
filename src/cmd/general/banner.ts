@@ -1,6 +1,5 @@
 import { Command, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
 
-import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
 
 export const bannerCmd: Command = {

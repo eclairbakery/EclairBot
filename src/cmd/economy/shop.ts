@@ -2,7 +2,7 @@ import { formatMoney } from '@/util/math/format.js';
 import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 import { PredefinedColors } from "@/util/color.js";
-import { APIEmbedField, EmbedBuilder } from "discord.js";
+import { APIEmbedField } from "discord.js";
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const shopCmd: Command = {

@@ -1,15 +1,11 @@
-import { Action, AnyAction, PredefinedActionEventTypes, ActionCallback, ConstraintCallback, AnyEventCtx, ActionEventType } from '../index.js';
-import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx } from '../index.js';
-import { PredefinedActionCallbacks, PredefinedActionConstraints } from '../index.js';
-import { OnForceReloadTemplates } from '../../../events/actions/templatesEvents.js';
+import { AnyAction, ActionCallback, ConstraintCallback, AnyEventCtx, ActionEventType } from '../index.js';
+import { ChannelEventCtx } from '../index.js';
 
 import actionsManager from '../index.js';
 
 import { RenameableChannel } from '../../../defs.js';
 
 import * as dsc from 'discord.js';
-import { ChannelName, makeChannelName } from '@/util/makeChannelName.js';
-import { client } from '@/client.js';
 
 export async function getChannel(id: dsc.Snowflake, client: dsc.Client): Promise<dsc.Channel> {
     let channel = client.channels.cache.get(id);

@@ -2,12 +2,12 @@ console.log('Welcome to EclairBOT!');
 
 // preparation & basic imports
 import { client } from '@/client.js';
-import { output as debug, ft } from '@/bot/logging.js';
+import { output, ft } from '@/bot/logging.js';
 import * as dotenv from 'dotenv';
 process.on('uncaughtException', async (e) => {
-    debug.err(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
+    output.err(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
     if (e.message.includes('An invalid token was provided.')) {
-        debug.err('Automatic shutdown. Token is invalid.');
+        output.err('Automatic shutdown. Token is invalid.');
         process.exit(2);
     }
 });
@@ -60,23 +60,23 @@ import { setUpStatusGenerator } from '@/util/generateStatusQuote.js';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
-    await debug.init();
-    debug.log(`${ft.CYAN}Logged in.`);
+    await output.init();
+    output.log(`${ft.CYAN}Logged in.`);
     await db.init();
-    debug.log(`Database initialized.`);
+    output.log(`Database initialized.`);
     await email.init();
-    debug.log(`Email initialized.`);
+    output.log(`Email initialized.`);
     await cache.init();
-    debug.log(`Cache initialized.`);
+    output.log(`Cache initialized.`);
 
     await initEmailActionsIntegration();
 
     if (!process.env.TENOR_API) {
-        debug.warn('You should set the TENOR_API enviorment variable to a Tenor API key.\nOtherwise, the Tenor API-based commands will not work.');
+        output.warn('You should set the TENOR_API enviorment variable to a Tenor API key.\nOtherwise, the Tenor API-based commands will not work.');
     }
 
     if (!process.env.EB_EMAIL_USER || !process.env.EB_EMAIL_PASS) {
-        debug.warn('You should set EB_EMAIL_USER and EB_EMAIL_PASS enviorment variables to a GMail login and temporary password\nOtherwise, the e-mail based commands will not work');
+        output.warn('You should set EB_EMAIL_USER and EB_EMAIL_PASS enviorment variables to a GMail login and temporary password\nOtherwise, the e-mail based commands will not work');
     }
 
     await main();
@@ -139,10 +139,10 @@ async function main() {
         let availableMemory = process.availableMemory();
         const treshold = 25 * 1024 * 1024; // 25MB
         if (processHeap > availableMemory - treshold) {
-            debug.warn(`Low on memory.\nUsing: ${processHeap} of ${availableMemory} available memory.\nEclairBOT will attempt to restart if this situation occurs more than 6 times in the next 10 seconds.`);
+            output.warn(`Low on memory.\nUsing: ${processHeap} of ${availableMemory} available memory.\nEclairBOT will attempt to restart if this situation occurs more than 6 times in the next 10 seconds.`);
             memoryIssuesTimes++;
             if (memoryIssuesTimes == 6) {
-                debug.log(`Attempting to restart EclairBOT to free up memory.`);
+                output.log(`Attempting to restart EclairBOT to free up memory.`);
                 process.exit(1); // start.hosting-only.js should catch this
             }
         }
@@ -172,11 +172,11 @@ async function main() {
             try {
                 dbBackUpsChannel = await getChannel(cfg.channels.eclairbot.dbBackups, client) as dsc.GuildTextBasedChannel;
             } catch {
-                debug.err('could not find the channel to send db backups');
+                output.err('could not find the channel to send db backups');
                 return;
             }
             if (!dbBackUpsChannel.isSendable()) {
-                debug.err('the channel with db backups is not sendable');
+                output.err('the channel with db backups is not sendable');
                 return;
             }
             try {
@@ -188,7 +188,7 @@ async function main() {
                     files: [{ attachment: dbPath, name: backupName }]
                 });
             } catch (e) {
-                debug.err('while sending db at bot.db: ' + e);
+                output.err('while sending db at bot.db: ' + e);
             }
         }, cfg.general.databaseBackups.interval);
     }

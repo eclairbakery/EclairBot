@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
 
 import { Command, CommandFlags } from "@/bot/command.js";
-import {output as debug} from '@/bot/logging.js';
+import { output } from '@/bot/logging.js';
 import { getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
@@ -80,7 +80,7 @@ export const reputationCmd: Command = {
         const user = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
 
         const userReputation = await getUserReputation(user.user.id);
-        debug.log(userReputation);
+        output.log(userReputation);
         const embed = new ReplyEmbed()
             .setAuthor({ name: user.nickname ?? user.user.username, iconURL: user.displayAvatarURL({ size: 128 }) })
             .setTitle(`Reputacja użytkownika ${user.displayName}`)

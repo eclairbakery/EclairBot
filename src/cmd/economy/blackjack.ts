@@ -1,7 +1,5 @@
 import * as dsc from 'discord.js';
 
-import User from '@/bot/apis/db/user.js';
-
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { db } from '@/bot/apis/db/bot-db.js';

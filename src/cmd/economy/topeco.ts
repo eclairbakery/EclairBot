@@ -1,8 +1,8 @@
-import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
-import { cfg } from '@/bot/cfg.js';
-import { db } from '@/bot/apis/db/bot-db.js';
-import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
+
+import { Command, CommandFlags } from '@/bot/command.js';
+
+import { db } from '@/bot/apis/db/bot-db.js';
 import { output } from '@/bot/logging.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 

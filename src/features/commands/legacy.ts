@@ -1,6 +1,6 @@
 import * as log from '@/util/log.js';
 import * as dsc from 'discord.js';
-import {output as debug} from '@/bot/logging.js';
+import { output } from '@/bot/logging.js';
 
 import { cfg } from '@/bot/cfg.js';
 import { CommandFlags } from '@/bot/command.js';
@@ -136,5 +136,5 @@ export function init() {
         constraints: [(msg) => msg.content.toLowerCase().startsWith(cfg.general.prefix.toLowerCase())],
         activationEventType: PredefinedActionEventTypes.OnMessageCreate
     });
-    debug.log('Legacy commands event registered');
+    output.log('Legacy commands event registered');
 }

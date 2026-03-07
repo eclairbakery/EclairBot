@@ -1,13 +1,13 @@
-import { cfg } from "@/bot/cfg.js";
-import { SendableChannel, Snowflake } from "../../../defs.js";
+import { cfg } from '@/bot/cfg.js';
+import { SendableChannel, Snowflake } from '../../../defs.js';
 import * as dsc from 'discord.js';
-import { Action, MagicSkipAllActions, MessageEventCtx, PredefinedActionEventTypes } from "../index.js";
-import { client } from "../../../client.js";
-import parseTimestamp from "@/util/parseTimestamp.js";
-import { scheduleWarnDeletion } from "../../deleteExpiredWarns.js";
-import warn from "@/bot/apis/mod/warns.js";
-import { sendLog } from "@/bot/apis/log/send-log.js";
-import { RarelyUsedColors } from "@/util/color.js";
+import { Action, MagicSkipAllActions, MessageEventCtx, PredefinedActionEventTypes } from '../index.js';
+import { client } from '../../../client.js';
+import parseTimestamp from '@/util/parseTimestamp.js';
+import { scheduleWarnDeletion } from '../../deleteExpiredWarns.js';
+import warn from '@/bot/apis/mod/warns.js';
+import { sendLog } from '@/bot/apis/log/send-log.js';
+import { RarelyUsedColors } from '@/util/color.js';
 
 const userMessagesAntiSpamMap: Map<Snowflake, number[]> = new Map();
 let userRecentlyInTheList: Record<Snowflake, boolean> = {};

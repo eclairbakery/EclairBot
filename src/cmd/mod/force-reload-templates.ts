@@ -1,8 +1,9 @@
+import actionsManager, { OnForceReloadTemplates } from '@/events/actions/templatesEvents.js';
+import fmtEmoji from '@/util/fmtEmoji.js';
+
 import { cfg } from '@/bot/cfg.js';
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
-import actionsManager, { OnForceReloadTemplates } from '../../events/actions/templatesEvents.js';
-import fmtEmoji from '@/util/fmtEmoji.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 /** @deprecated */

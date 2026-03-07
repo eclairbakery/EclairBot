@@ -1,5 +1,5 @@
-import { t } from "@/bot/apis/translations/translate.js";
-import { Command, CommandArgument } from "@/bot/command.js";
+import { t } from '@/bot/apis/translations/translate.js';
+import { Command, CommandArgument } from '@/bot/command.js';
 
 export function makeSlashCommandOptionDesc(arg: CommandArgument, alternativeTitle: string) {
     return t((arg.description.length > 90) ?

@@ -1,6 +1,5 @@
 import { Command, CommandFlags, CommandPermissions } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
-import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { sendLog } from '@/bot/apis/log/send-log.js';

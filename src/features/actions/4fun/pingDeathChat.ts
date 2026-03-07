@@ -1,6 +1,4 @@
-import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
-import * as dsc from 'discord.js';
 import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.js';
 
 let deathChatTimeout: NodeJS.Timeout;
