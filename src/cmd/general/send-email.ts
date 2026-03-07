@@ -98,8 +98,8 @@ export const sendEmailCmd: Command = {
         let msg = await api.reply({
             embeds: [
                 api.log.getInfoEmbed(
-                    "Czy na pewno?",
-                    "Maili nie da się cofnąć po wysłaniu. A jak wysyłasz jakiś donos na policję czy coś to i tak jest napisany twój username i Discord ID w notce na dole, więc nie, anonimowy nie jesteś.\n\nMasz **10 sekund**, aby ewentualnie anulować, bo inaczej się wyśle."
+                    "Are you siur about that?",
+                    "Maili nie da się usunąć po wysłaniu. Więc jak coś wyślesz gdzieś to masz problem. A jak wysyłasz jakiś donos na policję czy coś to i tak jest napisany twój username i Discord ID w notce na dole, więc nie, anonimowy nie jesteś.\n\nMasz **10 sekund**, aby ewentualnie anulować, bo inaczej się wyśle."
                 )
             ],
             components: [row]
