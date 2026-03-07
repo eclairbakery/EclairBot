@@ -9,6 +9,7 @@ import { t } from '@/bot/apis/translations/translate.js';
 import { deepMerge } from '@/util/objects/objects.js';
 import { cfg } from '@/bot/cfg.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
+import { commands } from '@/cmd/list.js';
 
 type FirstArg<T> =
     T extends { (...args: infer A): any } ?

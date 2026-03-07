@@ -1,7 +1,7 @@
 all: jsbuild 
 
 dev:
-	npm start
+	npm run dev
 
 depconfig:
 	npm install
