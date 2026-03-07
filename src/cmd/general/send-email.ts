@@ -91,7 +91,7 @@ export const sendEmailCmd: Command = {
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder()
                 .setCustomId('cancel_email')
-                .setLabel('ANULUJ W TEJ CHWILI')
+                .setLabel('Cofnij wysyłanie')
                 .setStyle(ButtonStyle.Danger)
         );
         
@@ -99,7 +99,7 @@ export const sendEmailCmd: Command = {
             embeds: [
                 api.log.getInfoEmbed(
                     "Czy na pewno?",
-                    "Maili nie da się cofnąć po wysłaniu. A jak wysyłasz jakiś donos na policję czy coś to i tak jest napisany twój username i Discord ID w notce na dole, więc nie, anonimowy nie jesteś.\n\nMasz **3 sekundy**, aby ewentualnie anulować, bo inaczej się wyśle."
+                    "Maili nie da się cofnąć po wysłaniu. A jak wysyłasz jakiś donos na policję czy coś to i tak jest napisany twój username i Discord ID w notce na dole, więc nie, anonimowy nie jesteś.\n\nMasz **10 sekund**, aby ewentualnie anulować, bo inaczej się wyśle."
                 )
             ],
             components: [row]
@@ -108,7 +108,7 @@ export const sendEmailCmd: Command = {
         let cancelled = false;
         
         const collector = msg.createMessageComponentCollector({
-            time: 3000
+            time: 10000
         });
         
         collector.on('collect', async (interaction) => {
