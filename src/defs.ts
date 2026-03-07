@@ -1,5 +1,5 @@
 import * as dsc from 'discord.js';
 
 export type Snowflake = `${number}` | string;
-export type SendableChannel = dsc.TextChannel | dsc.DMChannel | dsc.NewsChannel | dsc.ThreadChannel;
+export type SendableChannel = dsc.TextChannel | dsc.DMChannel | dsc.NewsChannel | dsc.ThreadChannel | dsc.VoiceChannel;
 export type RenameableChannel = dsc.GuildChannel & { setName(name: string, reason?: string): Promise<dsc.GuildChannel> };

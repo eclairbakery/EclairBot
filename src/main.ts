@@ -32,6 +32,7 @@ import { registerTemplateChannels } from '@/features/actions/channels/registerTe
 import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher, setUpWatchdog } from './bot/watchdog.js';
 import { actionPing } from '@/features/actions/4fun/pingDeathChat.js';
 import { hallOfFameAction } from './features/actions/4fun/hallOfFame.js';
+import { onReceivedEmailAction } from './features/actions/others/on-new-email.js';
 
 // events
 import { registerChannelCreateDscEvents } from './events/client/channelCreate.js';
@@ -50,10 +51,12 @@ import * as log from '@/util/log.js';
 
 // misc
 import actionsManager from '@/features/actions/index.js';
-import { getChannel } from './features/actions/channels/templateChannels.js';
-import { warnGivenLogAction } from './features/actions/mod/warn-given.js';
-import { db } from './bot/apis/db/bot-db.js';
-import { setUpStatusGenerator } from './util/generateStatusQuote.js';
+import { db } from '@/bot/apis/db/bot-db.js';
+
+import { initEmailActionsIntegration } from '@/bot/apis/email/actions.js';
+import { getChannel } from '@/features/actions/channels/templateChannels.js';
+import { warnGivenLogAction } from '@/features/actions/mod/warn-given.js';
+import { setUpStatusGenerator } from '@/util/generateStatusQuote.js';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -65,6 +68,8 @@ client.once('clientReady', async () => {
     debug.log(`Email initialized.`);
     await cache.init();
     debug.log(`Cache initialized.`);
+
+    await initEmailActionsIntegration();
 
     if (!process.env.TENOR_API) {
         debug.warn('You should set the TENOR_API enviorment variable to a Tenor API key.\nOtherwise, the Tenor API-based commands will not work.');
@@ -97,7 +102,9 @@ function setUpActions() {
         hallOfFameAction,
         // additional features
         actionPing,
-        warnGivenLogAction
+        warnGivenLogAction,
+        onReceivedEmailAction,
+        
     );
     registerTemplateChannels(client);
     slashCommands.init();

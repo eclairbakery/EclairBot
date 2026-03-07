@@ -1,6 +1,5 @@
-import { ChannelName } from '@/util/makeChannelName.js';
 import * as dsc from 'discord.js';
-import { BlockCommandsRules, ConfigCommandARgumentRulesForNumbers, ConfigEconomyShopItem, ConfigTranslation, Emoji, RegexExpressionDefinition } from './config-subtypes.js';
+import { BlockCommandsRules, ConfigCommandARgumentRulesForNumbers, ConfigEconomyShopItem, ConfigTranslation, Emoji } from './config-subtypes.js';
 
 export interface Config {
     /* Whether the bot is enabled (The most useless configuration field I've ever seen...) */
@@ -91,6 +90,7 @@ export interface Config {
             stdout: dsc.Snowflake;
             stderr: dsc.Snowflake;
             stdwarn: dsc.Snowflake;
+            email: dsc.Snowflake;
             dbBackups: dsc.Snowflake;
         };
     };
@@ -414,7 +414,7 @@ export interface Config {
                     successRatio: number;
                 }
             }
-        },
+        };
         moderation: {
             protectedRoles: dsc.Snowflake[];
             warnAutoActions: {
@@ -424,6 +424,9 @@ export interface Config {
                 activationPointsNumber: number;
             }[];
         },
+        email: {
+            listenerChannel: dsc.Snowflake;
+        };
         translations: ConfigTranslation[],
     }
 }

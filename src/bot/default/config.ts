@@ -55,7 +55,8 @@ const channelsCfg: Config['channels'] = {
         stdout: '1419323394440167555',
         stderr: '1419323609419092019',
         stdwarn: '1435307953660887101',
-        dbBackups: '1429118062816137318'
+        email: '1479194690233438341',
+        dbBackups: '1429118062816137318',
     },
     dev: {
         programming: '1426217543617740950'
@@ -454,6 +455,9 @@ export const defaultCfg: Config = {
         moderation: {
             protectedRoles: [],
             warnAutoActions: []
+        },
+        email: {
+            listenerChannel: channelsCfg.eclairbot.email,
         },
         translations: []
     },

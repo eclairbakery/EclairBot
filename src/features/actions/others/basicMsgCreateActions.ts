@@ -1,13 +1,11 @@
-import { cfg } from "@/bot/cfg.js";
-import { addExperiencePoints } from "@/bot/level.js";
-import { client } from "@/client.js";
-import { Action, MessageEventCtx, PredefinedActionEventTypes } from "@/features/actions/index.js";
-import { PredefinedColors } from "@/util/color.js";
-import { EmbedBuilder, GuildTextBasedChannel, PermissionsBitField, Snowflake } from "discord.js";
+import { addExperiencePoints } from '@/bot/level.js';
+import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.js';
+import { PredefinedColors } from '@/util/color.js';
+import { GuildTextBasedChannel, PermissionsBitField } from 'discord.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+
+import { cfg } from '@/bot/cfg.js';
 import * as log from '@/util/log.js';
-import * as dsc from 'discord.js';
-import sleep from "@/util/sleep.js";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.js";
 
 export const basicMsgCreateActions: Action<MessageEventCtx> = {
     constraints: [() => true],
@@ -28,7 +26,7 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
 
             // easter egg
             if (msg.content.trim().toLowerCase() == 'eb') {
-                msg.channel.send("https://i.iplsc.com/000AA4EQC5P4FTX6-C0.jpeg");
+                msg.channel.send('https://i.iplsc.com/000AA4EQC5P4FTX6-C0.jpeg');
             }
 
             // quote bot
@@ -83,19 +81,19 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
                         name: quotedMsg.author.tag,
                         iconURL: quotedMsg.author.displayAvatarURL(),
                     })
-                    .setDescription(quotedMsg.content || "*brak treści*")
+                    .setDescription(quotedMsg.content || '*brak treści*')
                     .setTimestamp(quotedMsg.createdAt)
                     .setFooter({ text: `Wysłano w ${(channel as any)?.name ?? 'piekarnii'}` })
                     .setColor(PredefinedColors.Fuchsia);
 
                 if (quotedMsg.attachments.size > 0) {
                     const first = quotedMsg.attachments.first();
-                    if (first?.contentType?.startsWith("image/")) {
+                    if (first?.contentType?.startsWith('image/')) {
                         embed.setImage(first.url);
                     } else {
                         embed.addFields({
-                            name: "Załączniki",
-                            value: quotedMsg.attachments.map(a => `[${a.name}](${a.url})`).join("\n"),
+                            name: 'Załączniki',
+                            value: quotedMsg.attachments.map(a => `[${a.name}](${a.url})`).join('\n'),
                         });
                     }
                 }
