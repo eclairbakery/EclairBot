@@ -138,7 +138,7 @@ export const sendEmailCmd: Command = {
                     embeds: [api.log.getErrorEmbed('Błędna wiadomość', 'Nie możesz wysłać pustego emaila!')],
                 });
             }
-            content += `\n\nTa wiadomość została wysłana automatycznie przez bota Discord na skutek wykonania komendy \`${cfg.general.prefix}${api.invokedViaAlias}\` przez użytkownika Discord @${api.invoker.user.username} (id: ${api.invoker.id}).`; 
+            content += `\n\nEN: This message was sent automatically, because Discord user @${api.invoker.user.username} (id: ${api.invoker.id}) used the \`${cfg.general.prefix}${api.invokedViaAlias}\` command.\nPL: Ta wiadomość została wysłana automatycznie przez bota Discord na skutek wykonania komendy \`${cfg.general.prefix}${api.invokedViaAlias}\` przez użytkownika Discord @${api.invoker.user.username} (id: ${api.invoker.id}).`; 
 
             await email.sendMessage({
                 receiver: receiver,
