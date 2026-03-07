@@ -91,7 +91,7 @@ export const sendEmailCmd: Command = {
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder()
                 .setCustomId('cancel_email')
-                .setLabel('Cancel')
+                .setLabel('ANULUJ W TEJ CHWILI')
                 .setStyle(ButtonStyle.Danger)
         );
         
@@ -128,7 +128,7 @@ export const sendEmailCmd: Command = {
 
         const now = Date.now();
 
-        msg.edit( { embeds: [api.log.getTipEmbed('Wysyłanie... ', 'Poczekaj, to chwile potrwa!')] } );
+        msg.edit( { embeds: [api.log.getTipEmbed('Wysyłanie... ', 'Poczekaj, to chwile potrwa!')], components: [] } );
 
         try {
             let { subject, content } = parseEmailMessage(contentArg);
