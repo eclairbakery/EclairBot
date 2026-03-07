@@ -84,6 +84,9 @@ export default class User {
                 `SELECT user_id, signature FROM users WHERE user_id = ?`,
                 [this.id],
             );
+            if (row?.signature == '') {
+                return undefined;
+            };
             return row?.signature;
         },
 
@@ -107,6 +110,9 @@ export default class User {
                 `SELECT user_id, default_email_title FROM users WHERE user_id = ?`,
                 [this.id],
             );
+            if (row?.default_email_title == '') {
+                return undefined;
+            };
             return row?.default_email_title;
         },
 
