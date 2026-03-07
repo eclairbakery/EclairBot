@@ -1,5 +1,5 @@
 import { cfg } from "@/bot/cfg.js";
-import { Command, CommandFlags } from "@/bot/command.js";
+import { Command, CommandFlags, CommandPermissions } from "@/bot/command.js";
 
 import * as email from '@/bot/apis/email/mail.js';
 import { db } from "@/bot/apis/db/bot-db.js";
@@ -51,10 +51,7 @@ export const sendEmailCmd: Command = {
         }
     ],
     flags: CommandFlags.Important,
-    permissions: {
-        allowedRoles: cfg.devPerms.allowedRoles,
-        allowedUsers: cfg.devPerms.allowedUsers,
-    },
+    permissions: CommandPermissions.everyone(),
     
     async execute(api) {
         const receiver = api.getTypedArg('receiver', 'string')?.value!;
