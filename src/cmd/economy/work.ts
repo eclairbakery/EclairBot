@@ -1,45 +1,13 @@
-import * as dsc from 'discord.js';
-
 import { getRandomInt } from '@/util/math/rand.js';
 
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { output } from '@/bot/logging.js';
-import User from '@/bot/apis/db/user.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
-const COOLDOWN_MS = 10 * 1000;
-const WORK_AMOUNT_MIN = 50;
-const WORK_AMOUNT_MAX = 300;
-
-async function canWork(userId: string): Promise<{ can: boolean; wait?: number }> {
-    const row = await (new User(userId)).cooldowns.get();
-    const now = Date.now();
-
-    if (!row) return { can: true };
-
-    const timeSinceLastWork = now - (row.lastWorked ?? 0);
-    if (timeSinceLastWork < COOLDOWN_MS) {
-        return { can: false, wait: COOLDOWN_MS - timeSinceLastWork };
-    }
-
-    return { can: true };
-}
-
-async function tryWork(userId: string, amount: number): Promise<{ ok: boolean; wait?: number }> {
-    const check = await canWork(userId);
-
-    if (!check.can) {
-        return { ok: false, wait: check.wait };
-    }
-
-    const now = Date.now();
-
-    await (new User(userId)).economy.addWalletMoney(amount);
-    await (new User(userId)).cooldowns.set('work', now);
-
-    return { ok: true };
-}
+const CooldownMs = 10 * 1000;
+const WorkAmountMin = 50;
+const WorkAmountMax = 300;
 
 export const workCmd: Command = {
     name: 'work',
@@ -58,19 +26,20 @@ export const workCmd: Command = {
 
     async execute(api: CommandAPI) {
         try {
-            const amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
-            const result = await tryWork(api.invoker.id, amount);
-
-            if (!result.ok) {
-                const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);
-
+            const result = await api.checkCooldown('work', CooldownMs);
+            if (!result.can) {
                 const embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Yellow)
                     .setTitle('Chwila przerwy!')
-                    .setDescription(`Ktoś tam Ci każe czekać **${waitSeconds}** sekund zanim znowu popr*cujesz, żebyś nie naspamił komendami w chuja hajsu...`);
+                    .setDescription(`Ktoś tam Ci każe czekać ${result.discordTime} sekund zanim znowu popr*cujesz, żebyś nie naspamił komendami w chuja hajsu...`);
 
                 return api.reply({ embeds: [embed] });
             }
+
+            const amount = getRandomInt(WorkAmountMin, WorkAmountMax);
+            
+            await api.executor.economy.addWalletMoney(amount);
+            await api.executor.cooldowns.set('work', Date.now());
 
             const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Blue)
@@ -78,8 +47,8 @@ export const workCmd: Command = {
                 .setDescription(`Zarobiłeś **${amount}** dolarów!`);
 
             return api.reply({ embeds: [embed] });
-        } catch (error) {
-            output.err(error);
+        } catch (err) {
+            output.err(err);
 
             const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Red)

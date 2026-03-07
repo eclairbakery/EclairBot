@@ -1,47 +1,14 @@
-import * as dsc from 'discord.js';
-
 import { getRandomInt } from '@/util/math/rand.js';
 
 import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { cfg } from '@/bot/cfg.js';
-import User from '@/bot/apis/db/user.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
-const WORK_AMOUNT_MIN = cfg.features.economy.commandSettings.crime.minimumCrimeAmount;
-const WORK_AMOUNT_MAX = cfg.features.economy.commandSettings.crime.maximumCrimeAmount;
-const PERCENTAGE = cfg.features.economy.commandSettings.crime.successRatio;
-
-async function canSlut(userId: string): Promise<{ can: boolean; wait?: number }> {
-    const row = await (new User(userId)).cooldowns.get();
-    const now = Date.now();
-
-    if (!row) return { can: true };
-
-    const timeSinceLastWork = now - (row.lastCrimed ?? 0);
-    if (timeSinceLastWork < cfg.features.economy.commandSettings.crime.cooldown) {
-        return { can: false, wait: cfg.features.economy.commandSettings.crime.cooldown - timeSinceLastWork };
-    }
-
-    return { can: true };
-}
-
-async function trySlut(userId: string, amount: number, success: boolean): Promise<{ ok: boolean; wait?: number }> {
-    const check = await canSlut(userId);
-
-    if (!check.can) {
-        return { ok: false, wait: check.wait };
-    }
-
-    const now = Date.now();
-
-    if (success) await (new User(userId)).economy.addWalletMoney(amount);
-            else await (new User(userId)).economy.deductWalletMoney(amount);
-    await (new User(userId)).cooldowns.set('crime', now);
-
-    return { ok: true };
-}
+const CrimeAmountMin = cfg.features.economy.commandSettings.crime.minimumCrimeAmount;
+const CrimeAmountMax = cfg.features.economy.commandSettings.crime.maximumCrimeAmount;
+const Percentage = cfg.features.economy.commandSettings.crime.successRatio;
 
 export const crimeCmd: Command = {
     name: 'crime',
@@ -68,19 +35,22 @@ export const crimeCmd: Command = {
         }
 
         try {
-            const amount = getRandomInt(WORK_AMOUNT_MIN, WORK_AMOUNT_MAX);
-            const win = Math.random() < PERCENTAGE;
-
-            const result = await trySlut(api.invoker.id, amount, win);
-
-            if (!result.ok) {
-                const waitSeconds = Math.ceil((result.wait ?? 0) / 1000);
+            const result = await api.checkCooldown('crime', cfg.features.economy.commandSettings.crime.cooldown);
+            if (!result.can) {
                 const embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Yellow)
                     .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.waitTextHeader)
-                    .setDescription(cfg.customization.economyTexts.workSlutOrCrime.crime.waitTextDescription.replaceAll('<seconds>', String(waitSeconds)));
+                    .setDescription(cfg.customization.economyTexts.workSlutOrCrime.crime.waitTextDescription.replaceAll('<seconds>', result.discordTime));
                 return api.reply({ embeds: [embed] });
             }
+
+            const amount = getRandomInt(CrimeAmountMin, CrimeAmountMax);
+            const win = Math.random() < Percentage;
+
+            if (win) await api.executor.economy.addWalletMoney(amount);
+            else await api.executor.economy.deductWalletMoney(amount);
+            
+            await api.executor.cooldowns.set('crime', Date.now());
 
             const embed = new ReplyEmbed()
                 .setColor(win ? PredefinedColors.Blue : PredefinedColors.Red)
