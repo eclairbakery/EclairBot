@@ -95,21 +95,15 @@ const commandsCfg: Config['commands'] = {
             maxPoints: 30,
             minPoints: 1,
         },
-        ping: {
-            allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin],
-            deathChatRenewInterval: 2 * 60 * 60 * 1000,
-            eclairNewsRenewInterval: 6 * 60 * 60 * 1000,
-            enabled: true
-        },
         izolatka: {
+            aliases: [],
             enabledForNormalAdministrators: true,
+            allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
+            allowedUsers: [],
             enabled: true
         }
     },
     customs: {},
-    defConf: {
-        enabled: true
-    }
 };
 
 export const defaultCfg: Config = {
@@ -143,6 +137,12 @@ export const defaultCfg: Config = {
             interval: 2 * 60 * 60 * 1000
         },
         usingNormalHosting: false
+    },
+
+    ping: {
+        enabled: true,
+        deathChatRenewInterval: 2 * 60 * 60 * 1000,
+        eclairNewsRenewInterval: 6 * 60 * 60 * 1000,
     },
 
     emoji: {
@@ -194,6 +194,13 @@ export const defaultCfg: Config = {
         unfilteredChannel: channelsCfg.forfun.unfiltred,
     },
 
+    defaultCommandConfig: {
+        enabled: true,
+        aliases: [],
+
+        allowedUsers: null,
+        allowedRoles: null,
+    },
     commands: commandsCfg,
 
     customization: {

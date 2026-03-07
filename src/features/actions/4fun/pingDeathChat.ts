@@ -31,7 +31,7 @@ export const pings: Record<string, PingAPI> = {
             'Lubisz [Desaferio](<https://talk.shapes.inc/desaferio/dm>)?'
         ],
         automatic: true,
-        automaticWaitUntilLastMsgInterval: cfg.commands.mod.ping.deathChatRenewInterval
+        automaticWaitUntilLastMsgInterval: cfg.ping.deathChatRenewInterval
     }
 };
 

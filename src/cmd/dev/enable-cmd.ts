@@ -1,6 +1,6 @@
 import { cfg, saveConfigurationChanges } from "@/bot/cfg.js";
 import { Command, CommandFlags } from "@/bot/command.js";
-import { findCmdConfigLocation } from "@/util/cmd/findCmdConfigObj.js";
+import { findCmdConfCategory } from "@/util/cmd/findCmdConfigObj.js";
 
 export const enableCommandCmd: Command = {
     name: 'cmd-enable',
@@ -25,16 +25,17 @@ export const enableCommandCmd: Command = {
     
     async execute(api) {
         const name = api.getTypedArg('arg', 'string')?.value!;
-        const found = findCmdConfigLocation(name);
+        const cat = findCmdConfCategory(name);
 
-        if (found.category === "defConf") {
-            cfg.commands.customs ??= {};
-            cfg.commands.customs[name] = { enabled: true };
-        } else {
-            found.conf.enabled = true;
+        if (!cat) {
+            return api.log.replyError(api, 'Błąd', `Nie znaleziono komendy **${name}**!`);
         }
 
-        saveConfigurationChanges();
+        cfg.commands[cat] ??= {};
+        cfg.commands[cat][name] ??= cfg.defaultCommandConfig;
+        cfg.commands[cat][name].enabled = true;
+
+        saveConfigurationChanges();        saveConfigurationChanges();
 
         api.log.replySuccess(api, 'Udało się!', `Włączono komendę **${name}**!`);
     }

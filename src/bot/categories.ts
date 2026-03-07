@@ -15,6 +15,25 @@ export class Category {
         this.color = color;
     }
 
+    stringId(): string | undefined {
+        switch (this) {
+        case Category.General:
+            return 'general';
+        case Category.Mod:
+            return 'mod';
+        case Category.Economy:
+            return 'economy';
+        case Category.Leveling:
+            return 'leveling';
+        case Category.Gifs:
+            return 'gifs';
+        case Category.DevelopersOnly:
+            return 'dev';
+        case Category.ForFun:
+            return 'forfun';
+        }
+    }
+
     static fromString(str: string): Category | null {
         switch (str.toLowerCase()) {
         case 'general':

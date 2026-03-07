@@ -34,7 +34,7 @@ export const kickCmd: Command = {
     ],
     permissions: {
         allowedRoles: cmdCfg.allowedRoles,
-        allowedUsers: cmdCfg.allowedUsers
+        allowedUsers: cmdCfg.allowedUsers,
     },
 
     async execute(api) {

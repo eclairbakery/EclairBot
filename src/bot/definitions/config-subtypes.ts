@@ -34,3 +34,41 @@ export interface ConfigCommandARgumentRulesForNumbers {
     allowInfinity: boolean,
     onlyIntegers: boolean,
 }
+
+////////////// command config base & commands ///////////////
+export interface CommandConfigBase {
+    enabled: boolean;
+    aliases: string[];
+
+    allowedUsers: dsc.Snowflake[] | null;
+    allowedRoles: dsc.Snowflake[] | null;
+    disallowedUsers?: dsc.Snowflake[];
+    disallowedRoles?: dsc.Snowflake[];
+    noCooldownForUsers?: dsc.Snowflake[];
+    noCooldownForRoles?: dsc.Snowflake[];
+};
+export type AnyCommandConfig = CommandConfigBase & { [key: string]: any };
+
+export interface ModCommandConfig extends CommandConfigBase {
+    reasonRequired?: boolean;
+};
+
+export interface WarnCommandConfig extends ModCommandConfig {
+    maxPoints: number;
+    minPoints: number;
+};
+
+export interface IzolatkaCommandConfig extends CommandConfigBase {
+    enabledForNormalAdministrators: boolean;
+};
+
+////////////// command config map & categories ///////////////
+export type CommandConfigMap = Record<string, AnyCommandConfig>;
+
+export type ModCommandsConfigs = {
+    ban: ModCommandConfig;
+    kick: ModCommandConfig;
+    mute: ModCommandConfig;
+    warn: WarnCommandConfig;
+    izolatka: IzolatkaCommandConfig;
+} & CommandConfigMap;

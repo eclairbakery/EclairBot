@@ -1,49 +1,35 @@
-import { cfg } from "@/bot/cfg.js";
-import { Command } from "@/bot/command.js";
+import { cfg } from '@/bot/cfg.js';
+import { Command } from '@/bot/command.js';
+import { commands } from '@/cmd/list.js';
 
-type CommandConfigResolvable = {
-    enabled: boolean;
-    aliases?: string[];
-    allowedRoles?: string[] | null;
-    allowedUsers?: string[] | null;
-    reasonRequired?: boolean;
-    [key: string]: any;
-};
+import { AnyCommandConfig } from '@/bot/definitions/config-subtypes.js';
 
-export function findCmdConfResolvable(commandName: string): CommandConfigResolvable {
-    const commands = cfg.commands;
-
-    for (const [category, content] of Object.entries(commands)) {
-        if (category === "defConf") continue;
-        const cat = content as Record<string, CommandConfigResolvable>;
-        if (commandName in cat) return cat[commandName];
-    }
-
-    return commands.defConf;
-}
-
-export function findCmdConfigObj(command: Command): CommandConfigResolvable {
-    return findCmdConfResolvable(command.name);
-}
-
-export function findCmdConfigLocation(cmdName: string) {
-    const commands = cfg.commands;
-
-    for (const [category, content] of Object.entries(commands)) {
-        if (category === "defConf") continue;
-        const cat = content as Record<string, CommandConfigResolvable>;
-        if (cmdName in cat) {
-            return {
-                category,
-                name: cmdName,
-                conf: cat[cmdName] 
-            };
+export function findCmdConfCategory(commandName: string): string | undefined {
+    for (const [category, content] of Object.entries(cfg.commands)) {
+        if (commandName in content) {
+            return category;
         }
     }
 
-    return {
-        category: "defConf",
-        name: cmdName,
-        conf: commands.defConf
-    };
+    for (const [category, cmds] of commands.entries()) {
+        if (cmds.some(c => c.name === commandName || c.aliases.includes(commandName))) {
+            return category.stringId();
+        }
+    }
+}
+
+export function findCmdConfigObj(command: Command): AnyCommandConfig | undefined {
+    const cat = findCmdConfCategory(command.name);
+    if (!cat) return undefined;
+    return cfg.commands[cat]?.[command.name];
+}
+
+export function findCmdConfResolvable(commandName: string): AnyCommandConfig {
+    const cat = findCmdConfCategory(commandName);
+    if (!cat) return cfg.defaultCommandConfig;
+    
+    const config = cfg.commands[cat]?.[commandName];
+    if (config) return config;
+
+    return cfg.defaultCommandConfig;
 }

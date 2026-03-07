@@ -1,5 +1,10 @@
 import * as dsc from 'discord.js';
-import { BlockCommandsRules, ConfigCommandARgumentRulesForNumbers, ConfigEconomyShopItem, ConfigTranslation, Emoji } from './config-subtypes.js';
+import {
+    BlockCommandsRules, ConfigCommandARgumentRulesForNumbers,
+    ConfigEconomyShopItem, ConfigTranslation, Emoji, CommandConfigMap, ModCommandsConfigs,
+    CommandConfigBase,
+    AnyCommandConfig
+} from './config-subtypes.js';
 
 export interface Config {
     /* Whether the bot is enabled (The most useless configuration field I've ever seen...) */
@@ -113,6 +118,12 @@ export interface Config {
         preferShortenedEmbeds: string[]
     };
 
+    ping: {
+        enabled: boolean;
+        deathChatRenewInterval: number;
+        eclairNewsRenewInterval: number;
+    };
+
     emoji: {
         darkRedBlock: Emoji;
         lightRedBlock: Emoji;
@@ -134,79 +145,10 @@ export interface Config {
         unfilteredChannel: dsc.Snowflake;
     };
 
+    defaultCommandConfig: AnyCommandConfig;
     commands: {
-        mod: {
-            ban: {
-                /* Whether the ban command is enabled */
-                enabled: boolean;
-                /* Array of command aliases */
-                aliases: string[];
-
-                /* Array of role IDs that can execute the command */
-                allowedRoles: dsc.Snowflake[] | null;
-                /* Array of user IDs that can execute the command; everyone if null */
-                allowedUsers: dsc.Snowflake[] | null;
-                /* Whether a reason is required for the ban */
-                reasonRequired: boolean;
-            };
-            kick: {
-                /* Whether the kick command is enabled */
-                enabled: boolean;
-                /* Array of command aliases */
-                aliases: string[];
-
-                /* Array of role IDs that can execute the command */
-                allowedRoles: dsc.Snowflake[] | null;
-                /* Array of user IDs that can execute the command; everyone if null */
-                allowedUsers: dsc.Snowflake[] | null;
-                /* Whether a reason is required for the kick */
-                reasonRequired: boolean;
-            };
-            mute: {
-                /* Whether the mute command is enabled */
-                enabled: boolean;
-                /* Array of command aliases */
-                aliases: string[];
-
-                /* Array of role IDs that can execute the command */
-                allowedRoles: dsc.Snowflake[] | null;
-                /* Array of user IDs that can execute the command; everyone if null */
-                allowedUsers: dsc.Snowflake[] | null;
-                /* Whether a reason is required for the mute */
-                reasonRequired: boolean;
-            };
-            warn: {
-                /* Whether the warn command is enabled */
-                enabled: boolean;
-                /* Array of command aliases */
-                aliases: string[];
-
-                /* Array of role IDs that can execute the command */
-                allowedRoles: dsc.Snowflake[];
-                /* Array of user IDs that can execute the command; everyone if null */
-                allowedUsers: dsc.Snowflake[] | null;
-                /* Whether a reason is required for the warn */
-                reasonRequired: boolean;
-                /* Maximum points that can be given for a warn */
-                maxPoints: number;
-                /* Minimum points that can be given for a warn */
-                minPoints: number;
-            };
-            ping: {
-                enabled: boolean;
-                allowedRoles: dsc.Snowflake[];
-                deathChatRenewInterval: number;
-                eclairNewsRenewInterval: number;
-            };
-            izolatka: {
-                enabled: boolean;
-                enabledForNormalAdministrators: boolean;
-            }
-        },
-        customs: Record<string, { enabled: boolean, [key: string]: any }>,
-        defConf: {
-            enabled: boolean
-        }
+        mod: ModCommandsConfigs;
+        [category: string]: CommandConfigMap;
     };
 
     customization: {

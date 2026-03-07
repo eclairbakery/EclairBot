@@ -3,7 +3,7 @@ import * as dsc from 'discord.js';
 import {output as debug} from '@/bot/logging.js';
 
 import { cfg } from '@/bot/cfg.js';
-import { CommandAPI, CommandFlags } from '@/bot/command.js';
+import { CommandFlags } from '@/bot/command.js';
 import { commands } from '@/cmd/list.js';
 
 import canExecuteCmd from '@/util/cmd/canExecuteCmd.js';
@@ -32,7 +32,7 @@ function waitForButton(interaction: dsc.Message, buttonId: string, time = 15000)
             resolve(i); 
         });
 
-        collector.on('end', (collected, reason) => {
+        collector.on('end', (_, reason) => {
             if (reason !== 'clicked') {
                 reject(new Error('Button not clicked in time'));
             }
@@ -51,7 +51,6 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     if (!commandObj) {
         return log.replyError(msg, cfg.customization.commandsErrors.legacy.commandNotFoundHeader, cfg.customization.commandsErrors.legacy.commandNotFoundText.replace('<cmd>', cmdName.replaceAll('`', '')));
     }
-
 
     if (!canExecuteCmd(commandObj, msg.member!)) {
         log.replyError(
@@ -110,7 +109,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         }
     }
 
-    if (!findCmdConfResolvable(commandObj.name).enabled && commandObj.name !== 'configuration') {
+    if (!findCmdConfResolvable(commandObj.name).enabled && commandObj.name != 'configuration') {
         log.replyWarn(
             msg,
             cfg.customization.commandsErrors.legacy.commandDisabledHeader,
