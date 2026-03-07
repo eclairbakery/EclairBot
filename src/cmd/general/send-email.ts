@@ -92,7 +92,7 @@ export const sendEmailCmd: Command = {
                     embeds: [api.log.getErrorEmbed('Błędna wiadomość', 'Nie możesz wysłać pustego emaila!')],
                 });
             }
-            content = `Ta wiadomość została wysłana automatycznie przez bota Discord na skutek wykonania komendy \`${cfg.general.prefix} ${api.invokedViaAlias}\` przez użytkownika Discord @${api.invoker.user.username} (id: ${api.invoker.id}).\n\n${content}`; 
+            content = `Ta wiadomość została wysłana automatycznie przez bota Discord na skutek wykonania komendy \`${cfg.general.prefix}${api.invokedViaAlias}\` przez użytkownika Discord @${api.invoker.user.username} (id: ${api.invoker.id}).\n\n${content}`; 
 
             await email.sendMessage({
                 receiver: receiver,
