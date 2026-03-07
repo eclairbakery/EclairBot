@@ -3,7 +3,6 @@ import { LogData } from "./log-defs.js";
 import { cfg } from "@/bot/cfg.js";
 import { PredefinedColors } from "@/util/color.js";
 import { client } from "@/client.js";
-import { t } from "../translations/translate.js";
 import { ReplyEmbed } from "../translations/reply-embed.js";
 
 export async function sendLog(logData: LogData, additionalChannels: dsc.Snowflake[] = []) {

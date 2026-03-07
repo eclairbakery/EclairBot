@@ -1,4 +1,3 @@
-import * as dsc from 'discord.js';
 import JSON5 from 'json5';
 
 import { deepMerge } from '@/util/objects/objects.js';
