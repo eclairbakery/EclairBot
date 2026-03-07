@@ -3,7 +3,6 @@ import { cfg } from '@/bot/cfg.js';
 import { client } from '@/client.js';
 import { Action } from '@/features/actions/index.js';
 import { sendLog } from '@/bot/apis/log/send-log.js';
-import { translate } from '@/bot/apis/translations/translate.js';
 import { db } from '@/bot/apis/db/bot-db.js';
 
 export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
@@ -14,9 +13,11 @@ export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
             const emailChannel = await client.channels.fetch(cfg.features.email.listenerChannel);
             if (emailChannel == null || !emailChannel.isSendable()) return;
 
-            const desc = `${(ctx.email.html ?? ctx.email.text) ?? translate('Chłop nie wysłał nawet tekstu XD.') }`;
+            const sender = ctx.email.from?.value?.[0]?.address;
 
-            const domain = ctx.email.from?.value?.[0]?.address?.split('@')[1]?.toLowerCase().trim();
+            const desc = `${(sender ?? 'ktoś tam').slice(0, 250)} wysłał: ${(ctx.email.text ?? ctx.email.html) ?? 'Chłop nie wysłał nawet tekstu XD.' }`;
+
+            const domain = sender?.split('@')[1]?.toLowerCase().trim() ?? 'hashcat.dev';
 
             if (domain) {
                 db.runSql("INSERT OR IGNORE INTO email_security VALUES (NULL, ?);", [domain]);
