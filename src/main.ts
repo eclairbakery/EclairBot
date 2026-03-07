@@ -162,7 +162,7 @@ async function main() {
             const channel = await client.channels.fetch(channelId) as dsc.TextChannel;
             const message = await channel.messages.fetch(messageId);
 
-            log.replySuccess(message, 'Restart Zakończony', 'EclairBot pomyślnie się zrestartował i jest znowu gotowy do działania!');
+            log.replySuccess(message, 'Restart zakończony', 'Istota wyższa pomyślnie i wreszcie się zrestartowała i powinna już działać poprawnie!');
         }
     } catch {}
 
