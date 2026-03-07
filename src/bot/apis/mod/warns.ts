@@ -1,7 +1,6 @@
 import * as dsc from 'discord.js';
+
 import { db } from '@/bot/apis/db/bot-db.js';
-import { cfg } from '@/bot/cfg.js';
-import { PredefinedColors } from '@/util/color.js';
 import { scheduleWarnDeletion } from '@/features/deleteExpiredWarns.js';
 import actionsManager from '@/features/actions/index.js';
 import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.js';

@@ -1,5 +1,6 @@
-import { GuildTextBasedChannel } from "discord.js";
 import util from "node:util";
+
+import { GuildTextBasedChannel } from "discord.js";
 import { cfg } from "./cfg.js";
 import { client } from "@/client.js";
 import { TextDecoder, TextEncoder } from "node:util";

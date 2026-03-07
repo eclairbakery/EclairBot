@@ -2,7 +2,6 @@ import * as dsc from 'discord.js';
 import {
     BlockCommandsRules, ConfigCommandARgumentRulesForNumbers,
     ConfigEconomyShopItem, ConfigTranslation, Emoji, CommandConfigMap, ModCommandsConfigs,
-    CommandConfigBase,
     AnyCommandConfig
 } from './config-subtypes.js';
 

@@ -1,12 +1,12 @@
 import * as dsc from 'discord.js';
-import * as log from '@/util/log.js';
+
+import User from './apis/db/user.js';
+
 import { cfg } from '@/bot/cfg.js';
-import { db } from '@/bot/apis/db/bot-db.js';
 import actionsManager, { Action } from '@/features/actions/index.js';
 import { client } from '@/client.js';
 import { mkProgressBar } from '@/util/progressbar.js';
 import { output } from './logging.js';
-import User from './apis/db/user.js';
 import { findLowerClosestKey } from '@/util/objects/findLowerClosestKey.js';
 
 export const OnSetXpEvent = actionsManager.mkEvent('OnSetXpEvent');
