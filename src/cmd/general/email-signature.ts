@@ -15,17 +15,17 @@ export const emailSignatureCmd: Command = {
         {
             name: 'signature',
             optional: false,
-            description: "No ten podpis czy coś, możesz dać pusty jak go nie chcesz",
+            description: "No ten podpis czy coś, możesz dać x jak go nie chcesz",
             type: 'trailing-string'
         }
     ],
 
     async execute(api) {
-        const signature = api.getTypedArg('signature', 'trailing-string')?.value ?? '';
+        const signature = api.getTypedArg('signature', 'trailing-string')?.value ?? 'x';
 
         const emailApi = api.executor.email;
 
-        if (signature.trim() === '') {
+        if (signature.trim() === 'x') {
             await emailApi.deleteSignature(api.invoker.id);
             return api.log.replySuccess(api, "Wywaliłem ci to...", "Jakby coś to anonimowy nie jesteś i tak.");
         }

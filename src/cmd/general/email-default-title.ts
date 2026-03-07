@@ -15,17 +15,17 @@ export const emailDefaultTitleCmd: Command = {
         {
             name: 'title',
             optional: false,
-            description: "No ten domyślny tytuł czy coś, możesz dać pusty jak go nie chcesz",
+            description: "No ten domyślny tytuł czy coś, możesz dać x jak go nie chcesz",
             type: 'trailing-string'
         }
     ],
 
     async execute(api) {
-        const signature = api.getTypedArg('title', 'trailing-string')?.value ?? '';
+        const signature = api.getTypedArg('title', 'trailing-string')?.value ?? 'x';
 
         const emailApi = api.executor.email;
 
-        if (signature.trim() === '') {
+        if (signature.trim() === 'x') {
             await emailApi.deleteDefaultTitle(api.invoker.id);
             return api.log.replySuccess(api, "Wywaliłem ci to...", "Teraz będziesz miał generyczne `brak tematu`. Gratulacje. GIFa bym wysłał ale mi się nie chce.");
         }
