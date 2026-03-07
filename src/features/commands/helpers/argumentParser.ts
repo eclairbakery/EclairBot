@@ -150,9 +150,9 @@ loop:
                     }
                 }
 
-                if (!raw) throw new MissingRequiredArgError(decl.name, declType);
-
                 if (decl.optional) continue;
+
+                if (!raw) throw new MissingRequiredArgError(decl.name, declType);
                 throw new ArgMustBeSomeTypeError(decl.name, 'user-mention-or-reference-msg-author');
             }
 
