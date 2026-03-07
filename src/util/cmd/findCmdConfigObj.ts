@@ -12,7 +12,7 @@ export function findCmdConfCategory(commandName: string): string | undefined {
     }
 
     for (const [category, cmds] of commands.entries()) {
-        if (cmds.some(c => c.name === commandName || c.aliases.includes(commandName))) {
+        if (cmds.some(c => c.name == commandName || c.aliases.includes(commandName))) {
             return category.stringId();
         }
     }
@@ -29,7 +29,7 @@ export function findCmdConfResolvable(commandName: string): AnyCommandConfig {
     if (!cat) return cfg.defaultCommandConfig;
     
     const config = cfg.commands[cat]?.[commandName];
-    if (config) return config;
+    if (config) return { ...cfg.defaultCommandConfig, ...config };
 
     return cfg.defaultCommandConfig;
 }

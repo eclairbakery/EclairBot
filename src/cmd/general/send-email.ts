@@ -61,7 +61,7 @@ export const sendEmailCmd: Command = {
         const contentArg = api.getTypedArg('content', 'trailing-string')?.value!;
 
         const COOLDOWN_MS = 10 * 60 * 1000;
-        const check = await api.executor.cooldowns.check('email', COOLDOWN_MS);
+        const check = await api.checkCooldown('email', COOLDOWN_MS);
 
         if (!process.env.EB_EMAIL_USER || !process.env.EB_EMAIL_PASS) 
             return api.log.replyWarn(

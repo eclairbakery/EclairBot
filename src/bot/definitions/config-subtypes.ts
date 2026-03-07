@@ -44,8 +44,8 @@ export interface CommandConfigBase {
     allowedRoles: dsc.Snowflake[] | null;
     disallowedUsers?: dsc.Snowflake[];
     disallowedRoles?: dsc.Snowflake[];
-    noCooldownForUsers?: dsc.Snowflake[];
-    noCooldownForRoles?: dsc.Snowflake[];
+    cooldownBypassUsers?: dsc.Snowflake[];
+    cooldownBypassRoles?: dsc.Snowflake[];
 };
 export type AnyCommandConfig = CommandConfigBase & { [key: string]: any };
 
