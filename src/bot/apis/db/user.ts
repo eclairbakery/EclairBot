@@ -12,6 +12,20 @@ const CooldownMap = {
     email: { col: 'last_email_sent', prop: 'lastEmailSent' },
 } as const;
 
+export interface CooldownReady {
+    can: true;
+}
+export interface CooldownWaiting {
+    can: false;
+    waitMs: number;
+    waitSec: number;
+    endAt: number;
+    endAtUnix: number;
+    discordTime: string;
+}
+
+export type CooldownCheckResult = CooldownReady | CooldownWaiting;
+
 type CooldownKey = keyof typeof CooldownMap;
 
 export default class User {
@@ -178,23 +192,29 @@ export default class User {
             return result as Cooldowns;
         },
 
-        check: async (field: CooldownKey, cooldownMs: number) => {
+        check: async (field: CooldownKey, cooldownMs: number): Promise<CooldownCheckResult> => {
             const cds = await this.cooldowns.get();
             const last = cds[CooldownMap[field].prop] ?? 0;
             const now = Date.now();
             const diff = now - last;
-
+        
             if (diff < cooldownMs) {
                 const remainingMs = cooldownMs - diff;
+                const endAt = now + remainingMs;
+                const endAtUnix = Math.floor(endAt / 1000);
+        
                 return {
                     can: false,
                     waitMs: remainingMs,
                     waitSec: Math.ceil(remainingMs / 1000),
+                    endAt,
+                    endAtUnix,
+                    discordTime: `<t:${endAtUnix}:R>`
                 };
             }
-
-            return { can: true, waitMs: 0, waitSec: 0 };
-        }
+        
+            return { can: true };
+        }   
     };
 
     /** -------- REPUTATION -------- */

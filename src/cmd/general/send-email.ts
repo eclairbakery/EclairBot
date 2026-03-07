@@ -63,7 +63,7 @@ export const sendEmailCmd: Command = {
         if (!check.can) {
             return api.log.replyError(
                 api, 'Spam check!',
-                `Musisz poczekać jeszcze ${check.waitSec} sekund zanim wyślesz kolejnego emaila bo nie chcemy `
+                `Będziesz mógł wysłać nastepnego maila dopiero ${check.discordTime}, bo nie chcemy `
                    + `by nasz brand new mail stracił reputacje i trafial do spamu odrazu po uruchomieniu.`
             );
         }
