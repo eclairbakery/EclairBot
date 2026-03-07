@@ -39,7 +39,6 @@ export interface Config {
 
     roles: {
         eclair25: dsc.Snowflake;
-        secondLevelOwner: dsc.Snowflake;
         headAdmin: dsc.Snowflake;
         admin: dsc.Snowflake;
         headMod: dsc.Snowflake;

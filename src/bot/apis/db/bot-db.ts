@@ -202,6 +202,61 @@ export class BotDatabase {
             return rows.map(warnFromRaw);
         },
     };
+
+    readonly reset = {
+        economy: async (userId?: string): Promise<void> => {
+            if (userId) {
+                await this.runSql(`UPDATE users SET wallet_money = 0, bank_money = 0 WHERE user_id = ?`, [userId]);
+            } else {
+                await this.runSql(`UPDATE users SET wallet_money = 0, bank_money = 0`);
+            }
+        },
+
+        leveling: async (userId?: string): Promise<void> => {
+            if (userId) {
+                await this.runSql(`UPDATE users SET xp = 0 WHERE user_id = ?`, [userId]);
+            } else {
+                await this.runSql(`UPDATE users SET xp = 0`);
+            }
+        },
+
+        cooldowns: async (userId?: string): Promise<void> => {
+            const sql = `
+                UPDATE users SET 
+                last_worked = 0, 
+                last_robbed = 0, 
+                last_slutted = 0, 
+                last_crimed = 0, 
+                last_email_sent = 0
+                ${userId ? "WHERE user_id = ?" : ""}
+            `;
+            await this.runSql(sql, userId ? [userId] : []);
+        },
+
+        reputation: async (userId?: string): Promise<void> => {
+            if (userId) {
+                await this.runSql(`DELETE FROM reputation WHERE author_id = ? OR target_user_id = ?`, [userId, userId]);
+            } else {
+                await this.runSql(`DELETE FROM reputation`);
+            }
+        },
+
+        warns: async (userId?: string): Promise<void> => {
+            if (userId) {
+                await this.runSql(`DELETE FROM warns WHERE user_id = ?`, [userId]);
+            } else {
+                await this.runSql(`DELETE FROM warns`);
+            }
+        },
+
+        all: async (userId?: string): Promise<void> => {
+            await this.reset.economy(userId);
+            await this.reset.leveling(userId);
+            await this.reset.cooldowns(userId);
+            await this.reset.reputation(userId);
+            await this.reset.warns(userId);
+        }
+    };
 }
 
 export const db = new BotDatabase('bot.db');

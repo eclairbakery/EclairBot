@@ -2,7 +2,6 @@ import { Config } from '../definitions/config.js';
 
 const rolesCfg: Config['roles'] = {
     eclair25: '1280081773019140096',
-    secondLevelOwner: '1280884378586845216',
     headAdmin: '1415710955022843904',
     admin: '1415710969732005980',
     headMod: '1415710973288910919',
@@ -68,28 +67,28 @@ const commandsCfg: Config['commands'] = {
         ban: {
             enabled: true,
             aliases: [],
-            allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod],
+            allowedRoles: [rolesCfg.eclair25, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod],
             allowedUsers: [],
             reasonRequired: false
         },
         kick: {
             enabled: true,
             aliases: [],
-            allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod],
+            allowedRoles: [rolesCfg.eclair25, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod],
             allowedUsers: [],
             reasonRequired: false,
         },
         mute: {
             enabled: true,
             aliases: [],
-            allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
+            allowedRoles: [rolesCfg.eclair25, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
             allowedUsers: [],
             reasonRequired: false,
         },
         warn: {
             enabled: true,
             aliases: [],
-            allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
+            allowedRoles: [rolesCfg.eclair25, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
             allowedUsers: [],
             reasonRequired: false,
             maxPoints: 30,
@@ -98,9 +97,15 @@ const commandsCfg: Config['commands'] = {
         izolatka: {
             aliases: [],
             enabledForNormalAdministrators: true,
-            allowedRoles: [rolesCfg.eclair25, rolesCfg.secondLevelOwner, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
+            allowedRoles: [rolesCfg.eclair25, rolesCfg.headAdmin, rolesCfg.admin, rolesCfg.headMod, rolesCfg.mod, rolesCfg.helper],
             allowedUsers: [],
             enabled: true
+        },
+        reset: {
+            enabled: true,
+            aliases: [],
+            allowedRoles: [rolesCfg.eclair25, rolesCfg.headAdmin],
+            allowedUsers: [],
         }
     },
     customs: {},
@@ -376,7 +381,7 @@ export const defaultCfg: Config = {
             xpPerMessage: 4,
             levelDivider: 100,
             excludedChannels: [],
-            canChangeXP: ['1404392144441180221', rolesCfg.eclair25, rolesCfg.secondLevelOwner],
+            canChangeXP: ['1404392144441180221', rolesCfg.eclair25],
             milestoneRoles: {
                 3: '1297559525989158912',
                 5: '1235550102563852348',

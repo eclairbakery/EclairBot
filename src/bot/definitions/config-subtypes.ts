@@ -71,4 +71,5 @@ export type ModCommandsConfigs = {
     mute: ModCommandConfig;
     warn: WarnCommandConfig;
     izolatka: IzolatkaCommandConfig;
+    reset: CommandConfigBase;
 } & CommandConfigMap;

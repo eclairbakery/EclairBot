@@ -3,14 +3,11 @@ import { Action, Skip, Ok, AnyAction, MessageEventCtx, PredefinedActionCallbacks
 import { mkAutoreplyAction } from '../autoreply.js';
 
 import { cfg } from '@/bot/cfg.js'
-
-import * as dsc from 'discord.js';
-import * as log from '@/util/log.js';
 import { client } from '@/client.js';
 
 export default class AutoModRules {
     static readonly msgAuthorIsNotImmuneToAutomod = (msg: MessageEventCtx) => {
-        for (const role of [...cfg.roles.automodBypassRoles, cfg.roles.eclair25, cfg.roles.secondLevelOwner, cfg.roles.headAdmin]) {
+        for (const role of [...cfg.roles.automodBypassRoles, cfg.roles.eclair25, cfg.roles.headAdmin]) {
             if (PredefinedActionConstraints.userHasRole(role)(msg.member!) == Ok) return Skip;
         }
 
