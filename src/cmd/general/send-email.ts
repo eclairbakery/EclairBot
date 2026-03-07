@@ -61,6 +61,12 @@ export const sendEmailCmd: Command = {
         const COOLDOWN_MS = 10 * 60 * 1000;
         const check = await api.executor.cooldowns.check('email', COOLDOWN_MS);
 
+        if (!process.env.EB_EMAIL_USER || !process.env.EB_EMAIL_PASS) 
+            return api.log.replyWarn(
+                api, 'Brakuje czegoś!',
+                'Poproś administrację o dostęp do e-mail\'a (w skrócie by ustawili EB_EMAIL_USER i EB_EMAIL_PASS).'
+            );
+
         if (!check.can) {
             return api.log.replyError(
                 api, 'Spam check!',

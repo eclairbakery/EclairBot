@@ -75,6 +75,10 @@ client.once('clientReady', async () => {
         debug.warn('You should set the TENOR_API enviorment variable to a Tenor API key.\nOtherwise, the Tenor API-based commands will not work.');
     }
 
+    if (!process.env.EB_EMAIL_USER || !process.env.EB_EMAIL_PASS) {
+        debug.warn('You should set EB_EMAIL_USER and EB_EMAIL_PASS enviorment variables to a GMail login and temporary password\nOtherwise, the e-mail based commands will not work');
+    }
+
     await main();
 }); 
 
