@@ -30,12 +30,12 @@ function parseEmailMessage(input: string): { subject: string, content: string } 
 }
 
 export const sendEmailCmd: Command = {
-    name: 'send-email',
+    name: 'email',
     description: {
         main: 'Wysyła emaila do danego użytkownika z adresu eclairbota.',
         short: 'Wysyła email.'
     },
-    aliases: ['email'],
+    aliases: ['send-email'],
     expectedArgs: [
         {
             name: 'receiver',
@@ -129,13 +129,20 @@ export const sendEmailCmd: Command = {
 
         try {
             let { subject, content } = parseEmailMessage(contentArg);
-            subject = `Wiadomość od ${api.invoker.user.displayName}: ${(subject == '') ? "brak tematu" : subject}`; 
+            subject = `Wiadomość od ${api.invoker.user.displayName}: ${(subject == '') ? ((await api.executor.email.getDefaultTitle()) ?? 'brak tematu') : subject}`; 
             if (content == '') {
                 return msg.edit({
                     embeds: [api.log.getErrorEmbed('Błędna wiadomość', 'Nie możesz wysłać pustego emaila!')],
                 });
             }
-            content += `\n\nEN: This message was sent automatically, because Discord user @${api.invoker.user.username} (id: ${api.invoker.id}) used the \`${cfg.general.prefix}${api.invokedViaAlias}\` command.\nPL: Ta wiadomość została wysłana automatycznie przez bota Discord na skutek wykonania komendy \`${cfg.general.prefix}${api.invokedViaAlias}\` przez użytkownika Discord @${api.invoker.user.username} (id: ${api.invoker.id}).`; 
+
+            const signature = await api.executor.email.getSignature();
+            if (signature)
+                content += `\n\n${signature}`;
+
+            content += `\n\n<p style="font-size:10px;display:block;">EN: This message was sent automatically, because Discord user @${api.invoker.user.username} (id: ${api.invoker.id}) used the \`${cfg.general.prefix}${api.invokedViaAlias}\` command.\nPL: Ta wiadomość została wysłana automatycznie przez bota Discord na skutek wykonania komendy \`${cfg.general.prefix}${api.invokedViaAlias}\` przez użytkownika Discord @${api.invoker.user.username} (id: ${api.invoker.id}).</p>`;
+
+            content = content.replaceAll('\n', '<br>');
 
             await email.sendMessage({
                 receiver: receiver,

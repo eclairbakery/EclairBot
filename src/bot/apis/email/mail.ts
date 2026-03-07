@@ -43,7 +43,7 @@ export async function sendMessage({ receiver, subject, content }: SendEmail) {
         from: process.env.EB_EMAIL_USER,
         to: receiver,
         subject: subject,
-        text: content,
+        html: content,
     })
 }
 

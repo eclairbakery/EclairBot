@@ -77,6 +77,54 @@ export default class User {
         },
     };
 
+    readonly email = {
+        getSignature: async (): Promise<string | undefined> => {
+            await this.ensureExists();
+            const row = await db.selectOne<{signature: string | undefined}>(
+                `SELECT user_id, signature FROM users WHERE user_id = ?`,
+                [this.id],
+            );
+            return row?.signature;
+        },
+
+        setSignature: async (userId: string, signature: string): Promise<void> => {
+            await db.runSql(
+                `UPDATE users SET signature = ? WHERE user_id = ?`,
+                [signature, userId],
+            );
+        },
+
+        deleteSignature: async (userId: string): Promise<void> => {
+            await db.runSql(
+                `UPDATE users SET signature = NULL WHERE user_id = ?`,
+                [userId],
+            );
+        },
+
+        getDefaultTitle: async (): Promise<string | undefined> => {
+            await this.ensureExists();
+            const row = await db.selectOne<{default_email_title: string | undefined}>(
+                `SELECT user_id, default_email_title FROM users WHERE user_id = ?`,
+                [this.id],
+            );
+            return row?.default_email_title;
+        },
+
+        setDefaultTitle: async (userId: string, signature: string): Promise<void> => {
+            await db.runSql(
+                `UPDATE users SET default_email_title = ? WHERE user_id = ?`,
+                [signature, userId],
+            );
+        },
+
+        deleteDefaultTitle: async (userId: string): Promise<void> => {
+            await db.runSql(
+                `UPDATE users SET default_email_title = NULL WHERE user_id = ?`,
+                [userId],
+            );
+        }
+    };
+
     /** -------- ECONOMY -------- */
     readonly economy = {
         getBalance: async (): Promise<Balance> => {

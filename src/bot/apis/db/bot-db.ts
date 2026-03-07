@@ -33,7 +33,9 @@ export class BotDatabase {
                 last_robbed INTEGER DEFAULT 0,
                 last_slutted INTEGER DEFAULT 0,
                 last_crimed INTEGER DEFAULT 0,
-                last_email_sent INTEGER DEFAULT 0
+                last_email_sent INTEGER DEFAULT 0,
+                signature TEXT,
+                default_email_title TEXT
             );
 
             CREATE TABLE IF NOT EXISTS warns (
