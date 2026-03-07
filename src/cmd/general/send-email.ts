@@ -4,6 +4,8 @@ import { Command, CommandFlags } from "@/bot/command.js";
 import * as email from '@/bot/apis/email/mail.js';
 import { db } from "@/bot/apis/db/bot-db.js";
 
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
+
 function parseEmailMessage(input: string): { subject: string, content: string } {
     let index = -1;
 
@@ -43,7 +45,7 @@ export const sendEmailCmd: Command = {
         },
         {
             name: 'content',
-            description: 'Zawartość emaila',
+            description: 'Zawartość emaila, możesz zrobić subject:content jak chcesz zmienić temat maila.',
             type: 'trailing-string',
             optional: false,
         }
@@ -86,9 +88,47 @@ export const sendEmailCmd: Command = {
             return await api.log.replyWarn(api, "Niestety nie...", "Tej domeny nie ma na whiteliście. Nie możesz więc do niej wysyłać maili. Wiem, szkoda... ALE UWAGA! Jest jedna opcja. Możesz utworzyć konto pocztowe na tej domenie i wysłać wiadomość do `theeclairbot@gmail.com`, aby permamentnie dodać ją do whitelisty.");
         }
 
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            new ButtonBuilder()
+                .setCustomId('cancel_email')
+                .setLabel('Cancel')
+                .setStyle(ButtonStyle.Danger)
+        );
+        
+        let msg = await api.reply({
+            embeds: [
+                api.log.getInfoEmbed(
+                    "Czy na pewno?",
+                    "Maili nie da się cofnąć po wysłaniu. A jak wysyłasz jakiś donos na policję czy coś to i tak jest napisany twój username i Discord ID w notce na dole, więc nie, anonimowy nie jesteś.\n\nMasz **3 sekundy**, aby ewentualnie anulować, bo inaczej się wyśle."
+                )
+            ],
+            components: [row]
+        });
+
+        let cancelled = false;
+        
+        const collector = msg.createMessageComponentCollector({
+            time: 3000
+        });
+        
+        collector.on('collect', async (interaction) => {
+            if (interaction.customId === 'cancel_email' && interaction.user.id === api.invoker.id) {
+                cancelled = true;
+                await interaction.update({
+                    embeds: [api.log.getSuccessEmbed("Anulowano", "Wysyłanie maila zostało anulowane.")],
+                    components: []
+                });
+                collector.stop();
+            }
+        });
+        
+        await new Promise(resolve => collector.on('end', resolve));
+        
+        if (cancelled) return;
+
         const now = Date.now();
 
-        let msg = await api.log.replyTip(api, 'Wysyłanie... ', 'Poczekaj, to chwile potrwa!');
+        msg.edit( { embeds: [api.log.getTipEmbed('Wysyłanie... ', 'Poczekaj, to chwile potrwa!')] } );
 
         try {
             let { subject, content } = parseEmailMessage(contentArg);
