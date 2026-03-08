@@ -67,6 +67,7 @@ export interface ConfigEconomyItem extends ConfigEconomyThing {
 export interface ConfigEconomyShopOffer extends ConfigEconomyThing {
     price: money;
     onBuy: ConfigEconomyAction[]; // for example: add-item
+    buyOnce: boolean;
 };
 
 

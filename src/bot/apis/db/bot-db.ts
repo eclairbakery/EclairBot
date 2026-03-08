@@ -70,6 +70,13 @@ export class BotDatabase {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 enabled_domain TEXT NOT NULL
             );
+
+            CREATE TABLE IF NOT EXISTS user_purchases (
+                user_id TEXT NOT NULL REFERENCES users(user_id),
+                offer_id TEXT NOT NULL,
+                amount INTEGER DEFAULT 0,
+                PRIMARY KEY (user_id, offer_id)
+            );
         `);
     }
 

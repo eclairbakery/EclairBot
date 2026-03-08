@@ -42,6 +42,15 @@ export const buyCmd: Command = {
 
         try {
             const user = api.executor;
+
+            if (offer.buyOnce && await user.purchases.getPurchaseCount(offer.id) >= 1) {
+                return api.log.replyError(
+                    api,
+                    'To jednorazowa oferta!',
+                    `Już kupiłeś **${offer.name}** i nie możesz zrobić tego ponownie.`
+                );
+            }
+
             const userBalance = await user.economy.getBalance();
 
             if (userBalance.wallet < offer.price) {
@@ -61,6 +70,8 @@ export const buyCmd: Command = {
 
             await user.economy.deductWalletMoney(offer.price);
             await api.economy.executeActions(offer.onBuy);
+
+            await user.purchases.add(offer.id);
 
             const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Green)

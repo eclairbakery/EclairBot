@@ -205,6 +205,7 @@ const economyCfg: EconomyConfig = {
             name: 'miniVIP',
             desc: 'Taki VIP ale na sterydach. Nie możesz się poflexować, bo ma mini w nazwie i będą myśleli, że cię nie stać...',
             price: 5_000,
+            buyOnce: true,
             onBuy: [
                 { op: 'add-role', roleId: 'minivip' },
             ],
@@ -214,6 +215,7 @@ const economyCfg: EconomyConfig = {
             name: 'VIP',
             desc: 'Nie wiem poflexuj się rangą która jest na końcu listy, ale hej - dalej jesteś VIP\'em.',
             price: 40_000,
+            buyOnce: true,
             onBuy: [
                 { op: 'add-role', roleId: 'vip' },
             ],
@@ -223,6 +225,7 @@ const economyCfg: EconomyConfig = {
             name: 'SVIP',
             desc: 'Już lepszy VIP. Nie wiem co Ci daje to ciągłe upgradeowanie VIP\'ów, ale musi coś dawać, bo inaczej byś tego nie robił :wilted_rose:',
             price: 300_000,
+            buyOnce: true,
             onBuy: [
                 { op: 'add-role', roleId: 'svip' },
             ],
@@ -232,6 +235,7 @@ const economyCfg: EconomyConfig = {
             name: 'MVIP',
             desc: 'Kolejna generacja VIPa, której prawdopodobnie nie użyjesz...',
             price: 1_250_000,
+            buyOnce: true,
             onBuy: [
                 { op: 'add-role', roleId: 'mvip' },
             ],
@@ -241,6 +245,7 @@ const economyCfg: EconomyConfig = {
             name: 'Pieczywo VIP',
             desc: 'VIP Final Boss. Daje ci aż 80% większe zarobki!',
             price: 8_000_000,
+            buyOnce: true,
             onBuy: [
                 { op: 'add-role', roleId: 'pieczywo-vip' },
             ],
@@ -251,6 +256,7 @@ const economyCfg: EconomyConfig = {
             name: 'Hall of Shame Access',
             desc: 'Mamy taki fajny kanał zwany `Hall of Shame`! Właśnie dostaniesz do niego dostęp, wystarczy tylko, że ten przedmiot zostanie przez ciebie kupiony',
             price: 10_000_000,
+            buyOnce: true,
             onBuy: [
                 { op: 'add-role', roleId: 'hall-of-shame-access' },
             ],

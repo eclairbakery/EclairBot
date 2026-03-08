@@ -90,7 +90,7 @@ export const shopCmd: Command = {
         {
             name: 'category',
             description: 'Kategoria lub "all" aby zobaczyć wszystkie',
-            type: 'string',
+            type: 'trailing-string',
             optional: true,
         }
     ],
@@ -107,7 +107,7 @@ export const shopCmd: Command = {
                 .setTitle('💳 Sklep')
                 .setDescription([
                     'Wybierz kategorię z menu poniżej!',
-                    `**Tip na przyszłość:** Możesz poprostu użyć \`${cfg.general.prefix} shop <category>\`!`
+                    `**Tip na przyszłość:** Możesz poprostu użyć \`${cfg.general.prefix}shop <category>\`!`
                 ].join('\n'))
                 .setColor(PredefinedColors.LuminousVividPink);
 
@@ -130,9 +130,12 @@ export const shopCmd: Command = {
                     return;
                 }
 
-                const categoryOffers = allOffers
-                    .filter(o => chosenCategory.items.includes(o.id))
-                    .sort((a, b) => a.price - b.price);
+                const categoryOffers = [];
+                for (const o of allOffers.filter(o => chosenCategory.items.includes(o.id))) {
+                    if (o.buyOnce && await api.executor.purchases.getPurchaseCount(o.id) >= 1) continue;
+                    categoryOffers.push(o);
+                }
+                categoryOffers.sort((a, b) => a.price - b.price);
 
                 const embed = buildCategoryEmbed(chosenCategory, categoryOffers, api);
                 await interaction.update({ embeds: [embed], components: [row] });
@@ -145,21 +148,20 @@ export const shopCmd: Command = {
             });
         };
 
-        const argCategory = api.getTypedArg('category', 'string');
-
-        if (!argCategory || !argCategory.value) {
+        const categoriesArg = api.getTypedArg('categories', 'trailing-string');
+        if (!categoriesArg || !categoriesArg.value) {
             await sendInteractiveMenu();
             return;
         }
 
-        const values = (argCategory.value as string).split(/\s+/);
+        const values = (categoriesArg.value as string).split(/\s+/);
         let categoriesToShow: ConfigEconomyShopCategory[] = [];
 
         if (values.includes('all')) {
             categoriesToShow = categories;
         } else {
             for (const val of values) {
-                const category = categories.find(c => c.id === val);
+                const category = categories.find(c => c.id == val);
                 if (!category) {
                     api.log.replyError(api, 'Nieznana kategoria', `Nie znam kategorii ${val}. Czy możesz powtórzyć?`);
                     return;
@@ -170,12 +172,18 @@ export const shopCmd: Command = {
 
         const introEmbed = new ReplyEmbed()
             .setTitle('💳 Sklep')
-            .setDescription(`Oto nasz asortyment, wybierz co chcesz a potem użyj \`${cfg.general.prefix} buy <item>\` by to kupić.`)
+            .setDescription(`Oto nasz asortyment, wybierz co chcesz a potem użyj \`${cfg.general.prefix}buy <item>\` by to kupić.`)
             .setColor(PredefinedColors.LuminousVividPink);
 
         const allEmbeds = [introEmbed];
         for (const category of categoriesToShow) {
-            const categoryOffers = allOffers.filter(o => category.items.includes(o.id)).sort((a, b) => a.price - b.price);
+            let categoryOffers: ConfigEconomyShopOffer[] = [];
+            for (const o of allOffers.filter(o => category.items.includes(o.id))) {
+                if (o.buyOnce && await api.executor.purchases.getPurchaseCount(o.id) >= 1) continue;
+                categoryOffers.push(o);
+            }
+            categoryOffers = categoryOffers.sort((a, b) => a.price - b.price);
+
             allEmbeds.push(buildCategoryEmbed(category, categoryOffers, api));
         }
 

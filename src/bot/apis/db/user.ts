@@ -262,6 +262,32 @@ export default class User {
         }
     };
 
+    /** ------- PURCHASES -------- */
+    readonly purchases = {
+        add: async (offerId: string) => {
+            await this.ensureExists();
+            return db.runSql(
+                `INSERT INTO user_purchases (user_id, offer_id, amount)
+                 VALUES (?, ?, 1)
+                 ON CONFLICT(user_id, offer_id) DO UPDATE SET amount = amount + 1`,
+                [this.id, offerId]
+            );
+        },
+
+        getPurchaseCount: async (offerId: string): Promise<number> => {
+            const row = await db.selectOne<{ amount: number }>(
+                `SELECT amount FROM user_purchases WHERE user_id = ? AND offer_id = ?`,
+                [this.id, offerId]
+            );
+            return row?.amount ?? 0;
+        },
+
+        hasBought: async (offerId: string): Promise<boolean> => {
+            const count = await this.purchases.getPurchaseCount(offerId);
+            return count > 0;
+        }
+    };
+
     /** -------- COOLDOWNS -------- */
     readonly cooldowns = {
         set: async (field: CooldownKey, timestamp: number) => {
