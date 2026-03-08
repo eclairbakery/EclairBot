@@ -512,6 +512,11 @@ export const defaultCfg: Config = {
     },
 
     features: {
+        compilation: {
+            replaceCompilerMap: {
+                "c": "gcc-13.2.0",
+            }
+        },
         automod: {
             antiFloodEnabled: false,
             antiSpamEnabled: false,

@@ -298,6 +298,9 @@ export interface Config {
     },
 
     features: {
+        compilation: {
+            replaceCompilerMap: Record<string, string>
+        },
         automod: {
             antiFloodEnabled: boolean;
             antiSpamEnabled: boolean;

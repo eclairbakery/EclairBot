@@ -55,6 +55,7 @@ import { collectIncomeCmd } from './economy/collect-income.js';
 import { refreshCmd } from './mod/refresh.js';
 import { emailSignatureCmd } from './email/email-signature.js';
 import { emailDefaultTitleCmd } from './email/email-default-title.js';
+import { compileCmd } from './4fun/compile.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -63,7 +64,7 @@ export const commands: Map<Category, Command[]> = new Map([
             helpCmd, commandsCmd,
             manCmd,
             bannerCmd, pfpCmd,
-            wikiCmd, 
+            wikiCmd,  
         ]
     ],
     [
@@ -114,7 +115,7 @@ export const commands: Map<Category, Command[]> = new Map([
         [
             plusRepCmd, subRepCmd, reputationCmd,
             toprepCmd, replistCmd,
-            figletCmd,
+            figletCmd, compileCmd
         ],
     ]
 ]);
