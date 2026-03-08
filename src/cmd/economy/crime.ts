@@ -62,7 +62,7 @@ export const crimeCmd: Command = {
                 .setDescription((win
                     ? cfg.customization.economyTexts.workSlutOrCrime.crime.winText
                     : cfg.customization.economyTexts.workSlutOrCrime.crime.loseText
-                ).replaceAll('<amount>', String(amount)));
+                ).replaceAll('<amount>', String(total)));
 
             return api.reply({ embeds: [embed] });
 

@@ -55,12 +55,12 @@ export const slutCmd: Command = {
                 embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Blue)
                     .setTitle('Yay!')
-                    .setDescription(`Praca dorywcza dała Ci *prawie* darmowe **${formatMoney(amount)}**!`);
+                    .setDescription(`Praca dorywcza dała Ci *prawie* darmowe **${formatMoney(total)}**!`);
             } else {
                 embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Red)
                     .setTitle('Niestety, nie tym razem...')
-                    .setDescription(`Straciłeś **${formatMoney(amount)}**!`);
+                    .setDescription(`Straciłeś **${formatMoney(total)}**!`);
             }
 
             return api.reply({ embeds: [embed] });

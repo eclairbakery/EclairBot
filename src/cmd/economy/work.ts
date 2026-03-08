@@ -93,8 +93,8 @@ export const workCmd: Command = {
             const genMessage = WorkMessages[getRandomInt(0, WorkMessages.length-1)];
             const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Blue)
-                .setTitle('Ciężka praca popłaca!')
-                .setDescription(genMessage(amount));
+                .setTitle('Ciężka praca popłaca! ')
+                .setDescription(genMessage(total));
 
             return api.reply({ embeds: [embed] });
         } catch (err) {
