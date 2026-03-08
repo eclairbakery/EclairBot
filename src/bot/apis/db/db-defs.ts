@@ -73,11 +73,12 @@ export interface Balance {
 export type Cooldown = number | null;
 
 export interface Cooldowns {
-    lastWorked:    Cooldown;
-    lastRobbed:    Cooldown;
-    lastSlutted:   Cooldown;
-    lastCrimed:    Cooldown;
-    lastEmailSent: Cooldown;
+    lastWorked:        Cooldown;
+    lastRobbed:        Cooldown;
+    lastSlutted:       Cooldown;
+    lastCrimed:        Cooldown;
+    lastCollectIncome: Cooldown;
+    lastEmailSent:     Cooldown;
 };
 
 

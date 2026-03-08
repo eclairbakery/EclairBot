@@ -29,11 +29,14 @@ export class BotDatabase {
                 xp INTEGER DEFAULT 0,
                 wallet_money REAL DEFAULT 0,
                 bank_money REAL DEFAULT 0,
+                
                 last_worked INTEGER DEFAULT 0,
                 last_robbed INTEGER DEFAULT 0,
                 last_slutted INTEGER DEFAULT 0,
                 last_crimed INTEGER DEFAULT 0,
+                last_collect_income INTEGER DEFAULT 0,
                 last_email_sent INTEGER DEFAULT 0,
+                
                 signature TEXT,
                 default_email_title TEXT
             );

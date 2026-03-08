@@ -52,6 +52,7 @@ import { enableCommandCmd } from './dev/enable-cmd.js';
 import { disableCommandCmd } from './dev/disable-cmd.js';
 import { sendEmailCmd } from './general/email.js';
 import { buyCmd } from './economy/buy.js';
+import { collectIncomeCmd } from './economy/collect-income.js';
 import { refreshCmd } from './mod/refresh.js';
 import { emailSignatureCmd } from './general/email-signature.js';
 import { emailDefaultTitleCmd } from './general/email-default-title.js';
@@ -92,7 +93,7 @@ export const commands: Map<Category, Command[]> = new Map([
     [
         Category.Economy,
         [
-            balCmd, workCmd, blackjackCmd, slutCmd, crimeCmd, topecoCmd, robCmd, withdrawCmd, depositCmd, shopCmd, moneyCmd, buyCmd
+            balCmd, workCmd, blackjackCmd, slutCmd, crimeCmd, topecoCmd, robCmd, withdrawCmd, depositCmd, shopCmd, moneyCmd, buyCmd, collectIncomeCmd
         ]
     ],
     [

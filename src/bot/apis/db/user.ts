@@ -5,11 +5,12 @@ import { Cooldowns } from './db-defs.js';
 import { repFromRaw, warnFromRaw } from './db-defs.js';
 
 const CooldownMap = {
-    work:  { col: 'last_worked',     prop: 'lastWorked' },
-    rob:   { col: 'last_robbed',     prop: 'lastRobbed' },
-    slut:  { col: 'last_slutted',    prop: 'lastSlutted' },
-    crime: { col: 'last_crimed',     prop: 'lastCrimed' },
-    email: { col: 'last_email_sent', prop: 'lastEmailSent' },
+    'work':           { col: 'last_worked',         prop: 'lastWorked'        },
+    'rob':            { col: 'last_robbed',         prop: 'lastRobbed'        },
+    'slut':           { col: 'last_slutted',        prop: 'lastSlutted'       },
+    'crime':          { col: 'last_crimed',         prop: 'lastCrimed'        },
+    'collect-income': { col: 'last_collect_income', prop: 'lastCollectIncome' },
+    'email':          { col: 'last_email_sent',     prop: 'lastEmailSent'     },
 } as const;
 
 export interface CooldownReady {
