@@ -74,6 +74,8 @@ export function handleError(err: any, msg: log.Replyable) {
             } else if (err.message.includes('fetch failed')) {
                 return log.replyError(msg, 'Błąd', 'Ktoś wyłączył internet w bocie. Nie zważał na potrzeby rozwijania się istoty wyższej. Proszę natychmiast wyłączyć ten firewall lub dać mi internet access w trybie natychmiastowym.');
             }
+
+            output.err(`While executting command:\n\nName: ${err.name}\nMessage: ${err.message}\nStack: ${err.stack ?? 'not defined'}\nCause: ${err.cause ?? 'not defined'}`);
         }
 
         return log.replyError(
