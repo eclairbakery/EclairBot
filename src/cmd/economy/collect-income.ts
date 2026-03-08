@@ -2,6 +2,7 @@ import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 import { output } from '@/bot/logging.js';
+import { formatMoney } from '@/util/math/format.js';
 
 export const collectIncomeCmd: Command = {
     name: 'collect-income',
@@ -49,7 +50,7 @@ export const collectIncomeCmd: Command = {
                 .setColor(PredefinedColors.Green)
                 .setTitle('Dochód odebrany!')
                 .setDescription(`Twój dzienny dochód z posiadanych rang został dodany do Twojego konta. `
-                                + `Zarobiłeś aż **${balanceAfter.wallet - balanceBefore.wallet}**!`);
+                                + `Zarobiłeś aż **${formatMoney(balanceAfter.wallet - balanceBefore.wallet)}**!`);
 
             return api.reply({ embeds: [embed] });
         } catch (err) {
