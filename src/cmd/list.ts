@@ -13,7 +13,6 @@ import { warnlistCmd } from '@/cmd/mod/warnlist.js';
 import { muteCmd } from '@/cmd/mod/mute.js';
 import { unmuteCmd } from '@/cmd/mod/unmute.js';
 import { clearCmd } from '@/cmd/mod/clear.js';
-import { forceReloadTemplatesCmd } from '@/cmd/mod/force-reload-templates.js';
 import { warnClearCmd } from '@/cmd/mod/warn-clear.js';
 import { toggleCooldownBypassCmd } from './mod/toggle-cooldown-bypass.js';
 import { resetCmd } from './mod/reset.js';
@@ -50,12 +49,12 @@ import { configurationCommand } from './dev/configuration.js';
 import { setbalCmd } from './economy/setbal.js';
 import { enableCommandCmd } from './dev/enable-cmd.js';
 import { disableCommandCmd } from './dev/disable-cmd.js';
-import { sendEmailCmd } from './general/email.js';
+import { sendEmailCmd } from './email/email.js';
 import { buyCmd } from './economy/buy.js';
 import { collectIncomeCmd } from './economy/collect-income.js';
 import { refreshCmd } from './mod/refresh.js';
-import { emailSignatureCmd } from './general/email-signature.js';
-import { emailDefaultTitleCmd } from './general/email-default-title.js';
+import { emailSignatureCmd } from './email/email-signature.js';
+import { emailDefaultTitleCmd } from './email/email-default-title.js';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -64,18 +63,23 @@ export const commands: Map<Category, Command[]> = new Map([
             helpCmd, commandsCmd,
             manCmd,
             bannerCmd, pfpCmd,
-            wikiCmd, sendEmailCmd,
-            emailSignatureCmd, emailDefaultTitleCmd
+            wikiCmd, 
+        ]
+    ],
+    [
+        Category.Email,
+        [
+            sendEmailCmd, emailSignatureCmd, emailDefaultTitleCmd
         ]
     ],
     [
         Category.Mod,
         [
-            forceReloadTemplatesCmd, clearCmd,
+            clearCmd,
             warnCmd, warnClearCmd, warnlistCmd,
             muteCmd, unmuteCmd,
             banCmd, kickCmd,
-            refreshCmd, toggleCooldownBypassCmd, resetCmd
+            refreshCmd, toggleCooldownBypassCmd
         ]
     ],
     [
@@ -102,7 +106,7 @@ export const commands: Map<Category, Command[]> = new Map([
         Category.DevelopersOnly,
         [
             evalCmd, restartCmd, configurationCommand,
-            enableCommandCmd, disableCommandCmd,
+            enableCommandCmd, disableCommandCmd, resetCmd
         ],
     ],
     [

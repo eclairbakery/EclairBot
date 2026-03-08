@@ -31,6 +31,8 @@ export class Category {
             return 'dev';
         case Category.ForFun:
             return 'forfun';
+        case Category.Email:
+            return 'email';
         }
     }
 
@@ -69,6 +71,11 @@ export class Category {
         case 'for-fun':
             return Category.ForFun;
 
+        case 'email':
+        case 'e-mail':
+        case 'mail':
+            return Category.Email;
+
         default:
             return null;
         }
@@ -106,8 +113,13 @@ export class Category {
         PredefinedColors.Cyan,
     );
     static readonly ForFun = new Category(
-        '🔥', '4fun', 'opis dam potem',
-        'opis dam potem',
+        '🔥', '4fun', 'Komendy bez celu. Do zabawy czy coś.',
+        'Masz tu komendy i możesz się nimi bawić. Są bezcelowe i istnieją bo są fajne.',
         PredefinedColors.Blurple,
+    );
+    static readonly Email = new Category(
+        '📧', 'E-mail\'e', 'Możesz wysyłać e-maile.',
+        'Kontaktuj się z innymi za pomocą przełomowej technologii XXI wieku - e-mail\'i!',
+        PredefinedColors.Aqua,
     );
 };
