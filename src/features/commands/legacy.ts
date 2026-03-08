@@ -42,9 +42,12 @@ function waitForButton(interaction: dsc.Message, buttonId: string, time = 15000)
 
 async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     if (!(msg instanceof dsc.Message)) return;
-    if (!msg.content.toLowerCase().startsWith(cfg.general.prefix.toLowerCase())) return;
 
-    const argsRaw = msg.content.slice(cfg.general.prefix.length).trim().split(/\s+/);
+    let prefixes = [cfg.general.prefix, ...cfg.general.alternativePrefixes];
+    let prefix = prefixes.find((val) => msg.content.startsWith(val.toLowerCase()));
+    if (!prefix) return;
+
+    const argsRaw = msg.content.slice(prefix.length).trim().split(/\s+/);
     const cmdName = argsRaw.shift()?.toLowerCase() ?? '';
 
     const commandObj = findCommand(cmdName, commands)?.command;

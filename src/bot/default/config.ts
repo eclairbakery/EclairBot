@@ -308,6 +308,9 @@ export const defaultCfg: Config = {
 
     general: {
         prefix: 'sudo ',
+        alternativePrefixes: [
+            '.'
+        ],
         commandHandling: {
             arguments: {
                 number: {

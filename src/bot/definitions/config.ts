@@ -15,6 +15,7 @@ export interface Config {
     general: {
         /* General configuration for the bot */
         prefix: string;
+        alternativePrefixes: string[];
 
         commandHandling: {
             arguments: {
