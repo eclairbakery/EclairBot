@@ -1,9 +1,12 @@
 import * as dsc from 'discord.js';
 import {
     BlockCommandsRules, ConfigCommandARgumentRulesForNumbers,
-    ConfigEconomyShopItem, ConfigTranslation, Emoji, CommandConfigMap, ModCommandsConfigs,
-    AnyCommandConfig
+    ConfigTranslation, Emoji, CommandConfigMap, ModCommandsConfigs,
+    AnyCommandConfig,
+    EconomyCommandsConfig
 } from './config-subtypes.js';
+
+import EconomyConfig from './economy.js';
 
 export interface Config {
     /* Whether the bot is enabled (The most useless configuration field I've ever seen...) */
@@ -146,6 +149,7 @@ export interface Config {
     defaultCommandConfig: AnyCommandConfig;
     commands: {
         mod: ModCommandsConfigs;
+        economy: EconomyCommandsConfig;
         [category: string]: CommandConfigMap;
     };
 
@@ -341,20 +345,7 @@ export interface Config {
             stderr: dsc.Snowflake;
             stdwarn: dsc.Snowflake;
         };
-        economy: {
-            shop: ConfigEconomyShopItem[];
-            currencySign: string;
-            currencySignPlacement: 'left' | 'right';
-
-            commandSettings: {
-                crime: {
-                    cooldown: number;
-                    minimumCrimeAmount: number;
-                    maximumCrimeAmount: number;
-                    successRatio: number;
-                }
-            }
-        };
+        economy: EconomyConfig;
         moderation: {
             protectedRoles: dsc.Snowflake[];
             warnAutoActions: {

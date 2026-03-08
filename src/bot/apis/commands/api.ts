@@ -4,6 +4,7 @@ import { CommandArgType, CommandValuableArgument } from "./arguments.js";
 import { Category } from "@/bot/categories.js";
 import { Command } from "./cmd.js";
 import type * as log from '@/util/log.js';
+import { EconomyExecutor } from "../economy/action.js";
 
 export interface CommandAPI {
     // ---- COMMAND INFO ----
@@ -30,6 +31,9 @@ export interface CommandAPI {
         => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;
 
     checkCooldown: (field: string, cooldownMs: number) => Promise<CooldownCheckResult>;
+
+    // ---- ECONOMY ----
+    economy: EconomyExecutor;
 
     // ---- EXTERNAL DATA ----
     commands: Map<Category, Command[]>;

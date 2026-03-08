@@ -13,13 +13,6 @@ export interface Emoji {
     id: dsc.Snowflake;
 };
 
-export interface ConfigEconomyShopItem {
-    name: string;
-    description: string;
-    price: number;
-    role: dsc.Snowflake;
-}
-
 export interface ConfigTranslation {
     input: string[] | string,
     output: string
@@ -62,6 +55,13 @@ export interface IzolatkaCommandConfig extends CommandConfigBase {
     enabledForNormalAdministrators: boolean;
 };
 
+export interface CrimeCommandConfig extends CommandConfigBase {
+    cooldown: number;
+    minimumCrimeAmount: number;
+    maximumCrimeAmount: number;
+    successRatio: number;
+}
+
 ////////////// command config map & categories ///////////////
 export type CommandConfigMap = Record<string, AnyCommandConfig>;
 
@@ -72,4 +72,8 @@ export type ModCommandsConfigs = {
     warn: WarnCommandConfig;
     izolatka: IzolatkaCommandConfig;
     reset: CommandConfigBase;
+} & CommandConfigMap;
+
+export type EconomyCommandsConfig = {
+    crime: CrimeCommandConfig;
 } & CommandConfigMap;

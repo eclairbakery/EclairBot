@@ -1,25 +1,25 @@
-import { cfg } from "@/bot/cfg.js";
-import { Command, CommandFlags } from "@/bot/command.js";
-import { PredefinedColors } from "@/util/color.js";
-import { output } from "@/bot/logging.js";
+import { cfg } from '@/bot/cfg.js';
+import { Command, CommandFlags } from '@/bot/command.js';
+import { PredefinedColors } from '@/util/color.js';
+import { output } from '@/bot/logging.js';
 import { formatMoney } from '@/util/math/format.js';
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.js";
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const buyCmd: Command = {
-    name: "buy",
-    aliases: ["kup"],
+    name: 'buy',
+    aliases: ['kup'],
     description: {
-        main: "Masz masę kasy i nie wiesz co z nią zrobić? Pomogę Ci! Kup coś!",
-        short: "Kupuje wybrany przedmiot."
+        main: 'Masz masę kasy i nie wiesz co z nią zrobić? Pomogę Ci! Kup coś!',
+        short: 'Kupuje wybrany przedmiot.'
     },
     flags: CommandFlags.Economy,
 
     expectedArgs: [
         {
-            name: "item",
-            type: "trailing-string",
+            name: 'offer',
+            type: 'trailing-string',
             optional: false,
-            description: "Jakaś rzecz, którą chcesz kupić."
+            description: 'Jakaś rzecz, którą chcesz kupić.'
         }
     ],
 
@@ -29,57 +29,43 @@ export const buyCmd: Command = {
     },
 
     async execute(api) {
-        const itemName = api.getTypedArg("item", "trailing-string")?.value ?? "";
-        const normalized = itemName.trim().toLowerCase();
+        const offerName = api.getTypedArg('offer', 'trailing-string')?.value ?? '';
 
-        const item = cfg.features.economy.shop.find(entry =>
-            entry.name.trim().toLowerCase() === normalized
-        );
-
-        if (!item) {
+        const offer = api.economy.getOfferByName(offerName);
+        if (!offer) {
             return api.log.replyError(
                 api,
-                "Coś takiego w ogóle istnieje?",
-                `Nie udało się znaleźć przedmiotu.`
+                'Coś takiego w ogóle istnieje?',
+                `Nie udało się znaleźć oferty o nazwie **${offerName}**.`
             );
         }
 
         try {
-            const userId = api.invoker.id;
             const user = api.executor;
             const userBalance = await user.economy.getBalance();
 
-            if (userBalance.wallet < item.price) {
+            if (userBalance.wallet < offer.price) {
                 api.log.replyError(
                     api,
                     'Nie stać Cię!',
-                    `Nie stać Cię na **${item.name}**. Brakuje Ci **${formatMoney(item.price - userBalance.wallet)}** dolarów.`
+                    `Nie stać Cię na **${offer.name}**. Brakuje Ci **${formatMoney(offer.price - userBalance.wallet)}**.`
                 );
-                if (userBalance.bank + userBalance.wallet >= item.price) {
+                if (userBalance.bank + userBalance.wallet >= offer.price) {
                     return api.log.replyTip(
-                        api,
-                        'Wskazówka',
+                        api, 'Wskazówka',
                         'Za przedmioty możesz płacić tylko pieniędzmi z portfela, jednak w banku masz wystarczającą ilość pieniędzy by kupić ten przedmiot.\n**Spróbuj troche wypłacić!**',
                     );
                 }
                 return;
             }
 
-            user.economy.deductWalletMoney(item.price);
-
-            if (item.role) {
-                const role =   api.guild?.roles.cache.get(item.role);
-                const member = api.guild?.members.cache.get(userId);
-
-                if (role && member) {
-                    await member.roles.add(role).catch(() => {});
-                }
-            }
+            await user.economy.deductWalletMoney(offer.price);
+            await api.economy.executeActions(offer.onBuy);
 
             const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Green)
-                .setTitle("Zakup udany!")
-                .setDescription(`Kupiłeś **${item.name}** za **${formatMoney(item.price)}**.\n${item.description}`);
+                .setTitle('Zakup udany!')
+                .setDescription(`Kupiłeś **${offer.name}** za **${formatMoney(offer.price)}**.\n${offer.desc}`);
 
             return api.reply({ embeds: [embed] });
         } catch (err) {
@@ -87,8 +73,8 @@ export const buyCmd: Command = {
 
             return api.log.replyError(
                 api,
-                "Coś poszło bardzo nie tak...",
-                "Spróbuj ponownie później."
+                'Coś poszło bardzo nie tak...',
+                'Spróbuj ponownie później.'
             );
         }
     }

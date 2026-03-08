@@ -222,6 +222,45 @@ export default class User {
         },
     };
 
+    /** -------- INVENTORY -------- */
+    readonly inventory = {
+        getItems: async (): Promise<{ item_id: string, amount: number }[]> => {
+            return db.selectMany(`SELECT item_id, amount FROM user_items WHERE user_id = ?`, [this.id]);
+        },
+
+        getItemAmount: async (itemId: string): Promise<number> => {
+            const row = await db.selectOne<{ amount: number }>(
+                `SELECT amount FROM user_items WHERE user_id = ? AND item_id = ?`,
+                [this.id, itemId]
+            );
+            return row?.amount ?? 0;
+        },
+
+        addItem: async (itemId: string, amount: number = 1) => {
+            await this.ensureExists();
+            return db.runSql(
+                `INSERT INTO user_items (user_id, item_id, amount)
+                 VALUES (?, ?, ?)
+                 ON CONFLICT(user_id, item_id) DO UPDATE SET amount = amount + ?`,
+                [this.id, itemId, amount, amount]
+            );
+        },
+
+        removeItem: async (itemId: string, amount: number = 1) => {
+            await this.ensureExists();
+            await db.runSql(
+                `UPDATE user_items SET amount = amount - ? WHERE user_id = ? AND item_id = ?`,
+                [amount, this.id, itemId]
+            );
+            await db.runSql(`DELETE FROM user_items WHERE user_id = ? AND item_id = ? AND amount <= 0`, [this.id, itemId]);
+        },
+
+        hasItem: async (itemId: string, amount: number = 1): Promise<boolean> => {
+            const current = await this.inventory.getItemAmount(itemId);
+            return current >= amount;
+        }
+    };
+
     /** -------- COOLDOWNS -------- */
     readonly cooldowns = {
         set: async (field: CooldownKey, timestamp: number) => {

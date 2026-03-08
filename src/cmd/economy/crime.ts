@@ -6,9 +6,10 @@ import { output } from '@/bot/logging.js';
 import { cfg } from '@/bot/cfg.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
-const CrimeAmountMin = cfg.features.economy.commandSettings.crime.minimumCrimeAmount;
-const CrimeAmountMax = cfg.features.economy.commandSettings.crime.maximumCrimeAmount;
-const Percentage = cfg.features.economy.commandSettings.crime.successRatio;
+const CrimeAmountMin = cfg.commands.economy.crime.minimumCrimeAmount;
+const CrimeAmountMax = cfg.commands.economy.crime.maximumCrimeAmount;
+const Percentage = cfg.commands.economy.crime.successRatio;
+const Cooldown = cfg.commands.economy.crime.cooldown;
 
 export const crimeCmd: Command = {
     name: 'crime',
@@ -35,7 +36,7 @@ export const crimeCmd: Command = {
         }
 
         try {
-            const result = await api.checkCooldown('crime', cfg.features.economy.commandSettings.crime.cooldown);
+            const result = await api.checkCooldown('crime', Cooldown);
             if (!result.can) {
                 const embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Yellow)

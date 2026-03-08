@@ -10,6 +10,7 @@ import { deepMerge } from '@/util/objects/objects.js';
 import { cfg } from '@/bot/cfg.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import { commands } from '@/cmd/list.js';
+import { EconomyExecutor } from '@/bot/apis/economy/action.js';
 
 type FirstArg<T> =
     T extends { (...args: infer A): any } ?
@@ -103,6 +104,9 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
             member: rawMember,
             id: (context.interaction?.user.id ?? context.msg?.author.id)!,
         },
+
+        // economy
+        economy: new EconomyExecutor({ user: user, member: rawMember ?? undefined }),
 
         // misc
         reply: context.interaction ? ((options) => context.interaction!.editReply(makeOptions(options))) : ((options) => context.msg!.reply(makeOptions(options))),

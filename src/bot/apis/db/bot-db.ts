@@ -47,11 +47,11 @@ export class BotDatabase {
                 expires_at INTEGER
             );
 
-            CREATE TABLE IF NOT EXISTS items (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                owner_id TEXT NOT NULL REFERENCES users(user_id),
-                type TEXT NOT NULL CHECK(type IN ('mystery-box', 'check', 'role')),
-                item_properties TEXT
+            CREATE TABLE IF NOT EXISTS user_items (
+                user_id TEXT NOT NULL REFERENCES users(user_id),
+                item_id TEXT NOT NULL,
+                amount INTEGER DEFAULT 0,
+                PRIMARY KEY (user_id, item_id)
             );
 
             CREATE TABLE IF NOT EXISTS reputation (
@@ -212,6 +212,14 @@ export class BotDatabase {
             }
         },
 
+        inventory: async (userId?: string): Promise<void> => {
+            if (userId) {
+                await this.runSql(`DELETE FROM user_items WHERE user_id = ?`, [userId]);
+            } else {
+                await this.runSql(`DELETE FROM user_items`);
+            }
+        },
+
         leveling: async (userId?: string): Promise<void> => {
             if (userId) {
                 await this.runSql(`UPDATE users SET xp = 0 WHERE user_id = ?`, [userId]);
@@ -251,6 +259,7 @@ export class BotDatabase {
 
         all: async (userId?: string): Promise<void> => {
             await this.reset.economy(userId);
+            await this.reset.inventory(userId);
             await this.reset.leveling(userId);
             await this.reset.cooldowns(userId);
             await this.reset.reputation(userId);
