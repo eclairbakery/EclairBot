@@ -15,7 +15,7 @@ import { unmuteCmd } from '@/cmd/mod/unmute.js';
 import { clearCmd } from '@/cmd/mod/clear.js';
 import { warnClearCmd } from '@/cmd/mod/warn-clear.js';
 import { toggleCooldownBypassCmd } from './mod/toggle-cooldown-bypass.js';
-import { resetCmd } from './mod/reset.js';
+import { resetCmd } from './dev/reset.js';
 
 import { workCmd } from '@/cmd/economy/work.js';
 import { slutCmd } from '@/cmd/economy/slut.js';
