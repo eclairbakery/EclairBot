@@ -7,13 +7,13 @@ import { output } from '@/bot/logging.js';
 import { formatMoney } from '@/util/math/format.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
-export const moneyCmd: Command = {
-    name: 'money',
+export const setbalCmd: Command = {
+    name: 'setbal',
     description: {
         main: 'Coś poszło nie tak? Naprawisz to ręcznie. Chyba...',
         short: 'Ustawia ilość pieniędzy danej osobie.'
     },
-    aliases: ['moneymod', 'modeco'],
+    aliases: ['setbalance', 'moneymod', 'modeco'],
     flags: CommandFlags.Economy | CommandFlags.Unsafe,
 
     expectedArgs: [
