@@ -1,3 +1,4 @@
+import { Color, PredefinedColors } from '@/util/color.js';
 import * as dsc from 'discord.js';
 
 export type money = number;
@@ -68,6 +69,16 @@ export interface ConfigEconomyShopOffer extends ConfigEconomyThing {
     onBuy: ConfigEconomyAction[]; // for example: add-item
 };
 
+
+export interface ConfigEconomyShopCategory {
+    id: string;
+    name: string;
+    desc: string;
+    emoji: string;
+    color: Color;
+    items: string[]; // offer IDs
+};
+
 // ----- config ----- // 
 export default interface EconomyConfig {
     currencySign: string;
@@ -76,4 +87,5 @@ export default interface EconomyConfig {
     roles: ConfigEconomyRole[];
     items: ConfigEconomyItem[];
     offers: ConfigEconomyShopOffer[];
+    shop: ConfigEconomyShopCategory[];
 };

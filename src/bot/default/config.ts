@@ -1,3 +1,4 @@
+import { PredefinedColors } from '@/util/color.js';
 import { Config } from '../definitions/config.js';
 import EconomyConfig from '../definitions/economy.js';
 
@@ -254,6 +255,32 @@ const economyCfg: EconomyConfig = {
                 { op: 'add-role', roleId: 'hall-of-shame-access' },
             ],
         }
+    ],
+    shop: [
+        {
+            id: 'vips',
+            name: 'VIPy',
+            desc: 'Poczuj się jak prawdziwy VIP. No i masz jakiś tam multiplier do zarabiania.',
+            color: PredefinedColors.Yellow,
+            emoji: '😎',
+            items: [ 'buy-minivip', 'buy-vip', 'buy-svip', 'buy-mvip', 'buy-pieczywo-vip' ],
+        },
+        {
+            id: 'boxes',
+            name: 'Mystery Boxes',
+            desc: 'Misterne skrzynki. Otwórz i zgarnij świetne nagrody',
+            color: PredefinedColors.Blurple,
+            emoji: '📦',
+            items: [],
+        },
+        {
+            id: 'others',
+            name: 'Inne',
+            desc: 'Oferty które nie pasowały do żadnej kategorii',
+            color: PredefinedColors.Teal,
+            emoji: '🎗️',
+            items: [ 'buy-hall-of-shame-access' ],
+        },
     ],
     currencySign: '$',
     currencySignPlacement: 'left',
