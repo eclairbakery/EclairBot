@@ -44,14 +44,24 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     if (!(msg instanceof dsc.Message)) return;
 
     const content = msg.content.trimStart();
-    const contentLower = content.toLowerCase();
+
+    const prefixes = [
+        cfg.general.prefix,
+        ...(cfg.general.alternativePrefixes ?? [])
+    ];
     
-    let prefixes = [cfg.general.prefix, ...cfg.general.alternativePrefixes];
-    let prefix = prefixes.find(p => contentLower.startsWith(p.toLowerCase()));
+    const prefix = prefixes.find(p =>
+        content.toLowerCase().startsWith(p.toLowerCase())
+    );
+    
     if (!prefix) return;
     
-    const argsRaw = content.slice(prefix.length).trim().split(/\s+/);
-    const cmdName = argsRaw.shift()?.toLowerCase() ?? ''; 
+    const argsRaw = content
+      .slice(prefix.length)
+      .trim()
+      .split(/\s+/);
+    
+    const cmdName = (argsRaw.shift() ?? "").toLowerCase(); 
 
     const commandObj = findCommand(cmdName, commands)?.command;
     if (!commandObj) {
@@ -139,7 +149,9 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 export function init() {
     actionsManager.addAction({
         callbacks: [legacyCommandsMessageHandler],
-        constraints: [(msg) => msg.content.toLowerCase().startsWith(cfg.general.prefix.toLowerCase())],
+        constraints: [
+            (msg) => [cfg.general.prefix, ...cfg.general.alternativePrefixes].some((val) => msg.toLowerCase().startsWith(val.toLowerCase()))
+        ],
         activationEventType: PredefinedActionEventTypes.OnMessageCreate
     });
     output.log('Legacy commands event registered');
