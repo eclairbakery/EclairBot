@@ -1,5 +1,6 @@
 import {
-    ConfigEconomyCond, ConfigEconomyAction, ConfigEconomyRandomVariant
+    ConfigEconomyCond, ConfigEconomyAction, ConfigEconomyRandomVariant,
+    ConfigEconomyMultiplierKind, ConfigEconomyRole
 } from '@/bot/definitions/economy.js';
 import User from '@/bot/apis/db/user.js';
 import { cfg } from '@/bot/cfg.js';
@@ -30,6 +31,30 @@ export class EconomyExecutor {
     getRoleByName(name: string)  { return this.getByName(name, cfg.features.economy.roles);  }
     getItemByName(name: string)  { return this.getByName(name, cfg.features.economy.items);  }
     getOfferByName(name: string) { return this.getByName(name, cfg.features.economy.offers); }
+
+    getMemberRoles(): ConfigEconomyRole[] {
+        if (!this.ctx.member) return [];
+        return cfg.features.economy.roles.filter(r => this.ctx.member!.roles.cache.has(r.discordRoleId));
+    }
+
+    getMultiplier(kind: ConfigEconomyMultiplierKind): number {
+        const roles = this.getMemberRoles();
+        let total = 1.0;
+        for (const role of roles) {
+            for (const m of role.benefits.multipliers) {
+                const matches = m.filter == '*' || (Array.isArray(m.filter) && m.filter.includes(kind));
+                if (matches) total *= m.multiplier;
+            }
+        }
+        return total;
+    }
+
+    getDailyIncomeActions(): ConfigEconomyAction[] {
+        return this.getMemberRoles().flatMap(r => r.benefits.dailyIncome);
+    }
+    async applyDailyIncome() {
+        await this.executeActions(this.getDailyIncomeActions());
+    }
 
     async executeActions(actions: ConfigEconomyAction[]) {
         for (const action of actions) {

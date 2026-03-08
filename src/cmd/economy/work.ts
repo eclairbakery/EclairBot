@@ -12,8 +12,6 @@ const WorkAmountMax = 300;
 
 type MessageCallback = (amount: number) => string;
 const WorkMessages: MessageCallback[] = [
-    amount => `Zarobiłeś ${amount}`,
-    
     amount => `Pracowałeś w serwisie komputerowym i zarobiłeś **${formatMoney(amount)}** naprawiając komuś telefon. To nic że wystarczyło wyłączyć i włączyć!`,
     amount => `Pracowałeś na kasie w macdonaldzie i zarobiłeś **${formatMoney(amount)}** serwując pyszne burgery na które cię nie stać bo dalej jesteś biedny!`,
     amount => `Pracowałeś w banku i nie dostałeś żadnego wynagrodzenia bo się opierdalałeś. Jednak nikt nie zauważył że pokryjomu ukradłeś **${formatMoney(amount)}**!`,
@@ -36,10 +34,23 @@ const WorkMessages: MessageCallback[] = [
     amount => `Zrobiłeś głupi filmik z brainrotami na tiktoka i zyskałeś taką popularność że zarobiłeś **${formatMoney(amount)}**. Gdzie my zmierzamy jako ludzkość?`,
     amount => `Założyłeś się z losowym gościem o **${formatMoney(amount)+100}** że napiszesz kalkulator w assembly i wygrałeś. Niestety ${formatMoney(100)} z tego i tak poszło na psychologa.`,
     amount => `Naprawiłeś bug który sam wcześniej wprowadziłeś i dostałeś premię **${formatMoney(amount)}**.`,
+    amount => `Sprzedałeś domenę którą kupiłeś dla żartu i zarobiłeś **${formatMoney(amount)}**.`,
 
+    amount => `Przeklikałeś ankietę w internecie i zarobiłeś **${formatMoney(amount)}**. Twoje dane osobowe już gdzieś lecą.`,
+    amount => `Sprzedałeś stare konto z gry za **${formatMoney(amount)}**. 12-letni ty byłby dumny.`,
+    amount => `Zrobiłeś komuś prezentację w PowerPoincie na ostatnią chwilę i zarobiłeś **${formatMoney(amount)}**.`,
+    amount => `Napisałeś komuś pracę domową i zarobiłeś **${formatMoney(amount)}**. Edukacja level biznes.`,
+    amount => `Znalazłeś **${formatMoney(amount)}** pod kanapą. Najwyraźniej to skarbonka przyszłości.`,
+    amount => `Zainstalowałeś komuś aktualizację systemu i zarobiłeś **${formatMoney(amount)}**. Komputer teraz działa wolniej ale kto by liczył.`,
+    amount => `Zrobiłeś restart routera i zarobiłeś **${formatMoney(amount)}**. Internetowy cudotwórca.`,
+    amount => `Ktoś zapłacił ci **${formatMoney(amount)}** żebyś naprawił drukarkę. Po 30 minutach kupił nową.`,
     amount => `Napisałeś na StackOverflow "nvm fixed it" i ktoś wysłał ci **${formatMoney(amount)}** z wdzięczności.`,
     amount => `Zainstalowałeś komuś Linuxa i zarobiłeś **${formatMoney(amount)}**. 5 minut później poprosił żeby wrócić do Windowsa.`,
     amount => `Stworzyłeś bota na Discorda który robi absolutnie nic i zarobiłeś **${formatMoney(amount)}**.`,
+
+    amount => `Naprawiłeś produkcję komentując jedną linijkę kodu i zarobiłeś **${formatMoney(amount)}**.`,
+    amount => `Powiedziałeś "spróbuj wyłączyć i włączyć" i zarobiłeś **${formatMoney(amount)}**.`,
+    amount => `Zdebugowałeś problem który okazał się literówką. Premia **${formatMoney(amount)}**.`,
 
     amount => `Czy się stoi, czy się leży, **${formatMoney(amount)}** się należy!`,
     amount => `Przespałeś cały dzień za biurkiem ale szef i tak cię pochwalił i zarobiłeś **${formatMoney(amount)}**. Chyba nie możesz narzekać.`,
@@ -73,8 +84,10 @@ export const workCmd: Command = {
             }
 
             const amount = getRandomInt(WorkAmountMin, WorkAmountMax);
-            
-            await api.executor.economy.addWalletMoney(amount);
+            const multiplier = api.economy.getMultiplier('work');
+            const total = amount * multiplier;
+
+            await api.executor.economy.addWalletMoney(total);
             await api.executor.cooldowns.set('work', Date.now());
 
             const genMessage = WorkMessages[getRandomInt(0, WorkMessages.length-1)];
@@ -82,7 +95,6 @@ export const workCmd: Command = {
                 .setColor(PredefinedColors.Blue)
                 .setTitle('Ciężka praca popłaca!')
                 .setDescription(genMessage(amount));
-                
 
             return api.reply({ embeds: [embed] });
         } catch (err) {

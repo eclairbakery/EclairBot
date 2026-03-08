@@ -48,9 +48,12 @@ export const crimeCmd: Command = {
             const amount = getRandomInt(CrimeAmountMin, CrimeAmountMax);
             const win = Math.random() < Percentage;
 
-            if (win) await api.executor.economy.addWalletMoney(amount);
-            else await api.executor.economy.deductWalletMoney(amount);
-            
+            const multiplier = api.economy.getMultiplier('crime');
+            const total = win ? (amount * multiplier) : amount;
+
+            if (win) await api.executor.economy.addWalletMoney(total);
+            else await api.executor.economy.deductWalletMoney(total);
+
             await api.executor.cooldowns.set('crime', Date.now());
 
             const embed = new ReplyEmbed()

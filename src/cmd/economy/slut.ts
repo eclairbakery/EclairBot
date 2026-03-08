@@ -40,9 +40,12 @@ export const slutCmd: Command = {
 
             const amount = getRandomInt(SlutAmountMin, SlutAmountMax);
             const win = Math.random() < Percentage;
+            
+            const multiplier = api.economy.getMultiplier('slut');
+            const total = win ? (amount * multiplier) : amount;
 
-            if (win) await api.executor.economy.addWalletMoney(amount);
-            else await api.executor.economy.deductWalletMoney(amount);
+            if (win) await api.executor.economy.addWalletMoney(total);
+            else await api.executor.economy.deductWalletMoney(total);
             
             await api.executor.cooldowns.set('slut', Date.now());
 
