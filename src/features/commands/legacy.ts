@@ -59,7 +59,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     const argsRaw = content
       .slice(prefix.length)
       .trim()
-      .split(/\s+/);
+      .split(' ');
     
     const cmdName = (argsRaw.shift() ?? "").toLowerCase(); 
 

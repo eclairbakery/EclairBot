@@ -88,7 +88,7 @@ export const compileCmd: Command = {
                 }
             }) as {type: string, data: string}[];
 
-        let output = 'Masz tu wynik\n\n';
+        let output = 'Masz tu wynik, paniczu, ciesz się pan:\n\n';
 
         for (const message of messages) {
             if (message.type == "Control")
@@ -108,7 +108,7 @@ export const compileCmd: Command = {
                     output += ":wilted_rose: error: ";
                     break;
                 case "exitcode":
-                    output += ":fire: exited with code: ";
+                    output += ":black_large_square: exited with code: ";
                     break;
                 case "compilermessages":
                 case "compilermessagee":
@@ -117,12 +117,12 @@ export const compileCmd: Command = {
                     break;
             }
 
-            output += `\`${message.data.replaceAll('\n', ' ').trim()}\`\n`;
+            output += `\`${message.data.replaceAll('\n', ' ').replaceAll('\`', '').trim()}\`\n`;
         }
 
         return await msg.edit({
             embeds: [
-                api.log.getSuccessEmbed('Masz', output)
+                api.log.getSuccessEmbed('Proszę bardzo', output)
             ]
         });
     },
