@@ -5,11 +5,58 @@ import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { cfg } from '@/bot/cfg.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { formatMoney } from '@/util/math/format.js';
 
 const CrimeAmountMin = cfg.commands.economy.crime.minimumCrimeAmount;
 const CrimeAmountMax = cfg.commands.economy.crime.maximumCrimeAmount;
 const Percentage = cfg.commands.economy.crime.successRatio;
 const Cooldown = cfg.commands.economy.crime.cooldown;
+
+type MessageCallback = (amount: number) => string;
+const CrimeSuccessMessages: MessageCallback[] = [
+    amount => `Włamałeś się do automatu z napojami i znalazłeś w nim **${formatMoney(amount)}**.`,
+    amount => `Ukradłeś komuś portfel w autobusie i znalazłeś w nim **${formatMoney(amount)}**.`,
+    amount => `Podmieniłeś skarbonkę w sklepie i zgarnąłeś **${formatMoney(amount)}**.`,
+    amount => `Okazało się że czyjś samochód był otwarty. W schowku znalazłeś **${formatMoney(amount)}**.`,
+    amount => `Zrobiłeś fake giveaway na Discordzie i ktoś naprawdę wysłał ci **${formatMoney(amount)}**.`,
+    amount => `Sprzedałeś pirackie kopie gier i zarobiłeś **${formatMoney(amount)}** zanim ktoś się zorientował.`,
+    amount => `Zhakowałeś czyjeś WiFi i sprzedałeś hasło sąsiadom za **${formatMoney(amount)}**.`,
+    amount => `Znalazłeś niezabezpieczoną kasę w sklepie i zgarnąłeś **${formatMoney(amount)}**.`,
+    amount => `Ukryłeś cryptominera w czyimś komputerze i zarobiłeś **${formatMoney(amount)}**.`,
+    amount => `Zrobiłeś phishing na Discordzie i ktoś się nabrał. Zysk **${formatMoney(amount)}**.`,
+    amount => `Ukradłeś rower spod sklepu i sprzedałeś go za **${formatMoney(amount)}**.`,
+    amount => `Sprzedałeś fałszywe bilety na koncert i zarobiłeś **${formatMoney(amount)}**.`,
+    amount => `Podmieniłeś słoik z napiwkami w kawiarni i zgarnąłeś **${formatMoney(amount)}**.`,
+    amount => `Znalazłeś niezablokowany komputer w bibliotece i przelałeś sobie **${formatMoney(amount)}**.`,
+    amount => `Sprzedałeś "gamingowy" kabel który znalazłeś na ulicy za **${formatMoney(amount)}**.`,
+    amount => `Ukradłeś hulajnogę elektryczną i sprzedałeś ją za **${formatMoney(amount)}**.`,
+    amount => `Podszyłeś się pod support i ktoś wysłał ci **${formatMoney(amount)}**.`,
+    amount => `Znalazłeś czyjąś zgubioną kartę podarunkową wartą **${formatMoney(amount)}**.`,
+    amount => `Okazało się że ktoś zostawił portfel na ladzie. W środku było **${formatMoney(amount)}**.`,
+    amount => `Sprzedałeś losowy kabel jako "adapter do wszystkiego" za **${formatMoney(amount)}**.`,
+];
+const CrimeFailMessages: MessageCallback[] = [
+    amount => `Próbowałeś ukraść portfel, ale właściciel to zauważył i musiałeś oddać **${formatMoney(amount)}**.`,
+    amount => `Chciałeś włamać się do automatu z napojami, ale przyjechała policja. Mandat **${formatMoney(amount)}**.`,
+    amount => `Próbowałeś zrobić scam na Discordzie, ale ktoś zgłosił cię adminowi i straciłeś **${formatMoney(amount)}**.`,
+    amount => `Ukradłeś rower, ale po 5 minutach okazało się że należy do policjanta. Strata **${formatMoney(amount)}**.`,
+    amount => `Chciałeś sprzedać pirackie gry, ale klient okazał się policjantem. Kara **${formatMoney(amount)}**.`,
+    amount => `Zhakowałeś WiFi sąsiada, ale zmienił hasło i musiałeś zapłacić **${formatMoney(amount)}** za szkody.`,
+    amount => `Próbowałeś ukraść hulajnogę, ale bateria była rozładowana i złapali cię. Mandat **${formatMoney(amount)}**.`,
+    amount => `Chciałeś zrobić phishing, ale wysłałeś linka do admina serwera. Straciłeś **${formatMoney(amount)}**.`,
+    amount => `Próbowałeś okraść sklep, ale kamera wszystko nagrała. Kara **${formatMoney(amount)}**.`,
+    amount => `Znalazłeś portfel, ale właściciel wrócił szybciej niż myślałeś i oddałeś **${formatMoney(amount)}**.`,
+    amount => `Próbowałeś sprzedać fałszywe bilety, ale kupujący chciał zwrot **${formatMoney(amount)}**.`,
+    amount => `Ukryłeś cryptominera w komputerze znajomego, ale jego antywirus znalazł go po 2 minutach. Strata **${formatMoney(amount)}**.`,
+    amount => `Próbowałeś ukraść napiwki z kawiarni, ale barista cię złapał. Musiałeś oddać **${formatMoney(amount)}**.`,
+    amount => `Chciałeś sprzedać kradziony rower, ale kupujący był jego właścicielem. Strata **${formatMoney(amount)}**.`,
+    amount => `Podszyłeś się pod support, ale ktoś sprawdził profil i straciłeś **${formatMoney(amount)}**.`,
+    amount => `Próbowałeś ukraść coś ze sklepu, ale alarm się włączył. Mandat **${formatMoney(amount)}**.`,
+    amount => `Chciałeś oscamować kogoś na OLX, ale to on oscamował ciebie. Strata **${formatMoney(amount)}**.`,
+    amount => `Próbowałeś włamać się do auta, ale właściciel siedział w środku. Oddałeś **${formatMoney(amount)}**.`,
+    amount => `Chciałeś sprzedać fałszywy kabel jako "gamingowy", ale kupujący był informatykiem. Straciłeś **${formatMoney(amount)}**.`,
+    amount => `Próbowałeś zrobić napad, ale potknąłeś się uciekając. Kara **${formatMoney(amount)}**.`,
+];
 
 export const crimeCmd: Command = {
     name: 'crime',
@@ -56,13 +103,20 @@ export const crimeCmd: Command = {
 
             await api.executor.cooldowns.set('crime', Date.now());
 
-            const embed = new ReplyEmbed()
-                .setColor(win ? PredefinedColors.Blue : PredefinedColors.Red)
-                .setTitle(win ? cfg.customization.economyTexts.workSlutOrCrime.crime.winHeader : cfg.customization.economyTexts.workSlutOrCrime.crime.loseHeader)
-                .setDescription((win
-                    ? cfg.customization.economyTexts.workSlutOrCrime.crime.winText
-                    : cfg.customization.economyTexts.workSlutOrCrime.crime.loseText
-                ).replaceAll('<amount>', String(total)));
+            let embed: ReplyEmbed;
+            if (win) {
+                const genMessage = CrimeSuccessMessages[getRandomInt(0, CrimeSuccessMessages.length-1)];
+                embed = new ReplyEmbed()
+                    .setColor(PredefinedColors.Blue)
+                    .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.winHeader)
+                    .setDescription(genMessage(total));
+            } else {
+                const genMessage = CrimeFailMessages[getRandomInt(0, CrimeFailMessages.length-1)];
+                embed = new ReplyEmbed()
+                    .setColor(PredefinedColors.Red)
+                    .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.loseHeader)
+                    .setDescription(genMessage(total));
+            }
 
             return api.reply({ embeds: [embed] });
 
