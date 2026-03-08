@@ -150,7 +150,7 @@ export function init() {
     actionsManager.addAction({
         callbacks: [legacyCommandsMessageHandler],
         constraints: [
-            (msg) => [cfg.general.prefix, ...cfg.general.alternativePrefixes].some((val) => msg.toLowerCase().startsWith(val.toLowerCase()))
+            (msg) => [cfg.general.prefix, ...cfg.general.alternativePrefixes].some((val) => msg.content.toLowerCase().startsWith(val.toLowerCase()))
         ],
         activationEventType: PredefinedActionEventTypes.OnMessageCreate
     });
