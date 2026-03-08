@@ -75,7 +75,7 @@ export const configurationCommand: Command = {
 
         let evaluatedValue: any;
         try {
-            evaluatedValue = (0, eval)(sanitizedValue);
+            evaluatedValue = (0, eval)('(' + sanitizedValue + ')');
         } catch (e) {
             return api.reply(`❌ nie udało się sparsować wartości: ${e}`);
         }
