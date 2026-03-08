@@ -1,5 +1,6 @@
 import { cfg } from "@/bot/cfg.js";
 import { db } from '@/bot/apis/db/bot-db.js';
+import User from "@/bot/apis/db/user.js";
 import { Command, CommandFlags } from "@/bot/command.js";
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
@@ -31,7 +32,7 @@ export const moneyCmd: Command = {
         {
             name: 'amount',
             description: 'Tu powiedz na jakiej ilości hajsu chcesz to zrobić',
-            type: 'string',
+            type: 'number',
             optional: false
         },
         {
@@ -48,9 +49,9 @@ export const moneyCmd: Command = {
 
     async execute(api) {
         const rawAction = api.getTypedArg('action', 'string')?.value!;
-        const rawAmount = api.getTypedArg('amount', 'string')?.value!;
+        const amount = api.getTypedArg('amount', 'number')?.value!;
         const rawLocation = (api.getTypedArg('location', 'string')?.value) || 'wallet';
-        const targetUser = api.getTypedArg('who', 'user-mention-or-reference-msg-author')?.value!;
+        const targetMember = api.getTypedArg('who', 'user-mention-or-reference-msg-author')?.value!;
 
         const action = rawAction?.toLowerCase();
         const location = rawLocation?.toLowerCase();
@@ -63,44 +64,37 @@ export const moneyCmd: Command = {
             return api.log.replyError(api, 'Nieprawidłowa lokalizacja', 'Możesz użyć `wallet` lub `bank`.');
         }
 
-        const parsed = Number(rawAmount);
-        if (!Number.isFinite(parsed) || isNaN(parsed)) {
-            return api.log.replyError(api, 'Nieprawidłowa kwota', 'Podaj poprawną liczbę.');
-        }
-
-        const amount = Math.floor(parsed);
         if (amount < 0) return api.log.replyError(api, 'Nieprawidłowa kwota', 'Nie może być ona ujemna.');
 
-        const targetId = targetUser.id;
+        const targetId = targetMember.id;
+        const targetUser = new User(targetId);
 
         try {
-            await db.runSql('BEGIN TRANSACTION');
+            let currentMoney: number, currentBank: number, newMoney: number, newBank: number;
 
-            const user = api.executor;
+            await db.transaction(async () => {
+                const bal = await targetUser.economy.getBalance();
+                currentMoney = bal.wallet;
+                currentBank = bal.bank;
 
-            const row = await user.economy.getBalance();
-            const currentMoney = row && typeof row.wallet === 'number' ? Number(row.wallet) : 0;
-            const currentBank = row && typeof row.bank === 'number' ? Number(row.bank) : 0;
+                newMoney = currentMoney;
+                newBank = currentBank;
 
-            let newMoney = currentMoney;
-            let newBank = currentBank;
+                if (location === 'wallet') {
+                    if (action === 'add') newMoney = currentMoney + amount;
+                    if (action === 'set') newMoney = amount;
+                    if (action === 'remove') newMoney = Math.max(0, currentMoney - amount);
+                } else {
+                    if (action === 'add') newBank = currentBank + amount;
+                    if (action === 'set') newBank = amount;
+                    if (action === 'remove') newBank = Math.max(0, currentBank - amount);
+                }
 
-            if (location === 'wallet') {
-                if (action === 'add') newMoney = currentMoney + amount;
-                if (action === 'set') newMoney = amount;
-                if (action === 'remove') newMoney = Math.max(0, currentMoney - amount);
-            } else {
-                if (action === 'add') newBank = currentBank + amount;
-                if (action === 'set') newBank = amount;
-                if (action === 'remove') newBank = Math.max(0, currentBank - amount);
-            }
-
-            await user.economy.setBalance({
-                bank: newBank,
-                wallet: newMoney
+                await targetUser.economy.setBalance({
+                    bank: newBank,
+                    wallet: newMoney
+                });
             });
-
-            await db.runSql('COMMIT');
 
             return api.reply({
                 embeds: [
@@ -111,14 +105,13 @@ export const moneyCmd: Command = {
                             `Użytkownik: <@${targetId}>`,
                             `Typ: ${location == 'wallet' ? 'Portfel' : 'Bank'}`,
                             `Akcja: ${action}`,
-                            `Przed: ${formatMoney(location == 'wallet' ? currentMoney : currentBank)}`,
-                            `Po: ${formatMoney(location == 'wallet' ? newMoney : newBank)}`,
+                            `Przed: ${formatMoney(location == 'wallet' ? currentMoney! : currentBank!)}`,
+                            `Po: ${formatMoney(location == 'wallet' ? newMoney! : newBank!)}`,
                         ].join('\n')),
                 ]
             });
         } catch (err) {
             output.err(err);
-            try { await db.runSql('ROLLBACK'); } catch {}
             return api.log.replyError(api, 'Błąd bazy danych', 'Operacja nie mogła zostać zakończona.');
         }
     },
