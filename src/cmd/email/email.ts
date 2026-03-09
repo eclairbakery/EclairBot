@@ -45,7 +45,7 @@ export const sendEmailCmd: Command = {
         },
         {
             name: 'content',
-            description: 'Zawartość emaila, możesz zrobić subject:content jak chcesz zmienić temat maila.',
+            description: 'Zawartość emaila, możesz zrobić <twój temat>:<twoja treść maila> jak chcesz zmienić temat maila.',
             type: 'trailing-string',
             optional: false,
         }
