@@ -5,6 +5,7 @@ import { Action } from '@/features/actions/index.js';
 import { sendLog } from '@/bot/apis/log/send-log.js';
 import { db } from '@/bot/apis/db/bot-db.js';
 import { AddressObject } from 'mailparser';
+import { PredefinedColors } from '@/util/color.js';
 
 export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
     activationEventType: ReceivedNewEmailEvent,
@@ -27,7 +28,38 @@ export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
 
             if (domain) {
                 db.runSql("INSERT OR IGNORE INTO email_security VALUES (NULL, ?);", [domain]);
-            } 
+            }
+
+            if (
+                ctx.email.subject?.trim().toLowerCase() == 'delivery status notification (failure)'
+            ) {
+                const recipient = ctx.email.text?.match(/Final-Recipient:.*?;\s*(.+)/i)?.[1];
+
+                let sentence = 'Ten... no nie powinno sie to stać.';
+
+                const status = ctx.email.text?.match(/Status:\s*(.+)/i)?.[1]?.toLowerCase().trim();
+
+                if (status?.startsWith('5.1.1')) {
+                    sentence = 'Jakby coś, to po prostu ten mail nie istnieje.';
+                } else if (status?.startsWith('5.2.1')) {
+                    sentence = 'Teraz tu chodzi o to, że chyba ktoś wysłał do Epsteina maila, czy coś, bo skrzynka jest zablokowana u tej osoby chyba.';
+                } else if (status?.startsWith('5.2.2')) {
+                    sentence = 'Odbiorca maila nie zapłacił za abonament czy coś i skrzynkę ma pełną.';
+                } else if (status?.startsWith('5.4.1')) {
+                    sentence = 'Po prostu dzbaniany dostawca poczty, który nie ma nawet domeny lub nie istnieje.';
+                } else if (status?.startsWith('4.')) {
+                    sentence = 'Generalnie u osoby, która ma tą domenę, to coś się odpierdala, bo ma problem jakiś.';
+                } else {
+                    sentence = 'No nie wiem co to znaczy. W necie se wyszukaj.';
+                } 
+
+                return sendLog({
+                    where: cfg.channels.eclairbot.email,
+                    title: '😭 E-mail nie doszedł',
+                    color: PredefinedColors.Red,
+                    description: `Ktoś próbował wysłać maila do ${recipient}, ale nie doszedł, ponieważ jakiś dzbaniany dostawca poczty zgłosił błąd \`${status}\`. ${sentence}`
+                });
+            }
 
             sendLog({
                 where: cfg.channels.eclairbot.email,
