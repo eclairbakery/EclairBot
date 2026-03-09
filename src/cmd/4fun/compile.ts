@@ -47,7 +47,11 @@ export const compileCmd: Command = {
         
             if (lang === 'auto') {
                 if (!first.trim())
-                    return api.log.replyError(api, 'Błąd!', 'Codeblock musi zawierać język gdy używasz auto.');
+                    return msg.edit({
+                        embeds: [
+                            api.log.getErrorEmbed('Błąd!', 'Codeblock musi zawierać język gdy używasz auto.')
+                        ]
+                    });
                 lang = first.trim();
             }
         
@@ -56,7 +60,11 @@ export const compileCmd: Command = {
             else
                 code = inner.trim();
         } else if (lang === 'auto') {
-            return api.log.replyError(api, 'Błąd!', 'Nie możesz używać auto jako lang, kiedy nie dajesz codeblocka.');
+            return msg.edit({
+                embeds: [
+                    api.log.getErrorEmbed('Błąd!', 'Nie możesz używać auto jako lang, kiedy nie dajesz codeblocka.')
+                ]
+            });
         }
 
         const compiler = cfg.features.compilation.replaceCompilerMap[lang] ?? lang;
