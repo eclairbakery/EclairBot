@@ -96,7 +96,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         (commandObj.flags & CommandFlags.Unsafe) ||
         (commandObj.flags & CommandFlags.Deprecated)
     ) {
-        const row = new dsc.ActionRowBuilder()
+        const row = new dsc.ActionRowBuilder<dsc.ButtonBuilder>()
         .addComponents(
             new dsc.ButtonBuilder()
             .setCustomId('confirm')
@@ -113,7 +113,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
                         ? 'potencjalnie niebezpieczna i przestarzała'
                         : (commandObj.flags & CommandFlags.Deprecated) ? 'przestarzała' : 'potencjalnie niebezpieczna'
                 }.`)
-        ], components: [row.toJSON()] });
+        ], components: [row] });
 
         try {
             await waitForButton(msg, 'confirm', 20000);
