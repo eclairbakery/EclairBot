@@ -65,7 +65,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 
     const commandObj = findCommand(cmdName, commands)?.command;
     if (!commandObj) {
-        return await msg.react('❌'); 
+        return log.replyError(msg, cfg.customization.commandsErrors.legacy.commandNotFoundHeader, cfg.customization.commandsErrors.legacy.commandNotFoundText.replace('<cmd>', cmdName.replaceAll('`', '')));
     }
 
     if (!canExecuteCmd(commandObj, msg.member!)) {
@@ -96,7 +96,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         (commandObj.flags & CommandFlags.Unsafe) ||
         (commandObj.flags & CommandFlags.Deprecated)
     ) {
-        const row = new dsc.ActionRowBuilder<dsc.ButtonBuilder>()
+        const row = new dsc.ActionRowBuilder()
         .addComponents(
             new dsc.ButtonBuilder()
             .setCustomId('confirm')
@@ -113,7 +113,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
                         ? 'potencjalnie niebezpieczna i przestarzała'
                         : (commandObj.flags & CommandFlags.Deprecated) ? 'przestarzała' : 'potencjalnie niebezpieczna'
                 }.`)
-        ], components: [row] });
+        ], components: [row.toJSON()] });
 
         try {
             await waitForButton(msg, 'confirm', 20000);
@@ -125,13 +125,27 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         }
     }
 
-    if (!findCmdConfResolvable(commandObj.name).enabled && commandObj.name != 'configuration') {
+    const conf = findCmdConfResolvable(commandObj.name);
+
+    if (!conf.enabled && commandObj.name != 'configuration') {
         log.replyWarn(
             msg,
             cfg.customization.commandsErrors.legacy.commandDisabledHeader,
             cfg.customization.commandsErrors.legacy.commandDisabledDescription
         );
         return;
+    }
+
+    let is_disallowed = false;
+
+    for (const role of (conf.disallowedRoles ?? []))
+        is_disallowed ||= msg.member?.roles.cache.has(role) ?? false;
+
+    if ((conf.disallowedUsers ?? []).includes(msg.author.id)) 
+        is_disallowed = true;
+
+    if (is_disallowed) {
+        return await log.replyWarn(msg, 'Nie dla psa kiełbasa...', 'Niestety ktoś mądry pomyślał, by specjalnie dla ciebie wyłączyć tę komendę.');
     }
 
     try {
