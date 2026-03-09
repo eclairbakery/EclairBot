@@ -57,7 +57,7 @@ export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
                     where: cfg.channels.eclairbot.email,
                     title: '😭 E-mail nie doszedł',
                     color: PredefinedColors.Red,
-                    description: `Ktoś próbował wysłać maila do ${recipient}, ale nie doszedł, ponieważ jakiś dzbaniany dostawca poczty zgłosił błąd \`${status}\`. ${sentence}`
+                    description: `Ktoś próbował wysłać maila do \`${recipient}\`, ale nie doszedł, ponieważ jakiś dzbaniany dostawca poczty zgłosił błąd \`${status}\`. ${sentence}`
                 });
             }
 
