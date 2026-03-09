@@ -65,7 +65,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 
     const commandObj = findCommand(cmdName, commands)?.command;
     if (!commandObj) {
-        return log.replyError(msg, cfg.customization.commandsErrors.legacy.commandNotFoundHeader, cfg.customization.commandsErrors.legacy.commandNotFoundText.replace('<cmd>', cmdName.replaceAll('`', '')));
+        return await msg.react('❌'); 
     }
 
     if (!canExecuteCmd(commandObj, msg.member!)) {

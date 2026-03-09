@@ -34,8 +34,30 @@ export const compileCmd: Command = {
             "Proszę uzbroić się w cierpliwość bo kompilacja jest zasobożerna."
         );
 
-        const code = api.getTypedArg('code', 'trailing-string').value!;
-        const lang = api.getTypedArg('compiler', 'string').value!;
+        let code = api.getTypedArg('code', 'trailing-string').value!;
+        let lang = api.getTypedArg('compiler', 'string').value!;
+        
+        const trimmed = code.trim();
+        const is_codeblock = trimmed.startsWith('```') && trimmed.endsWith('```');
+        
+        if (is_codeblock) {
+            let inner = trimmed.slice(3, -3);
+            const lines = inner.split('\n');
+            const first = lines.shift() ?? '';
+        
+            if (lang === 'auto') {
+                if (!first.trim())
+                    return api.log.replyError(api, 'Błąd!', 'Codeblock musi zawierać język gdy używasz auto.');
+                lang = first.trim();
+            }
+        
+            if (first.trim() && lang !== 'auto')
+                code = lines.join('\n').trim();
+            else
+                code = inner.trim();
+        } else if (lang === 'auto') {
+            return api.log.replyError(api, 'Błąd!', 'Nie możesz używać auto jako lang, kiedy nie dajesz codeblocka.');
+        }
 
         const compiler = cfg.features.compilation.replaceCompilerMap[lang] ?? lang;
 
@@ -65,8 +87,8 @@ export const compileCmd: Command = {
             return await msg.edit({
                 embeds: [
                     api.log.getWarnEmbed(
-                        'Nie ma takiego compilera...',
-                        'Sorki. Naprawimy potem czy cuś. Powiadom o tym administracje serwera.'
+                        'Kompiler zły dałeś...',
+                        'Sorki. Naprawimy potem czy cuś. Powiadom o tym administracje serwera.\n**Jeżeli używasz multi-line kodu, upewnij się, że pierwsza jego linia lub start codeblock\'u jest w tej samej linijce co język**, bo inaczej coś się sypie.'
                     )
                 ]
             });
@@ -118,6 +140,14 @@ export const compileCmd: Command = {
             }
 
             output += `\`${message.data.replaceAll('\n', ' ').replaceAll('\`', '').trim()}\`\n`;
+        };
+
+        if (output.length > 1500) {
+            return await msg.edit({
+                embeds: [
+                    api.log.getWarnEmbed('Za długie', 'Result twojego programu jest za długi. Spróbuj podzielić swój kod.')
+                ]
+            });
         }
 
         return await msg.edit({
