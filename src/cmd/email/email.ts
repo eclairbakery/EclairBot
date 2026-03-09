@@ -91,6 +91,9 @@ export const sendEmailCmd: Command = {
                 .setLabel('Cofnij wysyłanie')
                 .setStyle(ButtonStyle.Danger)
         );
+
+        
+        await api.executor.cooldowns.set('email', Date.now());
         
         let msg = await api.reply({
             embeds: [
@@ -123,8 +126,6 @@ export const sendEmailCmd: Command = {
         
         if (cancelled) return;
 
-        const now = Date.now();
-
         msg.edit( { embeds: [api.log.getTipEmbed('Wysyłanie... ', 'Poczekaj, to chwile potrwa!')], components: [] } );
 
         try {
@@ -149,8 +150,6 @@ export const sendEmailCmd: Command = {
                 subject: subject,
                 content: content,
             });
-
-            await api.executor.cooldowns.set('email', now);
 
             msg.edit({
                 embeds: [api.log.getSuccessEmbed('Udało się!', `Wysłalem emaila do ${receiver}!`)],
