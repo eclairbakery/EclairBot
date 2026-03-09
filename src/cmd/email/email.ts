@@ -92,7 +92,7 @@ export const sendEmailCmd: Command = {
                 .setStyle(ButtonStyle.Danger)
         );
 
-        
+        const prev_cooldown = (await api.executor.cooldowns.get()).lastEmailSent;
         await api.executor.cooldowns.set('email', Date.now());
         
         let msg = await api.reply({
@@ -118,6 +118,7 @@ export const sendEmailCmd: Command = {
                     embeds: [api.log.getSuccessEmbed("Anulowano", "Wysyłanie maila zostało anulowane.")],
                     components: []
                 });
+                await api.executor.cooldowns.set('email', prev_cooldown ?? 1); 
                 collector.stop();
             }
         });
