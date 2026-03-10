@@ -312,6 +312,8 @@ export const defaultCfg: Config = {
             '.'
         ],
         commandHandling: {
+            confirmUnsafeCommands: false,
+            confirmDeprecatedCommands: false,
             arguments: {
                 number: {
                     allowInfinity: false,

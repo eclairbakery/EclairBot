@@ -2,12 +2,12 @@ import {output as debug} from '@/bot/logging.js';
 
 import { Interaction } from 'discord.js';
 import * as dsc from 'discord.js';
+import * as log from '@/util/log.js';
 
 import { cfg } from '@/bot/cfg.js';
 import { CommandFlags } from '@/bot/command.js';
 import { client } from '../../client.js';
 import { commands } from '../../cmd/list.js';
-import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import { handleError } from './helpers/errorHandler.js';
 import { makeCommandApi } from './helpers/makeCommandApi.js';
 import { makeSlashCommandDesc, makeSlashCommandOptionDesc } from './helpers/makeSlashCommandDescs.js';
@@ -15,36 +15,139 @@ import { makeSlashCommandDesc, makeSlashCommandOptionDesc } from './helpers/make
 import findCommand from '@/util/cmd/findCommand.js';
 import canExecuteCmd from '@/util/cmd/canExecuteCmd.js';
 import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { PredefinedColors } from '@/util/color.js';
+
+function waitForButton(int: dsc.ChatInputCommandInteraction, buttonId: string, time = 15000) {
+    return new Promise((resolve, reject) => {
+        const collector = int.channel!.createMessageComponentCollector({
+            filter: function (i) {return i.customId === buttonId && i.user.id === int.user.id},
+            time
+        });
+
+        collector.on('collect', async i => {
+            await i.deferUpdate(); 
+            collector.stop('clicked');
+            resolve(i); 
+        });
+
+        collector.on('end', (_, reason) => {
+            if (reason !== 'clicked') {
+                reject(new Error('Button not clicked in time'));
+            }
+        });
+    });
+}
 
 client.on('interactionCreate', async (int: Interaction) => {
     if (!int.isChatInputCommand()) return;
 
-    const cmdObj = findCommand(int.commandName, commands)?.command;
-    if (!cmdObj) return int.reply({ content: cfg.customization.commandsErrors.slash.commandNotFound });
-
-    if (!int.guild && !(cmdObj.flags & CommandFlags.WorksInDM)) {
-        int.reply(cfg.customization.commandsErrors.slash.notAllowedInDm);
-        return;
+    const result = findCommand(int.commandName, commands);
+    if (!result) {
+        return int.reply({ content: cfg.customization.commandsErrors.slash.commandNotFound, ephemeral: true });
     }
 
-    if (!canExecuteCmd(cmdObj, int.member! as any)) {
-        int.reply(cfg.customization.commandsErrors.slash.missingPermissions);
-        return;
-    } 
+    const { command, config } = result;
 
-    if (!findCmdConfResolvable(cmdObj.name).enabled) {
-        int.reply(cfg.customization.commandsErrors.slash.commandIsDisabled);
-        return;
+    const replyable: log.Replyable = {
+        reply: async (options: any) => {
+            if (int.replied || int.deferred) {
+                return await int.editReply(options);
+            }
+            await int.reply(options);
+            return await int.fetchReply();
+        }
+    };
+
+    if (!canExecuteCmd(command, int.member! as any)) {
+        return log.replyError(
+            replyable,
+            cfg.customization.commandsErrors.legacy.missingPermissionsHeader,
+            cfg.customization.commandsErrors.legacy.missingPermissionsText
+        );
     }
 
-    const isBlocked = isCommandBlockedOnChannel(cmdObj, int.channelId, int.guild ? false : true);
-    await int.deferReply({
-        flags: isBlocked ? ['Ephemeral'] : []
-    });
+    const isBlocked = isCommandBlockedOnChannel(command, int.channelId, !int.guild);
+    if (isBlocked) {
+        return int.reply({ content: '❌', ephemeral: true });
+    }
+
+    if (!int.guild && !(command.flags & CommandFlags.WorksInDM)) {
+        return log.replyError(
+            replyable, 'Ta komenda nie jest przeznaczona do tego trybu gadania!',
+            `Taka komenda jak **${command.name}** może być wykonana tylko na serwerach no sorki no!`,
+        );
+    }
+
+    if (
+        (cfg.general.commandHandling.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
+        (cfg.general.commandHandling.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
+    ) { 
+        const row = new dsc.ActionRowBuilder<dsc.ButtonBuilder>()
+            .addComponents(
+                new dsc.ButtonBuilder()
+                .setCustomId('confirm')
+                .setLabel('Tak, uruchom')
+                .setStyle(dsc.ButtonStyle.Danger)
+            );
+
+        await int.reply({ embeds: [
+            new ReplyEmbed()
+                .setColor(PredefinedColors.Red)
+                .setTitle('Czy na pewno chcesz uruchomić tą komendę?')
+                .setDescription(`Została ona oznaczona jako ${
+                    ((command.flags & CommandFlags.Unsafe) && (command.flags & CommandFlags.Deprecated))
+                        ? 'potencjalnie niebezpieczna i przestarzała'
+                        : (command.flags & CommandFlags.Deprecated) ? 'przestarzała' : 'potencjalnie niebezpieczna'
+                }.`)
+        ], components: [row] });
+
+        try {
+            await waitForButton(int, 'confirm', 20000);
+            await int.editReply({ components: [], embeds: [], content: '⏳' }); 
+        } catch {
+            return;
+        }
+    }
+
+    if (!config.enabled && command.name != 'configuration') {
+        return log.replyWarn(
+            replyable,
+            cfg.customization.commandsErrors.legacy.commandDisabledHeader,
+            cfg.customization.commandsErrors.legacy.commandDisabledDescription
+        );
+    }
+
+    let isDisallowed = false;
+
+    if (config.disallowedRoles && int.member) {
+        const member = int.member as dsc.GuildMember;
+        for (const role of config.disallowedRoles) {
+            if (isDisallowed) break;
+            isDisallowed ||= member.roles.cache.has(role);
+        }
+    }
+    if (config.disallowedUsers && config.disallowedUsers.includes(int.user.id)) {
+        isDisallowed = true;
+    }
+
+    if (isDisallowed) {
+        return await log.replyWarn(replyable, 'Nie dla psa kiełbasa...', 'Niestety ktoś mądry pomyślał, by specjalnie dla ciebie wyłączyć tę komendę.');
+    }
+
+    if (!int.deferred && !int.replied) {
+        await int.deferReply();
+    }
 
     try {
-        const argsRaw = cmdObj.expectedArgs.map(arg => int.options.getString(arg.name) ?? '');
-        await cmdObj.execute(await makeCommandApi(cmdObj, argsRaw, {interaction: int, cmd: cmdObj, guild: int.guild ?? undefined, invokedviaalias: int.commandName}));
+        const argsRaw = command.expectedArgs.map(arg => int.options.get(arg.name)?.value?.toString() ?? '');
+        const api = await makeCommandApi(command, argsRaw, {
+            interaction: int,
+            cmd: command,
+            guild: int.guild ?? undefined,
+            invokedviaalias: int.commandName
+        });
+        await command.execute(api);
 
     } catch (err) {
         handleError(err, { reply: (options: any) => int.editReply(options as any), });

@@ -63,12 +63,14 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     
     const cmdName = (argsRaw.shift() ?? "").toLowerCase(); 
 
-    const commandObj = findCommand(cmdName, commands)?.command;
-    if (!commandObj) {
+    const result = findCommand(cmdName, commands);
+    if (!result) {
         return log.replyError(msg, cfg.customization.commandsErrors.legacy.commandNotFoundHeader, cfg.customization.commandsErrors.legacy.commandNotFoundText.replace('<cmd>', cmdName.replaceAll('`', '')));
     }
 
-    if (!canExecuteCmd(commandObj, msg.member!)) {
+    const { command, config } = result;
+
+    if (!canExecuteCmd(command, msg.member!)) {
         log.replyError(
             msg,
             cfg.customization.commandsErrors.legacy.missingPermissionsHeader,
@@ -77,13 +79,13 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         return;
     }
 
-    const isBlocked = isCommandBlockedOnChannel(commandObj, msg.channelId, !msg.inGuild());
+    const isBlocked = isCommandBlockedOnChannel(command, msg.channelId, !msg.inGuild());
     if (isBlocked) {
         await msg.react('❌');
         return;
     }
 
-    if (!msg.inGuild() && !(commandObj.flags & CommandFlags.WorksInDM)) {
+    if (!msg.inGuild() && !(command.flags & CommandFlags.WorksInDM)) {
         log.replyError(
             msg,
             cfg.customization.commandsErrors.legacy.doesNotWorkInDmHeader,
@@ -93,8 +95,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     }
 
     if (
-        (commandObj.flags & CommandFlags.Unsafe) ||
-        (commandObj.flags & CommandFlags.Deprecated)
+        (cfg.general.commandHandling.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
+        (cfg.general.commandHandling.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
     ) {
         const row = new dsc.ActionRowBuilder()
         .addComponents(
@@ -109,9 +111,9 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
                 .setColor(PredefinedColors.Red)
                 .setTitle('Czy na pewno chcesz uruchomić tą komendę?')
                 .setDescription(`Została ona oznaczona jako ${
-                    ((commandObj.flags & CommandFlags.Unsafe) && (commandObj.flags & CommandFlags.Deprecated))
+                    ((command.flags & CommandFlags.Unsafe) && (command.flags & CommandFlags.Deprecated))
                         ? 'potencjalnie niebezpieczna i przestarzała'
-                        : (commandObj.flags & CommandFlags.Deprecated) ? 'przestarzała' : 'potencjalnie niebezpieczna'
+                        : (command.flags & CommandFlags.Deprecated) ? 'przestarzała' : 'potencjalnie niebezpieczna'
                 }.`)
         ], components: [row.toJSON()] });
 
@@ -125,9 +127,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         }
     }
 
-    const conf = findCmdConfResolvable(commandObj.name);
-
-    if (!conf.enabled && commandObj.name != 'configuration') {
+    if (!config.enabled && command.name != 'configuration') {
         log.replyWarn(
             msg,
             cfg.customization.commandsErrors.legacy.commandDisabledHeader,
@@ -136,25 +136,30 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         return;
     }
 
-    let is_disallowed = false;
+    let isDisallowed = false;
 
-    for (const role of (conf.disallowedRoles ?? []))
-        is_disallowed ||= msg.member?.roles.cache.has(role) ?? false;
+    if (config.disallowedRoles) {
+        for (const role of config.disallowedRoles) {
+            if (isDisallowed) break;
+            isDisallowed ||= msg.member?.roles.cache.has(role) ?? false;
+        }
+    }
+    if (config.disallowedUsers && config.disallowedUsers.includes(msg.author.id)) {
+        isDisallowed = true;
+    }
 
-    if ((conf.disallowedUsers ?? []).includes(msg.author.id)) 
-        is_disallowed = true;
-
-    if (is_disallowed) {
+    if (isDisallowed) {
         return await log.replyWarn(msg, 'Nie dla psa kiełbasa...', 'Niestety ktoś mądry pomyślał, by specjalnie dla ciebie wyłączyć tę komendę.');
     }
 
     try {
-        await commandObj.execute(await makeCommandApi(commandObj, argsRaw, {
+        const api = await makeCommandApi(command, argsRaw, {
             msg,
             guild: msg.guild ?? undefined,
-            cmd: commandObj,
+            cmd: command,
             invokedviaalias: cmdName
-        }));
+        });
+        await command.execute(api);
     } catch (err) {
         handleError(err, msg);
     }

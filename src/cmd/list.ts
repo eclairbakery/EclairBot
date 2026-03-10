@@ -15,6 +15,7 @@ import { unmuteCmd } from '@/cmd/mod/unmute.js';
 import { clearCmd } from '@/cmd/mod/clear.js';
 import { warnClearCmd } from '@/cmd/mod/warn-clear.js';
 import { toggleCooldownBypassCmd } from './mod/toggle-cooldown-bypass.js';
+import { toggleCmdBlockCmd } from './mod/toggle-cmd-block.js';
 import { resetCmd } from './dev/reset.js';
 
 import { workCmd } from '@/cmd/economy/work.js';
@@ -82,7 +83,7 @@ export const commands: Map<Category, Command[]> = new Map([
             warnCmd, warnClearCmd, warnlistCmd,
             muteCmd, unmuteCmd,
             banCmd, kickCmd,
-            refreshCmd, toggleCooldownBypassCmd
+            refreshCmd, toggleCooldownBypassCmd, toggleCmdBlockCmd
         ]
     ],
     [
