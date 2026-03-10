@@ -74,6 +74,20 @@ export const sendEmailCmd: Command = {
             );
         }
 
+        const ddrow = await db.selectOne(
+            "SELECT 1 FROM email_blacklist WHERE email = ? LIMIT 1",
+            [
+                receiver
+            ]
+        );
+
+        if (ddrow) {
+            return await api.log.replyWarn(
+                api, "Niestety nie...", 
+                "Ten e-mail był często celem ataków czy coś, więc go zablokowaliśmy sorki."
+            );
+        }
+
         const drow = await db.selectOne(
             "SELECT 1 FROM email_security WHERE enabled_domain = ? LIMIT 1",
             [
@@ -82,8 +96,11 @@ export const sendEmailCmd: Command = {
         );
 
         if (!drow) {
-            return await api.log.replyWarn(api, "Niestety nie...", "Tej domeny nie ma na whiteliście. Nie możesz więc do niej wysyłać maili. Wiem, szkoda... ALE UWAGA! Jest jedna opcja. Możesz utworzyć konto pocztowe na tej domenie i wysłać wiadomość do `theeclairbot@gmail.com`, aby permamentnie dodać ją do whitelisty.");
-        }
+            return await api.log.replyWarn(
+                api, "Niestety nie...", 
+                "**Tej domeny nie ma na whiteliście. Nie możesz więc do niej wysyłać maili.** Jeżeli dalej chcesz to robić, **możesz utworzyć konto pocztowe na tej domenie** i wysłać wiadomość do `theeclairbot@gmail.com`, aby **permamentnie dodać ją do whitelisty**."
+            );
+        } 
 
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder()
