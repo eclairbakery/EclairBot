@@ -7,6 +7,38 @@ import { db } from '@/bot/apis/db/bot-db.js';
 import { AddressObject } from 'mailparser';
 import { PredefinedColors } from '@/util/color.js';
 
+async function isSpam(subject: string, text: string, sender: string) {
+    // blacklist check
+    const blacklist_row = await db.selectOne(
+        "SELECT 1 FROM email_blacklist WHERE email = ? LIMIT 1",
+        [
+            sender 
+        ]
+    );
+    if (blacklist_row)
+        return true;
+
+    // content-based checking 
+    if (
+        [
+            // corporate shit
+            'Zweryfikuj', 'zignorować', 'Polityka prywatności', 'Regulamin',
+            'Verify', 'ignore', 'privacy policy', 'guidelines', 'terms of service',
+            'kup teraz', 'buy now', 'limited edition',
+            // casino shit 
+            'crypto', 'krypto', 'nft', 'kasyno', 'casino'
+        ]
+        .map((v) => v.toLowerCase())
+        .some(
+            (v) => (text + subject)
+                .toLowerCase()
+                .includes(v.toLowerCase())
+        )
+    ) return true;
+
+    return false;
+}
+
 export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
     activationEventType: ReceivedNewEmailEvent,
     constraints: [],
@@ -61,23 +93,37 @@ export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
                 });
             }
 
+            let spam = await isSpam(ctx.email.subject ?? '', ctx.email.text ?? '', sender ?? '');
+
             sendLog({
-                where: cfg.channels.eclairbot.email,
-                title: `📧 ${ctx.email.subject ?? 'Nowy e-mail'}`,
+                where: spam 
+                    ? undefined
+                    : cfg.channels.eclairbot.email,
+
+                title: spam
+                    ? `😭 Nowy e-mail w spamie: ${ctx.email.subject}`
+                    : `📧 ${ctx.email.subject ?? 'Nowy e-mail'}`,
                 description: 
                     desc.length > 1000 
                         ? desc.slice(0, 1000)
                         : desc,
+
                 fields: [
                     {
                         name: 'Od',
-                        value: sender ?? '<nieznany nadawca>'
+                        value: sender ?? '<nieznany nadawca>',
+                        inline: true
                     },
                     {
                         name: 'Do',
-                        value: receiver ?? process.env.EB_EMAIL_USER ?? '<nieznany odbiorca>' 
+                        value: receiver ?? process.env.EB_EMAIL_USER ?? '<nieznany odbiorca>',
+                        inline: true
                     }
-                ] 
+                ],
+
+                color: spam 
+                    ? PredefinedColors.Red 
+                    : PredefinedColors.Grey
             });
         }
     ],
