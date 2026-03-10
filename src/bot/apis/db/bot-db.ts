@@ -71,6 +71,11 @@ export class BotDatabase {
                 enabled_domain TEXT NOT NULL
             );
 
+            CREATE TABLE IF NOT EXISTS email_blacklist (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT NOT NULL
+            );
+
             CREATE TABLE IF NOT EXISTS user_purchases (
                 user_id TEXT NOT NULL REFERENCES users(user_id),
                 offer_id TEXT NOT NULL,
