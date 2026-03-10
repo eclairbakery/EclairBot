@@ -18,6 +18,8 @@ export interface Config {
         alternativePrefixes: string[];
 
         commandHandling: {
+            confirmUnsafeCommands: boolean;
+            confirmDeprecatedCommands: boolean;
             arguments: {
                 number: ConfigCommandARgumentRulesForNumbers & {
                     commandOverrides: Record<string, ConfigCommandARgumentRulesForNumbers>

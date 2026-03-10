@@ -24,6 +24,16 @@ export function findCmdConfigObj(command: Command): AnyCommandConfig | undefined
     return cfg.commands[cat]?.[command.name];
 }
 
+export function findCmdConfigObjOrDefault(command: Command): AnyCommandConfig {
+    const cat = findCmdConfCategory(command.name);
+    if (!cat) return cfg.defaultCommandConfig;
+    
+    const config = cfg.commands[cat]?.[command.name];
+    if (config) return { ...cfg.defaultCommandConfig, ...config };
+
+    return cfg.defaultCommandConfig;
+}
+
 export function findCmdConfResolvable(commandName: string): AnyCommandConfig {
     const cat = findCmdConfCategory(commandName);
     if (!cat) return cfg.defaultCommandConfig;
@@ -33,3 +43,4 @@ export function findCmdConfResolvable(commandName: string): AnyCommandConfig {
 
     return cfg.defaultCommandConfig;
 }
+
