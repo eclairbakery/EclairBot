@@ -7,27 +7,9 @@ import { output } from '@/bot/logging.js';
 import { Action, PredefinedActionEventTypes, UserEventCtx } from '@/features/actions/index.js';
 import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.js';
 import { ReplyEmbed } from './apis/translations/reply-embed.js';
+import { levenshtein } from '@/util/math/levenshtein.js';
 
 const recentJoins: { id: string; joinedAt: number; username: string }[] = [];
-
-function levenshtein(a: string, b: string): number {
-    const matrix: number[][] = [];
-    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-    for (let i = 1; i <= b.length; i++) {
-        for (let j = 1; j <= a.length; j++) {
-            matrix[i][j] =
-                b[i - 1] === a[j - 1]
-                    ? matrix[i - 1][j - 1]
-                    : Math.min(
-                          matrix[i - 1][j - 1] + 1,
-                          matrix[i][j - 1] + 1,
-                          matrix[i - 1][j] + 1
-                      );
-        }
-    }
-    return matrix[b.length][a.length];
-}
 
 async function logAlarming(description: string, fatal: boolean, mem: dsc.GuildMember, score: number) {
     const channel = await client.channels.fetch(cfg.channels.mod.eclairBotAlerts);
