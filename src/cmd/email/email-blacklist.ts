@@ -17,7 +17,7 @@ export const emailBlacklistCmd: Command = {
             name: 'email',
             description: "Email który chcesz zblacklistować lub odblokować.",
             optional: false,
-            type: 'string'
+            type: { base: 'string', trailing: false }
         }
     ],
 
