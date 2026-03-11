@@ -18,13 +18,13 @@ export const clearCmd: Command = {
 
     expectedArgs: [
         {
-            type: 'number',
+            type: { base: 'float' },
             optional: false,
             name: 'amount',
             description: 'Liczba wiadomości do usunięcia',
         },
         {
-            type: 'user-mention',
+            type: { base: 'user-mention' },
             optional: true,
             name: 'user',
             description: 'Opcjonalnie, usuń wiadomości tylko tego użytkownika',
@@ -33,7 +33,7 @@ export const clearCmd: Command = {
     permissions: CommandPermissions.fromCommandConfig(cmdCfg),
 
     async execute(api: CommandAPI) {
-        const amount = api.getTypedArg('amount', 'number')?.value as number;
+        const amount = api.getTypedArg('amount', 'float')?.value as number;
         const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember;
 
         if (!amount || amount < 1) {

@@ -23,19 +23,19 @@ export const warnCmd: Command = {
         {
             name: 'user',
             description: 'No ten, tu podaj użytkownika którego chcesz zwarnować',
-            type: 'user-mention-or-reference-msg-author',
+            type: { base: 'user-mention', includeRefMessageAuthor: true },
             optional: false,
         },
         {
             name: 'points',
             description: `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cfg.commands.mod.warn.maxPoints}`,
-            type: 'number',
+            type: { base: 'float' },
             optional: true,
         },
         {
             name: 'duration',
             description: 'Czas po jakim warn wygaśnie',
-            type: 'timestamp',
+            type: { base: 'timestamp' },
             optional: true,
         },
         {
@@ -43,7 +43,7 @@ export const warnCmd: Command = {
             description: cfg.commands.mod.warn.reasonRequired
                 ? 'Po prostu powód warna'
                 : 'Po prostu powód warna. Możesz go pominąć ale nie polecam',
-            type: 'trailing-string',
+            type: { base: 'string', trailing: true },
             optional: !cfg.commands.mod.warn.reasonRequired,
         }
     ],
@@ -51,9 +51,9 @@ export const warnCmd: Command = {
     permissions: CommandPermissions.fromCommandConfig(cfg.commands.mod.warn),
 
     async execute(api) {
-        let targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember | undefined;
-        let points = api.getTypedArg('points', 'number')?.value as number ?? 1;
-        let reason = api.getTypedArg('reason', 'trailing-string')?.value as string ?? '';
+        let targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | undefined;
+        let points = api.getTypedArg('points', 'float')?.value as number ?? 1;
+        let reason = api.getTypedArg('reason', 'string')?.value as string ?? '';
         const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null;
         let expiresAt = (duration != null ? Math.floor(Date.now() / 1000) + duration : null) ?? (Math.floor(Date.now() / 1000) + parseTimestamp('24h')!);
 

@@ -22,13 +22,13 @@ export const kickCmd: Command = {
         {
             name: 'user',
             description: 'W tej chwili dawaj użytkownika do skopniakowania!',
-            type: 'user-mention-or-reference-msg-author',
+            type: { base: 'user-mention', includeRefMessageAuthor: true },
             optional: false,
         },
         {
             name: 'reason',
             description: 'Powód wywalenia użytkownika',
-            type: 'trailing-string',
+            type: { base: 'string', trailing: true },
             optional: !cmdCfg.reasonRequired,
         }
     ],
@@ -38,8 +38,8 @@ export const kickCmd: Command = {
     },
 
     async execute(api) {
-        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
-        let reason = api.getTypedArg('reason', 'trailing-string').value as string || null;
+        const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
+        let reason = api.getTypedArg('reason', 'string').value as string || null;
 
         if (!targetUser) {
             return api.log.replyError(api, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyślę komu ty chcesz dać kopniaka? Użycie: odpowiedzi na wiadomość lub !kick <@user> <powód>');

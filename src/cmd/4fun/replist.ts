@@ -20,13 +20,13 @@ export const replistCmd: Command = {
         {
             name: 'user',
             description: 'Użytkownik którego repów chcesz dostać liste',
-            type: 'user-mention-or-reference-msg-author',
+            type: { base: 'user-mention', includeRefMessageAuthor: true },
             optional: false,
         },
         {
             name: 'limit',
             description: `Limit ile maksymalnie repów chcesz zobaczyć. Domyślnie ${DefaultLimit}`,
-            type: 'number',
+            type: { base: 'float' },
             optional: true,
         }
     ],
@@ -36,8 +36,8 @@ export const replistCmd: Command = {
     },
 
     async execute(api) {
-        const user = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
-        const limit = api.getTypedArg('limit', 'number').value as number | null ?? DefaultLimit;
+        const user = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
+        const limit = api.getTypedArg('limit', 'float').value ?? DefaultLimit;
 
         const userReps = await new User(user.id).reputation.getReceived();
 

@@ -1,163 +1,112 @@
 import {
     CommandArgument,
     CommandValuableArgument,
-    CommandArgumentWithStringValue,
-    CommandArgumentWithNumberValue,
-    CommandArgumentWithTimestampValue,
-    CommandArgumentWithUserMentionValue,
-    CommandArgumentWithRoleMentionValue,
-    CommandArgumentWithChannelMentionValue,
     CommandArgType,
     Command,
-    CommandFlags
+    CommandFlags,
+    Category
 } from '@/bot/command.js';
+
 import * as dsc from 'discord.js';
+
 import parseTimestamp from '@/util/parseTimestamp.js';
-import { ArgMustBeSomeTypeError, MissingRequiredArgError } from '../defs/errors.js';
-import { parseMentionsFromStrings } from './mentions.js';
+import findCommand from '@/util/cmd/findCommand.js';
 import User from '@/bot/apis/db/user.js';
 
-export async function parseArgs(
-    rawArgs: string[],
-    declaredArgs: CommandArgument[],
-    context?: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction; cmd?: Command }
-): Promise<CommandValuableArgument[]> {
-    const parsedArgs: CommandValuableArgument[] = [];
+import { ArgMustBeSomeTypeError, MissingRequiredArgError } from '../defs/errors.js';
+import { flatTypesToUnion } from './flat-types.js';
 
-    let argIndex = 0;
+async function parseUser(raw: string, name: string, context?: ParserContext): Promise<dsc.GuildMember | null> {
+    try {
+        if (context?.interaction) {
+            const memberStr = (context.interaction as dsc.ChatInputCommandInteraction).options.getString(name);
+            if (!memberStr) return null;
+            const id = memberStr.replace(/[<@!>]/g, '');
+            return await context.interaction.guild!.members.fetch(id).catch(() => null);
+        } else if (context?.msg) {
+            const id = raw.replace(/[<@!>]/g, '');
+            return await context.msg.guild!.members.fetch(id).catch(() => null);
+        }
+    } catch {
+        return null;
+    }
+    return null;
+}
 
-loop:
-    for (let declIndex = 0; declIndex < declaredArgs.length; ++declIndex) {
-        const decl: CommandArgument = declaredArgs[declIndex];
-        const raw: string | undefined = rawArgs[argIndex];
+async function tryParseUserMentionOrRef(decl: CommandArgument, context?: ParserContext): Promise<dsc.GuildMember | null> {
+    if (context?.msg && context.msg.reference) {
+        try {
+            const refMessageId = context.msg.reference.messageId;
+            const refChannelId = context.msg.reference.channelId;
 
-        let declType: CommandArgType = decl.type;
-        if (!context?.msg) {
-            if (decl.type == 'trailing-string') {
-                declType = 'string';
-            } else if (decl.type == 'user-mention-or-reference-msg-author') {
-                declType = 'user-mention';
+            const channel = await context.msg.guild!.channels.fetch(refChannelId);
+            if (channel && channel.isTextBased()) {
+                const refMessage = await (channel as dsc.TextChannel).messages.fetch({ message: refMessageId ?? '', force: false });
+                return await context.msg.guild!.members.fetch(refMessage.author.id).catch(() => null);
             }
+        } catch {
+            return null;
         }
+    }
 
-        if (!raw && declType != 'user-mention-or-reference-msg-author') {
-            if (!decl.optional) throw new MissingRequiredArgError(decl.name, declType);
-            parsedArgs.push({ ...decl } as any);
-            continue;
-        }
+    return null;
+}
 
-        switch (declType) {
-        case 'string': {
-            parsedArgs.push({ ...decl, value: raw } as CommandArgumentWithStringValue);
-            break;
-        }
+export interface ParserContext {
+    msg?: dsc.Message;
+    guild?: dsc.Guild;
+    interaction?: dsc.CommandInteraction;
+    cmd?: Command;
+    commands?: Map<Category, Command[]>;
+}
 
-        case 'trailing-string': {
-            const trailingValue = rawArgs.slice(argIndex).join(' ');
-            parsedArgs.push({ ...decl, value: trailingValue } as CommandArgumentWithStringValue);
-            break loop;
-        }
 
-        case 'number': {
-            if ((raw?.normalize('NFKC').trim().toLowerCase() ?? '') === 'all' && (context?.cmd?.flags ?? CommandFlags.None) == CommandFlags.Economy) {
+
+async function tryParseArg(
+    type: CommandArgType,
+    raw: string,
+    argIndex: number,
+    rawArgs: string[],
+    decl: CommandArgument,
+    context?: ParserContext
+): Promise<CommandValuableArgument | null> {
+    if (type.base == 'union') return null;
+
+    switch (type.base) {
+        case 'string':
+            const val = type.trailing ? rawArgs.slice(argIndex).join(' ') : raw;
+            return { ...decl, type, value: val } as CommandValuableArgument;
+
+        case 'int': {
+            if (raw.normalize('NFKC').trim().toLowerCase() == 'all' && (context?.cmd?.flags ?? CommandFlags.None) == CommandFlags.Economy) {
                 let x = context?.interaction?.user.id ?? context?.msg?.author.id ?? 'someone';
                 const balance = await new User(x).economy.getBalance();
-                parsedArgs.push({ ...decl, value: balance.wallet } as CommandArgumentWithNumberValue);
-                break;
+                return { ...decl, type, value: BigInt(balance.wallet) } as CommandValuableArgument;
             }
-            const rawIsNumber = /^-?\d+(\.\d+)?$/.test(raw ?? '');
-            if (!rawIsNumber) {
-                if (decl.optional) {
-                    continue;
-                }
-                throw new ArgMustBeSomeTypeError(decl.name, 'number');
-            }
-            const num = Number(raw);
-            parsedArgs.push({ ...decl, value: num } as CommandArgumentWithNumberValue);
-            break;
+
+            const isInt = /^-?\d+$/.test(raw);
+            if (!isInt) return null;
+
+            return { ...decl, type, value: BigInt(raw) } as CommandValuableArgument;
+        }
+
+        case 'float': {
+            const isFloat = /^-?\d+(\.\d+)?$/.test(raw);
+            if (!isFloat) return null;
+
+            return { ...decl, type, value: Number(raw) } as CommandValuableArgument;
         }
 
         case 'timestamp': {
             const ts = parseTimestamp(raw);
-            if (ts == null) {
-                if (decl.optional) continue;
-                throw new ArgMustBeSomeTypeError(decl.name, 'timestamp');
-            }
-            parsedArgs.push({ ...decl, value: ts } as CommandArgumentWithTimestampValue);
-            break;
+            if (!ts) return null;
+            return { ...decl, type, value: ts } as CommandValuableArgument;
         }
 
         case 'user-mention': {
-            let user: dsc.GuildMember | null = null;
-            if (context?.interaction) {
-                const member = (context.interaction as dsc.ChatInputCommandInteraction).options.getString(decl.name);
-                user = parseMentionsFromStrings([member!], context.interaction.guild!).members.first() ?? null;
-                if (!user) {
-                    user = await context.interaction.guild!.members.fetch(member!);
-                }
-            } else if (context?.msg) {
-                user = parseMentionsFromStrings([raw], context.msg.guild!).members.first() ?? null;
-                if (!user) {
-                    const match = raw.match(/^<@!?(\d+)>$/);
-                    const id = match?.[1] ?? raw;
-                    user = await context.msg.guild!.members.fetch(id);
-                }
-            }
-
-            if (user == null) {
-                if (decl.optional) continue;
-                throw new ArgMustBeSomeTypeError(decl.name, 'user-mention');
-            }
-            parsedArgs.push({ ...decl, value: user } as CommandArgumentWithUserMentionValue);
-            break;
-        }
-
-        case 'user-mention-or-reference-msg-author': {
-            let user: dsc.GuildMember | null = null;
-            if (raw) {
-                try {
-                    if (context?.interaction) {
-                        const member = (context.interaction as dsc.ChatInputCommandInteraction).options.getString(decl.name);
-                        user = parseMentionsFromStrings([member!], context.interaction.guild!).members.first() ?? null;
-                        if (!user) {
-                            user = await context.interaction.guild!.members.fetch(member!);
-                        }
-                    } else if (context?.msg) {
-                        user = parseMentionsFromStrings([raw], context.msg.guild!).members.first() ?? null;
-                        if (!user) {
-                            const match = raw.match(/^<@!?(\d+)>$/);
-                            const id = match?.[1] ?? raw;
-                            user = await context.msg.guild!.members.fetch(id);
-                        }
-                    }
-                } catch {}
-            }
-
-            if (user == null) {
-                if (context?.msg && context?.msg?.reference) {
-                    const refMessageId = context.msg.reference.messageId;
-                    const refChannelId = context.msg.reference.channelId;
-
-                    const channel = await context.msg.guild!.channels.fetch(refChannelId);
-                    if (channel && channel.isTextBased && channel.isTextBased()) {
-                        const refMessage = await channel.messages.fetch({ message: refMessageId ?? '', force: false });
-                        const member = await context.msg.guild!.members.fetch(refMessage.author.id);
-
-                        if (member) {
-                            parsedArgs.push({ ...decl, value: member } as CommandArgumentWithUserMentionValue);
-                            continue loop;
-                        }
-                    }
-                }
-
-                if (decl.optional) continue;
-
-                if (!raw) throw new MissingRequiredArgError(decl.name, declType);
-                throw new ArgMustBeSomeTypeError(decl.name, 'user-mention-or-reference-msg-author');
-            }
-
-            parsedArgs.push({ ...decl, value: user } as CommandArgumentWithUserMentionValue);
-            break;
+            const user = await parseUser(raw, decl.name, context);
+            if (!user) return null;
+            return { ...decl, type, value: user } as CommandValuableArgument;
         }
 
         case 'role-mention': {
@@ -165,16 +114,12 @@ loop:
             const roleId = match?.[1];
             let role: dsc.Role | null = null;
 
-            if (roleId && context?.guild) {
-                role = context.msg?.mentions.roles?.get(roleId) ?? context.guild.roles.cache.get(roleId) ?? null;
+            if (roleId && (context?.guild || context?.msg?.guild)) {
+                const guild = context?.guild ?? context?.msg?.guild!;
+                role = context?.msg?.mentions.roles?.get(roleId) ?? guild.roles.cache.get(roleId) ?? null;
             }
-
-            if (role == null) {
-                if (decl.optional) continue;
-                throw new ArgMustBeSomeTypeError(decl.name, 'role-mention');
-            }
-            parsedArgs.push({ ...decl, value: role } as CommandArgumentWithRoleMentionValue);
-            break;
+            if (!role) return null;
+            return { ...decl, type, value: role } as CommandValuableArgument;
         }
 
         case 'channel-mention': {
@@ -182,27 +127,93 @@ loop:
             const channelID = match?.[1];
             let channel: dsc.GuildChannel | null = null;
 
-            if (channelID && context?.guild) {
-                const foundChannel = context.msg?.mentions.channels?.get(channelID) ?? context.guild.channels.cache.get(channelID);
+            if (channelID && (context?.guild || context?.msg?.guild)) {
+                const guild = context?.guild ?? context?.msg?.guild!;
+                const foundChannel = context?.msg?.mentions.channels?.get(channelID) ?? guild.channels.cache.get(channelID);
                 if (foundChannel && foundChannel instanceof dsc.GuildChannel) {
                     channel = foundChannel;
                 }
             }
+            if (!channel) return null;
+            return { ...decl, type, value: channel } as CommandValuableArgument;
+        }
 
-            if (channel == null) {
-                if (decl.optional) continue;
-                throw new ArgMustBeSomeTypeError(decl.name, 'channel-mention');
-            }
-            parsedArgs.push({ ...decl, value: channel } as CommandArgumentWithChannelMentionValue);
-            break;
+        case 'command-ref': {
+            if (!context?.commands) return null;
+            const res = findCommand(raw, context.commands);
+            if (!res) return null;
+            return { ...decl, type, value: res.command } as CommandValuableArgument;
         }
 
         default:
-            parsedArgs.push({ ...decl } as any);
-            break;
+            return null;
+    }
+}
+
+export async function parseArgs(
+    rawArgs: string[],
+    declaredArgs: CommandArgument[],
+    context?: ParserContext
+): Promise<CommandValuableArgument[]> {
+    const parsedArgs: CommandValuableArgument[] = [];
+
+    let argIndex = 0;
+
+    for (let declIndex = 0; declIndex < declaredArgs.length; ++declIndex) {
+        const decl: CommandArgument = declaredArgs[declIndex];
+        const raw: string | undefined = rawArgs[argIndex];
+
+        const types = flatTypesToUnion(decl.type);
+        let success = false;
+        let consumedRaw = false;
+
+        for (const typeObj of types) {
+            if (typeObj.base == 'user-mention' && typeObj.includeRefMessageAuthor) {
+                let user: dsc.GuildMember | null = null;
+                if (raw) {
+                    user = await parseUser(raw, decl.name, context);
+                }
+
+                if (user) {
+                    parsedArgs.push({ ...decl, type: typeObj, value: user } as CommandValuableArgument);
+                    success = true;
+                    consumedRaw = true;
+                    break;
+                }
+
+                const refMember = await tryParseUserMentionOrRef(decl, context);
+                if (refMember) {
+                    parsedArgs.push({ ...decl, type: typeObj, value: refMember } as CommandValuableArgument);
+                    success = true;
+                    consumedRaw = false;
+                    break;
+                }
+            } else {
+                if (!raw) continue;
+
+                const result = await tryParseArg(typeObj, raw, argIndex, rawArgs, decl, context);
+                if (result) {
+                    parsedArgs.push(result);
+                    if (typeObj.base == 'string' && typeObj.trailing) {
+                        return parsedArgs;
+                    }
+                    success = true;
+                    consumedRaw = true;
+                    break;
+                }
+            }
         }
 
-        ++argIndex;
+        if (success) {
+            if (consumedRaw) argIndex++;
+        } else {
+            if (decl.optional) {
+                parsedArgs.push({ ...decl } as CommandValuableArgument);
+                continue;
+            }
+            if (!raw) throw new MissingRequiredArgError(decl.name, decl.type);
+            throw new ArgMustBeSomeTypeError(decl.name, decl.type);
+        }
     }
 
     return parsedArgs;

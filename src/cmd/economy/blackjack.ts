@@ -41,10 +41,17 @@ export const blackjackCmd: Command = {
     flags: CommandFlags.Economy,
 
     permissions: { allowedRoles: null, allowedUsers: null },
-    expectedArgs: [{ name: 'amount', description: 'O ile gramy?', optional: false, type: 'number' }],
+    expectedArgs: [
+        {
+            name: 'amount',
+            description: 'O ile gramy?',
+            optional: false,
+            type: { base: 'float' }
+        }
+    ],
 
     async execute(api: CommandAPI) {
-        const betArg = api.getTypedArg('amount', 'number');
+        const betArg = api.getTypedArg('amount', 'float');
         const bet = betArg?.value as number;
         if (!bet || bet <= 0) {
             return api.log.replyError(api, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);

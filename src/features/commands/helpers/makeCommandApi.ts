@@ -11,6 +11,7 @@ import { cfg } from '@/bot/cfg.js';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
 import { commands } from '@/cmd/list.js';
 import { EconomyExecutor } from '@/bot/apis/economy/action.js';
+import { flatTypesToUnion } from './flat-types.js';
 
 type FirstArg<T> =
     T extends { (...args: infer A): any } ?
@@ -86,7 +87,7 @@ function makeOptions(options: FirstArg<CommandAPI['reply']>): any {
 }
 
 export async function makeCommandApi(commandObj: Command, argsRaw: string[], context: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction; cmd?: Command; invokedviaalias: string }): Promise<CommandAPI> {
-    const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, context);
+    const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, { ...context, commands });
     const rawMember =
         context.msg?.member ??
         (context.interaction?.member as dsc.GuildMember) ??
@@ -96,7 +97,10 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
 
     return {
         // -- args --
-        getTypedArg: (name, type) => parsedArgs.find(a => a.name === name && a.type === type)! as any,
+        getTypedArg: (name: string, type: any) => {
+            const types = flatTypesToUnion(Array.isArray(type) ? { base: 'union', variants: type.map(t => ({ base: t })) } : (typeof type == 'string' ? { base: type } : type));
+            return parsedArgs.find(a => a.name == name && types.some((t: any) => t.base == a.type.base))! as any;
+        },
 
         // -- invoker --
         invoker: {

@@ -19,14 +19,14 @@ export const depositCmd: Command = {
     },
     expectedArgs: [
         {
-            type: 'number',
+            type: { base: 'float' },
             optional: false,
             name: 'amount',
             description: 'Kwota do wpłaty (liczba lub "all").',
         }
     ],
     async execute(api: CommandAPI) {
-        const amount = api.getTypedArg('amount', 'number')?.value as number;
+        const amount = api.getTypedArg('amount', 'float')?.value as number;
         if (isNaN(amount) || amount <= 0) {
             return api.log.replyError(api, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
         }

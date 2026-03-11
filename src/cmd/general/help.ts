@@ -114,7 +114,7 @@ export const helpCmd: Command = {
         {
             name: 'category',
             description: 'Kategoria lub "all" aby zobaczyć wszystkie',
-            type: 'string',
+            type: { base: 'string' },
             optional: true,
         }
     ],
@@ -164,7 +164,7 @@ export const helpCmd: Command = {
             });
         };
 
-        if (!argCategory || !argCategory.value) {
+        if (!argCategory?.value) {
             await sendInteractiveMenu();
             return;
         }

@@ -21,7 +21,12 @@ export const evalCmd: Command = {
     flags: CommandFlags.Important | CommandFlags.Unsafe,
 
     expectedArgs: [
-        { name: 'code', type: 'trailing-string', description: 'Kod JS do wykonania', optional: false },
+        {
+            name: 'code',
+            type: { base: 'string', trailing: true },
+            description: 'Kod JS do wykonania',
+            optional: false,
+        },
     ],
     aliases: ['exec'],
     permissions: {
@@ -32,7 +37,7 @@ export const evalCmd: Command = {
     async execute(api) {
         const AsyncFunction = Object.getPrototypeOf(async function() {}).constructor satisfies AsynchronicFunction;
 
-        const code = api.getTypedArg('code', 'trailing-string')?.value as string;
+        const code = api.getTypedArg('code', 'string')?.value as string;
         if (code.includes('process.exit')) {
             return api.reply(cfg.customization.evalWarnings.unsafeEval);
         }

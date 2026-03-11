@@ -1,7 +1,7 @@
 import { db } from '@/bot/apis/db/bot-db.js';
 import { getRandomFloat } from '@/util/math/rand.js';
 
-import { Command, CommandArgumentWithUserMentionOrMsgReferenceValue, CommandFlags } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { cfg } from '@/bot/cfg.js';
@@ -90,17 +90,17 @@ export const robCmd: Command = {
     expectedArgs: [
         {
             name: 'user',
-            type: 'user-mention-or-reference-msg-author',
+            type: { base: 'user-mention', includeRefMessageAuthor: true },
             optional: false,
             description: 'No daj tego użytkownika, proszę...'
         }
     ],
     aliases: [],
     execute: async (api) => {
-        const targetArg = api.getTypedArg('user', 'user-mention-or-reference-msg-author') as CommandArgumentWithUserMentionOrMsgReferenceValue;
+        const targetMember = api.getTypedArg('user', 'user-mention').value;
 
-        if (!targetArg?.value) return api.reply('Musisz oznaczyć osobę, którą chcesz okraść!');
-        const targetMember = targetArg.value;
+        if (!targetMember) return api.reply('Musisz oznaczyć osobę, którą chcesz okraść!');
+
 
         if (targetMember.id === api.invoker.id) return api.reply('Nie możesz okraść samego siebie!');
 

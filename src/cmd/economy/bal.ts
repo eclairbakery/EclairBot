@@ -22,7 +22,7 @@ export const balCmd: Command = {
     },
     expectedArgs: [
         {
-            type: 'user-mention',
+            type: { base: 'user-mention' },
             optional: true,
             name: 'user',
             description: 'Użytkownik, którego balans chcesz zobaczyć (domyślnie Ty).',

@@ -58,7 +58,7 @@ export const wikiCmd: Command = {
     expectedArgs: [
         {
             name: 'query',
-            type: 'trailing-string',
+            type: { base: 'string', trailing: true },
             optional: false,
             description: 'No, podaj jaki jest ten twój artykuł do pobrania!'
         }
@@ -68,7 +68,7 @@ export const wikiCmd: Command = {
         allowedUsers: null
     },
     execute: async (api: CommandAPI) => {
-        const rawQuery = api.getTypedArg('query', 'trailing-string')?.value as string;
+        const rawQuery = api.getTypedArg('query', 'string')?.value as string;
 
         const query =
             rawQuery == 'hubix' ? 'pedał'

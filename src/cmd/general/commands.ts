@@ -21,7 +21,7 @@ export const commandsCmd: Command = {
             name: 'category',
             description: 'Kategoria komend, którą chcesz zobaczyć. Jeśli nie podasz, pokaże wszystkie. Oddziel je przecinkiem!',
             optional: true,
-            type: 'string'
+            type: { base: 'string' }
         }
     ],
     aliases: ['cmds', 'komendy'],
@@ -45,7 +45,7 @@ export const commandsCmd: Command = {
         } else {
             const categoriesList = categoriesArg.value
                 .split(",")
-                .map(s => s.trim().toLowerCase());
+                .map((s: string) => s.trim().toLowerCase());
 
             for (const arg of categoriesList) {
                 const category = Category.fromString(arg);

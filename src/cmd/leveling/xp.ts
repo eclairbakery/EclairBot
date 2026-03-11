@@ -21,25 +21,25 @@ export const xpCmd: Command = {
     },
     expectedArgs: [
         {
-            type: 'user-mention',
+            type: { base: 'user-mention' },
             optional: false,
             name: 'user',
             description: 'Użytkownik, którego chcesz zjeść... lub mu delikatnie pomóc z levelem...',
         },
         {
-            type: 'string',
+            type: { base: 'string' },
             optional: false,
             name: 'action',
             description: 'Co chcesz zrobić z levelem? `add`, `set` lub `delete`',
         },
         {
-            type: 'number',
+            type: { base: 'float' },
             optional: false,
             name: 'amount',
             description: 'Ile levela lub XP chcesz dodać/ustawić/usunąć',
         },
         {
-            type: 'string',
+            type: { base: 'string' },
             optional: true,
             name: 'affect',
             description: 'Czy dotyczy `levels` czy `xp` (domyślnie levels)',
@@ -49,7 +49,7 @@ export const xpCmd: Command = {
     async execute(api: CommandAPI) {
         const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.invoker.member;
         const actionStr = api.getTypedArg('action', 'string')?.value as string;
-        let amount = api.getTypedArg('amount', 'number')?.value as number;
+        let amount = api.getTypedArg('amount', 'float')?.value as number;
         const affect = api.getTypedArg('affect', 'string')?.value as string ?? 'levels';
 
         if (!targetUser || !actionStr || amount === undefined) {

@@ -14,7 +14,7 @@ export const refreshCmd: Command = {
     expectedArgs: [
         {
             name: "flags",
-            type: "trailing-string",
+            type: { base: 'string', trailing: true },
             description: "Użyj różnych flag, by zmienić działanie tej komendy. Użyj \'--help\' by się czegoś dowiedzieć na ich temat.",
             optional: true
         }
@@ -23,7 +23,7 @@ export const refreshCmd: Command = {
 
     async execute(api: CommandAPI) {
         // define constants & variables
-        let flags = (api.getTypedArg('flags', 'trailing-string')?.value ?? '').split(' ');
+        let flags = (api.getTypedArg('flags', 'string')?.value ?? '').split(' ');
         let reloadedThings: string[] = [];
         let failedThingsToReload: string[] = [];
         const user = api.executor;

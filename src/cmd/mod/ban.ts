@@ -23,21 +23,21 @@ export const banCmd: Command = {
         {
             name: 'user',
             description: 'Osoba, która jest nieznośna idzie do tego pola...',
-            type: 'user-mention-or-reference-msg-author',
+            type: { base: 'user-mention', includeRefMessageAuthor: true },
             optional: false,
         },
         {
             name: 'reason',
             description: 'Powód bana',
-            type: 'trailing-string',
+            type: { base: 'string', trailing: true },
             optional: !cmdCfg.reasonRequired,
         }
     ],
     permissions: CommandPermissions.fromCommandConfig(cmdCfg),
-    
+
     execute: async (api: CommandAPI) => {
-        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
-        const reasonArg = api.getTypedArg('reason', 'trailing-string').value as string;
+        const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
+        const reasonArg = api.getTypedArg('reason', 'string').value as string;
         const reason = reasonArg?.trim() || (cmdCfg.reasonRequired ? null : cfg.customization.modTexts.defaultReason);
 
         if (!targetUser) {

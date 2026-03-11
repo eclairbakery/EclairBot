@@ -12,13 +12,13 @@ export const configurationCommand: Command = {
         {
             name: 'arg',
             description: 'Argument generalnie który chcesz zmodyfikować w konfiguracji, np. `masterSecurity.fuckNewMembers`.',
-            type: 'string',
+            type: { base: 'string' },
             optional: false
         },
         {
             name: 'value',
             description: 'Wartość. Ostrzeżenie: Pod spodem uruchamia eval, więc jest unsafe. Możesz skipnąć i wtedy masz wartość ;)',
-            type: 'trailing-string',
+            type: { base: 'string', trailing: true },
             optional: true
         }
     ],
@@ -30,7 +30,7 @@ export const configurationCommand: Command = {
 
     async execute(api) {
         const property = api.getTypedArg('arg', 'string')?.value as string;
-        const value = api.getTypedArg('value', 'trailing-string')?.value as string | undefined;
+        const value = api.getTypedArg('value', 'string')?.value as string | undefined;
 
         const keys = property.split(".");
         let target: any = cfg;

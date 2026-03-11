@@ -165,8 +165,10 @@ export async function init() {
                 .setDescription(makeSlashCommandDesc(cmd));
 
             for (const arg of cmd.expectedArgs) {
-                switch (arg.type) {
-                case 'trailing-string':
+                const types = Array.isArray(arg.type) ? arg.type : [arg.type];
+                const type = types[0]; // Use first type for slash command representation
+
+                switch (type.base) {
                 case 'string':
                     scb.addStringOption(option =>
                         option
@@ -176,7 +178,8 @@ export async function init() {
                     );
                     break;
 
-                case 'number':
+                case 'float':
+                case 'int':
                     scb.addNumberOption(option =>
                         option
                             .setName(arg.name)
@@ -185,7 +188,6 @@ export async function init() {
                     );
                     break;
 
-                case 'user-mention-or-reference-msg-author':
                 case 'user-mention':
                     scb.addStringOption(option =>
                         option

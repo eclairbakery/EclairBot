@@ -90,7 +90,7 @@ export const shopCmd: Command = {
         {
             name: 'category',
             description: 'Kategoria lub "all" aby zobaczyć wszystkie',
-            type: 'trailing-string',
+            type: { base: 'string', trailing: true },
             optional: true,
         }
     ],
@@ -148,7 +148,7 @@ export const shopCmd: Command = {
             });
         };
 
-        const categoriesArg = api.getTypedArg('categories', 'trailing-string');
+        const categoriesArg = api.getTypedArg('categories', 'string');
         if (!categoriesArg || !categoriesArg.value) {
             await sendInteractiveMenu();
             return;

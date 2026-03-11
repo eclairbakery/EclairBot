@@ -16,7 +16,7 @@ export const withdrawCmd: Command = {
     },
     expectedArgs: [
         {
-            type: 'string',
+            type: { base: 'string' },
             optional: false,
             name: 'amount',
             description: 'Kwota do wypłaty (liczba lub "all").',
@@ -25,8 +25,8 @@ export const withdrawCmd: Command = {
     async execute(api: CommandAPI) {
         try {
             const row = await api.executor.economy.getBalance();
-            let amountArg = api.getTypedArg('amount', 'string')?.value as string;
-            let amount = amountArg.toLowerCase() === "all" ? row.bank : parseInt(amountArg);
+            let amountArg = api.getTypedArg('amount', 'string')?.value;
+            let amount = amountArg.toLowerCase() == "all" ? row.bank : parseInt(amountArg);
 
             if (isNaN(amount) || amount <= 0) {
                 return api.log.replyError(api, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);

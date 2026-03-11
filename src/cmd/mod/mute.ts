@@ -26,19 +26,19 @@ export const muteCmd: Command = {
         {
             name: 'user',
             description: 'No ten, tu podaj użytkownika którego chcesz zmuteowac',
-            type: 'user-mention-or-reference-msg-author',
+            type: { base: 'user-mention', includeRefMessageAuthor: true },
             optional: false,
         },
         {
             name: 'duration',
             description: 'Długość mute, domyślnie 24h',
-            type: 'timestamp',
+            type: { base: 'timestamp' },
             optional: true,
         },
         {
             name: 'reason',
             description: 'Powód wyciszenia użytkownika',
-            type: 'trailing-string',
+            type: { base: 'string', trailing: true },
             optional: !cmdCfg.reasonRequired,
         },
     ],
@@ -48,8 +48,8 @@ export const muteCmd: Command = {
     },
 
     async execute(api) {
-        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember;
-        let reason = api.getTypedArg('reason', 'trailing-string')?.value as string;
+        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember;
+        let reason = api.getTypedArg('reason', 'string')?.value as string;
         const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null ?? 24 * Hour;
         let expiresAt = duration != null ? Math.floor(Date.now() / 1000) + duration : null;
 

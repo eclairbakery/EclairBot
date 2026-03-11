@@ -21,7 +21,7 @@ export const manCmd: Command = {
             name: 'command',
             description: 'Podaj tu bez prefixu komendę, o której chcesz się czegoś dowiedzieć...',
             optional: true,
-            type: 'string'
+            type: { base: 'string' }
         },
     ],
     aliases: [],
@@ -48,7 +48,7 @@ export const manCmd: Command = {
                                 name: 'odciąż mnie',
                                 description: 'Wszystko muszę robić sama. Nie mam z wami żadnego pożytku',
                                 optional: false,
-                                type: 'string'
+                                type: { base: 'string' }
                             },
                         ],
                         permissions: {

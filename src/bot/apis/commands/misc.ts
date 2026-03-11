@@ -13,4 +13,4 @@ export enum CommandFlags {
 };
 
 
-export type CommandViolatedRule = 'used_infinity' | 'non_int_passed';
+export type CommandViolatedRule = 'used-infinity' | 'non-int-passed';

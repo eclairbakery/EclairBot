@@ -16,12 +16,12 @@ export const emailDefaultTitleCmd: Command = {
             name: 'title',
             optional: false,
             description: "No ten domyślny tytuł czy coś, możesz dać x jak go nie chcesz",
-            type: 'trailing-string'
+            type: { base: 'string', trailing: true }
         }
     ],
 
     async execute(api) {
-        const signature = api.getTypedArg('title', 'trailing-string')?.value ?? 'x';
+        const signature = api.getTypedArg('title', 'string')?.value ?? 'x';
 
         const emailApi = api.executor.email;
 

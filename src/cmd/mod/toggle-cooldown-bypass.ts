@@ -26,13 +26,13 @@ export const toggleCooldownBypassCmd: Command = {
         {
             name: 'cmd',
             description: 'komenda dla której nałozyć bypass',
-            type: 'string',
+            type: { base: 'string' },
             optional: false
         },
         {
             name: 'target',
             description: 'użytkownik lub roli do nałożenia bypassa',
-            type: 'string',
+            type: { base: 'string' },
             optional: false
         }
     ],

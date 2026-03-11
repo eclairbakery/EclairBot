@@ -19,13 +19,13 @@ export const plusRepCmd: Command = {
         {
             name: 'user',
             description: 'Tu podaj użytkownika ok',
-            type: 'user-mention-or-reference-msg-author',
+            type: { base: 'user-mention', includeRefMessageAuthor: true },
             optional: false,
         },
         {
             name: 'comment',
             description: 'Tu możesz dać komentarz, dlaczego chcesz dodać reputacje danej osobie!',
-            type: 'trailing-string',
+            type: { base: 'string', trailing: true },
             optional: true,
         },
     ],
@@ -35,8 +35,8 @@ export const plusRepCmd: Command = {
     },
 
     async execute(api) {
-        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
-        const comment = api.getTypedArg('comment', 'trailing-string')?.value;
+        const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
+        const comment = api.getTypedArg('comment', 'string')?.value;
 
         if (api.invoker.id == targetUser.id) {
             return api.log.replyWarn(api, 'Halo!', 'Nie mozesz modyfikować swoich punktów reputacji!');

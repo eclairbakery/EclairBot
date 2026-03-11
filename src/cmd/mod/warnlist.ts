@@ -17,7 +17,7 @@ export const warnlistCmd: Command = {
     expectedArgs: [
         {
             name: 'user',
-            type: 'user-mention',
+            type: { base: 'user-mention' },
             description: 'Użytkownik, którego warny chcesz zobaczyć (opcjonalne).',
             optional: true
         }
@@ -32,7 +32,7 @@ export const warnlistCmd: Command = {
         let client: dsc.Client = api.channel.client;
         let guild: dsc.Guild = api.guild!;
 
-        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember | undefined;
+        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | undefined;
         const limit = 5;
         let currentPage = 1;
 
