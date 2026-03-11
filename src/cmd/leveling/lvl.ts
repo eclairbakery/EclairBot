@@ -21,7 +21,7 @@ export const lvlCmd: Command = {
 
     expectedArgs: [
         {
-            type: 'user-mention',
+            type: { base: 'user-mention' },
             optional: true,
             name: 'user',
             description: 'Opcjonalnie, użytkownik którego level chcesz sprawdzić.',

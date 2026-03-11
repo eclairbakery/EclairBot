@@ -26,13 +26,13 @@ export const toggleCmdBlockCmd: Command = {
         {
             name: 'cmd',
             description: 'komenda którą chcesz zablokować',
-            type: 'string',
+            type: { base: 'string' },
             optional: false
         },
         {
             name: 'target',
             description: 'użytkownik lub rola do zablokowania/odblokowania',
-            type: 'string',
+            type: { base: 'string' },
             optional: false
         }
     ],

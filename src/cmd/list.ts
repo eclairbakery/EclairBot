@@ -50,6 +50,7 @@ import { configurationCommand } from './dev/configuration.js';
 import { setbalCmd } from './economy/setbal.js';
 import { enableCommandCmd } from './dev/enable-cmd.js';
 import { disableCommandCmd } from './dev/disable-cmd.js';
+import { echoCmd } from './dev/echo.js';
 import { sendEmailCmd } from './email/email.js';
 import { buyCmd } from './economy/buy.js';
 import { collectIncomeCmd } from './economy/collect-income.js';
@@ -110,7 +111,8 @@ export const commands: Map<Category, Command[]> = new Map([
         Category.DevelopersOnly,
         [
             evalCmd, restartCmd, configurationCommand,
-            enableCommandCmd, disableCommandCmd, resetCmd
+            enableCommandCmd, disableCommandCmd, resetCmd,
+            echoCmd,
         ],
     ],
     [

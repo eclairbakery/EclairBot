@@ -129,13 +129,13 @@ export const figletCmd: Command = {
         //{
         //    name: 'font',
         //    description: 'Czcionka jakiej chcesz użyć. Możesz wybrać: ' + fmtArr(await figletFonts()) + '.',
-        //    type: 'string',
+        //    type: { base: 'string' },
         //    optional: true,
         //},
         {
             name: 'text',
             description: 'Tekst który chcesz wyrenderować',
-            type: 'trailing-string',
+            type: { base: 'string', trailing: true },
             optional: false,
         },
     ],
@@ -146,7 +146,7 @@ export const figletCmd: Command = {
 
     async execute(api) {
         const font = /*api.getArg('font').value as string ??*/ 'Standard';
-        const textArg = api.getTypedArg('text', 'trailing-string').value as string;
+        const textArg = api.getTypedArg('text', 'string').value as string;
 
         const text
             = textArg == 'hubix'

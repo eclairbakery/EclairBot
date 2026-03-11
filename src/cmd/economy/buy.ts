@@ -17,7 +17,7 @@ export const buyCmd: Command = {
     expectedArgs: [
         {
             name: 'offer',
-            type: 'trailing-string',
+            type: { base: 'string', trailing: true },
             optional: false,
             description: 'Jakaś rzecz, którą chcesz kupić.'
         }
@@ -29,7 +29,7 @@ export const buyCmd: Command = {
     },
 
     async execute(api) {
-        const offerName = api.getTypedArg('offer', 'trailing-string')?.value ?? '';
+        const offerName = api.getTypedArg('offer', 'string')?.value ?? '';
 
         const offer = api.economy.getOfferByName(offerName);
         if (!offer) {

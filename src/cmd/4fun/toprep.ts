@@ -23,7 +23,7 @@ export const toprepCmd: Command = {
         {
             name: 'count',
             description: `Tu ogólnie możesz podać ile miejsc w topce. Domyślnie to ${DefaultCount}.`,
-            type: 'number',
+            type: { base: 'float' },
             optional: true,
         }
     ],
@@ -33,7 +33,7 @@ export const toprepCmd: Command = {
     },
 
     async execute(api) {
-        const count = api.getTypedArg('count', 'number').value as number | null ?? DefaultCount;
+        const count = api.getTypedArg('count', 'float').value as number | null ?? DefaultCount;
 
         if (count > 18) {
             return api.log.replyError(api, 'Ej nie przesadzaj!', 'Nie pozwole ci więcej niż 18 pól bo zrobi się flood!');

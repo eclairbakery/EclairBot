@@ -16,12 +16,12 @@ export const emailSignatureCmd: Command = {
             name: 'signature',
             optional: false,
             description: "No ten podpis czy coś, możesz dać x jak go nie chcesz",
-            type: 'trailing-string'
+            type: { base: 'string', trailing: true }
         }
     ],
 
     async execute(api) {
-        const signature = api.getTypedArg('signature', 'trailing-string')?.value ?? 'x';
+        const signature = api.getTypedArg('signature', 'string')?.value ?? 'x';
 
         const emailApi = api.executor.email;
 

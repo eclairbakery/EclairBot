@@ -1,4 +1,4 @@
-import { Command, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 
 export const pfpCmd: Command = {
     name: 'pfp',
@@ -14,7 +14,7 @@ export const pfpCmd: Command = {
             name: 'user',
             description: 'Użytkownik generalnie...',
             optional: false,
-            type: 'user-mention'
+            type: { base: 'user-mention' }
         }
     ],
     permissions: {
@@ -23,7 +23,7 @@ export const pfpCmd: Command = {
     },
 
     execute(api) {
-        const user = (api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue).value?.user ?? api.invoker.user;
+        const user = api.getTypedArg('user', 'user-mention').value?.user ?? api.invoker.user;
         api.reply({content: 'Tu masz profilowe i nie marudź:', files: [user.displayAvatarURL()]});
     },
 };

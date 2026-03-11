@@ -67,7 +67,7 @@ export const reputationCmd: Command = {
         {
             name: 'user',
             description: 'Użytkownik którego reputacje chcesz sprawdzić',
-            type: 'user-mention-or-reference-msg-author',
+            type: { base: 'user-mention', includeRefMessageAuthor: true },
             optional: false,
         },
     ],
@@ -77,7 +77,7 @@ export const reputationCmd: Command = {
     },
 
     async execute(api) {
-        const user = api.getTypedArg('user', 'user-mention-or-reference-msg-author').value as dsc.GuildMember;
+        const user = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
 
         const userReputation = await getUserReputation(user.user.id);
         output.log(userReputation);

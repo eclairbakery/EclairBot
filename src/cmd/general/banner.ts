@@ -1,4 +1,4 @@
-import { Command, CommandArgumentWithUserMentionValue, CommandFlags } from '@/bot/command.js';
+import { Command, CommandFlags } from '@/bot/command.js';
 
 import * as dsc from 'discord.js';
 
@@ -14,7 +14,7 @@ export const bannerCmd: Command = {
         {
             name: 'user',
             description: 'Użytkownik generalnie...',
-            type: 'user-mention',
+            type: { base: 'user-mention' },
             optional: true
         }
     ],
@@ -25,10 +25,10 @@ export const bannerCmd: Command = {
     },
 
     async execute(api) {
-        const member = api.getTypedArg('user', 'user-mention') as CommandArgumentWithUserMentionValue;
-        const user = member.value?.user ?? api.invoker.user;
+        const member = api.getTypedArg('user', 'user-mention').value;
+        const target = member?.user ?? api.invoker.user;
 
-        const fetchedUser = await user.fetch();
+        const fetchedUser = await target.fetch();
 
         const bannerURL = fetchedUser.bannerURL({ size: 1024, extension: 'png' });
         const accentColor = fetchedUser.accentColor;

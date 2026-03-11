@@ -13,7 +13,7 @@ export const disableCommandCmd: Command = {
         {
             name: 'arg',
             description: 'Komenda.',
-            type: 'string',
+            type: { base: 'string' },
             optional: false
         },
     ],

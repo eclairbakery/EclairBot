@@ -20,25 +20,25 @@ export const setbalCmd: Command = {
         {
             name: 'who',
             description: 'Na kim chcesz wykonać tą komendę?',
-            type: 'user-mention-or-reference-msg-author',
+            type: { base: 'user-mention', includeRefMessageAuthor: true },
             optional: false
         },
         {
             name: 'action',
             description: 'Tu powiedz co chcesz zrobić (add/set/remove)',
-            type: 'string',
+            type: { base: 'string' },
             optional: false
         },
         {
             name: 'amount',
             description: 'Tu powiedz na jakiej ilości hajsu chcesz to zrobić',
-            type: 'number',
+            type: { base: 'float' },
             optional: false
         },
         {
             name: 'location',
             description: 'A tu czy w banku czy nie. Domyślnie w portfelu. (wallet/bank)',
-            type: 'string',
+            type: { base: 'string' },
             optional: true
         },
     ],
@@ -49,9 +49,9 @@ export const setbalCmd: Command = {
 
     async execute(api) {
         const rawAction = api.getTypedArg('action', 'string')?.value!;
-        const amount = api.getTypedArg('amount', 'number')?.value!;
+        const amount = api.getTypedArg('amount', 'float')?.value!;
         const rawLocation = (api.getTypedArg('location', 'string')?.value) || 'wallet';
-        const targetMember = api.getTypedArg('who', 'user-mention-or-reference-msg-author')?.value!;
+        const targetMember = api.getTypedArg('who', 'user-mention')?.value!;
 
         const action = rawAction?.toLowerCase();
         const location = rawLocation?.toLowerCase();

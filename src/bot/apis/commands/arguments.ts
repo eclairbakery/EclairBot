@@ -1,13 +1,28 @@
 import { Timestamp } from '@/util/parseTimestamp.js';
 import * as dsc from 'discord.js';
 
-export type CommandArgType =
-    | 'string' | 'trailing-string'
-    | 'user-mention' | 'user-mention-or-reference-msg-author'
+import type { Command } from './cmd.js';
+
+export type CommandArgBaseType =
+    | 'string'
+    | 'user-mention'
     | 'channel-mention'
     | 'role-mention'
     | 'timestamp'
-    | 'number';
+    | 'int'
+    | 'float'
+    | 'command-ref';
+
+export type CommandArgType = 
+    | { base: 'string', trailing?: boolean }
+    | { base: 'user-mention', includeRefMessageAuthor?: boolean }
+    | { base: 'role-mention' }
+    | { base: 'channel-mention' }
+    | { base: 'timestamp' }
+    | { base: 'int' }
+    | { base: 'float' }
+    | { base: 'command-ref' }
+    | { base: 'union', variants: CommandArgType[] };
 
 export interface CommandArgument {
     name: string;
@@ -16,53 +31,20 @@ export interface CommandArgument {
     optional: boolean;
 };
 
-export interface CommandArgumentWithStringValue extends CommandArgument {
-    type: 'string';
-    value?: string;
+export type CommandArgValueMap = {
+    'string': string;
+    'user-mention': dsc.GuildMember;
+    'role-mention': dsc.Role;
+    'channel-mention': dsc.GuildChannel;
+    'timestamp': Timestamp;
+    'int': bigint;
+    'float': number;
+    'command-ref': Command;
 };
 
-export interface CommandArgumentWithTrailStringValue extends CommandArgument {
-    type: 'trailing-string';
-    value?: string;
+export type CommandValuableArgument<T extends { base: string } = any> = CommandArgument & {
+    type: T;
+    value?: T extends { base: 'union', variants: (infer V)[] }
+        ? (V extends { base: keyof CommandArgValueMap } ? CommandArgValueMap[V['base']] : any)
+        : T['base'] extends keyof CommandArgValueMap ? CommandArgValueMap[T['base']] : any;
 };
-
-export interface CommandArgumentWithUserMentionValue extends CommandArgument {
-    type: 'user-mention';
-    value?: dsc.GuildMember;
-};
-
-export interface CommandArgumentWithUserMentionOrMsgReferenceValue extends CommandArgument {
-    type: 'user-mention-or-reference-msg-author';
-    value?: dsc.GuildMember;
-};
-
-export interface CommandArgumentWithRoleMentionValue extends CommandArgument {
-    type: 'role-mention';
-    value?: dsc.Role;
-};
-
-export interface CommandArgumentWithChannelMentionValue extends CommandArgument {
-    type: 'channel-mention';
-    value?: dsc.GuildChannel;
-};
-
-export interface CommandArgumentWithTimestampValue extends CommandArgument {
-    type: 'timestamp';
-    value?: Timestamp;
-};
-
-export interface CommandArgumentWithNumberValue extends CommandArgument {
-    type: 'number';
-    value?: number;
-};
-
-export type CommandValuableArgument =
-    | CommandArgumentWithNumberValue
-    | CommandArgumentWithRoleMentionValue
-    | CommandArgumentWithChannelMentionValue
-    | CommandArgumentWithStringValue
-    | CommandArgumentWithTrailStringValue
-    | CommandArgumentWithTimestampValue
-    | CommandArgumentWithUserMentionValue
-    | CommandArgumentWithUserMentionOrMsgReferenceValue
-    ;;

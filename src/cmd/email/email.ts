@@ -40,27 +40,27 @@ export const sendEmailCmd: Command = {
         {
             name: 'receiver',
             description: 'Odbiorca twojego pięknego emaila',
-            type: 'string',
+            type: { base: 'string' },
             optional: false,
         },
         {
             name: 'content',
             description: 'Zawartość emaila, możesz zrobić <twój temat>:<twoja treść maila> jak chcesz zmienić temat maila.',
-            type: 'trailing-string',
+            type: { base: 'string', trailing: true },
             optional: false,
         }
     ],
     flags: CommandFlags.Important,
     permissions: CommandPermissions.everyone(),
-    
+
     async execute(api) {
         const receiver = api.getTypedArg('receiver', 'string')?.value!;
-        const contentArg = api.getTypedArg('content', 'trailing-string')?.value!;
+        const contentArg = api.getTypedArg('content', 'string')?.value!;
 
         const COOLDOWN_MS = 10 * 60 * 1000;
         const check = await api.checkCooldown('email', COOLDOWN_MS);
 
-        if (!process.env.EB_EMAIL_USER || !process.env.EB_EMAIL_PASS) 
+        if (!process.env.EB_EMAIL_USER || !process.env.EB_EMAIL_PASS)
             return api.log.replyWarn(
                 api, 'Brakuje czegoś!',
                 'Poproś administrację o dostęp do e-mail\'a (w skrócie by ustawili EB_EMAIL_USER i EB_EMAIL_PASS).'
@@ -111,7 +111,7 @@ export const sendEmailCmd: Command = {
 
         const prev_cooldown = (await api.executor.cooldowns.get()).lastEmailSent;
         await api.executor.cooldowns.set('email', Date.now());
-        
+
         let msg = await api.reply({
             embeds: [
                 api.log.getInfoEmbed(
@@ -123,11 +123,11 @@ export const sendEmailCmd: Command = {
         });
 
         let cancelled = false;
-        
+
         const collector = msg.createMessageComponentCollector({
             time: 10000
         });
-        
+
         collector.on('collect', async (interaction) => {
             if (interaction.customId === 'cancel_email' && interaction.user.id === api.invoker.id) {
                 cancelled = true;
@@ -135,20 +135,20 @@ export const sendEmailCmd: Command = {
                     embeds: [api.log.getSuccessEmbed("Anulowano", "Wysyłanie maila zostało anulowane.")],
                     components: []
                 });
-                await api.executor.cooldowns.set('email', prev_cooldown ?? 1); 
+                await api.executor.cooldowns.set('email', prev_cooldown ?? 1);
                 collector.stop();
             }
         });
-        
+
         await new Promise(resolve => collector.on('end', resolve));
-        
+
         if (cancelled) return;
 
         msg.edit( { embeds: [api.log.getTipEmbed('Wysyłanie... ', 'Poczekaj, to chwile potrwa!')], components: [] } );
 
         try {
             let { subject, content } = parseEmailMessage(contentArg);
-            subject = `Wiadomość od ${api.invoker.user.displayName}: ${(subject == '') ? ((await api.executor.email.getDefaultTitle()) ?? 'brak tematu') : subject}`; 
+            subject = `Wiadomość od ${api.invoker.user.displayName}: ${(subject == '') ? ((await api.executor.email.getDefaultTitle()) ?? 'brak tematu') : subject}`;
             if (content == '') {
                 return msg.edit({
                     embeds: [api.log.getErrorEmbed('Błędna wiadomość', 'Nie możesz wysłać pustego emaila!')],

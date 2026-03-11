@@ -12,19 +12,19 @@ export const compileCmd: Command = {
         short: "Skompiluj kod w swoim ulubionym języku programowania."
     },
     permissions: CommandPermissions.everyone(),
-    
+
     expectedArgs: [
         {
             name: 'compiler',
             description: "Daj file extension albo nazwę języka idk.",
             optional: false,
-            type: 'string'
+            type: { base: 'string' }
         },
         {
             name: 'code',
             description: "No kod.",
             optional: false,
-            type: 'trailing-string'
+            type: { base: 'string', trailing: true }
         }
     ],
 
@@ -34,17 +34,17 @@ export const compileCmd: Command = {
             "Proszę uzbroić się w cierpliwość bo kompilacja jest zasobożerna."
         );
 
-        let code = api.getTypedArg('code', 'trailing-string').value!;
+        let code = api.getTypedArg('code', 'string').value!;
         let lang = api.getTypedArg('compiler', 'string').value!;
-        
+
         const trimmed = code.trim();
         const is_codeblock = trimmed.startsWith('```') && trimmed.endsWith('```');
-        
+
         if (is_codeblock) {
             let inner = trimmed.slice(3, -3);
             const lines = inner.split('\n');
             const first = lines.shift() ?? '';
-        
+
             if (lang === 'auto') {
                 if (!first.trim())
                     return msg.edit({
@@ -54,7 +54,7 @@ export const compileCmd: Command = {
                     });
                 lang = first.trim();
             }
-        
+
             if (first.trim() && lang !== 'auto')
                 code = lines.join('\n').trim();
             else
@@ -142,7 +142,7 @@ export const compileCmd: Command = {
                     break;
                 case "compilermessages":
                 case "compilermessagee":
-                default: 
+                default:
                     output += ":diamond_shape_with_a_dot_inside: ";
                     break;
             }

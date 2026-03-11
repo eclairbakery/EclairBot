@@ -17,10 +17,10 @@ export const unmuteCmd: Command = {
     flags: CommandFlags.Important,
 
     expectedArgs: [
-        { name: 'user', type: 'user-mention-or-reference-msg-author', description: 'Komu unmute chcesz dać?', optional: false },
+        { name: 'user', type: { base: 'user-mention', includeRefMessageAuthor: true }, description: 'Komu unmute chcesz dać?', optional: false },
         {
             name: 'reason',
-            type: 'string',
+            type: { base: 'string' },
             description: cmdCfg.reasonRequired
                 ? 'Po prostu powód otworzenia mordy chłopa.'
                 : 'Po prostu powód otworzenia mordy chłopa. Możesz pominąć, ale bądź tak dobry i tego nie rób...',
@@ -30,7 +30,7 @@ export const unmuteCmd: Command = {
     permissions: CommandPermissions.fromCommandConfig(cmdCfg),
 
     async execute(api) {
-        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')!.value!;
+        const targetUser = api.getTypedArg('user', 'user-mention')!.value!;
         let reason = api.getTypedArg('reason', "string")?.value;
 
         if (!targetUser) {
@@ -58,7 +58,7 @@ export const unmuteCmd: Command = {
                 fields: [{ name: 'Powód', value: reason }],
                 color: PredefinedColors.Pink
             });
-            
+
             return api.reply({
                 embeds: [
                     new ReplyEmbed()

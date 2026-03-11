@@ -20,7 +20,7 @@ export const warnClearCmd: Command = {
     expectedArgs: [
         {
             name: 'id',
-            type: 'number',
+            type: { base: 'float' },
             description: 'No powiedz jaki warn...',
             optional: false
         }
@@ -31,7 +31,7 @@ export const warnClearCmd: Command = {
     },
 
     async execute(api) {
-        const warnIdArg = api.getTypedArg('id', 'number');
+        const warnIdArg = api.getTypedArg('id', 'float');
 
         if (!warnIdArg || isNaN(Number(warnIdArg.value))) {
             return api.log.replyError(api, 'Nieprawidłowe ID', 'Podaj numer ID warna do usunięcia.');

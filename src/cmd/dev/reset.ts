@@ -20,13 +20,13 @@ export const resetCmd: Command = {
         {
             name: 'table',
             description: 'Co chcesz zresetować? (economy, leveling, cooldowns, warns, reputation, all)',
-            type: 'string',
+            type: { base: 'string' },
             optional: false,
         },
         {
             name: 'user',
             description: 'Użytkownik, którego dane chcesz zresetować (opcjonalnie, domyślnie wszyscy).',
-            type: 'user-mention-or-reference-msg-author',
+            type: { base: 'user-mention', includeRefMessageAuthor: true },
             optional: true,
         }
     ],
@@ -34,7 +34,7 @@ export const resetCmd: Command = {
 
     async execute(api: CommandAPI) {
         const table = api.getTypedArg('table', 'string')?.value?.toLowerCase();
-        const targetUser = api.getTypedArg('user', 'user-mention-or-reference-msg-author')?.value as dsc.GuildMember | dsc.User | undefined;
+        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | dsc.User | undefined;
 
         if (!table || !['economy', 'leveling', 'cooldowns', 'warns', 'reputation', 'all'].includes(table)) {
             return api.log.replyError(api, 'Niepoprawna tabela', 'Poprawne tabele: economy, leveling, cooldowns, warns, reputation, all');
@@ -45,7 +45,7 @@ export const resetCmd: Command = {
 
         let warningText = '';
         if (!userId) {
-            warningText = table === 'all' 
+            warningText = table === 'all'
                 ? 'Właśnie próbujesz usunąć **WSZYSTKIE** dane dla **WSZYSTKICH UŻYTKOWNIKÓW**.'
                 : `Właśnie próbujesz usunąć dane z tabeli **${table}** dla **WSZYSTKICH UŻYTKOWNIKÓW**.`;
         } else {
