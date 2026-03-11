@@ -13,7 +13,7 @@ export const disableCommandCmd: Command = {
         {
             name: 'arg',
             description: 'Komenda.',
-            type: { base: 'string' },
+            type: { base: 'command-ref' },
             optional: false
         },
     ],
@@ -24,11 +24,12 @@ export const disableCommandCmd: Command = {
     },
     
     async execute(api) {
-        const name = api.getTypedArg('arg', 'string')?.value!;
+        const cmd = api.getTypedArg('arg', 'command-ref').value;
+        const name = cmd.name;
         const cat = findCmdConfCategory(name);
 
         if (!cat) {
-            return api.log.replyError(api, 'Błąd', `Nie znaleziono komendy **${name}**!`);
+            return api.log.replyError(api, 'Błąd', `Nie znaleziono kategorii dla komendy **${name}**!`);
         }
 
         overrideCfg!.commands![cat] ??= {};

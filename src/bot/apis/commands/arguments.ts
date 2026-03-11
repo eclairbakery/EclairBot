@@ -42,9 +42,9 @@ export type CommandArgValueMap = {
     'command-ref': Command;
 };
 
-export type CommandValuableArgument<T extends { base: string } = any> = CommandArgument & {
-    type: T;
-    value?: T extends { base: 'union', variants: (infer V)[] }
-        ? (V extends { base: keyof CommandArgValueMap } ? CommandArgValueMap[V['base']] : any)
-        : T['base'] extends keyof CommandArgValueMap ? CommandArgValueMap[T['base']] : any;
-};
+export type CommandValuableArgument = {
+    [K in CommandArgBaseType]: CommandArgument & {
+        type: Extract<CommandArgType, { base: K }>;
+        value: CommandArgValueMap[K];
+    }
+}[CommandArgBaseType];

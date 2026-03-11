@@ -8,8 +8,8 @@ import { EconomyExecutor } from "../economy/action.js";
 
 export interface CommandAPI {
     // ---- COMMAND INFO ----
-    getTypedArg<B extends CommandArgBaseType>(name: string, base: B): CommandValuableArgument & { type: { base: B }, value: CommandArgValueMap[B] };
-    getTypedArg<B extends readonly CommandArgBaseType[]>(name: string, bases: B): CommandValuableArgument & { type: { base: B[number] }, value: CommandArgValueMap[B[number]] };
+    getTypedArg<B extends CommandArgBaseType>(name: string, base: B): Extract<CommandValuableArgument, { type: { base: B } }>;
+    getTypedArg<B extends readonly CommandArgBaseType[]>(name: string, bases: B): Extract<CommandValuableArgument, { type: { base: B[number] } }>;
     invokedViaAlias: string;
     preferShortenedEmbeds: boolean;
 
