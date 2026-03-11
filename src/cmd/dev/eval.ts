@@ -4,7 +4,7 @@ import { client } from '@/client.js';
 import { output } from '@/bot/logging.js';
 import { db } from '@/bot/apis/db/bot-db.js';
 
-export let canEval = cfg.general.usingNormalHosting;
+export let canEval = cfg.legacy.general.usingNormalHosting;
 
 setTimeout(() => {
     canEval = true;
@@ -30,8 +30,8 @@ export const evalCmd: Command = {
     ],
     aliases: ['exec'],
     permissions: {
-        allowedRoles: cfg.devPerms.allowedRoles,
-        allowedUsers: cfg.devPerms.allowedUsers,
+        allowedRoles: cfg.legacy.devPerms.allowedRoles,
+        allowedUsers: cfg.legacy.devPerms.allowedUsers,
     },
 
     async execute(api) {
@@ -39,20 +39,20 @@ export const evalCmd: Command = {
 
         const code = api.getTypedArg('code', 'string')?.value as string;
         if (code.includes('process.exit')) {
-            return api.reply(cfg.customization.evalWarnings.unsafeEval);
+            return api.reply(cfg.legacy.customization.evalWarnings.unsafeEval);
         }
         if (code.includes('bot.db') || code.includes('bot/eclair')) {
-            return api.reply(cfg.customization.evalWarnings.doNotDownloadDatabase);
+            return api.reply(cfg.legacy.customization.evalWarnings.doNotDownloadDatabase);
         }
         let warns: string[] = [];
         if (code.includes('console.log') || code.includes('console.error')) {
-            warns.push(cfg.customization.evalWarnings.consoleLogWarn);
+            warns.push(cfg.legacy.customization.evalWarnings.consoleLogWarn);
         }
         if (!code.includes('return')) {
-            warns.push(cfg.customization.evalWarnings.execReturnWarn);
+            warns.push(cfg.legacy.customization.evalWarnings.execReturnWarn);
         }
         if (!canEval) {
-            warns.push(cfg.customization.evalWarnings.wait);
+            warns.push(cfg.legacy.customization.evalWarnings.wait);
         }
         for (const warn of warns) {
             await api.log.replyTip(api, 'Ten kod może nie zadziałać!', warn);

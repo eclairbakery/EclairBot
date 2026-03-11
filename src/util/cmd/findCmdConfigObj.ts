@@ -5,7 +5,7 @@ import { commands } from '@/cmd/list.js';
 import { AnyCommandConfig } from '@/bot/definitions/config-subtypes.js';
 
 export function findCmdConfCategory(commandName: string): string | undefined {
-    for (const [category, content] of Object.entries(cfg.commands)) {
+    for (const [category, content] of Object.entries(cfg.legacy.commands)) {
         if (commandName in content) {
             return category;
         }
@@ -21,26 +21,26 @@ export function findCmdConfCategory(commandName: string): string | undefined {
 export function findCmdConfigObj(command: Command): AnyCommandConfig | undefined {
     const cat = findCmdConfCategory(command.name);
     if (!cat) return undefined;
-    return cfg.commands[cat]?.[command.name];
+    return cfg.legacy.commands[cat]?.[command.name];
 }
 
 export function findCmdConfigObjOrDefault(command: Command): AnyCommandConfig {
     const cat = findCmdConfCategory(command.name);
-    if (!cat) return cfg.defaultCommandConfig;
+    if (!cat) return cfg.legacy.defaultCommandConfig;
     
-    const config = cfg.commands[cat]?.[command.name];
-    if (config) return { ...cfg.defaultCommandConfig, ...config };
+    const config = cfg.legacy.commands[cat]?.[command.name];
+    if (config) return { ...cfg.legacy.defaultCommandConfig, ...config };
 
-    return cfg.defaultCommandConfig;
+    return cfg.legacy.defaultCommandConfig;
 }
 
 export function findCmdConfResolvable(commandName: string): AnyCommandConfig {
     const cat = findCmdConfCategory(commandName);
-    if (!cat) return cfg.defaultCommandConfig;
+    if (!cat) return cfg.legacy.defaultCommandConfig;
     
-    const config = cfg.commands[cat]?.[commandName];
-    if (config) return { ...cfg.defaultCommandConfig, ...config };
+    const config = cfg.legacy.commands[cat]?.[commandName];
+    if (config) return { ...cfg.legacy.defaultCommandConfig, ...config };
 
-    return cfg.defaultCommandConfig;
+    return cfg.legacy.defaultCommandConfig;
 }
 

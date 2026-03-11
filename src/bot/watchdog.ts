@@ -12,7 +12,7 @@ import { levenshtein } from '@/util/math/levenshtein.js';
 const recentJoins: { id: string; joinedAt: number; username: string }[] = [];
 
 async function logAlarming(description: string, fatal: boolean, mem: dsc.GuildMember, score: number) {
-    const channel = await client.channels.fetch(cfg.channels.mod.eclairBotAlerts);
+    const channel = await client.channels.fetch(cfg.legacy.channels.mod.eclairBotAlerts);
     if (!channel?.isSendable()) return;
     channel.send({
         embeds: [
@@ -21,8 +21,8 @@ async function logAlarming(description: string, fatal: boolean, mem: dsc.GuildMe
                     name: 'EclairBOT'
                 })
                 .setColor(fatal ? PredefinedColors.Red : PredefinedColors.Yellow)
-                .setTitle('❌ ' + (fatal ? cfg.customization.watchdogTexts.fatalHeader.replaceAll('<user>', mem.user.username) : cfg.customization.watchdogTexts.suspiciousHeader.replaceAll('<user>', mem.user.username)))
-                .setDescription(`${cfg.customization.watchdogTexts.descStart}${description}${cfg.customization.watchdogTexts.descEnd.reputation.replaceAll('<score>', score.toString())} ${fatal ? cfg.customization.watchdogTexts.descEnd.pingSorry : cfg.customization.watchdogTexts.descEnd.floodSorry}`)
+                .setTitle('❌ ' + (fatal ? cfg.legacy.customization.watchdogTexts.fatalHeader.replaceAll('<user>', mem.user.username) : cfg.legacy.customization.watchdogTexts.suspiciousHeader.replaceAll('<user>', mem.user.username)))
+                .setDescription(`${cfg.legacy.customization.watchdogTexts.descStart}${description}${cfg.legacy.customization.watchdogTexts.descEnd.reputation.replaceAll('<score>', score.toString())} ${fatal ? cfg.legacy.customization.watchdogTexts.descEnd.pingSorry : cfg.legacy.customization.watchdogTexts.descEnd.floodSorry}`)
         ]
     });
 }
@@ -34,21 +34,21 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
     let fatal = false;
     let issues: string[] = [];
 
-    if (cfg.masterSecurity.trustNewMembers) return true;
-    if (cfg.masterSecurity.fuckNewMembers) {
+    if (cfg.legacy.masterSecurity.trustNewMembers) return true;
+    if (cfg.legacy.masterSecurity.fuckNewMembers) {
         await mem.kick();
         return 'kicked';
     }
-    if (!cfg.masterSecurity.allowNewBots && mem.user.bot) {
-        const notifyChan = await client.channels.fetch(cfg.channels.mod.eclairBotAlerts);
+    if (!cfg.legacy.masterSecurity.allowNewBots && mem.user.bot) {
+        const notifyChan = await client.channels.fetch(cfg.legacy.channels.mod.eclairBotAlerts);
         if (notifyChan && notifyChan.isSendable()) {
-            await notifyChan.send(cfg.customization.watchdogTexts.newBotsAddition.firstSentence)
-            await notifyChan.send(cfg.customization.watchdogTexts.newBotsAddition.secondSentence);
-            if (mem.user.id == '572906387382861835') await notifyChan.send(cfg.customization.watchdogTexts.newBotsAddition.gayBotSentence);
+            await notifyChan.send(cfg.legacy.customization.watchdogTexts.newBotsAddition.firstSentence)
+            await notifyChan.send(cfg.legacy.customization.watchdogTexts.newBotsAddition.secondSentence);
+            if (mem.user.id == '572906387382861835') await notifyChan.send(cfg.legacy.customization.watchdogTexts.newBotsAddition.gayBotSentence);
         } else {
             output.warn('New bot joined, but cannot find the channel to notify everyone about it.');
         }
-        await mem.kick(cfg.customization.watchdogTexts.newBotsAddition.remReason);
+        await mem.kick(cfg.legacy.customization.watchdogTexts.newBotsAddition.remReason);
         return 'kicked';
     }
 
@@ -56,41 +56,41 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
     const now = new Date();
     const accountAge = (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
     if (accountAge < 30) {
-        issues.push(cfg.customization.watchdogTexts.susThings.youngAccount);
+        issues.push(cfg.legacy.customization.watchdogTexts.susThings.youngAccount);
         trustScore -= 2;
     }
     if (accountAge < 7) {
-        issues.push(cfg.customization.watchdogTexts.susThings.freshAccount);
+        issues.push(cfg.legacy.customization.watchdogTexts.susThings.freshAccount);
         trustScore -= 5;
     }
 
     if (!mem.user.avatar) {
         trustScore -= 1;
-        issues.push(cfg.customization.watchdogTexts.susThings.noAvatar);
+        issues.push(cfg.legacy.customization.watchdogTexts.susThings.noAvatar);
     }
 
     const susWords = ["free nitro", "discord.gg", "http://", "https://", ".ru", "▒", "░"];
     if (susWords.some(w => (mem.user.username.toLowerCase().includes(w)) || mem.user.displayName.toLowerCase().includes(w))) {
         trustScore -= 1;
-        issues.push(cfg.customization.watchdogTexts.susThings.susName);
+        issues.push(cfg.legacy.customization.watchdogTexts.susThings.susName);
     }
 
     if (mem.user.id == '572906387382861835') {
         trustScore -= 3;
-        issues.push(cfg.customization.watchdogTexts.susThings.gayBot);
+        issues.push(cfg.legacy.customization.watchdogTexts.susThings.gayBot);
     }
 
     recentJoins.push({ id: mem.id, joinedAt: Date.now(), username: mem.user.username });
-    const windowStart = Date.now() - cfg.masterSecurity.massJoinWindow;
+    const windowStart = Date.now() - cfg.legacy.masterSecurity.massJoinWindow;
     const recent = recentJoins.filter(e => e.joinedAt > windowStart);
-    if (recent.length >= cfg.masterSecurity.massJoinThreshold) {
-        issues.push(cfg.customization.watchdogTexts.susThings.raid.replaceAll('<count>', recent.length.toString()));
+    if (recent.length >= cfg.legacy.masterSecurity.massJoinThreshold) {
+        issues.push(cfg.legacy.customization.watchdogTexts.susThings.raid.replaceAll('<count>', recent.length.toString()));
         trustScore -= 3;
     }
 
     for (const prev of recent.filter(e => e.id !== mem.id)) {
-        if (levenshtein(prev.username.toLowerCase(), mem.user.username.toLowerCase()) <= cfg.masterSecurity.similarityThreshold) {
-            issues.push(cfg.customization.watchdogTexts.susThings.similarUsername.replaceAll('<user>', prev.username));
+        if (levenshtein(prev.username.toLowerCase(), mem.user.username.toLowerCase()) <= cfg.legacy.masterSecurity.similarityThreshold) {
+            issues.push(cfg.legacy.customization.watchdogTexts.susThings.similarUsername.replaceAll('<user>', prev.username));
             trustScore -= 2;
         }
     }
@@ -99,7 +99,7 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
         if (trustScore <= 0) {
             fatal = true;
         }
-        issues.push(cfg.customization.watchdogTexts.susThings.defaultIssue);
+        issues.push(cfg.legacy.customization.watchdogTexts.susThings.defaultIssue);
 
         let issuesString = '';
         issues.forEach((issue) => {
@@ -113,12 +113,12 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
     return true;
 }
 
-const roleHierarchy: dsc.Snowflake[] = [cfg.roles.headAdmin, cfg.roles.admin, cfg.roles.headMod, cfg.roles.mod, cfg.roles.helper];
+const roleHierarchy: dsc.Snowflake[] = [cfg.legacy.roles.headAdmin, cfg.legacy.roles.admin, cfg.legacy.roles.headMod, cfg.legacy.roles.mod, cfg.legacy.roles.helper];
 const userCounters = new Map<string, { creates: number; deletes: number; warns: number; mutes: number; timeout?: NodeJS.Timeout }>();
 
 async function downgradeRole(member: dsc.GuildMember) {
-    output.log(`watchdog: about to degrade role for ${member.user.username} (user id: ${member.id}); remove all adm roles for user: ${cfg.masterSecurity.notForgiveAdministration}`);
-    if (cfg.masterSecurity.notForgiveAdministration) {
+    output.log(`watchdog: about to degrade role for ${member.user.username} (user id: ${member.id}); remove all adm roles for user: ${cfg.legacy.masterSecurity.notForgiveAdministration}`);
+    if (cfg.legacy.masterSecurity.notForgiveAdministration) {
         for (const admRoleId of roleHierarchy) {
             if (member.roles.cache.has(admRoleId)) {
                 try {
@@ -153,14 +153,14 @@ function addAction(userId: string, type: "create" | "delete" | "warn" | "mute") 
     if (type === "warn") counter.warns++;
     if (type === "mute") counter.mutes++;
 
-    return counter.creates > cfg.masterSecurity.limitsConfiguration.maxChannelCreations || counter.deletes > cfg.masterSecurity.limitsConfiguration.maxChannelDeletions || counter.warns > cfg.masterSecurity.limitsConfiguration.maxWarns || counter.mutes > cfg.masterSecurity.limitsConfiguration.maxMutes;
+    return counter.creates > cfg.legacy.masterSecurity.limitsConfiguration.maxChannelCreations || counter.deletes > cfg.legacy.masterSecurity.limitsConfiguration.maxChannelDeletions || counter.warns > cfg.legacy.masterSecurity.limitsConfiguration.maxWarns || counter.mutes > cfg.legacy.masterSecurity.limitsConfiguration.maxMutes;
 }
 
 const channelAddWatcher: Action<any> = {
     activationEventType: PredefinedActionEventTypes.OnChannelCreate,
     constraints: [
         () => {
-            return cfg.masterSecurity.shallAutoDegrade;
+            return cfg.legacy.masterSecurity.shallAutoDegrade;
         }
     ],
     callbacks: [
@@ -185,7 +185,7 @@ const channelDeleteWatcher: Action<any> = {
     activationEventType: PredefinedActionEventTypes.OnChannelDelete,
     constraints: [
         () => {
-            return cfg.masterSecurity.shallAutoDegrade;
+            return cfg.legacy.masterSecurity.shallAutoDegrade;
         }
     ],
     callbacks: [
@@ -210,7 +210,7 @@ const onWarnGivenWatcher: Action<WarnEventCtx> = {
     activationEventType: OnWarnGiven,
     constraints: [
         () => {
-            return cfg.masterSecurity.shallAutoDegrade;
+            return cfg.legacy.masterSecurity.shallAutoDegrade;
         }
     ],
     callbacks: [
@@ -233,7 +233,7 @@ const onMuteGivenWatcher: Action<UserEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnUserMute,
     constraints: [
         () => {
-            return cfg.masterSecurity.shallAutoDegrade;
+            return cfg.legacy.masterSecurity.shallAutoDegrade;
         }
     ],
     callbacks: [
@@ -252,7 +252,7 @@ const onMuteGivenWatcher: Action<UserEventCtx> = {
 };
 
 export async function watchMute(executor: dsc.GuildMember) {   
-    if (!cfg.masterSecurity.shallAutoDegrade) return;
+    if (!cfg.legacy.masterSecurity.shallAutoDegrade) return;
     output.log('watchdog: mute given by commmand');
     if (addAction(executor.id, "mute")) {
         output.log(`watchdog: about to downgrade role for ${executor.user.username} [muting too many times per minute]`);
@@ -268,7 +268,7 @@ export async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.Per
 
     if (dangerous.length === 0) return;
 
-    if (cfg.masterSecurity.approveDangerousPermissions) {
+    if (cfg.legacy.masterSecurity.approveDangerousPermissions) {
         for (const p of dangerous) {
             output.log(`watchdog: role ${role.id} contains dangerous permission '${p}'; removing it is disabled`);
         }

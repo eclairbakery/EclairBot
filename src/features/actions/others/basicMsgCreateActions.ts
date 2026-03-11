@@ -18,7 +18,7 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
             if (!msg.author.bot) await addExperiencePoints(msg);
 
             // gifs ban
-            if (msg.member!.roles.cache.has(cfg.unfilteredRelated.gifBan) && msg.channelId !== cfg.unfilteredRelated.unfilteredChannel && (msg.attachments.some(att => att.name?.toLowerCase().endsWith('.gif')) || msg.content.includes('tenor.com') || msg.content.includes('.gif'))) {
+            if (msg.member!.roles.cache.has(cfg.legacy.unfilteredRelated.gifBan) && msg.channelId !== cfg.legacy.unfilteredRelated.unfilteredChannel && (msg.attachments.some(att => att.name?.toLowerCase().endsWith('.gif')) || msg.content.includes('tenor.com') || msg.content.includes('.gif'))) {
                 await msg.reply('masz bana na gify');
                 await msg.delete();
                 return;

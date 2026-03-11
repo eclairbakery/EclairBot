@@ -9,6 +9,7 @@ import {
 import EconomyConfig from './economy.js';
 
 export interface Config {
+legacy: {
     /* Whether the bot is enabled (The most useless configuration field I've ever seen...) */
     enabled: boolean;
 
@@ -366,4 +367,5 @@ export interface Config {
         };
         translations: ConfigTranslation[],
     }
+}
 }

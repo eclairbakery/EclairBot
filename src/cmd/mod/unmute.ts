@@ -5,7 +5,7 @@ import { output } from '@/bot/logging.js';
 import { sendLog } from '@/bot/apis/log/send-log.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
-const cmdCfg = cfg.commands.mod.mute;
+const cmdCfg = cfg.legacy.commands.mod.mute;
 
 export const unmuteCmd: Command = {
     name: 'unmute',
@@ -34,14 +34,14 @@ export const unmuteCmd: Command = {
         let reason = api.getTypedArg('reason', "string")?.value;
 
         if (!targetUser) {
-            return api.log.replyError(api, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
+            return api.log.replyError(api, cfg.legacy.customization.modTexts.noTargetSpecifiedHeader, cfg.legacy.customization.modTexts.noTargetSpecifiedText);
         }
 
         if (!reason) {
             if (cmdCfg.reasonRequired) {
-                return api.log.replyError(api, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+                return api.log.replyError(api, cfg.legacy.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.legacy.customization.modTexts.reasonRequiredNotSpecifiedText);
             }
-            reason = cfg.customization.modTexts.defaultReason;
+            reason = cfg.legacy.customization.modTexts.defaultReason;
         }
 
         try {

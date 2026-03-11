@@ -18,19 +18,19 @@ export interface XpEventCtx {
     amount: number;
 };
 
-export function xpToLevel(xp: number, levelDivider: number = cfg.features.leveling.levelDivider): number {
+export function xpToLevel(xp: number, levelDivider: number = cfg.legacy.features.leveling.levelDivider): number {
     return Math.floor(
         (1 + Math.sqrt(1 + 8 * xp / levelDivider)) / 2
     );
 }
 
-export function levelToXp(level: number, levelDivider: number = cfg.features.leveling.levelDivider): number {
+export function levelToXp(level: number, levelDivider: number = cfg.legacy.features.leveling.levelDivider): number {
     return Math.floor((level * (level - 1) / 2) * levelDivider);
 }
 
-export const lvlRoles = Object.values(cfg.features.leveling.milestoneRoles);
+export const lvlRoles = Object.values(cfg.legacy.features.leveling.milestoneRoles);
 
-function getMention(user: dsc.GuildMember, ping: boolean = cfg.features.leveling.shallPingWhenNewLevel) {
+function getMention(user: dsc.GuildMember, ping: boolean = cfg.legacy.features.leveling.shallPingWhenNewLevel) {
     return ping ? `<@${user.user.id}>` : `**${user.displayName.replace('**', '\*\*')}**`;
 }
 
@@ -51,7 +51,7 @@ export async function addLvlRole(
     user: dsc.Snowflake
 ): Promise<boolean> {
 
-    const milestones = cfg.features.leveling.milestoneRoles || {};
+    const milestones = cfg.legacy.features.leveling.milestoneRoles || {};
     const milestoneRoleId = milestones[findLowerClosestKey(milestones, newLevel)];
     if (!milestoneRoleId) return false;
 
@@ -88,17 +88,17 @@ export async function addLvlRole(
 
 export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     // check if eligible
-    if (cfg.features.leveling.excludedChannels.includes(msg.channelId)) return;
-    if (msg.channelId == cfg.unfilteredRelated.unfilteredChannel) return;
+    if (cfg.legacy.features.leveling.excludedChannels.includes(msg.channelId)) return;
+    if (msg.channelId == cfg.legacy.unfilteredRelated.unfilteredChannel) return;
 
     // amount
-    let amount = cfg.features.leveling.xpPerMessage;
+    let amount = cfg.legacy.features.leveling.xpPerMessage;
     if (msg.attachments.size > 0 && msg.content.length > 5) amount = Math.floor(amount * 1.5);
     if (msg.content.length > 100) amount = Math.floor(amount * 1.2);
 
     // events
-    if (cfg.features.leveling.currentEvent.enabled && cfg.features.leveling.currentEvent.channels.includes(msg.channelId)) {
-        amount = Math.floor(amount * cfg.features.leveling.currentEvent.multiplier);
+    if (cfg.legacy.features.leveling.currentEvent.enabled && cfg.legacy.features.leveling.currentEvent.channels.includes(msg.channelId)) {
+        amount = Math.floor(amount * cfg.legacy.features.leveling.currentEvent.multiplier);
     }
 
     // logic
@@ -106,15 +106,15 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
 
     const prevXp = await user.leveling.getXP();
     const newXp = prevXp + amount;
-    const prevLevel = xpToLevel(prevXp, cfg.features.leveling.levelDivider);
-    const newLevel = xpToLevel(newXp, cfg.features.leveling.levelDivider);
+    const prevLevel = xpToLevel(prevXp, cfg.legacy.features.leveling.levelDivider);
+    const newLevel = xpToLevel(newXp, cfg.legacy.features.leveling.levelDivider);
 
     await user.leveling.addXP(amount);
 
     if (newLevel > prevLevel) {
         let gotNewRole = await addLvlRole(msg.guild!, newLevel, msg.author.id);
 
-        const channelLvl = await msg.client.channels.fetch(cfg.features.leveling.levelChannel);
+        const channelLvl = await msg.client.channels.fetch(cfg.legacy.features.leveling.levelChannel);
         if (!channelLvl || !channelLvl.isSendable()) return;
 
         let content = `${getMention(msg.member!)} wbił poziom ${newLevel}! Wow co za osiągnięcie!`;
@@ -150,8 +150,8 @@ const updateXpAction: Action<XpEventCtx> = {
 
             let content: string;
 
-            const prevLevel = xpToLevel(prevXp, cfg.features.leveling.levelDivider);
-            const newLevel = xpToLevel(newXp, cfg.features.leveling.levelDivider);
+            const prevLevel = xpToLevel(prevXp, cfg.legacy.features.leveling.levelDivider);
+            const newLevel = xpToLevel(newXp, cfg.legacy.features.leveling.levelDivider);
 
             if (newLevel > prevLevel) {
                 content = `Level użytkownika ${getMention(member)} został zmieniony i teraz ma aż ${newLevel} level!`;
@@ -169,7 +169,7 @@ const updateXpAction: Action<XpEventCtx> = {
                 }
             }
 
-            const channelLvl = await client.channels.fetch(cfg.features.leveling.levelChannel);
+            const channelLvl = await client.channels.fetch(cfg.legacy.features.leveling.levelChannel);
             if (!channelLvl || !channelLvl.isSendable()) return;
             return channelLvl.send(content);
         },

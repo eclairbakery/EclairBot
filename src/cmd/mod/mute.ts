@@ -11,7 +11,7 @@ import { watchMute } from '@/bot/watchdog.js';
 import { sendLog } from '@/bot/apis/log/send-log.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
-const cmdCfg = cfg.commands.mod.mute;
+const cmdCfg = cfg.legacy.commands.mod.mute;
 
 export const muteCmd: Command = {
     name: 'mute',
@@ -54,17 +54,17 @@ export const muteCmd: Command = {
         let expiresAt = duration != null ? Math.floor(Date.now() / 1000) + duration : null;
 
         if (!targetUser) {
-            return api.log.replyError(api, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
+            return api.log.replyError(api, cfg.legacy.customization.modTexts.noTargetSpecifiedHeader, cfg.legacy.customization.modTexts.noTargetSpecifiedText);
         }
 
         if (!reason && cmdCfg.reasonRequired) {
-            return api.log.replyError(api, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+            return api.log.replyError(api, cfg.legacy.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.legacy.customization.modTexts.reasonRequiredNotSpecifiedText);
         } else if (!reason) {
-            reason = cfg.customization.modTexts.defaultReason;
+            reason = cfg.legacy.customization.modTexts.defaultReason;
         }
 
-        if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
-            return api.log.replyError(api, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
+        if (targetUser.roles.cache.hasAny(...cfg.legacy.features.moderation.protectedRoles)) {
+            return api.log.replyError(api, cfg.legacy.customization.modTexts.userIsProtectedHeader, cfg.legacy.customization.modTexts.userIsProtectedDesc);
         }
 
         try {

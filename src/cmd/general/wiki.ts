@@ -81,8 +81,8 @@ export const wikiCmd: Command = {
             return api.reply({
                 embeds: [{
                     author: { name: 'EclairBOT' },
-                    title: cfg.customization.uncategorized.wikiIsNotFandomHeader,
-                    description: cfg.customization.uncategorized.wikiIsNotFandomText,
+                    title: cfg.legacy.customization.uncategorized.wikiIsNotFandomHeader,
+                    description: cfg.legacy.customization.uncategorized.wikiIsNotFandomText,
                     color: PredefinedColors.Blurple
                 }]
             });
@@ -93,8 +93,8 @@ export const wikiCmd: Command = {
             return api.reply({
                 embeds: [{
                     author: { name: 'EclairBOT' },
-                    title: cfg.customization.uncategorized.wikiUnknownArticleHeader,
-                    description: cfg.customization.uncategorized.wikiUnknownArticleText,
+                    title: cfg.legacy.customization.uncategorized.wikiUnknownArticleHeader,
+                    description: cfg.legacy.customization.uncategorized.wikiUnknownArticleText,
                     color: PredefinedColors.Orange
                 }]
             });
@@ -107,8 +107,8 @@ export const wikiCmd: Command = {
             return api.reply({
                 embeds: [{
                     author: { name: 'EclairBOT' },
-                    title: cfg.customization.uncategorized.wikiDisambiguationPageHeader,
-                    description: `${cfg.customization.uncategorized.wikiDisambiguationPageText}\n${titles.join(', ')}`,
+                    title: cfg.legacy.customization.uncategorized.wikiDisambiguationPageHeader,
+                    description: `${cfg.legacy.customization.uncategorized.wikiDisambiguationPageText}\n${titles.join(', ')}`,
                     url: json.content_urls.desktop.page,
                     color: PredefinedColors.Cyan
                 }]

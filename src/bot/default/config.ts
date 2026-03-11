@@ -2,7 +2,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { Config } from '../definitions/config.js';
 import EconomyConfig from '../definitions/economy.js';
 
-const rolesCfg: Config['roles'] = {
+const rolesCfg: Config['legacy']['roles'] = {
     eclair25: '1280081773019140096',
     headAdmin: '1415710955022843904',
     admin: '1415710969732005980',
@@ -13,7 +13,7 @@ const rolesCfg: Config['roles'] = {
     automodBypassRoles: ['1380875827998097418'],
 };   
      
-const channelsCfg: Config['channels'] = {
+const channelsCfg: Config['legacy']['channels'] = {
     mod: {
         modGeneral: '1235552454838456433',
         logs: '1235641912241819669',
@@ -64,7 +64,7 @@ const channelsCfg: Config['channels'] = {
     }
 };
 
-const commandsCfg: Config['commands'] = {
+const commandsCfg: Config['legacy']['commands'] = {
     mod: {
         ban: {
             enabled: true,
@@ -293,6 +293,7 @@ const economyCfg: EconomyConfig = {
 }
 
 export const defaultCfg: Config = {
+legacy: {
     enabled: true,
 
     roles: rolesCfg,
@@ -481,9 +482,9 @@ export const defaultCfg: Config = {
             },
             newBotsAddition: {
                 firstSentence: 'dodawanie botów jest wyłączone w konfiguracji',
-                secondSentence: 'aby dodać innego bota, włącz cfg.masterSecurity.allowNewBots',
+                secondSentence: 'aby dodać innego bota, włącz cfg.legacy.masterSecurity.allowNewBots',
                 gayBotSentence: 'a i btw to jest zacznijTO więc i tak bym go wywalił bo jest gejem',
-                remReason: 'zasada cfg.masterSecurity.allowNewBots nie pozwala na dodawanie nowych botów'
+                remReason: 'zasada cfg.legacy.masterSecurity.allowNewBots nie pozwala na dodawanie nowych botów'
             },
             susThings: {
                 defaultIssue: 'Ma trust score mniejszy od domyślnego.',
@@ -633,4 +634,5 @@ export const defaultCfg: Config = {
         },
         approveDangerousPermissions: false
     }
+}
 };

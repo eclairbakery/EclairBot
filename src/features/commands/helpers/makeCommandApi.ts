@@ -62,7 +62,7 @@ function makeOptions(options: FirstArg<CommandAPI['reply']>): any {
             result = options;
     }
 
-    if (cfg.customization.stringifyEmbed && result?.embeds?.length) {
+    if (cfg.legacy.customization.stringifyEmbed && result?.embeds?.length) {
         const embedText = result.embeds
             .map((e: any) => {
                 if (typeof e?.toJSON === 'function') {
@@ -138,7 +138,7 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
             interaction: context.interaction,
         },
 
-        preferShortenedEmbeds: cfg.blockCommands.preferShortenedEmbeds.includes((context.interaction?.channel ?? context.msg!.channel!).id),
+        preferShortenedEmbeds: cfg.legacy.blockCommands.preferShortenedEmbeds.includes((context.interaction?.channel ?? context.msg!.channel!).id),
         invokedViaAlias: context.invokedviaalias
     };
 }

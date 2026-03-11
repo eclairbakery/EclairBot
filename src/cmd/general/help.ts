@@ -53,14 +53,14 @@ function buildCategoryEmbed(
         let formattedName = cmd.name;
 
         if (cmd.aliases.length === 1) {
-            formattedName += ` *(a.k.a. \`${cfg.general.prefix}${cmd.aliases[0]}\`)*`;
+            formattedName += ` *(a.k.a. \`${cfg.legacy.general.prefix}${cmd.aliases[0]}\`)*`;
         } else if (cmd.aliases.length >= 2) {
-            formattedName += ` *(a.k.a. \`${cfg.general.prefix}${cmd.aliases[0]}\` i \`${cfg.general.prefix}${cmd.aliases[1]}\`)*`;
+            formattedName += ` *(a.k.a. \`${cfg.legacy.general.prefix}${cmd.aliases[0]}\` i \`${cfg.legacy.general.prefix}${cmd.aliases[1]}\`)*`;
         }
 
         embed.addFields({
             name: '',
-            value: `**:star: ${cfg.general.prefix}${formattedName}:** ${isQuick ? cmd.description.short : cmd.description.main}`,
+            value: `**:star: ${cfg.legacy.general.prefix}${formattedName}:** ${isQuick ? cmd.description.short : cmd.description.main}`,
             inline: false,
         });
     }

@@ -20,19 +20,19 @@ export default function isCommandBlockedOnChannel(command: Command, channelID: d
    let result: boolean = false;
 
    // this is confusing so i'll document it
-   //  cfg.blockCommands.fullExceptImportant allows important cmds on some channels
+   //  cfg.legacy.blockCommands.fullExceptImportant allows important cmds on some channels
    //  or maybe not
    //  who knows
    if (command.flags & CommandFlags.Important)
-       result ||= isBlockedByRules(channelID, cfg.blockCommands.fullExceptImportant);
+       result ||= isBlockedByRules(channelID, cfg.legacy.blockCommands.fullExceptImportant);
    else
-       result ||= isBlockedByRules(channelID, cfg.blockCommands.full);
+       result ||= isBlockedByRules(channelID, cfg.legacy.blockCommands.full);
 
    if (command.flags & CommandFlags.Spammy)
-       result ||= isBlockedByRules(channelID, cfg.blockCommands.spammy);
+       result ||= isBlockedByRules(channelID, cfg.legacy.blockCommands.spammy);
 
    if (command.flags & CommandFlags.Economy)
-       result ||= isBlockedByRules(channelID, cfg.blockCommands.economy);
+       result ||= isBlockedByRules(channelID, cfg.legacy.blockCommands.economy);
 
    return result;
 }

@@ -19,8 +19,8 @@ export const enableCommandCmd: Command = {
     ],
     flags: CommandFlags.Important,
     permissions: {
-        allowedRoles: cfg.devPerms.allowedRoles,
-        allowedUsers: cfg.devPerms.allowedUsers,
+        allowedRoles: cfg.legacy.devPerms.allowedRoles,
+        allowedUsers: cfg.legacy.devPerms.allowedUsers,
     },
     
     async execute(api) {
@@ -32,9 +32,11 @@ export const enableCommandCmd: Command = {
             return api.log.replyError(api, 'Błąd', `Nie znaleziono kategorii dla komendy **${name}**!`);
         }
 
-        overrideCfg!.commands![cat] ??= {};
-        overrideCfg!.commands![cat][name] ??= cfg.defaultCommandConfig;
-        overrideCfg!.commands![cat][name].enabled = true;
+        if (!overrideCfg.legacy) (overrideCfg as any).legacy = {};
+
+        overrideCfg!.legacy!.commands![cat] ??= {};
+        overrideCfg!.legacy!.commands![cat][name] ??= cfg.legacy.defaultCommandConfig;
+        overrideCfg!.legacy!.commands![cat][name].enabled = true;
         saveConfigurationChanges();
 
         api.log.replySuccess(api, 'Udało się!', `Włączono komendę **${name}**!`);

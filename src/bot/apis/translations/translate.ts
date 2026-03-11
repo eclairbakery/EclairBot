@@ -19,7 +19,7 @@ function translatePatternToRegex(input: string): { regex: RegExp, groups: number
 }
 
 function translateString(what: string) {
-    const translation = cfg.features.translations.find((val) => {
+    const translation = cfg.legacy.features.translations.find((val) => {
         const inputs = typeof val.input === "string" ? [val.input] : val.input;
 
         return inputs.some((pattern: string) => {

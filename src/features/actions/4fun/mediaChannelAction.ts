@@ -13,14 +13,14 @@ export const mediaChannelAction: Action<MessageEventCtx> = {
     constraints: [
         (msg: dsc.Message) => {
             if (msg.author.bot) return false;
-            const channel = cfg.features.forFun.media.find((mc) => mc.channel == msg.channelId);
+            const channel = cfg.legacy.features.forFun.media.find((mc) => mc.channel == msg.channelId);
             if (channel == null || channel == undefined) return false;
             return true;
         }
     ],
     callbacks: [
         async (msg: dsc.Message) => {
-            const channelConfig = cfg.features.forFun.media.find((mc) => mc.channel == msg.channelId)!;
+            const channelConfig = cfg.legacy.features.forFun.media.find((mc) => mc.channel == msg.channelId)!;
             let check = false;
             if (msg.attachments.size > 0) {
                 for (const attachment of msg.attachments.values()) {
@@ -45,7 +45,7 @@ export const mediaChannelAction: Action<MessageEventCtx> = {
                     await msg.react(reaction);
                 }
             } else if (channelConfig.deleteMessageIfNotMedia) {
-                const reply = await msg.reply(`to nie do tego kanał ${fmtEmoji(cfg.emoji.wowEmoji)}`);
+                const reply = await msg.reply(`to nie do tego kanał ${fmtEmoji(cfg.legacy.emoji.wowEmoji)}`);
                 await sleep(2000);
                 await msg.delete();
                 await reply.delete();

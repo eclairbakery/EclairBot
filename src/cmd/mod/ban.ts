@@ -8,7 +8,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 import ban from '@/bot/apis/mod/bans.js';
 
-const cmdCfg = cfg.commands.mod.ban;
+const cmdCfg = cfg.legacy.commands.mod.ban;
 
 export const banCmd: Command = {
     name: 'ban',
@@ -38,18 +38,18 @@ export const banCmd: Command = {
     execute: async (api: CommandAPI) => {
         const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
         const reasonArg = api.getTypedArg('reason', 'string').value as string;
-        const reason = reasonArg?.trim() || (cmdCfg.reasonRequired ? null : cfg.customization.modTexts.defaultReason);
+        const reason = reasonArg?.trim() || (cmdCfg.reasonRequired ? null : cfg.legacy.customization.modTexts.defaultReason);
 
         if (!targetUser) {
-            return api.log.replyError(api, cfg.customization.modTexts.noTargetSpecifiedHeader, cfg.customization.modTexts.noTargetSpecifiedText);
+            return api.log.replyError(api, cfg.legacy.customization.modTexts.noTargetSpecifiedHeader, cfg.legacy.customization.modTexts.noTargetSpecifiedText);
         }
 
         if (!reason) {
-            return api.log.replyError(api, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+            return api.log.replyError(api, cfg.legacy.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.legacy.customization.modTexts.reasonRequiredNotSpecifiedText);
         }
 
-        if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
-            return api.log.replyError(api, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
+        if (targetUser.roles.cache.hasAny(...cfg.legacy.features.moderation.protectedRoles)) {
+            return api.log.replyError(api, cfg.legacy.customization.modTexts.userIsProtectedHeader, cfg.legacy.customization.modTexts.userIsProtectedDesc);
         }
 
         try {

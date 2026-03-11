@@ -28,7 +28,7 @@ export const depositCmd: Command = {
     async execute(api: CommandAPI) {
         const amount = api.getTypedArg('amount', 'float')?.value as number;
         if (isNaN(amount) || amount <= 0) {
-            return api.log.replyError(api, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
+            return api.log.replyError(api, cfg.legacy.customization.economyTexts.betWrongAmountHeader, cfg.legacy.customization.economyTexts.betWrongAmountText);
         }
 
         const user = api.executor;
@@ -36,7 +36,7 @@ export const depositCmd: Command = {
 
         try {
             if (userBalance.wallet < amount) {
-                return api.log.replyError(api, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
+                return api.log.replyError(api, cfg.legacy.customization.economyTexts.balanceNotSufficientHeader, cfg.legacy.customization.economyTexts.balanceNotSufficientText);
             }
 
             await user.economy.depositToBank(amount);

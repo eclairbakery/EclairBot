@@ -21,8 +21,9 @@ export function saveConfigurationChanges() {
 }
 
 export function getCommandOverride(category: string, commandName: string): any {
-    if (!overrideCfg.commands) (overrideCfg as any).commands = {};
-    const cmds = overrideCfg.commands as any;
+    if (!overrideCfg.legacy) (overrideCfg as any).legacy = {}; 
+    if (!overrideCfg.legacy?.commands) (overrideCfg as any).legacy.commands = {};
+    const cmds = overrideCfg.legacy?.commands as any;
     cmds[category] ??= {};
     cmds[category][commandName] ??= {};
     return cmds[category][commandName];

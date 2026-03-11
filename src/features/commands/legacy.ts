@@ -46,8 +46,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     const content = msg.content.trimStart();
 
     const prefixes = [
-        cfg.general.prefix,
-        ...(cfg.general.alternativePrefixes ?? [])
+        cfg.legacy.general.prefix,
+        ...(cfg.legacy.general.alternativePrefixes ?? [])
     ];
     
     const prefix = prefixes.find(p =>
@@ -65,7 +65,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 
     const result = findCommand(cmdName, commands);
     if (!result) {
-        return log.replyError(msg, cfg.customization.commandsErrors.legacy.commandNotFoundHeader, cfg.customization.commandsErrors.legacy.commandNotFoundText.replace('<cmd>', cmdName.replaceAll('`', '')));
+        return log.replyError(msg, cfg.legacy.customization.commandsErrors.legacy.commandNotFoundHeader, cfg.legacy.customization.commandsErrors.legacy.commandNotFoundText.replace('<cmd>', cmdName.replaceAll('`', '')));
     }
 
     const { command, config } = result;
@@ -73,8 +73,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     if (!canExecuteCmd(command, msg.member!)) {
         log.replyError(
             msg,
-            cfg.customization.commandsErrors.legacy.missingPermissionsHeader,
-            cfg.customization.commandsErrors.legacy.missingPermissionsText
+            cfg.legacy.customization.commandsErrors.legacy.missingPermissionsHeader,
+            cfg.legacy.customization.commandsErrors.legacy.missingPermissionsText
         );
         return;
     }
@@ -88,15 +88,15 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     if (!msg.inGuild() && !(command.flags & CommandFlags.WorksInDM)) {
         log.replyError(
             msg,
-            cfg.customization.commandsErrors.legacy.doesNotWorkInDmHeader,
-            cfg.customization.commandsErrors.legacy.doesNotWorkInDmText.replace('<cmd>', cmdName.replaceAll('`', ''))
+            cfg.legacy.customization.commandsErrors.legacy.doesNotWorkInDmHeader,
+            cfg.legacy.customization.commandsErrors.legacy.doesNotWorkInDmText.replace('<cmd>', cmdName.replaceAll('`', ''))
         );
         return;
     }
 
     if (
-        (cfg.general.commandHandling.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
-        (cfg.general.commandHandling.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
+        (cfg.legacy.general.commandHandling.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
+        (cfg.legacy.general.commandHandling.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
     ) {
         const row = new dsc.ActionRowBuilder()
         .addComponents(
@@ -130,8 +130,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     if (!config.enabled && command.name != 'configuration') {
         log.replyWarn(
             msg,
-            cfg.customization.commandsErrors.legacy.commandDisabledHeader,
-            cfg.customization.commandsErrors.legacy.commandDisabledDescription
+            cfg.legacy.customization.commandsErrors.legacy.commandDisabledHeader,
+            cfg.legacy.customization.commandsErrors.legacy.commandDisabledDescription
         );
         return;
     }
@@ -169,7 +169,7 @@ export function init() {
     actionsManager.addAction({
         callbacks: [legacyCommandsMessageHandler],
         constraints: [
-            (msg) => [cfg.general.prefix, ...cfg.general.alternativePrefixes].some((val) => msg.content.toLowerCase().startsWith(val.toLowerCase()))
+            (msg) => [cfg.legacy.general.prefix, ...cfg.legacy.general.alternativePrefixes].some((val) => msg.content.toLowerCase().startsWith(val.toLowerCase()))
         ],
         activationEventType: PredefinedActionEventTypes.OnMessageCreate
     });

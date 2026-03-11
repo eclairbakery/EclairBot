@@ -44,7 +44,7 @@ client.on('interactionCreate', async (int: Interaction) => {
 
     const result = findCommand(int.commandName, commands);
     if (!result) {
-        return int.reply({ content: cfg.customization.commandsErrors.slash.commandNotFound, ephemeral: true });
+        return int.reply({ content: cfg.legacy.customization.commandsErrors.slash.commandNotFound, ephemeral: true });
     }
 
     const { command, config } = result;
@@ -62,8 +62,8 @@ client.on('interactionCreate', async (int: Interaction) => {
     if (!canExecuteCmd(command, int.member! as any)) {
         return log.replyError(
             replyable,
-            cfg.customization.commandsErrors.legacy.missingPermissionsHeader,
-            cfg.customization.commandsErrors.legacy.missingPermissionsText
+            cfg.legacy.customization.commandsErrors.legacy.missingPermissionsHeader,
+            cfg.legacy.customization.commandsErrors.legacy.missingPermissionsText
         );
     }
 
@@ -80,8 +80,8 @@ client.on('interactionCreate', async (int: Interaction) => {
     }
 
     if (
-        (cfg.general.commandHandling.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
-        (cfg.general.commandHandling.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
+        (cfg.legacy.general.commandHandling.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
+        (cfg.legacy.general.commandHandling.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
     ) { 
         const row = new dsc.ActionRowBuilder<dsc.ButtonBuilder>()
             .addComponents(
@@ -113,8 +113,8 @@ client.on('interactionCreate', async (int: Interaction) => {
     if (!config.enabled && command.name != 'configuration') {
         return log.replyWarn(
             replyable,
-            cfg.customization.commandsErrors.legacy.commandDisabledHeader,
-            cfg.customization.commandsErrors.legacy.commandDisabledDescription
+            cfg.legacy.customization.commandsErrors.legacy.commandDisabledHeader,
+            cfg.legacy.customization.commandsErrors.legacy.commandDisabledDescription
         );
     }
 

@@ -7,10 +7,10 @@ import { cfg } from '@/bot/cfg.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 import { formatMoney } from '@/util/math/format.js';
 
-const CrimeAmountMin = cfg.commands.economy.crime.minimumCrimeAmount;
-const CrimeAmountMax = cfg.commands.economy.crime.maximumCrimeAmount;
-const Percentage = cfg.commands.economy.crime.successRatio;
-const Cooldown = cfg.commands.economy.crime.cooldown;
+const CrimeAmountMin = cfg.legacy.commands.economy.crime.minimumCrimeAmount;
+const CrimeAmountMax = cfg.legacy.commands.economy.crime.maximumCrimeAmount;
+const Percentage = cfg.legacy.commands.economy.crime.successRatio;
+const Cooldown = cfg.legacy.commands.economy.crime.cooldown;
 
 type MessageCallback = (amount: number) => string;
 const CrimeSuccessMessages: MessageCallback[] = [
@@ -77,8 +77,8 @@ export const crimeCmd: Command = {
         if (((await api.executor.economy.getBalance()).wallet ?? 0) <= 100) {
             const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.DarkBlue)
-                .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.crimeNotAllowedHeader)
-                .setDescription(cfg.customization.economyTexts.workSlutOrCrime.crime.crimeNotAllowedText);
+                .setTitle(cfg.legacy.customization.economyTexts.workSlutOrCrime.crime.crimeNotAllowedHeader)
+                .setDescription(cfg.legacy.customization.economyTexts.workSlutOrCrime.crime.crimeNotAllowedText);
             return api.reply({ embeds: [embed] });
         }
 
@@ -87,8 +87,8 @@ export const crimeCmd: Command = {
             if (!result.can) {
                 const embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Yellow)
-                    .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.waitTextHeader)
-                    .setDescription(cfg.customization.economyTexts.workSlutOrCrime.crime.waitTextDescription.replaceAll('<seconds>', result.discordTime));
+                    .setTitle(cfg.legacy.customization.economyTexts.workSlutOrCrime.crime.waitTextHeader)
+                    .setDescription(cfg.legacy.customization.economyTexts.workSlutOrCrime.crime.waitTextDescription.replaceAll('<seconds>', result.discordTime));
                 return api.reply({ embeds: [embed] });
             }
 
@@ -108,13 +108,13 @@ export const crimeCmd: Command = {
                 const genMessage = CrimeSuccessMessages[getRandomInt(0, CrimeSuccessMessages.length-1)];
                 embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Blue)
-                    .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.winHeader)
+                    .setTitle(cfg.legacy.customization.economyTexts.workSlutOrCrime.crime.winHeader)
                     .setDescription(genMessage(total));
             } else {
                 const genMessage = CrimeFailMessages[getRandomInt(0, CrimeFailMessages.length-1)];
                 embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Red)
-                    .setTitle(cfg.customization.economyTexts.workSlutOrCrime.crime.loseHeader)
+                    .setTitle(cfg.legacy.customization.economyTexts.workSlutOrCrime.crime.loseHeader)
                     .setDescription(genMessage(total));
             }
 

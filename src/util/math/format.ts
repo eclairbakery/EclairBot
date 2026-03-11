@@ -36,10 +36,10 @@ export function formatNumber(value: number): string {
 }
 
 export function formatMoney(money: Money): string {
-    switch (cfg.features.economy.currencySignPlacement) {
+    switch (cfg.legacy.features.economy.currencySignPlacement) {
     case 'left':
-        return cfg.features.economy.currencySign + formatNumber(money satisfies number);
+        return cfg.legacy.features.economy.currencySign + formatNumber(money satisfies number);
     case 'right':
-        return formatNumber(money satisfies number) + cfg.features.economy.currencySign;
+        return formatNumber(money satisfies number) + cfg.legacy.features.economy.currencySign;
     }
 }

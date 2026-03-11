@@ -1,4 +1,4 @@
-import { cfg } from "@/bot/cfg.js";
+import { cfg as cfg2 } from "@/bot/cfg.js";
 import { Command } from "./cmd.js";
 
 export namespace CommandPermissions {
@@ -18,8 +18,8 @@ export namespace CommandPermissions {
 
     export function devOnly(): Command['permissions'] {
         return {
-            allowedRoles: [ ...cfg.devPerms.allowedRoles ],
-            allowedUsers: [ ...cfg.devPerms.allowedUsers ]
+            allowedRoles: [ ...cfg2.legacy.devPerms.allowedRoles ],
+            allowedUsers: [ ...cfg2.legacy.devPerms.allowedUsers ]
         };
     }
 

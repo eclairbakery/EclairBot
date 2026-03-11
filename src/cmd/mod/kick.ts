@@ -7,7 +7,7 @@ import { PredefinedColors } from '@/util/color.js';
 import kick from '@/bot/apis/mod/kicks.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
-const cmdCfg = cfg.commands.mod.kick;
+const cmdCfg = cfg.legacy.commands.mod.kick;
 
 export const kickCmd: Command = {
     name: 'kick',
@@ -45,14 +45,14 @@ export const kickCmd: Command = {
             return api.log.replyError(api, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyślę komu ty chcesz dać kopniaka? Użycie: odpowiedzi na wiadomość lub !kick <@user> <powód>');
         }
 
-        if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
-            return api.log.replyError(api, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
+        if (targetUser.roles.cache.hasAny(...cfg.legacy.features.moderation.protectedRoles)) {
+            return api.log.replyError(api, cfg.legacy.customization.modTexts.userIsProtectedHeader, cfg.legacy.customization.modTexts.userIsProtectedDesc);
         }
 
         if (!reason && cmdCfg.reasonRequired) {
-            return api.log.replyError(api, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+            return api.log.replyError(api, cfg.legacy.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.legacy.customization.modTexts.reasonRequiredNotSpecifiedText);
         } else if (!reason) {
-            reason = cfg.customization.modTexts.defaultReason;
+            reason = cfg.legacy.customization.modTexts.defaultReason;
         }
 
         try {

@@ -15,16 +15,16 @@ export const restartCmd: Command = {
     expectedArgs: [],
     aliases: [],
     permissions: {
-        allowedRoles: cfg.devPerms.allowedRoles,
-        allowedUsers: cfg.devPerms.allowedUsers,
+        allowedRoles: cfg.legacy.devPerms.allowedRoles,
+        allowedUsers: cfg.legacy.devPerms.allowedUsers,
     },
 
     async execute(api) {
         if (!canEval) {
-            return api.reply(cfg.customization.evalWarnings.waitRestart);
+            return api.reply(cfg.legacy.customization.evalWarnings.waitRestart);
         }
         output.log('Issued restart. This will work due to the behaviour of Pterodactyl Daemon.');
-        await api.reply(cfg.customization.evalWarnings.gonnaRestart);
+        await api.reply(cfg.legacy.customization.evalWarnings.gonnaRestart);
         
         if (api.raw.msg) {
             await cache.store('session', 'last-restart-command-message-id', api.raw.msg?.id);

@@ -5,7 +5,7 @@ import { db } from '@/bot/apis/db/bot-db.js';
 import { output } from '@/bot/logging.js';
 import { getWarnEmbed, getSuccessEmbed, getErrorEmbed } from '@/util/log.js';
 
-const cmdCfg = cfg.commands.mod.reset;
+const cmdCfg = cfg.legacy.commands.mod.reset;
 
 export const resetCmd: Command = {
     name: 'reset',

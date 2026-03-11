@@ -16,7 +16,7 @@ export const xpCmd: Command = {
     flags: CommandFlags.None | CommandFlags.Unsafe,
 
     permissions: {
-        allowedRoles: cfg.features.leveling.canChangeXP,
+        allowedRoles: cfg.legacy.features.leveling.canChangeXP,
         allowedUsers: [],
     },
     expectedArgs: [
@@ -58,7 +58,7 @@ export const xpCmd: Command = {
 
         let shouldLeveler = affect === 'levels';
         if (shouldLeveler) {
-            amount = levelToXp(amount, cfg.features.leveling.levelDivider);
+            amount = levelToXp(amount, cfg.legacy.features.leveling.levelDivider);
         }
 
         if (actionStr != 'set' && actionStr != 'add' && actionStr != 'delete') {

@@ -24,7 +24,7 @@ export const warnlistCmd: Command = {
     ],
 
     permissions: {
-        allowedRoles: cfg.commands.mod.warn.allowedRoles,
+        allowedRoles: cfg.legacy.commands.mod.warn.allowedRoles,
         allowedUsers: [],
     },
 

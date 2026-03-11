@@ -44,7 +44,7 @@ export const toggleCmdBlockCmd: Command = {
     ],
     flags: CommandFlags.None,
     permissions: {
-        allowedRoles: [cfg.roles.headMod, cfg.roles.admin, cfg.roles.headAdmin, cfg.roles.eclair25],
+        allowedRoles: [cfg.legacy.roles.headMod, cfg.legacy.roles.admin, cfg.legacy.roles.headAdmin, cfg.legacy.roles.eclair25],
         allowedUsers: [],
     },
 
@@ -58,7 +58,7 @@ export const toggleCmdBlockCmd: Command = {
         if (!cat) return api.log.replyError(api, 'Błąd', `Nie znaleziono komendy **${cmdName}**!`);
 
         const cmdOverride = getCommandOverride(cat, cmdName);
-        const currentMerged = (cfg.commands[cat] && cfg.commands[cat][cmdName]) ? cfg.commands[cat][cmdName] : cfg.defaultCommandConfig;
+        const currentMerged = (cfg.legacy.commands[cat] && cfg.legacy.commands[cat][cmdName]) ? cfg.legacy.commands[cat][cmdName] : cfg.legacy.defaultCommandConfig;
         
         let opText: string | undefined;
         if (target.type.base == 'user-mention') {
@@ -83,8 +83,8 @@ export const toggleCmdBlockCmd: Command = {
             }
         }
 
-        cfg.commands[cat] ??= {};
-        cfg.commands[cat][cmdName] = deepMerge(currentMerged, cmdOverride);
+        cfg.legacy.commands[cat] ??= {};
+        cfg.legacy.commands[cat][cmdName] = deepMerge(currentMerged, cmdOverride);
 
         saveConfigurationChanges();
         api.log.replySuccess(api, 'Udało się!', `**${opText}** dostęp do komendy **${cmdName}** dla podanego celu!`);

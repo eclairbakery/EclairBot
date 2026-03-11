@@ -166,11 +166,11 @@ async function main() {
         }
     } catch {}
 
-    if (cfg.general.databaseBackups.enabled) {
+    if (cfg.legacy.general.databaseBackups.enabled) {
         setInterval(async () => {
             let dbBackUpsChannel: dsc.GuildTextBasedChannel;
             try {
-                dbBackUpsChannel = await getChannel(cfg.channels.eclairbot.dbBackups, client) as dsc.GuildTextBasedChannel;
+                dbBackUpsChannel = await getChannel(cfg.legacy.channels.eclairbot.dbBackups, client) as dsc.GuildTextBasedChannel;
             } catch {
                 output.err('could not find the channel to send db backups');
                 return;
@@ -184,13 +184,13 @@ async function main() {
                 const backupName = `backup-${new Date().toISOString().replace(/[:.]/g, '-')}.db`;
 
                 await dbBackUpsChannel.send({
-                    content: `${cfg.general.databaseBackups.msg} (${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })})`,
+                    content: `${cfg.legacy.general.databaseBackups.msg} (${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })})`,
                     files: [{ attachment: dbPath, name: backupName }]
                 });
             } catch (e) {
                 output.err('while sending db at bot.db: ' + e);
             }
-        }, cfg.general.databaseBackups.interval);
+        }, cfg.legacy.general.databaseBackups.interval);
     }
 }
 

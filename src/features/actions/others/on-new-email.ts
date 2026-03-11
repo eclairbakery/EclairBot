@@ -44,7 +44,7 @@ export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
     constraints: [],
     callbacks: [
         async (ctx) => {
-            const emailChannel = await client.channels.fetch(cfg.features.email.listenerChannel);
+            const emailChannel = await client.channels.fetch(cfg.legacy.features.email.listenerChannel);
             if (emailChannel == null || !emailChannel.isSendable()) return;
 
             const sender = ctx.email.from?.value?.[0]?.address;
@@ -86,7 +86,7 @@ export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
                 } 
 
                 return sendLog({
-                    where: cfg.channels.eclairbot.email,
+                    where: cfg.legacy.channels.eclairbot.email,
                     title: '😭 E-mail nie doszedł',
                     color: PredefinedColors.Red,
                     description: `Ktoś próbował wysłać maila do \`${recipient}\`, ale nie doszedł, ponieważ jakiś dzbaniany dostawca poczty zgłosił błąd \`${status}\`. ${sentence}`
@@ -98,7 +98,7 @@ export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
             sendLog({
                 where: spam 
                     ? undefined
-                    : cfg.channels.eclairbot.email,
+                    : cfg.legacy.channels.eclairbot.email,
 
                 title: spam
                     ? `😭 Nowy e-mail w spamie: ${ctx.email.subject}`

@@ -67,7 +67,7 @@ export const compileCmd: Command = {
             });
         }
 
-        const compiler = cfg.features.compilation.replaceCompilerMap[lang] ?? lang;
+        const compiler = cfg.legacy.features.compilation.replaceCompilerMap[lang] ?? lang;
 
         const api_url = 'https://wandbox.org/api/compile.ndjson';
 
