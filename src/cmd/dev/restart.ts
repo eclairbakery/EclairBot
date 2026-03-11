@@ -1,5 +1,5 @@
 import { cfg } from '@/bot/cfg.js';
-import { Command, CommandFlags } from '@/bot/command.js';
+import { Command, CommandFlags, CommandPermissions } from '@/bot/command.js';
 import { canEval } from './eval.js';
 import { output } from '@/bot/logging.js';
 
@@ -14,17 +14,14 @@ export const restartCmd: Command = {
     flags: CommandFlags.Important,
     expectedArgs: [],
     aliases: [],
-    permissions: {
-        allowedRoles: cfg.legacy.devPerms.allowedRoles,
-        allowedUsers: cfg.legacy.devPerms.allowedUsers,
-    },
+    permissions: CommandPermissions.devOnly(),
 
     async execute(api) {
         if (!canEval) {
-            return api.reply(cfg.legacy.customization.evalWarnings.waitRestart);
+            return api.reply('nie możesz jeszcze');
         }
         output.log('Issued restart. This will work due to the behaviour of Pterodactyl Daemon.');
-        await api.reply(cfg.legacy.customization.evalWarnings.gonnaRestart);
+        await api.reply('jusz siem restartujem plis łejt plis plis plis łejt');
         
         if (api.raw.msg) {
             await cache.store('session', 'last-restart-command-message-id', api.raw.msg?.id);

@@ -44,7 +44,7 @@ export const toggleCooldownBypassCmd: Command = {
     ],
     flags: CommandFlags.None,
     permissions: {
-        allowedRoles: [cfg.legacy.roles.mod, cfg.legacy.roles.headMod, cfg.legacy.roles.admin, cfg.legacy.roles.headAdmin, cfg.legacy.roles.eclair25],
+        allowedRoles: [cfg.hierarchy.administration.headMod, cfg.hierarchy.administration.admin, cfg.hierarchy.administration.headAdmin, cfg.hierarchy.administration.eclair25],
         allowedUsers: [],
     },
 

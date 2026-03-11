@@ -113,7 +113,7 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
     return true;
 }
 
-const roleHierarchy: dsc.Snowflake[] = [cfg.legacy.roles.headAdmin, cfg.legacy.roles.admin, cfg.legacy.roles.headMod, cfg.legacy.roles.mod, cfg.legacy.roles.helper];
+const roleHierarchy: dsc.Snowflake[] = [cfg.hierarchy.administration.headAdmin, cfg.hierarchy.administration.admin, cfg.hierarchy.administration.headMod, cfg.hierarchy.administration.mod, cfg.hierarchy.administration.helper];
 const userCounters = new Map<string, { creates: number; deletes: number; warns: number; mutes: number; timeout?: NodeJS.Timeout }>();
 
 async function downgradeRole(member: dsc.GuildMember) {

@@ -24,8 +24,8 @@ export const configurationCommand: Command = {
     ],
     flags: CommandFlags.Important | CommandFlags.Unsafe,
     permissions: {
-        allowedRoles: cfg.legacy.devPerms.allowedRoles,
-        allowedUsers: cfg.legacy.devPerms.allowedUsers,
+        allowedRoles: cfg.hierarchy.developers.allowedRoles,
+        allowedUsers: cfg.hierarchy.developers.allowedUsers,
     },
 
     async execute(api) {

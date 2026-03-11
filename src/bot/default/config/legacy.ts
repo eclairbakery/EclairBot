@@ -1,8 +1,8 @@
 import { PredefinedColors } from '@/util/color.js';
-import { Config } from '../definitions/config.js';
-import EconomyConfig from '../definitions/economy.js';
+import { Config } from '../../definitions/config.js';
+import EconomyConfig from '../../definitions/economy.js';
 
-const rolesCfg: Config['legacy']['roles'] = {
+const rolesCfg = {
     eclair25: '1280081773019140096',
     headAdmin: '1415710955022843904',
     admin: '1415710969732005980',
@@ -292,11 +292,9 @@ const economyCfg: EconomyConfig = {
     currencySignPlacement: 'left',
 }
 
-export const defaultCfg: Config = {
-legacy: {
+export const defaultLegacyCfg: Config['legacy'] = {
     enabled: true,
 
-    roles: rolesCfg,
     channels: channelsCfg,
     channelsConfiguration: {
         characters: {
@@ -356,11 +354,6 @@ legacy: {
         idkEmoji: { name: 'joe_noniewiemno', id: '1317904812779503676' }
     },
 
-    devPerms: {
-        allowedRoles: [],
-        allowedUsers: ['1368171061585117224', '990959984005222410', '985053803151753316', '1274610053843783768', '1401568817766862899']
-    },
-
     blockCommands: {
         full: {
             default: 'allow',
@@ -410,15 +403,6 @@ legacy: {
             shitwarnHeader: 'Masz shitwarna/fake-warna, <mention>!',
             noTargetSpecifiedHeader: 'Nie podano celu',
             noTargetSpecifiedText: 'Kolego co ty myślisz że ja się sam domyślę, komu ty to chcesz zrobić? Zgadłeś - nie domyślę się. Więc bądź tak miły i podaj użytkownika, dla którego odpalasz tą komendę.'
-        },
-        evalWarnings: {
-            consoleLogWarn: '`console.log` spowoduje iż gorciu dostanie dm z wynikiem, ale może się on nie pojawić w wyniku komendy. evaluje sie funkcja wiec po prostu uzyj return by cos napisac. mozesz ten zrobic zmienna z buforem wyjscia i zwracac ja na koncu. z kolei `console.error` w ogóle nie da wyniku...',
-            doNotDownloadDatabase: 'wiem, ze jest do tego masa sposóbów by bypassnąć ten restriction ale plz nie pobieraj bazy danych bota; btw masz do tego db-backups',
-            execReturnWarn: 'nie używasz return a masz używać...',
-            unsafeEval: 'unsafe, użyj do tego komendy `restart`',
-            wait: 'cierpliwości nauczę cię, nie sbrickujesz mnie',
-            waitRestart: 'cierpliwości',
-            gonnaRestart: 'jusz siem restartujem plis łejt plis plis plis łejt'
         },
         commandsErrors: {
             legacy: {
@@ -634,5 +618,4 @@ legacy: {
         },
         approveDangerousPermissions: false
     }
-}
 };

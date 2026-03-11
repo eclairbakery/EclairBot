@@ -18,8 +18,8 @@ export namespace CommandPermissions {
 
     export function devOnly(): Command['permissions'] {
         return {
-            allowedRoles: [ ...cfg2.legacy.devPerms.allowedRoles ],
-            allowedUsers: [ ...cfg2.legacy.devPerms.allowedUsers ]
+            allowedRoles: [ ...cfg2.hierarchy.developers.allowedRoles ],
+            allowedUsers: [ ...cfg2.hierarchy.developers.allowedUsers ]
         };
     }
 

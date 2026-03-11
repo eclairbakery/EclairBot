@@ -3,7 +3,7 @@ import JSON5 from 'json5';
 import { deepMerge } from '@/util/objects/objects.js';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { Config } from './definitions/config.js';
-import { defaultCfg } from './default/config.js';
+import { defaultCfg } from './default/config/index.js';
 
 export let overrideCfg: Partial<Config> = {};
 

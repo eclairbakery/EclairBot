@@ -3,12 +3,28 @@ import {
     BlockCommandsRules, ConfigCommandARgumentRulesForNumbers,
     ConfigTranslation, Emoji, CommandConfigMap, ModCommandsConfigs,
     AnyCommandConfig,
-    EconomyCommandsConfig
+    EconomyCommandsConfig,
+    PermissionDefinitionConfig
 } from './config-subtypes.js';
 
 import EconomyConfig from './economy.js';
 
 export interface Config {
+    hierarchy: {
+        developers: PermissionDefinitionConfig,
+        
+        administration: {
+            eclair25: dsc.Snowflake;
+            headAdmin: dsc.Snowflake;
+            admin: dsc.Snowflake;
+            headMod: dsc.Snowflake;
+            mod: dsc.Snowflake;
+            helper: dsc.Snowflake;
+        },
+
+        automodBypassRoles: dsc.Snowflake[];
+    },
+
 legacy: {
     /* Whether the bot is enabled (The most useless configuration field I've ever seen...) */
     enabled: boolean;
@@ -35,23 +51,6 @@ legacy: {
         };
 
         usingNormalHosting: boolean;
-    };
-
-    /* WARNING: Dev permissions allows doing many unsafe things and taking full control over the bot, so only give them to trusted people and the bot's developers! */
-    devPerms: {
-        allowedRoles: dsc.Snowflake[];
-        allowedUsers: dsc.Snowflake[];
-    };
-
-    roles: {
-        eclair25: dsc.Snowflake;
-        headAdmin: dsc.Snowflake;
-        admin: dsc.Snowflake;
-        headMod: dsc.Snowflake;
-        mod: dsc.Snowflake;
-        helper: dsc.Snowflake;
-
-        automodBypassRoles: dsc.Snowflake[];
     };
 
     channels: {
@@ -172,15 +171,6 @@ legacy: {
             warnDescription: string;
             noTargetSpecifiedHeader: string;
             noTargetSpecifiedText: string;
-        },
-        evalWarnings: {
-            consoleLogWarn: string;
-            doNotDownloadDatabase: string;
-            execReturnWarn: string;
-            unsafeEval: string;
-            wait: string;
-            waitRestart: string;
-            gonnaRestart: string;
         },
         commandsErrors: {
             legacy: {
