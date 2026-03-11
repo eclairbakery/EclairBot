@@ -38,18 +38,18 @@ export const banCmd: Command = {
     execute: async (api: CommandAPI) => {
         const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
         const reasonArg = api.getTypedArg('reason', 'string').value as string;
-        const reason = reasonArg?.trim() || (cmdCfg.reasonRequired ? null : cfg.legacy.customization.modTexts.defaultReason);
+        const reason = reasonArg?.trim() || (cmdCfg.reasonRequired ? null : 'Moderator nie poszczycił się znajomością komendy i nie podał powodu... Ale moze to i lepiej...');
 
         if (!targetUser) {
-            return api.log.replyError(api, cfg.legacy.customization.modTexts.noTargetSpecifiedHeader, cfg.legacy.customization.modTexts.noTargetSpecifiedText);
+            return api.log.replyError(api, 'Nie podano celu', 'Kolego co ty myślisz że ja się sam domyślę, komu ty to chcesz zrobić? Zgadłeś - nie domyślę się. Więc bądź tak miły i podaj użytkownika, dla którego odpalasz tą komendę.');
         }
 
         if (!reason) {
-            return api.log.replyError(api, cfg.legacy.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.legacy.customization.modTexts.reasonRequiredNotSpecifiedText);
+            return api.log.replyError(api, 'Musisz podać powód!', 'Bratku... dlaczego ty chcesz to zrobić? Możesz mi chociaż powiedzieć, a nie wysuwać pochopne wnioski i banować/warnować/mute\'ować ludzi bez powodu?');
         }
 
         if (targetUser.roles.cache.hasAny(...cfg.legacy.features.moderation.protectedRoles)) {
-            return api.log.replyError(api, cfg.legacy.customization.modTexts.userIsProtectedHeader, cfg.legacy.customization.modTexts.userIsProtectedDesc);
+            return api.log.replyError(api, 'Ten użytkownik jest chroniony!', 'Ten uzytkownik chyba prosił o ochronę... A jak nie prosił... to i tak ją ma.');
         }
 
         try {

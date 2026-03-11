@@ -65,7 +65,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 
     const result = findCommand(cmdName, commands);
     if (!result) {
-        return log.replyError(msg, cfg.legacy.customization.commandsErrors.legacy.commandNotFoundHeader, cfg.legacy.customization.commandsErrors.legacy.commandNotFoundText.replace('<cmd>', cmdName.replaceAll('`', '')));
+        return log.replyError(msg, 'Nie znam takiej komendy', 'Komenda \`<cmd>\` nie istnieje'.replace('<cmd>', cmdName.replaceAll('`', '')));
     }
 
     const { command, config } = result;
@@ -73,8 +73,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     if (!canExecuteCmd(command, msg.member!)) {
         log.replyError(
             msg,
-            cfg.legacy.customization.commandsErrors.legacy.missingPermissionsHeader,
-            cfg.legacy.customization.commandsErrors.legacy.missingPermissionsText
+            'Hej, a co ty odpie*dalasz?',
+            'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...'
         );
         return;
     }
@@ -88,8 +88,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     if (!msg.inGuild() && !(command.flags & CommandFlags.WorksInDM)) {
         log.replyError(
             msg,
-            cfg.legacy.customization.commandsErrors.legacy.doesNotWorkInDmHeader,
-            cfg.legacy.customization.commandsErrors.legacy.doesNotWorkInDmText.replace('<cmd>', cmdName.replaceAll('`', ''))
+            'Ta komenda nie jest przeznaczona do tego trybu gadania!',
+            'Taka komenda jak \`<cmd>\` może być wykonana tylko na serwerach no sorki no!'.replace('<cmd>', cmdName.replaceAll('`', ''))
         );
         return;
     }
@@ -130,8 +130,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     if (!config.enabled && command.name != 'configuration') {
         log.replyWarn(
             msg,
-            cfg.legacy.customization.commandsErrors.legacy.commandDisabledHeader,
-            cfg.legacy.customization.commandsErrors.legacy.commandDisabledDescription
+            'Ta komenda jest wyłączona',
+            'Eklerka coś tam gadał, że go wkurza bloat, więc dodałem wyłączanie komend. Trzeba będzie wszystko dodać jako możliwe do wyłączenia w konfiguracji XD.'
         );
         return;
     }

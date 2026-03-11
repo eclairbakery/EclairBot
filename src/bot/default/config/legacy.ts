@@ -389,45 +389,7 @@ export const defaultLegacyCfg: Config['legacy'] = {
     commands: commandsCfg,
 
     customization: {
-        modTexts: {
-            userIsProtectedHeader: 'Ten użytkownik jest chroniony!',
-            userIsProtectedDesc: 'Ten uzytkownik chyba prosił o ochronę... A jak nie prosił... to i tak ją ma.',
-            reasonRequiredNotSpecifiedHeader: 'Musisz podać powód!',
-            reasonRequiredNotSpecifiedText: 'Bratku... dlaczego ty chcesz to zrobić? Możesz mi chociaż powiedzieć, a nie wysuwać pochopne wnioski i banować/warnować/mute\'ować ludzi bez powodu?',
-            defaultReason: 'Moderator nie poszczycił się znajomością komendy i nie podał powodu... Ale moze to i lepiej...',
-            havingMentalProblemsByWarningYourselfHeader: 'Bro co ty odpierdalasz?',
-            havingMentalProblemsByWarningYourselfText: 'Czemu ty chcesz sobie dać warna? Co jest z tobą nie tak... Zabrać cię do szpitala zdrowia psychicznego czy co ja mam zrobić...',
-            warningEclairBotReason: 'nei warnuje sie istoty wyższej panie',
-            warnHeader: '<mention> dostał warna od <mod>!',
-            warnDescription: 'Warn w skrócie ma <points> punktów i skończy się <duration>.',
-            shitwarnHeader: 'Masz shitwarna/fake-warna, <mention>!',
-            noTargetSpecifiedHeader: 'Nie podano celu',
-            noTargetSpecifiedText: 'Kolego co ty myślisz że ja się sam domyślę, komu ty to chcesz zrobić? Zgadłeś - nie domyślę się. Więc bądź tak miły i podaj użytkownika, dla którego odpalasz tą komendę.'
-        },
-        commandsErrors: {
-            legacy: {
-                commandDisabledHeader: 'Ta komenda jest wyłączona',
-                commandDisabledDescription: 'Eklerka coś tam gadał, że go wkurza bloat, więc dodałem wyłączanie komend. Trzeba będzie wszystko dodać jako możliwe do wyłączenia w konfiguracji XD.',
-                doesNotWorkInDmHeader: 'Ta komenda nie jest przeznaczona do tego trybu gadania!',
-                doesNotWorkInDmText: 'Taka komenda jak \`<cmd>\` może być wykonana tylko na serwerach no sorki no!',
-                missingPermissionsHeader: 'Hej, a co ty odpie*dalasz?',
-                missingPermissionsText: 'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...',
-                commandNotFoundHeader: 'Nie znam takiej komendy',
-                commandNotFoundText: 'Komenda \`<cmd>\` nie istnieje'
-            },
-            slash: {
-                notAllowedInDm: 'Nie możesz tej komendy uruchomić w DMach.',
-                commandIsDisabled: 'Ktoś tą komendę z jakiegoś powodu wyłączył...',
-                commandNotFound: 'Nie znam takiej komendy',
-                missingPermissions: 'Nie masz uprawnień.'
-            }
-        },
         economyTexts: {
-            betWrongAmountHeader: 'Namieszałeś z kwotą.',
-            betWrongAmountText: 'Podaj poprawną kwotę!',
-            balanceNotSufficientHeader: 'Nie masz wystarczającej ilości pieniędzy.',
-            balanceNotSufficientText: 'Może nie zdążyłeś ich wypłacić?',
-            bankBalanceNotSufficientText: 'Przynajmniej w banku...',
             blackjack: {
                 title: '♠️ Blackjack ♠️',
                 descriptionWin: '🏆 Wygrałeś!',

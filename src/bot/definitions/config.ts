@@ -157,45 +157,7 @@ legacy: {
     };
 
     customization: {
-        modTexts: {
-            userIsProtectedHeader: string;
-            userIsProtectedDesc: string;
-            reasonRequiredNotSpecifiedHeader: string;
-            reasonRequiredNotSpecifiedText: string;
-            defaultReason: string;
-            havingMentalProblemsByWarningYourselfHeader: string;
-            havingMentalProblemsByWarningYourselfText: string;
-            warningEclairBotReason: string;
-            warnHeader: string;
-            shitwarnHeader: string;
-            warnDescription: string;
-            noTargetSpecifiedHeader: string;
-            noTargetSpecifiedText: string;
-        },
-        commandsErrors: {
-            legacy: {
-                commandDisabledHeader: string;
-                commandDisabledDescription: string;
-                doesNotWorkInDmHeader: string;
-                doesNotWorkInDmText: string;
-                missingPermissionsHeader: string;
-                missingPermissionsText: string;
-                commandNotFoundHeader: string;
-                commandNotFoundText: string;
-            },
-            slash: {
-                notAllowedInDm: string;
-                commandIsDisabled: string;
-                commandNotFound: string;
-                missingPermissions: string;
-            }
-        },
         economyTexts: {
-            betWrongAmountHeader: string;
-            betWrongAmountText: string;
-            balanceNotSufficientHeader: string;
-            balanceNotSufficientText: string;
-            bankBalanceNotSufficientText: string;
             blackjack: {
                 title: string,
                 descriptionWin: string,

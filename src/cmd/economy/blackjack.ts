@@ -54,7 +54,7 @@ export const blackjackCmd: Command = {
         const betArg = api.getTypedArg('amount', 'float');
         const bet = betArg?.value as number;
         if (!bet || bet <= 0) {
-            return api.log.replyError(api, cfg.legacy.customization.economyTexts.betWrongAmountHeader, cfg.legacy.customization.economyTexts.betWrongAmountText);
+            return api.log.replyError(api, 'Namieszałeś z kwotą.', 'Podaj poprawną kwotę!');
         }
 
         const userId = api.invoker.id;
@@ -62,7 +62,7 @@ export const blackjackCmd: Command = {
         const playerBalance = await player.economy.getBalance();
 
         if (playerBalance.wallet < bet)
-            return api.log.replyError(api, cfg.legacy.customization.economyTexts.balanceNotSufficientHeader, cfg.legacy.customization.economyTexts.balanceNotSufficientText);
+            return api.log.replyError(api, 'Nie masz wystarczającej ilości pieniędzy.', 'Może nie zdążyłeś ich wypłacić?');
 
 
         let playerHand: Card[] = [drawCard(), drawCard()];
