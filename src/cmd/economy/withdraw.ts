@@ -1,4 +1,3 @@
-import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags, CommandAPI } from "@/bot/command.js";
 import { output } from "@/bot/logging.js";
 
@@ -16,30 +15,39 @@ export const withdrawCmd: Command = {
     },
     expectedArgs: [
         {
-            type: { base: 'string' },
+            type: { base: 'money', source: 'bank' },
             optional: false,
             name: 'amount',
-            description: 'Kwota do wypłaty (liczba lub "all").',
+            description: 'Kwota do wypłaty (liczba, "all" lub %).',
         }
     ],
     async execute(api: CommandAPI) {
-        try {
-            const row = await api.executor.economy.getBalance();
-            let amountArg = api.getTypedArg('amount', 'string')?.value;
-            let amount = amountArg.toLowerCase() == "all" ? row.bank : parseInt(amountArg);
+        const amount = api.getTypedArg('amount', 'money').value;
+        if (amount.isZero() || amount.isNegative()) {
+            return api.log.replyError(api, 'Namieszałeś z kwotą.', 'Podaj poprawną kwotę!');
+        }
 
-            if (isNaN(amount) || amount <= 0) {
-                return api.log.replyError(api, 'Namieszałeś z kwotą.', 'Podaj poprawną kwotę!');
-            }
-            if (row.bank < amount) {
+        const user = api.executor;
+
+        try {
+            const balanceBefore = await user.economy.getBalance();
+            if (balanceBefore.bank.lessThan(amount)) {
                 return api.log.replyError(api, 'Nie masz wystarczającej ilości pieniędzy.', 'Przynajmniej w banku...');
             }
 
-            row.bank -= amount;
-            row.wallet += amount;
-            await api.executor.economy.setBalance(row);
+            await user.economy.withdrawFromBank(amount);
+            const balanceAfter = await user.economy.getBalance();
 
-            return api.log.replySuccess(api, 'Udało się!', `Wypłacono ${amount}$ z banku.\nNowy stan:\n- ${row.bank}$ w banku\n- ${row.wallet}$ w portfelu.`);
+            return api.log.replySuccess(
+                api,
+                'Udało się!',
+                [
+                    `Wypłacono **${amount.format()}** z banku.`,
+                    `Nowy stan:`,
+                    `- **${balanceAfter.bank.format()}** w banku`,
+                    `- **${balanceAfter.wallet.format()}** w portfelu.`,
+                ].join('\n')
+            );
         } catch (err) {
             output.err(err);
             api.log.replyError(api, 'Błąd wypłaty', 'Coś poszło nie tak z bazą danych.');

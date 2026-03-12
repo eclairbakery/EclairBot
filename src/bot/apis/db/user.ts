@@ -3,6 +3,7 @@ import { db } from '@/bot/apis/db/bot-db.js';
 import { Warn, WarnRaw, Rep, RepRaw, Balance } from './db-defs.js';
 import { Cooldowns } from './db-defs.js';
 import { repFromRaw, warnFromRaw } from './db-defs.js';
+import Money from '@/util/money.js';
 
 const CooldownMap = {
     'work':           { col: 'last_worked',         prop: 'lastWorked'        },
@@ -37,10 +38,7 @@ export default class User {
     }
 
     async ensureExists(): Promise<void> {
-        db.runSql(
-            `INSERT OR IGNORE INTO users (user_id) VALUES (?);`,
-            [this.id]
-        );
+        await db.ensureUserExists(this.id);
     }
 
     /** -------- LEVELING -------- */
@@ -137,88 +135,92 @@ export default class User {
         getBalance: async (): Promise<Balance> => {
             await this.ensureExists();
             const row = await db.selectOne<{ wallet_money: number; bank_money: number }>(
-                `SELECT wallet_money, bank_money FROM users WHERE user_id = ?`,
+                `SELECT wallet_money, bank_money FROM economy WHERE user_id = ?`,
                 [this.id],
             );
-            let result = { wallet: row?.wallet_money ?? 0, bank: row?.bank_money ?? 0 };
-            return result;
+            return {
+                wallet: Money.fromCents(BigInt(Math.round(row?.wallet_money ?? 0))),
+                bank: Money.fromCents(BigInt(Math.round(row?.bank_money ?? 0)))
+            };
         },
 
         setBalance: async (bal: Balance) => {
             await this.ensureExists();
             await db.runSql(
-                `UPDATE users
+                `UPDATE economy
                  SET wallet_money = ?, bank_money = ?
                  WHERE user_id = ?`,
-                [bal.wallet, bal.bank, this.id],
+                [bal.wallet.asCents(), bal.bank.asCents(), this.id],
             );
         },
 
-        addWalletMoney: async (amount: number) => {
+        addWalletMoney: async (amount: Money) => {
             await this.ensureExists();
             return db.runSql(
-                `UPDATE users SET wallet_money = wallet_money + ? WHERE user_id = ?`,
-                [amount, this.id],
+                `UPDATE economy SET wallet_money = wallet_money + ? WHERE user_id = ?`,
+                [amount.asCents(), this.id],
             );
         },
 
-        deductWalletMoney: async (amount: number) => {
+        deductWalletMoney: async (amount: Money) => {
             await this.ensureExists();
             return db.runSql(
-                `UPDATE users SET wallet_money = wallet_money - ? WHERE user_id = ?`,
-                [amount, this.id],
+                `UPDATE economy SET wallet_money = wallet_money - ? WHERE user_id = ?`,
+                [amount.asCents(), this.id],
             );
         },
 
-        setWalletMoney: async (value: number) => {
+        setWalletMoney: async (value: Money) => {
             await this.ensureExists();
             return db.runSql(
-                `UPDATE users SET wallet_money = ? WHERE user_id = ?`,
-                [value, this.id],
+                `UPDATE economy SET wallet_money = ? WHERE user_id = ?`,
+                [value.asCents(), this.id],
             );
         },
 
-        addBankMoney: async (amount: number) => {
+        addBankMoney: async (amount: Money) => {
             await this.ensureExists();
             return db.runSql(
-                `UPDATE users SET bank_money = bank_money + ? WHERE user_id = ?`,
-                [amount, this.id],
+                `UPDATE economy SET bank_money = bank_money + ? WHERE user_id = ?`,
+                [amount.asCents(), this.id],
             );
         },
 
-        deductBankMoney: async (amount: number) => {
+        deductBankMoney: async (amount: Money) => {
             await this.ensureExists();
             return db.runSql(
-                `UPDATE users SET bank_money = bank_money - ? WHERE user_id = ?`,
-                [amount, this.id],
+                `UPDATE economy SET bank_money = bank_money - ? WHERE user_id = ?`,
+                [amount.asCents(), this.id],
             );
         },
 
-        setBankMoney: async (value: number) => {
+        setBankMoney: async (value: Money) => {
             await this.ensureExists();
             return db.runSql(
-                `UPDATE users SET bank_money = ? WHERE user_id = ?`,
-                [value, this.id],
+                `UPDATE economy SET bank_money = ? WHERE user_id = ?`,
+                [value.asCents(), this.id],
             );
         },
 
-        depositToBank: async (amount: number) => {
+        depositToBank: async (amount: Money) => {
             await this.ensureExists();
+            const cents = amount.asCents();
             await db.runSql(
-                `UPDATE users
+                `UPDATE economy
                  SET wallet_money = wallet_money - ?, bank_money = bank_money + ?
-                 WHERE user_id = ? AND wallet_money >= ?`,
-                [amount, amount, this.id, amount]
+                 WHERE user_id = ?`,
+                [cents, cents, this.id]
             );
         },
 
-        withdrawFromBank: async (amount: number) => {
+        withdrawFromBank: async (amount: Money) => {
             await this.ensureExists();
+            const cents = amount.asCents();
             await db.runSql(
-                `UPDATE users
+                `UPDATE economy
                  SET bank_money = bank_money - ?, wallet_money = wallet_money + ?
-                 WHERE user_id = ? AND bank_money >= ?`,
-                [amount, amount, this.id, amount]
+                 WHERE user_id = ?`,
+                [cents, cents, this.id]
             );
         },
     };

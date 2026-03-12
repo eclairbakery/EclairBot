@@ -5,8 +5,9 @@ import { PredefinedColors } from '@/util/color.js';
 import capitalizeFirst from '@/util/capitalizeFirst.js';
 
 import * as dsc from 'discord.js';
+import Money from '@/util/money.js';
+
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
-import { formatMoney } from '@/util/math/format.js';
 import { ConfigEconomyAction, ConfigEconomyShopCategory, ConfigEconomyShopOffer } from '@/bot/definitions/config/economy.js';
 
 function formatItemActions(api: CommandAPI, actions: ConfigEconomyAction[]): string[] {
@@ -22,7 +23,7 @@ function formatItemActions(api: CommandAPI, actions: ConfigEconomyAction[]): str
             result.push(`Daje item \`${item?.name}\``);
             break;
         case 'add-money':
-            result.push(`Daje ${formatMoney(action.amount)}`);
+            result.push(`Daje ${Money.fromDollarsFloat(action.amount).format()}`);
             break;
         default:
             break;
@@ -55,7 +56,7 @@ function buildCategoryEmbed(category: ConfigEconomyShopCategory, offers: ConfigE
         embed.addFields([{
             name: offer.name,
             value: [
-                `${formatMoney(offer.price)} - ${offer.desc}`,
+                `${Money.fromDollarsFloat(offer.price).format()} - ${offer.desc}`,
                 ...formatItemActions(api, offer.onBuy),
             ].join('\n'),
             inline: false,

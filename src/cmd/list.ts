@@ -47,7 +47,7 @@ import { figletCmd } from '@/cmd/4fun/figlet.js';
 import { restartCmd } from '@/cmd/dev/restart.js';
 import { evalCmd } from '@/cmd/dev/eval.js';
 import { configurationCommand } from './dev/configuration.js';
-import { setbalCmd } from './economy/setbal.js';
+import { ecomodCmd } from './economy/ecomod.js';
 import { enableCommandCmd } from './dev/enable-cmd.js';
 import { disableCommandCmd } from './dev/disable-cmd.js';
 import { echoCmd } from './dev/echo.js';
@@ -104,7 +104,7 @@ export const commands: Map<Category, Command[]> = new Map([
         [
             balCmd, workCmd, blackjackCmd, slutCmd, crimeCmd,
             topecoCmd, robCmd, withdrawCmd, depositCmd,
-            shopCmd, setbalCmd, buyCmd, collectIncomeCmd,
+            shopCmd, ecomodCmd, buyCmd, collectIncomeCmd,
         ]
     ],
     [

@@ -2,9 +2,12 @@ import {
     ConfigEconomyCond, ConfigEconomyAction, ConfigEconomyRandomVariant,
     ConfigEconomyMultiplierKind, ConfigEconomyRole
 } from '@/bot/definitions/config/economy.js';
-import User from '@/bot/apis/db/user.js';
 import { cfg } from '@/bot/cfg.js';
+
 import * as dsc from 'discord.js';
+
+import User from '@/bot/apis/db/user.js';
+import Money from '@/util/money.js';
 
 export interface EconomyExecutorContext {
     user: User;
@@ -77,10 +80,10 @@ export class EconomyExecutor {
             await this.remRole(action.roleId);
             break;
         case 'add-money':
-            await this.ctx.user.economy.addWalletMoney(action.amount);
+            await this.ctx.user.economy.addWalletMoney(Money.fromDollarsFloat(action.amount));
             break;
         case 'sub-money':
-            await this.ctx.user.economy.deductWalletMoney(action.amount);
+            await this.ctx.user.economy.deductWalletMoney(Money.fromDollarsFloat(action.amount));
             break;
         case 'random':
             await this.executeRandom(action.variants);
@@ -111,10 +114,10 @@ export class EconomyExecutor {
             return await this.ctx.user.inventory.hasItem(cond.itemId);
         case 'money-gte':
             const balGte = await this.ctx.user.economy.getBalance();
-            return balGte.wallet >= cond.amount;
+            return balGte.wallet.greaterThanOrEqual(Money.fromDollarsFloat(cond.amount));
         case 'money-lte':
             const balLte = await this.ctx.user.economy.getBalance();
-            return balLte.wallet <= cond.amount;
+            return balLte.wallet.lessThanOrEqual(Money.fromDollarsFloat(cond.amount));
         case 'random-chance':
             return Math.random() * 100 <= cond.chance;
         }

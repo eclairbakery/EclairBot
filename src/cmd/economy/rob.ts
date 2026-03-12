@@ -4,8 +4,8 @@ import { getRandomFloat } from '@/util/math/rand.js';
 import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
-import { cfg } from '@/bot/cfg.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import Money from '@/util/money.js';
 
 import User from '@/bot/apis/db/user.js';
 
@@ -13,60 +13,51 @@ const CooldownMs = 5 * 60 * 1000;
 const BaseSuccessChance = 0.5;
 const MinPercent = 0.05;
 const MaxPercent = 0.25;
-const MinStealable = 50;
+const MinStealable = Money.fromDollars(50);
 
 function randomPercentBetween(min: number, max: number): number {
     return getRandomFloat(min, max);
 }
 
-async function tryRob(attacker: User, target: User): Promise<{ ok: boolean; amount?: number; success?: boolean; percent?: number; reason?: string }> {
-    if (attacker.id === target.id) return { ok: false, amount: 0, success: false, reason: 'self' };
+async function tryRob(attacker: User, target: User): Promise<{ ok: boolean; amount?: Money; success?: boolean; percent?: number; reason?: string }> {
+    if (attacker.id === target.id) return { ok: false, reason: 'self' };
 
     await attacker.ensureExists();
     await target.ensureExists();
 
     const targetBalance = await target.economy.getBalance();
 
-    if (targetBalance.wallet < MinStealable) {
-        return { ok: false, amount: 0, success: false, reason: 'too_poor' };
+    if (targetBalance.wallet.lessThan(MinStealable)) {
+        return { ok: false, reason: 'too_poor' };
     }
 
     const success = getRandomFloat(0, 1) < BaseSuccessChance;
     const percent = randomPercentBetween(MinPercent, MaxPercent);
-    const rawAmount = Math.floor(targetBalance.wallet * percent);
-    const amount = Math.max(1, Math.min(rawAmount, targetBalance.wallet));
+    
+    const amountCents = (targetBalance.wallet.asCents() * BigInt(Math.round(percent * 100))) / 100n;
+    const amount = Money.fromCents(amountCents < 1n ? 1n : amountCents);
 
     try {
         await db.runSql('BEGIN IMMEDIATE TRANSACTION');
 
         await attacker.cooldowns.set('rob', Date.now());
 
-        if (success && amount > 0) {
-            await db.runSql(
-                `UPDATE users SET wallet_money = wallet_money - ? WHERE user_id = ? AND wallet_money >= ?`,
-                [amount, target.id, amount]
-            );
-
-            const targetAfter = await db.selectOne(`SELECT wallet_money FROM users WHERE user_id = ?`, [target.id]);
-            const targetAfterMoney = (targetAfter && typeof targetAfter.wallet_money === 'number') ? Number(targetAfter.wallet_money) : 0;
-
-            if (targetAfterMoney === targetBalance.wallet) {
+        if (success && amount.isPositive()) {
+            const result = await target.economy.deductWalletMoney(amount);
+            
+            if (result.changes === 0) {
                 await db.runSql('ROLLBACK');
-                return { ok: false, amount: 0, success: false, reason: 'target_update_failed' };
+                return { ok: false, reason: 'target_update_failed' };
             }
 
-            await db.runSql(
-                `UPDATE users SET wallet_money = wallet_money + ? WHERE user_id = ?`,
-                [amount, attacker.id]
-            );
-
+            await attacker.economy.addWalletMoney(amount);
             await db.runSql('COMMIT');
 
-            const percentDone = Math.round((amount / targetBalance.wallet) * 100);
+            const percentDone = Number((amount.asCents() * 100n) / targetBalance.wallet.asCents());
             return { ok: true, amount, success: true, percent: percentDone };
         } else {
             await db.runSql('COMMIT');
-            return { ok: true, amount: 0, success: false, percent: 0 };
+            return { ok: true, amount: Money.zero(), success: false, percent: 0 };
         }
     } catch (err) {
         output.err(err);
@@ -101,7 +92,6 @@ export const robCmd: Command = {
 
         if (!targetMember) return api.reply('Musisz oznaczyć osobę, którą chcesz okraść!');
 
-
         if (targetMember.id === api.invoker.id) return api.reply('Nie możesz okraść samego siebie!');
 
         try {
@@ -122,7 +112,7 @@ export const robCmd: Command = {
                     const embed = new ReplyEmbed()
                         .setColor(PredefinedColors.Yellow)
                         .setTitle('Cel jest zbyt biedny')
-                        .setDescription(`<@${targetMember.id}> ma za mało pieniędzy (mniej niż ${MinStealable} dolarów).`);
+                        .setDescription(`<@${targetMember.id}> ma za mało pieniędzy (mniej niż ${MinStealable.format()}).`);
                     return api.reply({ embeds: [embed] });
                 }
 
@@ -133,7 +123,7 @@ export const robCmd: Command = {
                 .setColor(result.success ? PredefinedColors.Green : PredefinedColors.Red)
                 .setTitle(result.success ? 'TAAAAAAAAAAAAAAAAK!' : 'System ochrony w banku się włączył.')
                 .setDescription(result.success
-                    ? `Udało Ci się ukraść <@${targetMember.id}> **${result.amount}** dolarów (${result.percent}%).`
+                    ? `Udało Ci się ukraść <@${targetMember.id}> **${result.amount?.format()}** (${result.percent}%).`
                     : `Nie udało Ci się nic ukraść od <@${targetMember.id}>!`
                 );
 

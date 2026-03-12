@@ -1,5 +1,6 @@
 import { Timestamp } from '@/util/parseTimestamp.js';
 import * as dsc from 'discord.js';
+import Money from '@/util/money.js';
 
 import type { Command } from './cmd.js';
 
@@ -11,6 +12,7 @@ export type CommandArgBaseType =
     | 'timestamp'
     | 'int'
     | 'float'
+    | 'money'
     | 'command-ref';
 
 export type CommandArgType = 
@@ -21,6 +23,7 @@ export type CommandArgType =
     | { base: 'timestamp' }
     | { base: 'int' }
     | { base: 'float' }
+    | { base: 'money', source?: 'wallet' | 'bank' }
     | { base: 'command-ref' }
     | { base: 'union', variants: CommandArgType[] };
 
@@ -39,6 +42,7 @@ export type CommandArgValueMap = {
     'timestamp': Timestamp;
     'int': bigint;
     'float': number;
+    'money': Money;
     'command-ref': Command;
 };
 

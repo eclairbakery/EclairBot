@@ -1,13 +1,19 @@
+import Money from "@/util/money.js";
+
 export interface UserDataRaw {
     user_id: string;
     xp: number;
-    money: number;
-    bank_money: number;
     last_worked: number;
     last_robbed: number;
     last_slutted: number;
     last_crimed: number;
     last_email_sent: number;
+}
+
+export interface EconomyRaw {
+    user_id: string;
+    wallet_money: bigint;
+    bank_money: bigint;
 }
 
 export interface WarnRaw {
@@ -66,8 +72,8 @@ export function repFromRaw(raw: RepRaw): Rep {
 }
 
 export interface Balance {
-    wallet: number;
-    bank: number;
+    wallet: Money;
+    bank: Money;
 }
 
 export type Cooldown = number | null;
@@ -80,40 +86,3 @@ export interface Cooldowns {
     lastCollectIncome: Cooldown;
     lastEmailSent:     Cooldown;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

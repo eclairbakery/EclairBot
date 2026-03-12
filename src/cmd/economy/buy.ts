@@ -1,9 +1,8 @@
-import { cfg } from '@/bot/cfg.js';
 import { Command, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
-import { formatMoney } from '@/util/math/format.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import Money from '@/util/money.js';
 
 export const buyCmd: Command = {
     name: 'buy',
@@ -52,14 +51,17 @@ export const buyCmd: Command = {
             }
 
             const userBalance = await user.economy.getBalance();
+            const price = Money.fromDollars(offer.price);
 
-            if (userBalance.wallet < offer.price) {
+            if (userBalance.wallet.lessThan(price)) {
                 api.log.replyError(
                     api,
                     'Nie stać Cię!',
-                    `Nie stać Cię na **${offer.name}**. Brakuje Ci **${formatMoney(offer.price - userBalance.wallet)}**.`
+                    `Nie stać Cię na **${offer.name}**. Brakuje Ci **${price.sub(userBalance.wallet).format()}**.`
                 );
-                if (userBalance.bank + userBalance.wallet >= offer.price) {
+
+                const totalBalance = userBalance.wallet.add(userBalance.bank);
+                if (totalBalance.greaterThanOrEqual(price)) {
                     return api.log.replyTip(
                         api, 'Wskazówka',
                         'Za przedmioty możesz płacić tylko pieniędzmi z portfela, jednak w banku masz wystarczającą ilość pieniędzy by kupić ten przedmiot.\n**Spróbuj troche wypłacić!**',
@@ -68,7 +70,7 @@ export const buyCmd: Command = {
                 return;
             }
 
-            await user.economy.deductWalletMoney(offer.price);
+            await user.economy.deductWalletMoney(price);
             await api.economy.executeActions(offer.onBuy);
 
             await user.purchases.add(offer.id);
@@ -76,7 +78,7 @@ export const buyCmd: Command = {
             const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Green)
                 .setTitle('Zakup udany!')
-                .setDescription(`Kupiłeś **${offer.name}** za **${formatMoney(offer.price)}**.\n${offer.desc}`);
+                .setDescription(`Kupiłeś **${offer.name}** za **${price.format()}**.\n${offer.desc}`);
 
             return api.reply({ embeds: [embed] });
         } catch (err) {
