@@ -80,8 +80,8 @@ client.on('interactionCreate', async (int: Interaction) => {
     }
 
     if (
-        (cfg.legacy.general.commandHandling.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
-        (cfg.legacy.general.commandHandling.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
+        (cfg.commands.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
+        (cfg.commands.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
     ) { 
         const row = new dsc.ActionRowBuilder<dsc.ButtonBuilder>()
             .addComponents(

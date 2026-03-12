@@ -118,7 +118,7 @@ export const manCmd: Command = {
             .setColor(category.color)
             .setDescription(
                 [
-                    `${emoji} **Wywołanie:** ${cfg.legacy.general.prefix}${command.name}`,
+                    `${emoji} **Wywołanie:** ${cfg.commands.prefix}${command.name}`,
                     `${emoji} **Aliasy do nazwy**: ${command.aliases.length === 0 ? 'brak aliasów' : command.aliases.join(', ')}`,
                     `${emoji} **Opisy**:\n> - **długi**: ${command.description.main}\n> - **krótki**: ${command.description.short}\n`,
                     `${emoji} **Kategoria:** ${category.name} ${category.emoji}`,

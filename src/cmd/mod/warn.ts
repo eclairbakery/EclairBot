@@ -12,7 +12,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const warnCmd: Command = {
     name: 'warn',
-    aliases: cfg.legacy.commands.mod.warn.aliases,
+    aliases: cfg.commands.configuration.warn.aliases,
     description: {
         main: 'Daj komuś warna, by go onieśmielić, uciszyć, zamknąć mu morde i nadużyć władzy. Żart, ale nie nadużywaj bo to się źle skończy... Nie wiesz z czym zadzierasz przybyszu!',
         short: 'Warnuje podaną osobę'
@@ -28,7 +28,7 @@ export const warnCmd: Command = {
         },
         {
             name: 'points',
-            description: `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cfg.legacy.commands.mod.warn.maxPoints}`,
+            description: `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cfg.commands.configuration.warn.maxPoints}`,
             type: { base: 'float' },
             optional: true,
         },
@@ -40,15 +40,15 @@ export const warnCmd: Command = {
         },
         {
             name: 'reason',
-            description: cfg.legacy.commands.mod.warn.reasonRequired
+            description: cfg.commands.configuration.warn.reasonRequired
                 ? 'Po prostu powód warna'
                 : 'Po prostu powód warna. Możesz go pominąć ale nie polecam',
             type: { base: 'string', trailing: true },
-            optional: !cfg.legacy.commands.mod.warn.reasonRequired,
+            optional: !cfg.commands.configuration.warn.reasonRequired,
         }
     ],
 
-    permissions: CommandPermissions.fromCommandConfig(cfg.legacy.commands.mod.warn),
+    permissions: CommandPermissions.fromCommandConfig(cfg.commands.configuration.warn),
 
     async execute(api) {
         let targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | undefined;
@@ -67,12 +67,12 @@ export const warnCmd: Command = {
             );
         }
 
-        if (targetUser.roles.cache.hasAny(...cfg.legacy.features.moderation.protectedRoles)) {
+        if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
             return api.log.replyError(api, 'Ten użytkownik jest chroniony!', 'Ten uzytkownik chyba prosił o ochronę... A jak nie prosił... to i tak ją ma.');
         }
 
         if (!reason) {
-            if (cfg.legacy.commands.mod.warn.reasonRequired) {
+            if (cfg.commands.configuration.warn.reasonRequired) {
                 return api.log.replyError(api, 'Musisz podać powód!', 'Bratku... dlaczego ty chcesz to zrobić? Możesz mi chociaż powiedzieć, a nie wysuwać pochopne wnioski i banować/warnować/mute\'ować ludzi bez powodu?');
             } else {
                 reason = 'Moderator nie poszczycił się znajomością komendy i nie podał powodu... Ale moze to i lepiej...';
@@ -87,7 +87,7 @@ export const warnCmd: Command = {
             );
         }
 
-        points = clamp(cfg.legacy.commands.mod.warn.minPoints, points, cfg.legacy.commands.mod.warn.maxPoints);
+        points = clamp(cfg.commands.configuration.warn.minPoints, points, cfg.commands.configuration.warn.maxPoints);
 
         if (targetUser.id === api.invoker.user.client.user?.id) {
             points = 2;
@@ -123,7 +123,7 @@ export const warnCmd: Command = {
                 new ReplyEmbed()
                     .setTitle('📢 Użytkownik dostał warna')
                     .setColor(PredefinedColors.Orange)
-                    .setDescription(`Udało się. To tyle. Więcej na <#${cfg.legacy.channels.mod.warnings}>`)
+                    .setDescription(`Udało się. To tyle. Więcej na <#${cfg.channels.mod.warnings}>`)
             ]
         });
 

@@ -77,11 +77,11 @@ export const blackjackCmd: Command = {
         const getEmbed = (hideDealer = true): ReplyEmbed => {
             const dealerShown = hideDealer ? `${dealerHand[0].name} ❓` : handToString(dealerHand);
             return new ReplyEmbed()
-                .setTitle(cfg.legacy.customization.economyTexts.blackjack.title)
+                .setTitle('♠️ Blackjack ♠️')
                 .setColor(PredefinedColors.Green)
                 .addFields(
-                    { inline: true, name: cfg.legacy.customization.economyTexts.playerCardsLabel, value: `${handToString(playerHand)} (${calcHandValue(playerHand)})` },
-                    { inline: true, name: cfg.legacy.customization.economyTexts.dealerCardsLabel, value: `${dealerShown}${hideDealer ? '' : ` (${calcHandValue(dealerHand)})`}` }
+                    { inline: true, name: 'Twoje karty', value: `${handToString(playerHand)} (${calcHandValue(playerHand)})` },
+                    { inline: true, name: 'Karty dealera', value: `${dealerShown}${hideDealer ? '' : ` (${calcHandValue(dealerHand)})`}` }
                 );
         };
 
@@ -106,7 +106,7 @@ export const blackjackCmd: Command = {
                     await button.update({
                         embeds: [
                             getEmbed(false)
-                                .setDescription(cfg.legacy.customization.economyTexts.blackjack.descriptionBust)
+                                .setDescription('💥 Przegrałeś! Przekroczyłeś 21.')
                         ],
                         components: [],
                     });
@@ -130,12 +130,12 @@ export const blackjackCmd: Command = {
 
                 if (dealerValue > 21 || playerValue > dealerValue) {
                     player.economy.addWalletMoney(bet);
-                    result = cfg.legacy.customization.economyTexts.blackjack.descriptionWin;
+                    result = '🏆 Wygrałeś!';
                 } else if (playerValue === dealerValue) {
-                    result = cfg.legacy.customization.economyTexts.blackjack.descriptionDraw;
+                    result = '🤝 Remis!';
                 } else {
                     player.economy.deductWalletMoney(bet);
-                    result = cfg.legacy.customization.economyTexts.blackjack.descriptionLose;
+                    result = '💥 Przegrałeś!';
                 }
 
                 gameOver = true;
@@ -155,7 +155,7 @@ export const blackjackCmd: Command = {
                 await gameMsg.edit({
                     embeds: [
                         getEmbed(false)
-                            .setDescription(cfg.legacy.customization.economyTexts.blackjack.descriptionTimeout)
+                            .setDescription('⏳ Czas minął!')
                     ],
                     components: [],
                 });

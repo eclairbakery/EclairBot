@@ -7,10 +7,10 @@ export function mkDualProgressBar(red: number, green: number, totalLength: numbe
     red = Math.min(red, maxHalf);
     green = Math.min(green, maxHalf);
 
-    return fmtEmoji(cfg.legacy.emoji.darkRedBlock).repeat(maxHalf - red)
-        + fmtEmoji(cfg.legacy.emoji.lightRedBlock).repeat(red)
-        + fmtEmoji(cfg.legacy.emoji.lightGreenBlock).repeat(green)
-        + fmtEmoji(cfg.legacy.emoji.darkGreenBlock).repeat(maxHalf - green);
+    return fmtEmoji(cfg.emojis.darkRedBlock).repeat(maxHalf - red)
+        + fmtEmoji(cfg.emojis.lightRedBlock).repeat(red)
+        + fmtEmoji(cfg.emojis.lightGreenBlock).repeat(green)
+        + fmtEmoji(cfg.emojis.darkGreenBlock).repeat(maxHalf - green);
 }
 
 export function mkProgressBar(fillLength: number, max: number, totalLength: number = 13) {

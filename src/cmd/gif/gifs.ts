@@ -27,13 +27,13 @@ async function getGIF(searchTerm: string): Promise<string> {
         if (json.results && json.results.length > 0) {
             return `[gif z tenora](${json.results[0].media_formats.gif.url})\n**niestety google przestaje wspierać te api więc eb przestanie w lipcu wysyłać gify :wilted_rose:**`;
         } else if (json.error?.message == "API key not valid. Please pass a valid API key.") {
-            return cfg.legacy.customization.uncategorized.gifWrongApiKey;
+            return 'Spinguj deweloperów bota, bo zapomnieli ustawić zmienną środowiskową...';
         } else {
-            return cfg.legacy.customization.uncategorized.gifNotFound;
+            return 'Nie znaleziono GIF\'a...';
         }
     } catch (error) {
         output.warn('GIF download error: ' + error);
-        return cfg.legacy.customization.uncategorized.gifErrorString;
+        return 'Wystąpił jakiś błąd. To najprawdopodobniej nie moja wina, więc wiń Tenora.';
     }
 }
 

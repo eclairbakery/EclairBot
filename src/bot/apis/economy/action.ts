@@ -1,7 +1,7 @@
 import {
     ConfigEconomyCond, ConfigEconomyAction, ConfigEconomyRandomVariant,
     ConfigEconomyMultiplierKind, ConfigEconomyRole
-} from '@/bot/definitions/economy.js';
+} from '@/bot/definitions/config/economy.js';
 import User from '@/bot/apis/db/user.js';
 import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';
@@ -14,9 +14,9 @@ export interface EconomyExecutorContext {
 export class EconomyExecutor {
     constructor(private ctx: EconomyExecutorContext) {}
 
-    getRoleById(id: string)  { return cfg.legacy.features.economy.roles.find(r => r.id == id);  }
-    getItemById(id: string)  { return cfg.legacy.features.economy.items.find(i => i.id == id);  }
-    getOfferById(id: string) { return cfg.legacy.features.economy.offers.find(o => o.id == id); }
+    getRoleById(id: string)  { return cfg.features.economy.roles.find(r => r.id == id);  }
+    getItemById(id: string)  { return cfg.features.economy.items.find(i => i.id == id);  }
+    getOfferById(id: string) { return cfg.features.economy.offers.find(o => o.id == id); }
 
     private getByName<T extends { name: string, id: string }>(name: string, arr: T[]): T | undefined {
         const nameNormalized = name.trim().toLowerCase();
@@ -28,13 +28,13 @@ export class EconomyExecutor {
         return undefined;
     }
 
-    getRoleByName(name: string)  { return this.getByName(name, cfg.legacy.features.economy.roles);  }
-    getItemByName(name: string)  { return this.getByName(name, cfg.legacy.features.economy.items);  }
-    getOfferByName(name: string) { return this.getByName(name, cfg.legacy.features.economy.offers); }
+    getRoleByName(name: string)  { return this.getByName(name, cfg.features.economy.roles);  }
+    getItemByName(name: string)  { return this.getByName(name, cfg.features.economy.items);  }
+    getOfferByName(name: string) { return this.getByName(name, cfg.features.economy.offers); }
 
     getMemberRoles(): ConfigEconomyRole[] {
         if (!this.ctx.member) return [];
-        return cfg.legacy.features.economy.roles.filter(r => this.ctx.member!.roles.cache.has(r.discordRoleId));
+        return cfg.features.economy.roles.filter(r => this.ctx.member!.roles.cache.has(r.discordRoleId));
     }
 
     getMultiplier(kind: ConfigEconomyMultiplierKind): number {

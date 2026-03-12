@@ -62,27 +62,6 @@ function makeOptions(options: FirstArg<CommandAPI['reply']>): any {
             result = options;
     }
 
-    if (cfg.legacy.customization.stringifyEmbed && result?.embeds?.length) {
-        const embedText = result.embeds
-            .map((e: any) => {
-                if (typeof e?.toJSON === 'function') {
-                    return stringifyEmbed(e.toJSON());
-                }
-                return stringifyEmbed(e);
-            })
-            .join('\n\n');
-
-        result.content = result.content
-            ? `${result.content}\n\n${embedText}`
-            : embedText;
-        
-        result.allowedMentions = {
-            parse: []
-        };
-
-        delete result.embeds;
-    }
-
     return result;
 }
 
@@ -138,7 +117,7 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
             interaction: context.interaction,
         },
 
-        preferShortenedEmbeds: cfg.legacy.blockCommands.preferShortenedEmbeds.includes((context.interaction?.channel ?? context.msg!.channel!).id),
+        preferShortenedEmbeds: cfg.commands.blocking.preferShortenedEmbeds.includes((context.interaction?.channel ?? context.msg!.channel!).id),
         invokedViaAlias: context.invokedviaalias
     };
 }

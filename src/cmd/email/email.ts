@@ -159,7 +159,7 @@ export const sendEmailCmd: Command = {
             if (signature)
                 content += `\n\n${signature}`;
 
-            content += `\n\n<p style="font-size:10px;display:block;">EN: This message was sent automatically, because Discord user @${api.invoker.user.username} (id: ${api.invoker.id}) used the \`${cfg.legacy.general.prefix}${api.invokedViaAlias}\` command.\nPL: Ta wiadomość została wysłana automatycznie przez bota Discord na skutek wykonania komendy \`${cfg.legacy.general.prefix}${api.invokedViaAlias}\` przez użytkownika Discord @${api.invoker.user.username} (id: ${api.invoker.id}).</p>`;
+            content += `\n\n<p style="font-size:10px;display:block;">EN: This message was sent automatically, because Discord user @${api.invoker.user.username} (id: ${api.invoker.id}) used the \`${cfg.commands.prefix}${api.invokedViaAlias}\` command.\nPL: Ta wiadomość została wysłana automatycznie przez bota Discord na skutek wykonania komendy \`${cfg.commands.prefix}${api.invokedViaAlias}\` przez użytkownika Discord @${api.invoker.user.username} (id: ${api.invoker.id}).</p>`;
 
             content = content.replaceAll('\n', '<br>');
 

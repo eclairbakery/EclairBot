@@ -81,8 +81,8 @@ export const wikiCmd: Command = {
             return api.reply({
                 embeds: [{
                     author: { name: 'EclairBOT' },
-                    title: cfg.legacy.customization.uncategorized.wikiIsNotFandomHeader,
-                    description: cfg.legacy.customization.uncategorized.wikiIsNotFandomText,
+                    title: 'Ta komenda nie jest do tego!',
+                    description: 'Rzeczy takie jak `eklerka`, `aurorOS`, `piekarnia eklerki`, `gorciu`, `maqix`, itd. nie są na wikipedii... Po prostu nie spodziewaj się, że jest to wiki serwera.',
                     color: PredefinedColors.Blurple
                 }]
             });
@@ -93,8 +93,8 @@ export const wikiCmd: Command = {
             return api.reply({
                 embeds: [{
                     author: { name: 'EclairBOT' },
-                    title: cfg.legacy.customization.uncategorized.wikiUnknownArticleHeader,
-                    description: cfg.legacy.customization.uncategorized.wikiUnknownArticleText,
+                    title: 'Tego artykułu nie ma na Wikipedii!',
+                    description: 'Wiem, to niemożliwe...',
                     color: PredefinedColors.Orange
                 }]
             });
@@ -107,8 +107,8 @@ export const wikiCmd: Command = {
             return api.reply({
                 embeds: [{
                     author: { name: 'EclairBOT' },
-                    title: cfg.legacy.customization.uncategorized.wikiDisambiguationPageHeader,
-                    description: `${cfg.legacy.customization.uncategorized.wikiDisambiguationPageText}\n${titles.join(', ')}`,
+                    title: 'Doprecyzuj!',
+                    description: `Natrafiłeś na stronę ujednoznaczniającą. Ona wyświetla różne znaczenia wyrazu...\n${titles.join(', ')}`,
                     url: json.content_urls.desktop.page,
                     color: PredefinedColors.Cyan
                 }]

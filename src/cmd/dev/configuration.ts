@@ -90,7 +90,7 @@ export const configurationCommand: Command = {
         }
 
         return api.reply(
-            `✅ ustawiono \`${property}\` na \`${sanitizedValue}\`; polecam jeszcze odpalić \`${cfg.legacy.general.prefix}restart\`.`
+            `✅ ustawiono \`${property}\` na \`${sanitizedValue}\`; polecam jeszcze odpalić \`${cfg.commands.prefix}restart\`.`
         );
     },
 };

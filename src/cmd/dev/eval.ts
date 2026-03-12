@@ -4,12 +4,6 @@ import { client } from '@/client.js';
 import { output } from '@/bot/logging.js';
 import { db } from '@/bot/apis/db/bot-db.js';
 
-export let canEval = cfg.legacy.general.usingNormalHosting;
-
-setTimeout(() => {
-    canEval = true;
-}, 61 * 1000);
-
 type AsynchronicFunction = () => PromiseLike<any>;
 
 export const evalCmd: Command = {
@@ -48,14 +42,11 @@ export const evalCmd: Command = {
         if (!code.includes('return')) {
             warns.push("nie używasz return a masz używać...");
         }
-        if (!canEval) {
-            warns.push('cierpliwości nauczę cię, nie sbrickujesz mnie');
-        }
         for (const warn of warns) {
             await api.log.replyTip(api, 'Ten kod może nie zadziałać!', warn);
         }
         try {
-            const result = await (new AsyncFunction("api", "db", "client", "debug", "cfg", canEval ? code : 'return false;'))(api, db, client, output, cfg);
+            const result = await (new AsyncFunction("api", "db", "client", "debug", "cfg", code))(api, db, client, output, cfg);
             return api.reply(`wynik twojej super komendy:\n\`\`\`${String(result).replace('`', '\`')}\`\`\``);
         } catch (err) {
             return api.reply(`❌ niepowodzenie:\n\`\`\`${err}\`\`\``);

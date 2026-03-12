@@ -8,7 +8,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 import ban from '@/bot/apis/mod/bans.js';
 
-const cmdCfg = cfg.legacy.commands.mod.ban;
+const cmdCfg = cfg.commands.configuration.ban;
 
 export const banCmd: Command = {
     name: 'ban',
@@ -48,7 +48,7 @@ export const banCmd: Command = {
             return api.log.replyError(api, 'Musisz podać powód!', 'Bratku... dlaczego ty chcesz to zrobić? Możesz mi chociaż powiedzieć, a nie wysuwać pochopne wnioski i banować/warnować/mute\'ować ludzi bez powodu?');
         }
 
-        if (targetUser.roles.cache.hasAny(...cfg.legacy.features.moderation.protectedRoles)) {
+        if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
             return api.log.replyError(api, 'Ten użytkownik jest chroniony!', 'Ten uzytkownik chyba prosił o ochronę... A jak nie prosił... to i tak ją ma.');
         }
 

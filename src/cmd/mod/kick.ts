@@ -7,7 +7,7 @@ import { PredefinedColors } from '@/util/color.js';
 import kick from '@/bot/apis/mod/kicks.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
-const cmdCfg = cfg.legacy.commands.mod.kick;
+const cmdCfg = cfg.commands.configuration.kick;
 
 export const kickCmd: Command = {
     name: 'kick',
@@ -45,7 +45,7 @@ export const kickCmd: Command = {
             return api.log.replyError(api, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyślę komu ty chcesz dać kopniaka? Użycie: odpowiedzi na wiadomość lub !kick <@user> <powód>');
         }
 
-        if (targetUser.roles.cache.hasAny(...cfg.legacy.features.moderation.protectedRoles)) {
+        if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
             return api.log.replyError(api, 'Ten użytkownik jest chroniony!', 'Ten uzytkownik chyba prosił o ochronę... A jak nie prosił... to i tak ją ma.');
         }
 

@@ -4,7 +4,7 @@ import { output } from "@/bot/logging.js";
 export interface ChannelName { name: string; emoji: string; leaveSpaces?: boolean };
 
 function makeEmojiForChannelName(emoji: string) {
-    return `${cfg.legacy.channelsConfiguration.characters.beforeEmoji}${emoji.replace(' ', cfg.legacy.channelsConfiguration.spaceReplacement ?? '-')}${cfg.legacy.channelsConfiguration.characters.afterEmoji}`;
+    return `${cfg.channels.settings.characters.beforeEmoji}${emoji.replace(' ', cfg.channels.settings.spaceReplacement ?? '-')}${cfg.channels.settings.characters.afterEmoji}`;
 };
 
 export function makeChannelName(data: ChannelName) {
@@ -14,5 +14,5 @@ export function makeChannelName(data: ChannelName) {
     if (data.name.length < 3) {
         output.warn(`Suspicious channel name at makeChannelName (data: ${JSON.stringify(data)})`);
     }
-    return `${cfg.legacy.channelsConfiguration.emojiPlacement == 'before-name' ? makeEmojiForChannelName(data.emoji) : '' }${data.name.replace(' ', data.leaveSpaces ? ' ' : (cfg.legacy.channelsConfiguration.spaceReplacement ?? '-'))}${cfg.legacy.channelsConfiguration.emojiPlacement == 'after-name' ? makeEmojiForChannelName(data.emoji) : '' }`;
+    return `${cfg.channels.settings.emojiPlacement == 'before-name' ? makeEmojiForChannelName(data.emoji) : '' }${data.name.replace(' ', data.leaveSpaces ? ' ' : (cfg.channels.settings.spaceReplacement ?? '-'))}${cfg.channels.settings.emojiPlacement == 'after-name' ? makeEmojiForChannelName(data.emoji) : '' }`;
 }

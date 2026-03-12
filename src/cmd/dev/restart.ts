@@ -1,6 +1,4 @@
-import { cfg } from '@/bot/cfg.js';
 import { Command, CommandFlags, CommandPermissions } from '@/bot/command.js';
-import { canEval } from './eval.js';
 import { output } from '@/bot/logging.js';
 
 import * as cache from '@/bot/apis/cache/cache.js';
@@ -17,9 +15,6 @@ export const restartCmd: Command = {
     permissions: CommandPermissions.devOnly(),
 
     async execute(api) {
-        if (!canEval) {
-            return api.reply('nie możesz jeszcze');
-        }
         output.log('Issued restart. This will work due to the behaviour of Pterodactyl Daemon.');
         await api.reply('jusz siem restartujem plis łejt plis plis plis łejt');
         

@@ -5,7 +5,7 @@ import { output } from '@/bot/logging.js';
 import { sendLog } from '@/bot/apis/log/send-log.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
-const cmdCfg = cfg.legacy.commands.mod.mute;
+const cmdCfg = cfg.commands.configuration.mute;
 
 export const unmuteCmd: Command = {
     name: 'unmute',

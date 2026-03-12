@@ -5,7 +5,7 @@ import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags, CommandPermissions } from '@/bot/command.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
-const cmdCfg = cfg.legacy.commands.mod.warn;
+const cmdCfg = cfg.commands.configuration.warn;
 
 export const clearCmd: Command = {
     name: 'clear',

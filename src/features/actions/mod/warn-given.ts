@@ -32,13 +32,13 @@ export const warnGivenLogAction: Action<WarnEventCtx> = {
                         value: ctx.expiresAt ? `<t:${ctx.expiresAt?.toString()}:R>` : 'nigdy'
                     }
                 ]
-            }, [cfg.legacy.channels.mod.warnings]);
+            }, [cfg.channels.mod.warnings]);
 
             // auto actions
             const result = await db.selectOne('SELECT SUM(points) AS totalPoints FROM warns WHERE user_id = ?', [ctx.user.id]);
             const points = result?.totalPoints ?? 0;
             const prevPoints = points - ctx.points;
-            const autoActions = cfg.legacy.features.moderation.warnAutoActions;
+            const autoActions = cfg.features.moderation.warnAutoActions;
             const triggeredActions = autoActions.filter(a =>
                 prevPoints < a.activationPointsNumber &&
                 points >= a.activationPointsNumber

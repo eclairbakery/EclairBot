@@ -17,13 +17,6 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
             // now goes leveling
             if (!msg.author.bot) await addExperiencePoints(msg);
 
-            // gifs ban
-            if (msg.member!.roles.cache.has(cfg.legacy.unfilteredRelated.gifBan) && msg.channelId !== cfg.legacy.unfilteredRelated.unfilteredChannel && (msg.attachments.some(att => att.name?.toLowerCase().endsWith('.gif')) || msg.content.includes('tenor.com') || msg.content.includes('.gif'))) {
-                await msg.reply('masz bana na gify');
-                await msg.delete();
-                return;
-            }
-
             // easter egg
             if (msg.content.trim().toLowerCase() == 'eb') {
                 msg.channel.send('https://i.iplsc.com/000AA4EQC5P4FTX6-C0.jpeg');

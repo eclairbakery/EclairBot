@@ -46,8 +46,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     const content = msg.content.trimStart();
 
     const prefixes = [
-        cfg.legacy.general.prefix,
-        ...(cfg.legacy.general.alternativePrefixes ?? [])
+        cfg.commands.prefix,
+        ...(cfg.commands.alternativePrefixes ?? [])
     ];
     
     const prefix = prefixes.find(p =>
@@ -95,8 +95,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     }
 
     if (
-        (cfg.legacy.general.commandHandling.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
-        (cfg.legacy.general.commandHandling.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
+        (cfg.commands.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
+        (cfg.commands.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
     ) {
         const row = new dsc.ActionRowBuilder()
         .addComponents(
@@ -169,7 +169,7 @@ export function init() {
     actionsManager.addAction({
         callbacks: [legacyCommandsMessageHandler],
         constraints: [
-            (msg) => [cfg.legacy.general.prefix, ...cfg.legacy.general.alternativePrefixes].some((val) => msg.content.toLowerCase().startsWith(val.toLowerCase()))
+            (msg) => [cfg.commands.prefix, ...cfg.commands.alternativePrefixes].some((val) => msg.content.toLowerCase().startsWith(val.toLowerCase()))
         ],
         activationEventType: PredefinedActionEventTypes.OnMessageCreate
     });

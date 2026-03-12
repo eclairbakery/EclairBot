@@ -49,7 +49,7 @@ export const toplvlCmd: Command = {
                     const userLvlRole = lvlRoles.filter(id => member.roles.cache.has(id)).at(-1);
                     fields.push({
                         name: `${i} » ${member.user.username}`,
-                        value: `${userLvlRole ? `<@&${userLvlRole}>` : 'Nowicjusz...'}\n**Lvl**: ${calculateLevel(row.xp, cfg.legacy.features.leveling.levelDivider)}\n**XP**: ${row.xp}${i % 2 === 1 ? '‎' : ''}`,
+                        value: `${userLvlRole ? `<@&${userLvlRole}>` : 'Nowicjusz...'}\n**Lvl**: ${calculateLevel(row.xp, cfg.features.leveling.levelDivider)}\n**XP**: ${row.xp}${i % 2 === 1 ? '‎' : ''}`,
                         inline: true
                     });
                 } catch (e) {
@@ -70,7 +70,7 @@ export const toplvlCmd: Command = {
                         .setFields(fields)
                         .setColor("#1ebfd5")
                         .setFooter({
-                            text: `Poziom serwera: ${calculateLevel(serverXP, cfg.legacy.features.leveling.levelDivider)} LVL (XP: ${serverXP})`
+                            text: `Poziom serwera: ${calculateLevel(serverXP, cfg.features.leveling.levelDivider)} LVL (XP: ${serverXP})`
                         })
                 ]
             });

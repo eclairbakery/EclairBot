@@ -11,7 +11,7 @@ import { watchMute } from '@/bot/watchdog.js';
 import { sendLog } from '@/bot/apis/log/send-log.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
-const cmdCfg = cfg.legacy.commands.mod.mute;
+const cmdCfg = cfg.commands.configuration.mute;
 
 export const muteCmd: Command = {
     name: 'mute',
@@ -63,7 +63,7 @@ export const muteCmd: Command = {
             reason = 'Moderator nie poszczycił się znajomością komendy i nie podał powodu... Ale moze to i lepiej...';
         }
 
-        if (targetUser.roles.cache.hasAny(...cfg.legacy.features.moderation.protectedRoles)) {
+        if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
             return api.log.replyError(api, 'Ten użytkownik jest chroniony!', 'Ten uzytkownik chyba prosił o ochronę... A jak nie prosił... to i tak ją ma.');
         }
 

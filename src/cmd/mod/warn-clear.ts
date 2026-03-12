@@ -6,7 +6,7 @@ import { output } from '@/bot/logging.js';
 import { sendLog } from '@/bot/apis/log/send-log.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
-const cmdCfg = cfg.legacy.commands.mod.warn;
+const cmdCfg = cfg.commands.configuration.warn;
 
 export const warnClearCmd: Command = {
     name: 'warn-clear',
