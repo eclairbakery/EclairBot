@@ -67,10 +67,6 @@ export const warnCmd: Command = {
             );
         }
 
-        if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
-            return api.log.replyError(api, 'Ten użytkownik jest chroniony!', 'Ten uzytkownik chyba prosił o ochronę... A jak nie prosił... to i tak ją ma.');
-        }
-
         if (!reason) {
             if (cfg.commands.configuration.warn.reasonRequired) {
                 return api.log.replyError(api, 'Musisz podać powód!', 'Bratku... dlaczego ty chcesz to zrobić? Możesz mi chociaż powiedzieć, a nie wysuwać pochopne wnioski i banować/warnować/mute\'ować ludzi bez powodu?');

@@ -45,10 +45,6 @@ export const kickCmd: Command = {
             return api.log.replyError(api, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyślę komu ty chcesz dać kopniaka? Użycie: odpowiedzi na wiadomość lub !kick <@user> <powód>');
         }
 
-        if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
-            return api.log.replyError(api, 'Ten użytkownik jest chroniony!', 'Ten uzytkownik chyba prosił o ochronę... A jak nie prosił... to i tak ją ma.');
-        }
-
         if (!reason && cmdCfg.reasonRequired) {
             return api.log.replyError(api, 'Musisz podać powód!', 'Bratku... dlaczego ty chcesz to zrobić? Możesz mi chociaż powiedzieć, a nie wysuwać pochopne wnioski i banować/warnować/mute\'ować ludzi bez powodu?');
         } else if (!reason) {

@@ -42,7 +42,7 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
     let issues: string[] = [];
 
     if (cfg.features.watchdog.trustNewMembers) return true;
-    if (cfg.features.watchdog.fuckNewMembers) {
+    if (cfg.features.watchdog.kickNewMembers) {
         await mem.kick();
         return 'kicked';
     }

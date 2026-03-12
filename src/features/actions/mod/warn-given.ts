@@ -33,27 +33,6 @@ export const warnGivenLogAction: Action<WarnEventCtx> = {
                     }
                 ]
             }, [cfg.channels.mod.warnings]);
-
-            // auto actions
-            const result = await db.selectOne('SELECT SUM(points) AS totalPoints FROM warns WHERE user_id = ?', [ctx.user.id]);
-            const points = result?.totalPoints ?? 0;
-            const prevPoints = points - ctx.points;
-            const autoActions = cfg.features.moderation.warnAutoActions;
-            const triggeredActions = autoActions.filter(a =>
-                prevPoints < a.activationPointsNumber &&
-                points >= a.activationPointsNumber
-            );
-            const member = await client.guilds.cache.first()!.members.fetch(ctx.user.id);
-
-            for (const action of triggeredActions) {
-                if (action.type === 'mute') {
-                    await mute(member, { duration: action.duration ?? (24 * Hour * 1000), reason: action.reason });
-                } else if (action.type === 'kick') {
-                    await kick(member, {reason: action.reason, mod: client.user!.id});
-                } else if (action.type === 'ban') {
-                    await ban(member, {reason: action.reason, mod: client.user!.id});
-                }
-            }
         }
     ]
 };

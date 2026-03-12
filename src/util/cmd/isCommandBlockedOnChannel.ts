@@ -19,10 +19,6 @@ export default function isCommandBlockedOnChannel(command: Command, channelID: d
 
    let result: boolean = false;
 
-   // this is confusing so i'll document it
-   //  cfg.legacy.blockCommands.fullExceptImportant allows important cmds on some channels
-   //  or maybe not
-   //  who knows
    if (command.flags & CommandFlags.Important)
        result ||= isBlockedByRules(channelID, cfg.commands.blocking.fullExceptImportant);
    else

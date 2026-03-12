@@ -1,6 +1,6 @@
 import * as dsc from 'discord.js';
-import { AnyCommandConfig, BlockCommandsRules, ConfigTranslation, Emoji, PermissionDefinitionConfig } from './subtypes.js';
-import EconomyConfig from './economy.js';
+import { AnyCommandConfig, BlockCommandsRules, Emoji, PermissionDefinitionConfig } from './subtypes.js';
+import { ConfigFeatures } from './features.js';
 
 export interface Config {
     hierarchy: {
@@ -108,97 +108,7 @@ export interface Config {
         };
     };
 
-    features: {
-        compilation: {
-            replaceCompilerMap: Record<string, string>
-        },
-        automod: {
-            antiFloodEnabled: boolean;
-            antiSpamEnabled: boolean;
-        };
-        welcomer: {
-            enabled: boolean;
-            channelId: dsc.Snowflake;
-            general: dsc.Snowflake;
-            mentionNewPeopleInLobby: boolean;
-            welcomeMsgs: `${string}<mention>${string}`[];
-            goodbyeMsgs: `${string}<mention>${string}`[];
-            freeRolesForEveryone: `${number}`[];
-        };
-        forFun: {
-            media: {
-                addReactions: string[];
-                deleteMessageIfNotMedia: boolean;
-                channel: dsc.Snowflake;
-                shallCreateThread: boolean;
-            }[];
-            lastLetterChannel: dsc.Snowflake;
-            countingChannel: dsc.Snowflake;
-        };
-        leveling: {
-            xpPerMessage: number;
-            levelDivider: number;
-            excludedChannels: string[];
-            milestoneRoles: Record<number, dsc.Snowflake>;
-            canChangeXP: dsc.Snowflake[];
-            levelChannel: dsc.Snowflake;
-            shallPingWhenNewLevel: boolean;
-            currentEvent: {
-                enabled: boolean;
-                channels: dsc.Snowflake[];
-                multiplier: number;
-            },
-        };
-        hallOfFame: {
-            enabled: boolean;
-            channel: dsc.Snowflake;
-            eligibleChannels: dsc.Snowflake[];
-        },
-        logs: {
-            channel: dsc.Snowflake;
-            stdout: dsc.Snowflake;
-            stderr: dsc.Snowflake;
-            stdwarn: dsc.Snowflake;
-        };
-        economy: EconomyConfig;
-        moderation: {
-            protectedRoles: dsc.Snowflake[];
-            warnAutoActions: {
-                type: 'mute' | 'kick' | 'ban';
-                duration?: number;
-                reason: string;
-                activationPointsNumber: number;
-            }[];
-        },
-        email: {
-            listenerChannel: dsc.Snowflake;
-        };
-        translations: ConfigTranslation[],
-
-        watchdog: {
-            /** if true, watchNewMember will always return true (trustworthy) */
-            trustNewMembers: boolean;
-            /** if enabled, bot will kick out every new member */
-            fuckNewMembers: boolean;
-            /** minimum account age in days, can be set to 0 to disable this check */
-            minimumAccountAge: number;
-            massJoinWindow: number;
-            massJoinThreshold: number;
-            similarityThreshold: number;
-            allowNewBots: boolean;
-            /** master switch for most of the watchdog security features */
-            shallAutoDegrade: boolean;
-            /** if this is enabled, eclairbot will ensure to remove EVERY SINGLE ONE of administration roles to the member that has violated watchdog rules; if disabled it'll just degrade that person by one role */
-            notForgiveAdministration: boolean;
-            approveDangerousPermissions: boolean;
-            limitsConfiguration: {
-                maxMutes: number;
-                maxWarns: number;
-                maxChannelCreations: number;
-                maxChannelDeletions: number;
-            };
-        },
-    },
+    features: ConfigFeatures,
 
     emojis: {
         darkRedBlock: Emoji;

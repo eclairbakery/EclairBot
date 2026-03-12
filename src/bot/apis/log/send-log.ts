@@ -6,7 +6,7 @@ import { client } from "@/client.js";
 import { ReplyEmbed } from "../translations/reply-embed.js";
 
 export async function sendLog(logData: LogData, additionalChannels: dsc.Snowflake[] = []) {
-    let where = logData.where ?? cfg.features.logs.channel;
+    let where = logData.where ?? cfg.channels.mod.logs;
     let color = logData.color ?? PredefinedColors.Grey;
     let header = logData.title;
     let description = logData.description;

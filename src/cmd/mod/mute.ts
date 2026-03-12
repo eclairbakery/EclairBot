@@ -63,10 +63,6 @@ export const muteCmd: Command = {
             reason = 'Moderator nie poszczycił się znajomością komendy i nie podał powodu... Ale moze to i lepiej...';
         }
 
-        if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
-            return api.log.replyError(api, 'Ten użytkownik jest chroniony!', 'Ten uzytkownik chyba prosił o ochronę... A jak nie prosił... to i tak ją ma.');
-        }
-
         try {
             if (api.invoker.member) watchMute(api.invoker.member!);
             await mute(targetUser, { reason, duration: (duration ?? 1) * 1000 });
