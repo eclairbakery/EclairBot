@@ -1,7 +1,7 @@
 import {
     ConfigEconomyCond, ConfigEconomyAction, ConfigEconomyRandomVariant,
     ConfigEconomyMultiplierKind, ConfigEconomyRole
-} from '@/bot/definitions/economy.js';
+} from '@/bot/definitions/config/economy.js';
 import User from '@/bot/apis/db/user.js';
 import { cfg } from '@/bot/cfg.js';
 import * as dsc from 'discord.js';

@@ -7,7 +7,7 @@ import { client } from '@/client.js';
 
 export default class AutoModRules {
     static readonly msgAuthorIsNotImmuneToAutomod = (msg: MessageEventCtx) => {
-        for (const role of [...cfg.roles.automodBypassRoles, cfg.roles.eclair25, cfg.roles.headAdmin]) {
+        for (const role of [...cfg.hierarchy.automodBypassRoles, cfg.hierarchy.administration.eclair25, cfg.hierarchy.administration.headAdmin]) {
             if (PredefinedActionConstraints.userHasRole(role)(msg.member!) == Ok) return Skip;
         }
 

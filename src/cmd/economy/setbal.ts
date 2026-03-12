@@ -43,7 +43,7 @@ export const setbalCmd: Command = {
         },
     ],
     permissions: {
-        allowedRoles: [cfg.roles.headAdmin, cfg.roles.eclair25],
+        allowedRoles: [cfg.hierarchy.administration.eclair25, cfg.hierarchy.administration.headAdmin],
         allowedUsers: []
     },
 

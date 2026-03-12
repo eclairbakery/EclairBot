@@ -77,3 +77,9 @@ export type ModCommandsConfigs = {
 export type EconomyCommandsConfig = {
     crime: CrimeCommandConfig;
 } & CommandConfigMap;
+
+////////////// permissions ///////////////
+export interface PermissionDefinitionConfig {
+    allowedUsers: dsc.Snowflake[],
+    allowedRoles: dsc.Snowflake[]
+};

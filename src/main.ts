@@ -166,7 +166,7 @@ async function main() {
         }
     } catch {}
 
-    if (cfg.general.databaseBackups.enabled) {
+    if (cfg.database.backups.enabled) {
         setInterval(async () => {
             let dbBackUpsChannel: dsc.GuildTextBasedChannel;
             try {
@@ -184,13 +184,13 @@ async function main() {
                 const backupName = `backup-${new Date().toISOString().replace(/[:.]/g, '-')}.db`;
 
                 await dbBackUpsChannel.send({
-                    content: `${cfg.general.databaseBackups.msg} (${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })})`,
+                    content: `${cfg.database.backups.msg} (${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })})`,
                     files: [{ attachment: dbPath, name: backupName }]
                 });
             } catch (e) {
                 output.err('while sending db at bot.db: ' + e);
             }
-        }, cfg.general.databaseBackups.interval);
+        }, cfg.database.backups.interval);
     }
 }
 

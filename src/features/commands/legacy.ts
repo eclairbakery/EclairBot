@@ -46,8 +46,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     const content = msg.content.trimStart();
 
     const prefixes = [
-        cfg.general.prefix,
-        ...(cfg.general.alternativePrefixes ?? [])
+        cfg.commands.prefix,
+        ...(cfg.commands.alternativePrefixes ?? [])
     ];
     
     const prefix = prefixes.find(p =>
@@ -65,7 +65,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 
     const result = findCommand(cmdName, commands);
     if (!result) {
-        return log.replyError(msg, cfg.customization.commandsErrors.legacy.commandNotFoundHeader, cfg.customization.commandsErrors.legacy.commandNotFoundText.replace('<cmd>', cmdName.replaceAll('`', '')));
+        return log.replyError(msg, 'Nie znam takiej komendy', 'Komenda \`<cmd>\` nie istnieje'.replace('<cmd>', cmdName.replaceAll('`', '')));
     }
 
     const { command, config } = result;
@@ -73,8 +73,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     if (!canExecuteCmd(command, msg.member!)) {
         log.replyError(
             msg,
-            cfg.customization.commandsErrors.legacy.missingPermissionsHeader,
-            cfg.customization.commandsErrors.legacy.missingPermissionsText
+            'Hej, a co ty odpie*dalasz?',
+            'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...'
         );
         return;
     }
@@ -88,15 +88,15 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     if (!msg.inGuild() && !(command.flags & CommandFlags.WorksInDM)) {
         log.replyError(
             msg,
-            cfg.customization.commandsErrors.legacy.doesNotWorkInDmHeader,
-            cfg.customization.commandsErrors.legacy.doesNotWorkInDmText.replace('<cmd>', cmdName.replaceAll('`', ''))
+            'Ta komenda nie jest przeznaczona do tego trybu gadania!',
+            'Taka komenda jak \`<cmd>\` może być wykonana tylko na serwerach no sorki no!'.replace('<cmd>', cmdName.replaceAll('`', ''))
         );
         return;
     }
 
     if (
-        (cfg.general.commandHandling.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
-        (cfg.general.commandHandling.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
+        (cfg.commands.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
+        (cfg.commands.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
     ) {
         const row = new dsc.ActionRowBuilder()
         .addComponents(
@@ -130,8 +130,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     if (!config.enabled && command.name != 'configuration') {
         log.replyWarn(
             msg,
-            cfg.customization.commandsErrors.legacy.commandDisabledHeader,
-            cfg.customization.commandsErrors.legacy.commandDisabledDescription
+            'Ta komenda jest wyłączona',
+            'Eklerka coś tam gadał, że go wkurza bloat, więc dodałem wyłączanie komend. Trzeba będzie wszystko dodać jako możliwe do wyłączenia w konfiguracji XD.'
         );
         return;
     }
@@ -169,7 +169,7 @@ export function init() {
     actionsManager.addAction({
         callbacks: [legacyCommandsMessageHandler],
         constraints: [
-            (msg) => [cfg.general.prefix, ...cfg.general.alternativePrefixes].some((val) => msg.content.toLowerCase().startsWith(val.toLowerCase()))
+            (msg) => [cfg.commands.prefix, ...cfg.commands.alternativePrefixes].some((val) => msg.content.toLowerCase().startsWith(val.toLowerCase()))
         ],
         activationEventType: PredefinedActionEventTypes.OnMessageCreate
     });

@@ -89,7 +89,6 @@ export async function addLvlRole(
 export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     // check if eligible
     if (cfg.features.leveling.excludedChannels.includes(msg.channelId)) return;
-    if (msg.channelId == cfg.unfilteredRelated.unfilteredChannel) return;
 
     // amount
     let amount = cfg.features.leveling.xpPerMessage;

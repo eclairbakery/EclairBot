@@ -21,7 +21,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
         async (msg: dsc.Message) => {
             const word = msg.content.trim();
             if (word.length < 1) {
-                const reply = await msg.reply(`to nie do tego kanał ${fmtEmoji(cfg.emoji.wowEmoji)}`);
+                const reply = await msg.reply(`to nie do tego kanał ${fmtEmoji(cfg.emojis.wowEmoji)}`);
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();
@@ -38,7 +38,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                     const actualFirst = word[0].toLowerCase();
 
                     if (expectedFirst !== actualFirst) {
-                        const reply = await msg.reply(`pomyliłeś się ${fmtEmoji(cfg.emoji.sadEmoji)}`);
+                        const reply = await msg.reply(`pomyliłeś się ${fmtEmoji(cfg.emojis.sadEmoji)}`);
                         await sleep(1000);
                         await msg.delete();
                         await reply.delete();
@@ -47,7 +47,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                 }
             }
             if (msg.content.endsWith('ą')) {
-                const reply = await msg.reply(`no ej no przeczytałeś kanał opis? ${fmtEmoji(cfg.emoji.heartAttackEmoji)}`);
+                const reply = await msg.reply(`no ej no przeczytałeś kanał opis? ${fmtEmoji(cfg.emojis.heartAttackEmoji)}`);
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();

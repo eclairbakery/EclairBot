@@ -12,7 +12,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 export const warnCmd: Command = {
     name: 'warn',
-    aliases: cfg.commands.mod.warn.aliases,
+    aliases: cfg.commands.configuration.warn.aliases,
     description: {
         main: 'Daj komuś warna, by go onieśmielić, uciszyć, zamknąć mu morde i nadużyć władzy. Żart, ale nie nadużywaj bo to się źle skończy... Nie wiesz z czym zadzierasz przybyszu!',
         short: 'Warnuje podaną osobę'
@@ -28,7 +28,7 @@ export const warnCmd: Command = {
         },
         {
             name: 'points',
-            description: `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cfg.commands.mod.warn.maxPoints}`,
+            description: `Tu ile warn-pointsów chcesz dać, domyślnie 1 i raczej tego nie zmieniaj. No i ten, maksymalnie możesz dać ${cfg.commands.configuration.warn.maxPoints}`,
             type: { base: 'float' },
             optional: true,
         },
@@ -40,15 +40,15 @@ export const warnCmd: Command = {
         },
         {
             name: 'reason',
-            description: cfg.commands.mod.warn.reasonRequired
+            description: cfg.commands.configuration.warn.reasonRequired
                 ? 'Po prostu powód warna'
                 : 'Po prostu powód warna. Możesz go pominąć ale nie polecam',
             type: { base: 'string', trailing: true },
-            optional: !cfg.commands.mod.warn.reasonRequired,
+            optional: !cfg.commands.configuration.warn.reasonRequired,
         }
     ],
 
-    permissions: CommandPermissions.fromCommandConfig(cfg.commands.mod.warn),
+    permissions: CommandPermissions.fromCommandConfig(cfg.commands.configuration.warn),
 
     async execute(api) {
         let targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | undefined;
@@ -62,36 +62,32 @@ export const warnCmd: Command = {
         if (!targetUser) {
             return api.log.replyError(
                 api,
-                cfg.customization.modTexts.noTargetSpecifiedHeader,
-                cfg.customization.modTexts.noTargetSpecifiedText
+                'Nie podano celu',
+                'Kolego co ty myślisz że ja się sam domyślę, komu ty to chcesz zrobić? Zgadłeś - nie domyślę się. Więc bądź tak miły i podaj użytkownika, dla którego odpalasz tą komendę.'
             );
         }
 
-        if (targetUser.roles.cache.hasAny(...cfg.features.moderation.protectedRoles)) {
-            return api.log.replyError(api, cfg.customization.modTexts.userIsProtectedHeader, cfg.customization.modTexts.userIsProtectedDesc);
-        }
-
         if (!reason) {
-            if (cfg.commands.mod.warn.reasonRequired) {
-                return api.log.replyError(api, cfg.customization.modTexts.reasonRequiredNotSpecifiedHeader, cfg.customization.modTexts.reasonRequiredNotSpecifiedText);
+            if (cfg.commands.configuration.warn.reasonRequired) {
+                return api.log.replyError(api, 'Musisz podać powód!', 'Bratku... dlaczego ty chcesz to zrobić? Możesz mi chociaż powiedzieć, a nie wysuwać pochopne wnioski i banować/warnować/mute\'ować ludzi bez powodu?');
             } else {
-                reason = cfg.customization.modTexts.defaultReason;
+                reason = 'Moderator nie poszczycił się znajomością komendy i nie podał powodu... Ale moze to i lepiej...';
             }
         }
 
         if (targetUser.id === api.invoker.id) {
             return api.log.replyError(
                 api,
-                cfg.customization.modTexts.havingMentalProblemsByWarningYourselfHeader,
-                cfg.customization.modTexts.havingMentalProblemsByWarningYourselfText,
+                'Bro co ty odpierdalasz?',
+                'Czemu ty chcesz sobie dać warna? Co jest z tobą nie tak... Zabrać cię do szpitala zdrowia psychicznego czy co ja mam zrobić...',
             );
         }
 
-        points = clamp(cfg.commands.mod.warn.minPoints, points, cfg.commands.mod.warn.maxPoints);
+        points = clamp(cfg.commands.configuration.warn.minPoints, points, cfg.commands.configuration.warn.maxPoints);
 
         if (targetUser.id === api.invoker.user.client.user?.id) {
             points = 2;
-            reason = cfg.customization.modTexts.warningEclairBotReason;
+            reason = 'nie warnuje się istoty wyższej panie';
             targetUser = api.invoker.member!;
         }
 
@@ -110,8 +106,8 @@ export const warnCmd: Command = {
         if (!api.preferShortenedEmbeds) {
 
         const embed = new ReplyEmbed()
-            .setTitle(`📢 ${cfg.customization.modTexts.warnHeader.replace('<mention>', targetUser.user.username).replace('<mod>', api.invoker.user.username)}`)
-            .setDescription(cfg.customization.modTexts.warnDescription.replace('<points>', `${points}`).replace('<duration>', `<t:${expiresAt}:R>`))
+            .setTitle(`📢 ${'<mention> dostał warna od <mod>!'.replace('<mention>', targetUser.user.username).replace('<mod>', api.invoker.user.username)}`)
+            .setDescription('Warn w skrócie ma <points> punktów i skończy się <duration>.'.replace('<points>', `${points}`).replace('<duration>', `<t:${expiresAt}:R>`))
             .setColor(PredefinedColors.Orange);
 
         await api.reply({ embeds: [embed] });

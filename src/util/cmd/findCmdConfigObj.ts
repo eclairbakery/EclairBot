@@ -2,10 +2,10 @@ import { cfg } from '@/bot/cfg.js';
 import { Command } from '@/bot/command.js';
 import { commands } from '@/cmd/list.js';
 
-import { AnyCommandConfig } from '@/bot/definitions/config-subtypes.js';
+import { AnyCommandConfig } from '@/bot/definitions/config/subtypes.js';
 
 export function findCmdConfCategory(commandName: string): string | undefined {
-    for (const [category, content] of Object.entries(cfg.commands)) {
+    for (const [category, content] of Object.entries(cfg.commands.configuration)) {
         if (commandName in content) {
             return category;
         }
@@ -21,26 +21,26 @@ export function findCmdConfCategory(commandName: string): string | undefined {
 export function findCmdConfigObj(command: Command): AnyCommandConfig | undefined {
     const cat = findCmdConfCategory(command.name);
     if (!cat) return undefined;
-    return cfg.commands[cat]?.[command.name];
+    return cfg.commands.configuration?.[command.name];
 }
 
 export function findCmdConfigObjOrDefault(command: Command): AnyCommandConfig {
     const cat = findCmdConfCategory(command.name);
-    if (!cat) return cfg.defaultCommandConfig;
+    if (!cat) return cfg.commands.defaultConfiguration;
     
-    const config = cfg.commands[cat]?.[command.name];
-    if (config) return { ...cfg.defaultCommandConfig, ...config };
+    const config = cfg.commands.configuration?.[command.name];
+    if (config) return { ...cfg.commands.defaultConfiguration, ...config };
 
-    return cfg.defaultCommandConfig;
+    return cfg.commands.defaultConfiguration;
 }
 
 export function findCmdConfResolvable(commandName: string): AnyCommandConfig {
     const cat = findCmdConfCategory(commandName);
-    if (!cat) return cfg.defaultCommandConfig;
+    if (!cat) return cfg.commands.defaultConfiguration;
     
-    const config = cfg.commands[cat]?.[commandName];
-    if (config) return { ...cfg.defaultCommandConfig, ...config };
+    const config = cfg.commands.configuration?.[commandName];
+    if (config) return { ...cfg.commands.defaultConfiguration, ...config };
 
-    return cfg.defaultCommandConfig;
+    return cfg.commands.defaultConfiguration;
 }
 

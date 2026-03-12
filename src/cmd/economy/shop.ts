@@ -7,7 +7,7 @@ import capitalizeFirst from '@/util/capitalizeFirst.js';
 import * as dsc from 'discord.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 import { formatMoney } from '@/util/math/format.js';
-import { ConfigEconomyAction, ConfigEconomyShopCategory, ConfigEconomyShopOffer } from '@/bot/definitions/economy.js';
+import { ConfigEconomyAction, ConfigEconomyShopCategory, ConfigEconomyShopOffer } from '@/bot/definitions/config/economy.js';
 
 function formatItemActions(api: CommandAPI, actions: ConfigEconomyAction[]): string[] {
     let result: string[] = [];
@@ -107,7 +107,7 @@ export const shopCmd: Command = {
                 .setTitle('💳 Sklep')
                 .setDescription([
                     'Wybierz kategorię z menu poniżej!',
-                    `**Tip na przyszłość:** Możesz poprostu użyć \`${cfg.general.prefix}shop <category>\`!`
+                    `**Tip na przyszłość:** Możesz poprostu użyć \`${cfg.commands.prefix}shop <category>\`!`
                 ].join('\n'))
                 .setColor(PredefinedColors.LuminousVividPink);
 
@@ -172,7 +172,7 @@ export const shopCmd: Command = {
 
         const introEmbed = new ReplyEmbed()
             .setTitle('💳 Sklep')
-            .setDescription(`Oto nasz asortyment, wybierz co chcesz a potem użyj \`${cfg.general.prefix}buy <item>\` by to kupić.`)
+            .setDescription(`Oto nasz asortyment, wybierz co chcesz a potem użyj \`${cfg.commands.prefix}buy <item>\` by to kupić.`)
             .setColor(PredefinedColors.LuminousVividPink);
 
         const allEmbeds = [introEmbed];

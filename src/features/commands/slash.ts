@@ -44,7 +44,7 @@ client.on('interactionCreate', async (int: Interaction) => {
 
     const result = findCommand(int.commandName, commands);
     if (!result) {
-        return int.reply({ content: cfg.customization.commandsErrors.slash.commandNotFound, ephemeral: true });
+        return int.reply({ content: 'Nie znam takiej komendy', ephemeral: true });
     }
 
     const { command, config } = result;
@@ -62,8 +62,8 @@ client.on('interactionCreate', async (int: Interaction) => {
     if (!canExecuteCmd(command, int.member! as any)) {
         return log.replyError(
             replyable,
-            cfg.customization.commandsErrors.legacy.missingPermissionsHeader,
-            cfg.customization.commandsErrors.legacy.missingPermissionsText
+            'Hej, a co ty odpie*dalasz?',
+            'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...'
         );
     }
 
@@ -80,8 +80,8 @@ client.on('interactionCreate', async (int: Interaction) => {
     }
 
     if (
-        (cfg.general.commandHandling.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
-        (cfg.general.commandHandling.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
+        (cfg.commands.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
+        (cfg.commands.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
     ) { 
         const row = new dsc.ActionRowBuilder<dsc.ButtonBuilder>()
             .addComponents(
@@ -113,8 +113,8 @@ client.on('interactionCreate', async (int: Interaction) => {
     if (!config.enabled && command.name != 'configuration') {
         return log.replyWarn(
             replyable,
-            cfg.customization.commandsErrors.legacy.commandDisabledHeader,
-            cfg.customization.commandsErrors.legacy.commandDisabledDescription
+            'Ta komenda jest wyłączona',
+            'Eklerka coś tam gadał, że go wkurza bloat, więc dodałem wyłączanie komend. Trzeba będzie wszystko dodać jako możliwe do wyłączenia w konfiguracji XD.'
         );
     }
 

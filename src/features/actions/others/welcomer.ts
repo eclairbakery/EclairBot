@@ -30,10 +30,10 @@ export const welcomeNewUserAction: Action<UserEventCtx> = {
                 }
             }
 
-            const welcomeChannel = await client.channels.fetch(cfg.features.welcomer.channelId);
+            const welcomeChannel = await client.channels.fetch(cfg.channels.important.lobby);
             if (welcomeChannel == null || !welcomeChannel.isSendable()) return;
 
-            const generalChannel = await client.channels.fetch(cfg.features.welcomer.general);
+            const generalChannel = await client.channels.fetch(cfg.channels.general.general);
             if (generalChannel == null || !generalChannel.isSendable()) return;
 
             if (member.user.id == StartItId) {
@@ -54,7 +54,7 @@ export const sayGoodbyeAction: Action<UserEventCtx> = {
     ],
     callbacks: [
         async (member) => {
-            const channel = await client.channels.fetch(cfg.features.welcomer.channelId);
+            const channel = await client.channels.fetch(cfg.channels.important.lobby);
             if (!channel?.isSendable()) return;
 
             if (member.user.id == StartItId) {

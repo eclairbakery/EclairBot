@@ -44,7 +44,7 @@ export const toggleCooldownBypassCmd: Command = {
     ],
     flags: CommandFlags.None,
     permissions: {
-        allowedRoles: [cfg.roles.mod, cfg.roles.headMod, cfg.roles.admin, cfg.roles.headAdmin, cfg.roles.eclair25],
+        allowedRoles: [cfg.hierarchy.administration.headMod, cfg.hierarchy.administration.admin, cfg.hierarchy.administration.headAdmin, cfg.hierarchy.administration.eclair25],
         allowedUsers: [],
     },
 
@@ -57,8 +57,8 @@ export const toggleCooldownBypassCmd: Command = {
 
         if (!cat) return api.log.replyError(api, 'Błąd', `Nie znaleziono komendy **${cmdName}**!`);
 
-        const cmdOverride = getCommandOverride(cat, cmdName);
-        const currentMerged = (cfg.commands[cat] && cfg.commands[cat][cmdName]) ? cfg.commands[cat][cmdName] : cfg.defaultCommandConfig;
+        const cmdOverride = getCommandOverride(cmdName);
+        const currentMerged = (cfg.commands.configuration && cfg.commands.configuration[cmdName]) ? cfg.commands.configuration[cmdName] : cfg.commands.defaultConfiguration;
         
         let opText: string | undefined;
         if (target.type.base == 'user-mention') {
@@ -83,8 +83,8 @@ export const toggleCooldownBypassCmd: Command = {
             }
         }
 
-        cfg.commands[cat] ??= {};
-        cfg.commands[cat][cmdName] = deepMerge(currentMerged, cmdOverride);
+        cfg.commands.configuration ??= {};
+        cfg.commands.configuration[cmdName] = deepMerge(currentMerged, cmdOverride);
 
         saveConfigurationChanges();
         api.log.replySuccess(api, 'Udało się!', `${opText} bypass cooldownu dla **${cmdName}**!`);

@@ -54,7 +54,7 @@ export const blackjackCmd: Command = {
         const betArg = api.getTypedArg('amount', 'float');
         const bet = betArg?.value as number;
         if (!bet || bet <= 0) {
-            return api.log.replyError(api, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
+            return api.log.replyError(api, 'Namieszałeś z kwotą.', 'Podaj poprawną kwotę!');
         }
 
         const userId = api.invoker.id;
@@ -62,7 +62,7 @@ export const blackjackCmd: Command = {
         const playerBalance = await player.economy.getBalance();
 
         if (playerBalance.wallet < bet)
-            return api.log.replyError(api, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.balanceNotSufficientText);
+            return api.log.replyError(api, 'Nie masz wystarczającej ilości pieniędzy.', 'Może nie zdążyłeś ich wypłacić?');
 
 
         let playerHand: Card[] = [drawCard(), drawCard()];
@@ -77,11 +77,11 @@ export const blackjackCmd: Command = {
         const getEmbed = (hideDealer = true): ReplyEmbed => {
             const dealerShown = hideDealer ? `${dealerHand[0].name} ❓` : handToString(dealerHand);
             return new ReplyEmbed()
-                .setTitle(cfg.customization.economyTexts.blackjack.title)
+                .setTitle('♠️ Blackjack ♠️')
                 .setColor(PredefinedColors.Green)
                 .addFields(
-                    { inline: true, name: cfg.customization.economyTexts.playerCardsLabel, value: `${handToString(playerHand)} (${calcHandValue(playerHand)})` },
-                    { inline: true, name: cfg.customization.economyTexts.dealerCardsLabel, value: `${dealerShown}${hideDealer ? '' : ` (${calcHandValue(dealerHand)})`}` }
+                    { inline: true, name: 'Twoje karty', value: `${handToString(playerHand)} (${calcHandValue(playerHand)})` },
+                    { inline: true, name: 'Karty dealera', value: `${dealerShown}${hideDealer ? '' : ` (${calcHandValue(dealerHand)})`}` }
                 );
         };
 
@@ -106,7 +106,7 @@ export const blackjackCmd: Command = {
                     await button.update({
                         embeds: [
                             getEmbed(false)
-                                .setDescription(cfg.customization.economyTexts.blackjack.descriptionBust)
+                                .setDescription('💥 Przegrałeś! Przekroczyłeś 21.')
                         ],
                         components: [],
                     });
@@ -130,12 +130,12 @@ export const blackjackCmd: Command = {
 
                 if (dealerValue > 21 || playerValue > dealerValue) {
                     player.economy.addWalletMoney(bet);
-                    result = cfg.customization.economyTexts.blackjack.descriptionWin;
+                    result = '🏆 Wygrałeś!';
                 } else if (playerValue === dealerValue) {
-                    result = cfg.customization.economyTexts.blackjack.descriptionDraw;
+                    result = '🤝 Remis!';
                 } else {
                     player.economy.deductWalletMoney(bet);
-                    result = cfg.customization.economyTexts.blackjack.descriptionLose;
+                    result = '💥 Przegrałeś!';
                 }
 
                 gameOver = true;
@@ -155,7 +155,7 @@ export const blackjackCmd: Command = {
                 await gameMsg.edit({
                     embeds: [
                         getEmbed(false)
-                            .setDescription(cfg.customization.economyTexts.blackjack.descriptionTimeout)
+                            .setDescription('⏳ Czas minął!')
                     ],
                     components: [],
                 });

@@ -25,8 +25,8 @@ export const echoCmd: Command = {
     ],
     flags: CommandFlags.Important,
     permissions: {
-        allowedRoles: cfg.devPerms.allowedRoles,
-        allowedUsers: cfg.devPerms.allowedUsers,
+        allowedRoles: cfg.hierarchy.developers.allowedRoles,
+        allowedUsers: cfg.hierarchy.developers.allowedUsers,
     },
     
     async execute(api) {

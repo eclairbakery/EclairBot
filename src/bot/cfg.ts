@@ -2,8 +2,8 @@ import JSON5 from 'json5';
 
 import { deepMerge } from '@/util/objects/objects.js';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { Config } from './definitions/config.js';
-import { defaultCfg } from './default/config.js';
+import { Config } from './definitions/config/config.js';
+import { defaultCfg } from './default/config/index.js';
 
 export let overrideCfg: Partial<Config> = {};
 
@@ -20,12 +20,16 @@ export function saveConfigurationChanges() {
     writeFileSync('bot/config.js', `(${JSON5.stringify(overrideCfg, null, 4)})`, 'utf-8');
 }
 
-export function getCommandOverride(category: string, commandName: string): any {
-    if (!overrideCfg.commands) (overrideCfg as any).commands = {};
-    const cmds = overrideCfg.commands as any;
-    cmds[category] ??= {};
-    cmds[category][commandName] ??= {};
-    return cmds[category][commandName];
+export function getCommandOverride(commandName: string): any {
+    if (!overrideCfg.commands) 
+        (overrideCfg as any).legacy.commands = {};
+
+    if (!overrideCfg.commands!.configuration)
+        (overrideCfg as any).legacy.commands.configuration = {};
+
+    const cmds = overrideCfg.commands!.configuration as any;
+    cmds[commandName] ??= {};
+    return cmds[commandName];
 }
 
 function makeConfig(): Config {

@@ -109,8 +109,8 @@ export const robCmd: Command = {
             if (!cooldownResult.can) {
                 const embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Yellow)
-                    .setTitle(cfg.customization.economyTexts.robbing.waitHeader)
-                    .setDescription(cfg.customization.economyTexts.robbing.waitText.replaceAll('<seconds>', cooldownResult.discordTime));
+                    .setTitle('Chwila przerwy!')
+                    .setDescription(`Musisz poczekać **<seconds> sekund** zanim spróbujesz znowu okraść kogoś.`.replaceAll('<seconds>', cooldownResult.discordTime));
                 return api.reply({ embeds: [embed] });
             }
 

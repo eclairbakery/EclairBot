@@ -21,7 +21,7 @@ export const countingChannelAction: Action<MessageEventCtx> = {
         async (msg: dsc.Message) => {
             const number = parseInt(msg.content.trim());
             if (isNaN(number)) {
-                const reply = await msg.reply(`to nie do tego kanał ${fmtEmoji(cfg.emoji.wowEmoji)}`);
+                const reply = await msg.reply(`to nie do tego kanał ${fmtEmoji(cfg.emojis.wowEmoji)}`);
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();
@@ -42,7 +42,7 @@ export const countingChannelAction: Action<MessageEventCtx> = {
             if (number === lastNumber + 1) {
                 return;
             } else {
-                const reply = await msg.reply(`pomyliłeś się ${fmtEmoji(cfg.emoji.sadEmoji)}`);
+                const reply = await msg.reply(`pomyliłeś się ${fmtEmoji(cfg.emojis.sadEmoji)}`);
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();

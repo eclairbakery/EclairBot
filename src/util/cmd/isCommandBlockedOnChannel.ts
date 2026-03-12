@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
 
 import { Command, CommandFlags } from "@/bot/command.js";
-import { BlockCommandsRules } from '@/bot/definitions/config-subtypes.js';
+import { BlockCommandsRules } from '@/bot/definitions/config/subtypes.js';
 import { cfg } from '@/bot/cfg.js';
 
 function isBlockedByRules(id: dsc.Snowflake, rules: BlockCommandsRules): boolean {
@@ -19,20 +19,16 @@ export default function isCommandBlockedOnChannel(command: Command, channelID: d
 
    let result: boolean = false;
 
-   // this is confusing so i'll document it
-   //  cfg.blockCommands.fullExceptImportant allows important cmds on some channels
-   //  or maybe not
-   //  who knows
    if (command.flags & CommandFlags.Important)
-       result ||= isBlockedByRules(channelID, cfg.blockCommands.fullExceptImportant);
+       result ||= isBlockedByRules(channelID, cfg.commands.blocking.fullExceptImportant);
    else
-       result ||= isBlockedByRules(channelID, cfg.blockCommands.full);
+       result ||= isBlockedByRules(channelID, cfg.commands.blocking.full);
 
    if (command.flags & CommandFlags.Spammy)
-       result ||= isBlockedByRules(channelID, cfg.blockCommands.spammy);
+       result ||= isBlockedByRules(channelID, cfg.commands.blocking.spammy);
 
    if (command.flags & CommandFlags.Economy)
-       result ||= isBlockedByRules(channelID, cfg.blockCommands.economy);
+       result ||= isBlockedByRules(channelID, cfg.commands.blocking.economy);
 
    return result;
 }

@@ -24,8 +24,8 @@ export const configurationCommand: Command = {
     ],
     flags: CommandFlags.Important | CommandFlags.Unsafe,
     permissions: {
-        allowedRoles: cfg.devPerms.allowedRoles,
-        allowedUsers: cfg.devPerms.allowedUsers,
+        allowedRoles: cfg.hierarchy.developers.allowedRoles,
+        allowedUsers: cfg.hierarchy.developers.allowedUsers,
     },
 
     async execute(api) {
@@ -90,7 +90,7 @@ export const configurationCommand: Command = {
         }
 
         return api.reply(
-            `✅ ustawiono \`${property}\` na \`${sanitizedValue}\`; polecam jeszcze odpalić \`${cfg.general.prefix}restart\`.`
+            `✅ ustawiono \`${property}\` na \`${sanitizedValue}\`; polecam jeszcze odpalić \`${cfg.commands.prefix}restart\`.`
         );
     },
 };

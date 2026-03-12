@@ -45,7 +45,7 @@ export const mediaChannelAction: Action<MessageEventCtx> = {
                     await msg.react(reaction);
                 }
             } else if (channelConfig.deleteMessageIfNotMedia) {
-                const reply = await msg.reply(`to nie do tego kanał ${fmtEmoji(cfg.emoji.wowEmoji)}`);
+                const reply = await msg.reply(`to nie do tego kanał ${fmtEmoji(cfg.emojis.wowEmoji)}`);
                 await sleep(2000);
                 await msg.delete();
                 await reply.delete();

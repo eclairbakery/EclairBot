@@ -29,10 +29,10 @@ export const withdrawCmd: Command = {
             let amount = amountArg.toLowerCase() == "all" ? row.bank : parseInt(amountArg);
 
             if (isNaN(amount) || amount <= 0) {
-                return api.log.replyError(api, cfg.customization.economyTexts.betWrongAmountHeader, cfg.customization.economyTexts.betWrongAmountText);
+                return api.log.replyError(api, 'Namieszałeś z kwotą.', 'Podaj poprawną kwotę!');
             }
             if (row.bank < amount) {
-                return api.log.replyError(api, cfg.customization.economyTexts.balanceNotSufficientHeader, cfg.customization.economyTexts.bankBalanceNotSufficientText);
+                return api.log.replyError(api, 'Nie masz wystarczającej ilości pieniędzy.', 'Przynajmniej w banku...');
             }
 
             row.bank -= amount;
