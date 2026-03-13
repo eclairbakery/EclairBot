@@ -62,6 +62,7 @@ export interface ConfigEconomyRole extends ConfigEconomyThing {
 
 export interface ConfigEconomyItem extends ConfigEconomyThing {
     onUse: ConfigEconomyAction[]; // for example: add-role/add-money
+    directOfferId?: string;
 };
 
 export interface ConfigEconomyShopOffer extends ConfigEconomyThing {

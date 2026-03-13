@@ -5,21 +5,34 @@ import Money from '@/util/money.js';
 import { Ternary } from '@/defs.js';
 import { cfg } from '@/bot/cfg.js';
 
+export interface EconomyActionsFormatterConfig {
+    indentStep?: string;
+    maxRandVariants?: number;
+    zeroWidthSpace?: string;
+    goodEmoji?: string;
+    badEmoji?: string;
+}
+
 export interface EconomyActionsFormatter {
     format(actions: ConfigEconomyAction[]): string[];
 };
 
 export class MinimalActionsFormatter implements EconomyActionsFormatter {
     private ctx: EconomyExecutor;
+    private config: Required<EconomyActionsFormatterConfig>;
 
-    private readonly IndentStep = '\u2002\u2002';
-    private readonly MaxRandVariants = 3;
-    private readonly ZeroWidthSpace = '\u200B';
-    private readonly GoodEmoji = '💸';
-    private readonly BadEmoji = '❗';
-
-    constructor(ctx: EconomyExecutor) {
+    constructor(ctx: EconomyExecutor, config?: EconomyActionsFormatterConfig) {
         this.ctx = ctx;
+        this.config = {
+            ...{
+                indentStep: '\u2002\u2002',
+                maxRandVariants: 3,
+                zeroWidthSpace: '\u200B',
+                goodEmoji: '💸',
+                badEmoji: '❗',
+            },
+            ...(config ?? {})
+        };
     }
 
     private formatCondition(cond: ConfigEconomyCond): string | null {
@@ -96,12 +109,12 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
         }));
 
         const sortedVariants = [...variantsWithPercent].sort((a, b) => b.percent - a.percent);
-        const displayedVariants = sortedVariants.slice(0, this.MaxRandVariants);
-        const hasMore = sortedVariants.length > this.MaxRandVariants;
+        const displayedVariants = this.config.maxRandVariants > 0 ? sortedVariants.slice(0, this.config.maxRandVariants) : sortedVariants;
+        const hasMore = this.config.maxRandVariants > 0 && sortedVariants.length > this.config.maxRandVariants;
 
         for (const { variant, percent } of displayedVariants) {
-            const nextIndent = indent + this.IndentStep;
-            const nextLinePrefix = this.ZeroWidthSpace + nextIndent;
+            const nextIndent = indent + this.config.indentStep;
+            const nextLinePrefix = this.config.zeroWidthSpace + nextIndent;
 
             if (variant.actions.length == 1) {
                 const subAction = variant.actions[0];
@@ -121,23 +134,23 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
                                 continue;
                             }
                             result.push(`${nextLinePrefix}**${percent}%** na ${subject} który:`);
-                            result.push(...this.formatActionsList(item.onUse, nextIndent + this.IndentStep, false));
+                            result.push(...this.formatActionsList(item.onUse, nextIndent + this.config.indentStep, false));
                             continue;
                         }
                     }
                    
-                    const emoji = this.isGood(subAction) ? this.GoodEmoji : this.BadEmoji;
+                    const emoji = this.isGood(subAction) ? this.config.goodEmoji : this.config.badEmoji;
                     result.push(`${nextLinePrefix}${emoji} **${percent}%** na ${subject}`);
                     continue;
                 }
             }
 
             result.push(`${nextLinePrefix}**${percent}%** na:`);
-            result.push(...this.formatActionsList(variant.actions, nextIndent + this.IndentStep, allowExpansion));
+            result.push(...this.formatActionsList(variant.actions, nextIndent + this.config.indentStep, allowExpansion));
         }
 
         if (hasMore) {
-            result.push(`${this.ZeroWidthSpace}${indent + this.IndentStep}... *użyj ${cfg.commands.prefix}iteminfo by zobaczyć pełną liste*`);
+            result.push(`${this.config.zeroWidthSpace}${indent + this.config.indentStep}... *użyj ${cfg.commands.prefix}iteminfo by zobaczyć pełną liste*`);
         }
         return result;
     }
@@ -145,7 +158,7 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
     private formatActionsList(actions: ConfigEconomyAction[], indent: string, allowExpansion: boolean): string[] {
         let result: string[] = [];
         for (const action of actions) {
-            const linePrefix = indent ? this.ZeroWidthSpace + indent : '';
+            const linePrefix = indent ? this.config.zeroWidthSpace + indent : '';
 
             switch (action.op) {
             case 'add-role':
@@ -158,15 +171,15 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
                     const item = this.ctx.getItemById(action.itemId);
                     if (item && item.onUse && item.onUse.length > 0) {
                         if (item.onUse.length === 1 && item.onUse[0].op === 'random') {
-                            result.push(...this.formatRandom(item.onUse[0] as any, indent, `${linePrefix}${this.GoodEmoji} Daję ${subject} który losowo:`, false));
+                            result.push(...this.formatRandom(item.onUse[0] as any, indent, `${linePrefix}${this.config.goodEmoji} Daję ${subject} który losowo:`, false));
                             break;
                         }
-                        result.push(`${linePrefix}${this.GoodEmoji} Daję ${subject} który:`);
-                        result.push(...this.formatActionsList(item.onUse, indent + this.IndentStep, false));
+                        result.push(`${linePrefix}${this.config.goodEmoji} Daję ${subject} który:`);
+                        result.push(...this.formatActionsList(item.onUse, indent + this.config.indentStep, false));
                         break;
                     }
                 }
-                result.push(`${linePrefix}${this.GoodEmoji} Daję ${subject}`);
+                result.push(`${linePrefix}${this.config.goodEmoji} Daję ${subject}`);
                 break;
             }
 
@@ -175,21 +188,21 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
             case 'sub-money': {
                 const subject = this.formatActionSubject(action);
                 if (!subject) break;
-                result.push(`${linePrefix}${this.BadEmoji} Zabiera ${subject}`);
+                result.push(`${linePrefix}${this.config.badEmoji} Zabiera ${subject}`);
                 break;
             }
 
             case 'if':
                 result.push(`${linePrefix}**Jeżeli ${this.formatCondition(action.cond)} to:**`);
-                result.push(...this.formatActionsList(action.then, indent + this.IndentStep, allowExpansion));
+                result.push(...this.formatActionsList(action.then, indent + this.config.indentStep, allowExpansion));
                 if (action.else) {
                     result.push(`${linePrefix}**W przeciwnym wypadku:**`);
-                    result.push(...this.formatActionsList(action.else, indent + this.IndentStep, allowExpansion));
+                    result.push(...this.formatActionsList(action.else, indent + this.config.indentStep, allowExpansion));
                 }
                 break;
             case 'while':
                 result.push(`${linePrefix}**Dopóki ${this.formatCondition(action.cond)} wykonuje:**`);
-                result.push(...this.formatActionsList(action.do, indent + this.IndentStep, allowExpansion));
+                result.push(...this.formatActionsList(action.do, indent + this.config.indentStep, allowExpansion));
                 break;
 
             case 'random': {

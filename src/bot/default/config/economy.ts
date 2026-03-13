@@ -85,6 +85,7 @@ export const economyCfg: EconomyConfig = {
             id: 'basic-mysterybox',
             name: 'Zwykły Mystery Box',
             desc: 'Zwykły MysteryBox. Dobry na początek, zbalansowane nagrody.',
+            directOfferId: 'buy-basic-mysterybox',
             onUse: [
                 { op: 'random', variants: [
                     { weight: 20, actions: [ { op: 'add-role', roleId: 'minivip' } ] },
@@ -102,6 +103,7 @@ export const economyCfg: EconomyConfig = {
             id: 'mega-mysterybox',
             name: 'Mega Mystery Box',
             desc: 'Mega Mystery Box. Znacznie lepsze nagrody niż zwykły mystery box, w tym VIPy, inne mystery boxy i pieniądze',
+            directOfferId: 'buy-mega-mysterybox',
             onUse: [
                 { op: 'random', variants: [
                     { weight: 30, actions: [ { op: 'add-role', roleId: 'svip' } ] },
@@ -120,7 +122,7 @@ export const economyCfg: EconomyConfig = {
             id: 'ultra-mysterybox',
             name: 'Ultra Mystery Box',
             desc: 'Najlepszy Mystery Box. Same najlepsze nagrody w late game!',
-
+            directOfferId: 'buy-ultra-mysterybox',
             onUse: [
                 { op: 'random', variants: [
                     { weight: 25, actions: [ { op: 'add-money', amount: 600_000 } ] },
@@ -138,7 +140,7 @@ export const economyCfg: EconomyConfig = {
             id: '5050-mysterybox',
             name: '50/50 Mystery Box',
             desc: 'Nagroda życia lub totalny sabotaż - 50/50!',
-
+            directOfferId: 'buy-5050-mysterybox',
             onUse: [
                 { op: 'random', variants: [
                     { actions: [
@@ -155,10 +157,8 @@ export const economyCfg: EconomyConfig = {
                         { op: 'random', variants: [
                             { weight: 50, actions: [ { op: 'sub-money', amount: 500_000 } ] },
                             { weight: 30, actions: [ { op: 'sub-money', amount: 1_000_000 } ] },
-                            { weight: 20, actions: [
-                                { op: 'rem-role', roleId: 'mvip' },
-                                    // automatically removes mvip.refund money if user dont have mvip role btw
-                            ] },
+                            // automatically removes mvip.refund money if user dont have mvip role
+                            { weight: 20, actions: [ { op: 'rem-role', roleId: 'mvip' } ] },
                         ] }
                     ] },
                 ] },
