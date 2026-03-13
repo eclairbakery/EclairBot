@@ -89,6 +89,15 @@ export class EconomyExecutor {
                     iterations++;
                 }
                 break;
+
+            case 'rem-role':
+                const role = this.getRoleById(action.roleId);
+                if (!this.hasRole(role!.id)) {
+                    res.push({ op: 'sub-money', amount: role!.refund });
+                    break;
+                }
+                res.push(action);
+
             default:
                 res.push(action);
                 break;
@@ -138,6 +147,8 @@ export class EconomyExecutor {
     }
 
     private async expandRandom(variants: ConfigEconomyRandomVariant[]): Promise<ConfigEconomyAction[]> {
+        if (variants.length == 0) return [];
+        
         const totalWeight = variants.reduce((acc, v) => acc + (v.weight ?? 1), 0);
         let rand = Math.random() * totalWeight;
 
@@ -151,7 +162,7 @@ export class EconomyExecutor {
         return [];
     }
 
-    private async hasRole(roleConfigId: string): Promise<boolean> {
+    private hasRole(roleConfigId: string): boolean {
         if (!this.ctx.member) return false;
         const roleConfig = this.getRoleById(roleConfigId);
         if (!roleConfig) return false;
