@@ -8,29 +8,8 @@ import * as dsc from 'discord.js';
 import Money from '@/util/money.js';
 
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
-import { ConfigEconomyAction, ConfigEconomyShopCategory, ConfigEconomyShopOffer } from '@/bot/definitions/config/economy.js';
-
-function formatItemActions(api: CommandAPI, actions: ConfigEconomyAction[]): string[] {
-    let result: string[] = [];
-    for (const action of actions) {
-        switch (action.op) {
-        case 'add-role':
-            const role = api.economy.getRoleById(action.roleId);
-            result.push(`Daje rolę <@&${role?.discordRoleId}>`);
-            break;
-        case 'add-item':
-            const item = api.economy.getItemById(action.itemId);
-            result.push(`Daje item \`${item?.name}\``);
-            break;
-        case 'add-money':
-            result.push(`Daje ${Money.fromDollarsFloat(action.amount).format()}`);
-            break;
-        default:
-            break;
-        }
-    }
-    return result;
-}
+import { ConfigEconomyShopCategory, ConfigEconomyShopOffer } from '@/bot/definitions/config/economy.js';
+import { MinimalActionsFormatter } from '@/bot/apis/economy/format.js';
 
 function buildSelectMenu(categories: ConfigEconomyShopCategory[]): dsc.StringSelectMenuBuilder {
     return new dsc.StringSelectMenuBuilder()
@@ -52,20 +31,24 @@ function buildCategoryEmbed(category: ConfigEconomyShopCategory, offers: ConfigE
         .setDescription(category.desc)
         .setColor(category.color);
 
+    const formatter = new MinimalActionsFormatter(api.economy);
+
     for (const offer of offers) {
+        const value = [
+            `**${Money.fromDollarsFloat(offer.price).format()}** - ${offer.desc}`,
+            ...formatter.format(offer.onBuy),
+        ].join('\n');
+
         embed.addFields([{
-            name: offer.name,
-            value: [
-                `${Money.fromDollarsFloat(offer.price).format()} - ${offer.desc}`,
-                ...formatItemActions(api, offer.onBuy),
-            ].join('\n'),
+            name: offer.name.slice(0, 256),
+            value: value.slice(0, 1024),
             inline: false,
         }]);
     }
 
     if (offers.length === 0) {
         embed.addFields([{
-            name: '',
+            name: '\u200b',
             value: `W tej kategorii nic nie ma.`,
             inline: false,
         }]);
