@@ -1,13 +1,13 @@
 import { Color, PredefinedColors } from '@/util/color.js';
 import * as dsc from 'discord.js';
 
-export type money = number;
+export type ConfigEconomyMoney = number;
 
 export type ConfigEconomyCond =
     | { op: 'has-role', roleId: string }
     | { op: 'has-item', itemId: string }
-    | { op: 'money-gte', amount: money }
-    | { op: 'money-lte', amount: money }
+    | { op: 'money-gte', amount: ConfigEconomyMoney }
+    | { op: 'money-lte', amount: ConfigEconomyMoney }
     | { op: 'random-chance', chance: number };
 
 export interface ConfigEconomyRandomVariant {
@@ -21,8 +21,8 @@ export type ConfigEconomyAction =
     | { op: 'rem-item', itemId: string }
     | { op: 'add-role', roleId: string }
     | { op: 'rem-role', roleId: string }
-    | { op: 'add-money', amount: money }
-    | { op: 'sub-money', amount: money }
+    | { op: 'add-money', amount: ConfigEconomyMoney }
+    | { op: 'sub-money', amount: ConfigEconomyMoney }
     
     | { op: 'random', variants: ConfigEconomyRandomVariant[] }
     
@@ -56,16 +56,16 @@ export interface ConfigEconomyThing {
 
 export interface ConfigEconomyRole extends ConfigEconomyThing {
     discordRoleId: dsc.Snowflake;
+    refund: ConfigEconomyMoney;
     benefits: ConfigEconomyRoleBenefits;
 };
 
 export interface ConfigEconomyItem extends ConfigEconomyThing {
-    price: money;
     onUse: ConfigEconomyAction[]; // for example: add-role/add-money
 };
 
 export interface ConfigEconomyShopOffer extends ConfigEconomyThing {
-    price: money;
+    price: ConfigEconomyMoney;
     onBuy: ConfigEconomyAction[]; // for example: add-item
     buyOnce: boolean;
 };

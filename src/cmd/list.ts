@@ -28,6 +28,7 @@ import { robCmd } from '@/cmd/economy/rob.js';
 import { withdrawCmd } from './economy/withdraw.js';
 import { depositCmd } from './economy/deposit.js';
 import { shopCmd } from './economy/shop.js';
+import { useCmd } from './economy/use.js';
 
 import { xpCmd } from '@/cmd/leveling/xp.js';
 import { lvlCmd } from '@/cmd/leveling/lvl.js';
@@ -104,7 +105,7 @@ export const commands: Map<Category, Command[]> = new Map([
         [
             balCmd, workCmd, blackjackCmd, slutCmd, crimeCmd,
             topecoCmd, robCmd, withdrawCmd, depositCmd,
-            shopCmd, ecomodCmd, buyCmd, collectIncomeCmd,
+            shopCmd, ecomodCmd, buyCmd, collectIncomeCmd, useCmd,
         ]
     ],
     [
