@@ -2,9 +2,12 @@ import {
     ConfigEconomyCond, ConfigEconomyAction, ConfigEconomyRandomVariant,
     ConfigEconomyMultiplierKind, ConfigEconomyRole
 } from '@/bot/definitions/config/economy.js';
-import User from '@/bot/apis/db/user.js';
 import { cfg } from '@/bot/cfg.js';
+
 import * as dsc from 'discord.js';
+
+import User from '@/bot/apis/db/user.js';
+import Money from '@/util/money.js';
 
 export interface EconomyExecutorContext {
     user: User;
@@ -56,13 +59,45 @@ export class EconomyExecutor {
         await this.executeActions(this.getDailyIncomeActions());
     }
 
-    async executeActions(actions: ConfigEconomyAction[]) {
-        for (const action of actions) {
-            await this.executeAction(action);
+    async executeActions(actions: ConfigEconomyAction[]): Promise<ConfigEconomyAction[]> {
+        const expanded = await this.expandActions(actions);
+        for (const action of expanded) {
+            await this.executeLeafAction(action);
         }
+        return expanded;
     }
 
-    private async executeAction(action: ConfigEconomyAction) {
+    async expandActions(actions: ConfigEconomyAction[]): Promise<ConfigEconomyAction[]> {
+        const res: ConfigEconomyAction[] = [];
+        for (const action of actions) {
+            switch (action.op) {
+            case 'if':
+                if (await this.checkCondition(action.cond)) {
+                    res.push(...await this.expandActions(action.then));
+                } else if (action.else) {
+                    res.push(...await this.expandActions(action.else));
+                }
+                break;
+            case 'random':
+                res.push(...await this.expandRandom(action.variants));
+                break;
+            case 'while':
+                let iterations = 0;
+                const max = action.maxIterations ?? 100;
+                while (await this.checkCondition(action.cond) && iterations < max) {
+                    res.push(...await this.expandActions(action.do));
+                    iterations++;
+                }
+                break;
+            default:
+                res.push(action);
+                break;
+            }
+        }
+        return res;
+    }
+
+    private async executeLeafAction(action: ConfigEconomyAction) {
         switch (action.op) {
         case 'add-item':
             await this.ctx.user.inventory.addItem(action.itemId);
@@ -77,28 +112,10 @@ export class EconomyExecutor {
             await this.remRole(action.roleId);
             break;
         case 'add-money':
-            await this.ctx.user.economy.addWalletMoney(action.amount);
+            await this.ctx.user.economy.addWalletMoney(Money.fromDollarsFloat(action.amount));
             break;
         case 'sub-money':
-            await this.ctx.user.economy.deductWalletMoney(action.amount);
-            break;
-        case 'random':
-            await this.executeRandom(action.variants);
-            break;
-        case 'if':
-            if (await this.checkCondition(action.cond)) {
-                await this.executeActions(action.then);
-            } else if (action.else) {
-                await this.executeActions(action.else);
-            }
-            break;
-        case 'while':
-            let iterations = 0;
-            const max = action.maxIterations ?? 100;
-            while (await this.checkCondition(action.cond) && iterations < max) {
-                await this.executeActions(action.do);
-                iterations++;
-            }
+            await this.ctx.user.economy.deductWalletMoney(Money.fromDollarsFloat(action.amount));
             break;
         }
     }
@@ -111,27 +128,27 @@ export class EconomyExecutor {
             return await this.ctx.user.inventory.hasItem(cond.itemId);
         case 'money-gte':
             const balGte = await this.ctx.user.economy.getBalance();
-            return balGte.wallet >= cond.amount;
+            return balGte.wallet.greaterThanOrEqual(Money.fromDollarsFloat(cond.amount));
         case 'money-lte':
             const balLte = await this.ctx.user.economy.getBalance();
-            return balLte.wallet <= cond.amount;
+            return balLte.wallet.lessThanOrEqual(Money.fromDollarsFloat(cond.amount));
         case 'random-chance':
             return Math.random() * 100 <= cond.chance;
         }
     }
 
-    private async executeRandom(variants: ConfigEconomyRandomVariant[]) {
+    private async expandRandom(variants: ConfigEconomyRandomVariant[]): Promise<ConfigEconomyAction[]> {
         const totalWeight = variants.reduce((acc, v) => acc + (v.weight ?? 1), 0);
         let rand = Math.random() * totalWeight;
 
         for (const variant of variants) {
             const weight = variant.weight ?? 1;
             if (rand < weight) {
-                await this.executeActions(variant.actions);
-                return;
+                return await this.expandActions(variant.actions);
             }
             rand -= weight;
         }
+        return [];
     }
 
     private async hasRole(roleConfigId: string): Promise<boolean> {

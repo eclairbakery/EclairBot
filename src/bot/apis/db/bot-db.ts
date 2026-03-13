@@ -27,8 +27,6 @@ export class BotDatabase {
             CREATE TABLE IF NOT EXISTS users (
                 user_id TEXT PRIMARY KEY,
                 xp INTEGER DEFAULT 0,
-                wallet_money REAL DEFAULT 0,
-                bank_money REAL DEFAULT 0,
                 
                 last_worked INTEGER DEFAULT 0,
                 last_robbed INTEGER DEFAULT 0,
@@ -39,6 +37,12 @@ export class BotDatabase {
                 
                 signature TEXT,
                 default_email_title TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS economy (
+                user_id TEXT PRIMARY KEY REFERENCES users(user_id),
+                wallet_money INTEGER DEFAULT 0,
+                bank_money INTEGER DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS warns (
@@ -87,9 +91,13 @@ export class BotDatabase {
 
     // ------------------ low-level helpers ------------------
 
+    private processParams(params: any[]): any[] {
+        return params.map(p => typeof p === 'bigint' ? Number(p) : p);
+    }
+
     runSql(sql: string, params: any[] = []): Promise<DBRunResult> {
         return new Promise((resolve, reject) => {
-            this.raw.run(sql, params, function (this: sqlite.RunResult, err) {
+            this.raw.run(sql, this.processParams(params), function (this: sqlite.RunResult, err) {
                 if (err) reject(err.message);
                 else resolve({ lastID: this.lastID, changes: this.changes });
             });
@@ -107,7 +115,7 @@ export class BotDatabase {
 
     selectOne<T = any>(sql: string, params: any[] = []): Promise<T | undefined> {
         return new Promise((resolve, reject) => {
-            this.raw.get(sql, params, (err, row) => {
+            this.raw.get(sql, this.processParams(params), (err, row) => {
                 if (err) reject(err.message);
                 else resolve(row as T);
             });
@@ -116,7 +124,7 @@ export class BotDatabase {
 
     selectMany<T = any>(sql: string, params: any[] = []): Promise<T[]> {
         return new Promise((resolve, reject) => {
-            this.raw.all(sql, params, (err, rows) => {
+            this.raw.all(sql, this.processParams(params), (err, rows) => {
                 if (err) reject(err.message);
                 else resolve(rows as T[]);
             });
@@ -126,13 +134,13 @@ export class BotDatabase {
     // ------------------ generic utils ------------------
 
     async transaction(fn: () => Promise<any>): Promise<any> {
-        await this.execSql("BEGIN");
+        await this.execSql('BEGIN');
         try {
             const result = await fn();
-            await this.execSql("COMMIT");
+            await this.execSql('COMMIT');
             return result;
         } catch (e) {
-            await this.execSql("ROLLBACK");
+            await this.execSql('ROLLBACK');
             throw e;
         }
     }
@@ -148,21 +156,28 @@ export class BotDatabase {
     async ensureUserExists(userId: string) {
         await this.runSql(
             `INSERT INTO users (user_id)
-             VALUES (?)
-             ON CONFLICT(user_id) DO NOTHING`,
+            VALUES (?)
+            ON CONFLICT(user_id) DO NOTHING`,
+            [userId]
+        );
+        await this.runSql(
+            `INSERT INTO economy (user_id)
+            VALUES (?)
+            ON CONFLICT(user_id) DO NOTHING`,
             [userId]
         );
     }
 
     protected async selectTop(
         column: string,
-        limit: number | null = null
+        limit: number | null = null,
+        tableName: string = 'users'
     ): Promise<string[]> {
         const sql = `
             SELECT user_id
-            FROM users
+            FROM ${tableName}
             ORDER BY ${column} DESC
-            ${limit ? "LIMIT ?" : ""}
+            ${limit ? 'LIMIT ?' : ''}
         `;
         const params = limit ? [limit] : [];
         const rows = await this.selectMany<{ user_id: string }>(sql, params);
@@ -171,20 +186,20 @@ export class BotDatabase {
 
     readonly economy = {
         getTopWallet: async (max: number | null = null): Promise<User[]> => {
-            const ids = await this.selectTop("wallet_money", max);
+            const ids = await this.selectTop('wallet_money', max, 'economy');
             return ids.map((id) => new User(id));
         },
 
         getTopBank: async (max: number | null = null): Promise<User[]> => {
-            const ids = await this.selectTop("bank_money", max);
+            const ids = await this.selectTop('bank_money', max, 'economy');
             return ids.map((id) => new User(id));
         },
 
         getTopTotal: async (max: number | null = null): Promise<User[]> => {
             const sql =
-                `SELECT user_id FROM users
+                `SELECT user_id FROM economy
                  ORDER BY (wallet_money + bank_money) DESC
-                 ${max ? "LIMIT ?" : ""}`;
+                 ${max ? 'LIMIT ?' : ''}`;
             const params = max ? [max] : [];
             const rows = await this.selectMany<{ user_id: string }>(sql, params);
             return rows.map((r) => new User(r.user_id));
@@ -193,7 +208,7 @@ export class BotDatabase {
 
     readonly leveling = {
         getTop: async (max: number | null = null): Promise<User[]> => {
-            const ids = await this.selectTop("xp", max);
+            const ids = await this.selectTop('xp', max, 'users');
             return ids.map((id) => new User(id));
         },
     };
@@ -201,7 +216,7 @@ export class BotDatabase {
     readonly reputation = {
         getAll: async (max: number | null = null): Promise<Rep[]> => {
             const rows = await this.selectMany<RepRaw>(
-                `SELECT * FROM reputation ${max ? "LIMIT ?" : ""}`,
+                `SELECT * FROM reputation ${max ? 'LIMIT ?' : ''}`,
                 max ? [max] : []
             );
             return rows.map(repFromRaw);
@@ -211,7 +226,7 @@ export class BotDatabase {
     readonly warns = {
         getAll: async (max: number | null = null): Promise<Warn[]> => {
             const rows = await this.selectMany<WarnRaw>(
-                `SELECT * FROM warns ${max ? "LIMIT ?" : ""}`,
+                `SELECT * FROM warns ${max ? 'LIMIT ?' : ''}`,
                 max ? [max] : []
             );
             return rows.map(warnFromRaw);
@@ -221,9 +236,9 @@ export class BotDatabase {
     readonly reset = {
         economy: async (userId?: string): Promise<void> => {
             if (userId) {
-                await this.runSql(`UPDATE users SET wallet_money = 0, bank_money = 0 WHERE user_id = ?`, [userId]);
+                await this.runSql(`UPDATE economy SET wallet_money = 0, bank_money = 0 WHERE user_id = ?`, [userId]);
             } else {
-                await this.runSql(`UPDATE users SET wallet_money = 0, bank_money = 0`);
+                await this.runSql(`UPDATE economy SET wallet_money = 0, bank_money = 0`);
             }
         },
 
@@ -251,7 +266,7 @@ export class BotDatabase {
                 last_slutted = 0, 
                 last_crimed = 0, 
                 last_email_sent = 0
-                ${userId ? "WHERE user_id = ?" : ""}
+                ${userId ? 'WHERE user_id = ?' : ''}
             `;
             await this.runSql(sql, userId ? [userId] : []);
         },

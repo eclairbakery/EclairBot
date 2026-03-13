@@ -12,6 +12,8 @@ import * as dsc from 'discord.js';
 import parseTimestamp from '@/util/parseTimestamp.js';
 import findCommand from '@/util/cmd/findCommand.js';
 import User from '@/bot/apis/db/user.js';
+import Money from '@/util/money.js';
+import { NumberParseError } from '@/util/math/parse.js';
 
 import { ArgMustBeSomeTypeError, MissingRequiredArgError } from '../defs/errors.js';
 import { flatTypesToUnion } from './flat-types.js';
@@ -60,8 +62,6 @@ export interface ParserContext {
     commands?: Map<Category, Command[]>;
 }
 
-
-
 async function tryParseArg(
     type: CommandArgType,
     raw: string,
@@ -78,12 +78,6 @@ async function tryParseArg(
             return { ...decl, type, value: val } as CommandValuableArgument;
 
         case 'int': {
-            if (raw.normalize('NFKC').trim().toLowerCase() == 'all' && (context?.cmd?.flags ?? CommandFlags.None) == CommandFlags.Economy) {
-                let x = context?.interaction?.user.id ?? context?.msg?.author.id ?? 'someone';
-                const balance = await new User(x).economy.getBalance();
-                return { ...decl, type, value: BigInt(balance.wallet) } as CommandValuableArgument;
-            }
-
             const isInt = /^-?\d+$/.test(raw);
             if (!isInt) return null;
 
@@ -95,6 +89,35 @@ async function tryParseArg(
             if (!isFloat) return null;
 
             return { ...decl, type, value: Number(raw) } as CommandValuableArgument;
+        }
+
+        case 'money': {
+            const input = raw.trim().toLowerCase();
+            const invokerId = context?.interaction?.user.id ?? context?.msg?.author.id;
+            
+            if (type.source && (input == 'all' || input.endsWith('%')) && invokerId) {
+                const balance = await new User(invokerId).economy.getBalance();
+                const sourceMoney = type.source == 'wallet' ? balance.wallet : balance.bank;
+
+                if (input == 'all') {
+                    return { ...decl, type, value: sourceMoney.clone() } as CommandValuableArgument;
+                }
+
+                const percentMatch = input.match(/^(\d+(?:[.,]\d+)?)%$/);
+                if (percentMatch) {
+                    const percent = parseFloat(percentMatch[1].replace(',', '.')) / 100;
+                    const amountCents = (sourceMoney.asCents() * BigInt(Math.round(percent * 10000))) / 10000n;
+                    return { ...decl, type, value: Money.fromCents(amountCents) } as CommandValuableArgument;
+                }
+            }
+
+            try {
+                const parsed = Money.parse(raw);
+                return { ...decl, type, value: parsed } as CommandValuableArgument;
+            } catch (e) {
+                if (e instanceof NumberParseError) return null;
+                throw e;
+            }
         }
 
         case 'timestamp': {

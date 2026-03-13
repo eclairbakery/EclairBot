@@ -6,7 +6,8 @@ export const economyCfg: EconomyConfig = {
         {
             id: 'minivip',
             name: 'miniVIP',
-            desc: 'Taki VIP ale na sterydach.',
+            desc: 'Taki słabszy VIP.',
+            refund: 3_000,
             discordRoleId: '1235550013233303582',
             benefits: {
                 multipliers: [
@@ -19,6 +20,7 @@ export const economyCfg: EconomyConfig = {
             id: 'vip',
             name: 'VIP',
             desc: 'Szanowny pan VIP.',
+            refund: 35_000,
             discordRoleId: '1235548993933541397',
             benefits: {
                 multipliers: [
@@ -31,6 +33,7 @@ export const economyCfg: EconomyConfig = {
             id: 'svip',
             name: 'SVIP',
             desc: 'Jeszcze szanowniejszy pan SVIP.',
+            refund: 250_000,
             discordRoleId: '1235550115998076948',
             benefits: {
                 multipliers: [
@@ -43,6 +46,7 @@ export const economyCfg: EconomyConfig = {
             id: 'mvip',
             name: 'MVIP',
             desc: 'Mega szanowny pan MVIP.',
+            refund: 1_000_000,
             discordRoleId: '1235569694451306516',
             benefits: {
                 multipliers: [
@@ -55,6 +59,7 @@ export const economyCfg: EconomyConfig = {
             id: 'pieczywo-vip',
             name: 'Pieczywo VIP',
             desc: 'Pieczywo VIP - Final Boss.',
+            refund: 6_000_000,
             discordRoleId: '1343632574437920799',
             benefits: {
                 multipliers: [
@@ -67,6 +72,7 @@ export const economyCfg: EconomyConfig = {
             id: 'hall-of-shame-access',
             name: 'Hall of Shame Access',
             desc: 'Dostęp do kanału Hall of Shame.',
+            refund: 6_000_000,
             discordRoleId: '1437780651356196864',
             benefits: {
                 multipliers: [],
@@ -74,12 +80,96 @@ export const economyCfg: EconomyConfig = {
             }
         }
     ],
-    items: [],
+    items: [
+        {
+            id: 'basic-mysterybox',
+            name: 'Zwykły Mystery Box',
+            desc: 'Zwykły MysteryBox. Dobry na początek, zbalansowane nagrody.',
+            onUse: [
+                { op: 'random', variants: [
+                    { weight: 20, actions: [ { op: 'add-role', roleId: 'minivip' } ] },
+                    { weight: 33, actions: [ { op: 'add-role', roleId: 'vip' } ] },
+                    { weight: 2,  actions: [ { op: 'add-role', roleId: 'svip' } ] },
+                    { weight: 5,  actions: [ { op: 'add-item', itemId: 'mega-mysterybox' } ] },
+                    { weight: 10, actions: [ { op: 'add-item', itemId: '5050-mysterybox' } ] },
+                    { weight: 15, actions: [ { op: 'add-money', amount: 40_000 } ] },
+                    { weight: 13, actions: [ { op: 'add-money', amount: 50_000 } ] },
+                    { weight: 2,  actions: [ { op: 'add-money', amount: 100_000 } ] },
+                ] }
+            ],
+        },
+        {
+            id: 'mega-mysterybox',
+            name: 'Mega Mystery Box',
+            desc: 'Mega Mystery Box. Znacznie lepsze nagrody niż zwykły mystery box, w tym VIPy, inne mystery boxy i pieniądze',
+            onUse: [
+                { op: 'random', variants: [
+                    { weight: 30, actions: [ { op: 'add-role', roleId: 'svip' } ] },
+                    { weight: 15, actions: [ { op: 'add-role', roleId: 'mvip' } ] },
+                    { weight: 5,  actions: [ { op: 'add-item', itemId: 'ultra-mysterybox' } ] },
+                    { weight: 5,  actions: [ { op: 'add-item', itemId: 'mega-mysterybox' } ] },
+                    { weight: 10, actions: [ { op: 'add-item', itemId: '5050-mysterybox' } ] },
+                    { weight: 15, actions: [ { op: 'add-money', amount: 250_000 } ] },
+                    { weight: 10, actions: [ { op: 'add-money', amount: 450_000 } ] },
+                    { weight: 8,  actions: [ { op: 'add-money', amount: 600_000 } ] },
+                    { weight: 2,  actions: [ { op: 'add-money', amount: 1_000_000 } ] },
+                ] },
+            ],
+        },
+        {
+            id: 'ultra-mysterybox',
+            name: 'Ultra Mystery Box',
+            desc: 'Najlepszy Mystery Box. Same najlepsze nagrody w late game!',
+
+            onUse: [
+                { op: 'random', variants: [
+                    { weight: 25, actions: [ { op: 'add-money', amount: 600_000 } ] },
+                    { weight: 20, actions: [ { op: 'add-money', amount: 1_000_000 } ] },
+                    { weight: 10, actions: [ { op: 'add-money', amount: 1_500_000 } ] },
+                    { weight: 15, actions: [ { op: 'add-role', roleId: 'mvip' } ] },
+                    { weight: 10, actions: [ { op: 'add-role', roleId: 'pieczywo-vip' } ] },
+                    { weight: 5,  actions: [ { op: 'add-role', roleId: 'hall-of-shame-access' } ] },
+                    { weight: 10, actions: [ { op: 'add-item', itemId: 'ultra-mysterybox' } ] },
+                    { weight: 5,  actions: [ { op: 'add-item', itemId: '5050-mysterybox' } ] },
+                ] },
+            ],
+        },
+        {
+            id: '5050-mysterybox',
+            name: '50/50 Mystery Box',
+            desc: 'Nagroda życia lub totalny sabotaż - 50/50!',
+
+            onUse: [
+                { op: 'random', variants: [
+                    { actions: [
+                        { op: 'random', variants: [
+                            { weight: 50, actions: [ { op: 'add-money', amount: 3_000_000 } ] },
+                            { weight: 25, actions: [ { op: 'add-role', roleId: 'pieczywo-vip' } ] },
+                            { weight: 25, actions: [
+                                { op: 'add-item', itemId: 'ultra-mysterybox' },
+                                { op: 'add-item', itemId: 'ultra-mysterybox' },
+                            ]},
+                        ] }
+                    ] },
+                    { actions: [
+                        { op: 'random', variants: [
+                            { weight: 50, actions: [ { op: 'sub-money', amount: 500_000 } ] },
+                            { weight: 30, actions: [ { op: 'sub-money', amount: 1_000_000 } ] },
+                            { weight: 20, actions: [
+                                { op: 'rem-role', roleId: 'mvip' },
+                                    // automatically removes mvip.refund money if user dont have mvip role btw
+                            ] },
+                        ] }
+                    ] },
+                ] },
+            ],
+        },
+    ],
     offers: [
         {
             id: 'buy-minivip',
             name: 'miniVIP',
-            desc: 'Taki VIP ale na sterydach. Nie możesz się poflexować, bo ma mini w nazwie i będą myśleli, że cię nie stać...',
+            desc: 'Taki słabszy VIP. Nie możesz się poflexować, bo ma mini w nazwie i będą myśleli, że cię nie stać...',
             price: 5_000,
             buyOnce: true,
             onBuy: [
@@ -136,7 +226,48 @@ export const economyCfg: EconomyConfig = {
             onBuy: [
                 { op: 'add-role', roleId: 'hall-of-shame-access' },
             ],
-        }
+        },
+
+        {
+            id: 'buy-basic-mysterybox',
+            name: 'Zwykły Mystery Box',
+            desc: 'Kup zwykły mystery box. Najtańszy mystery box, zbalansowane nagrody',
+            price: 45_000,
+            buyOnce: false,
+            onBuy: [
+                { op: 'add-item', itemId: 'basic-mysterybox' },
+            ],
+        },
+        {
+            id: 'buy-mega-mysterybox',
+            name: 'Mega Mystery Box',
+            desc: 'Kup Mega Mystery Box. Znacznie lepsze nagrody niż zwykły mystery box w tym VIPy, inne mystery boxy i pieniądze!',
+            price: 500_000,
+            buyOnce: false,
+            onBuy: [
+                { op: 'add-item', itemId: 'mega-mysterybox' },
+            ],
+        },
+        {
+            id: 'buy-ultra-mysterybox',
+            name: 'Ultra Mystery Box',
+            desc: 'Kup Ultra Mystery Box. Najlepszy mystery box, bardzo dobre nagrody w late game',
+            price: 2_000_000,
+            buyOnce: false,
+            onBuy: [
+                { op: 'add-item', itemId: 'ultra-mysterybox' },
+            ],
+        },
+        {
+            id: 'buy-5050-mysterybox',
+            name: '50/50 Mystery Box',
+            desc: 'Kup 50/50 Mystery Box. Nagroda życia lub totalny sabotaż - 50/50!',
+            price: 1_000_000,
+            buyOnce: false,
+            onBuy: [
+                { op: 'add-item', itemId: '5050-mysterybox' },
+            ],
+        },
     ],
     shop: [
         {
@@ -153,7 +284,7 @@ export const economyCfg: EconomyConfig = {
             desc: 'Misterne skrzynki. Otwórz i zgarnij świetne nagrody',
             color: PredefinedColors.Blurple,
             emoji: '📦',
-            items: [],
+            items: [ 'buy-basic-mysterybox', 'buy-mega-mysterybox', 'buy-ultra-mysterybox', 'buy-5050-mysterybox' ],
         },
         {
             id: 'others',

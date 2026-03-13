@@ -3,7 +3,6 @@ import User from '@/bot/apis/db/user.js';
 import * as dsc from 'discord.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
 import { PredefinedColors } from '@/util/color.js';
-import { formatMoney } from '@/util/math/format.js';
 import { output } from '@/bot/logging.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
@@ -11,7 +10,7 @@ export const balCmd: Command = {
     name: 'bal',
     aliases: ['balance'],
     description: {
-        main: 'Wyświetl swój balans zadłużenia (raczej jesteś mało warty, w sensie konto, nie pozywaj za zniesławienie).',
+        main: 'Wyświetl swój balans zadłużenia.',
         short: 'Wyświetl swój balans konta.',
     },
     flags: CommandFlags.Economy,
@@ -36,17 +35,18 @@ export const balCmd: Command = {
 
         try {
             const balance = await user.economy.getBalance();
-            const isIndebted = (balance.wallet + balance.bank) < 0;
+            const total = balance.wallet.add(balance.bank);
+            const isIndebted = total.isNegative();
 
             await api.reply({
                 embeds: [
                     new ReplyEmbed()
-                        .setTitle('📊 Twoje pieniądze')
+                        .setTitle(`📊 Pieniądze użytkownika ${who.displayName}`)
                         .setDescription([
-                            `Konto jest ${!isIndebted ? 'warte' : 'zadłużone o'} ${formatMoney(Math.abs(balance.wallet + balance.bank))}.`,
+                            `Konto jest ${!isIndebted ? 'warte' : 'zadłużone o'} **${total.abs().format()}**.`,
                             '',
-                            `🏦 Pieniądze w banku: ${formatMoney(balance.bank)}`,
-                            `👛 Pieniądze w portfelu: ${formatMoney(balance.wallet)}`,
+                            `🏦 Pieniądze w banku: **${balance.bank.format()}**`,
+                            `👛 Pieniądze w portfelu: **${balance.wallet.format()}**`,
                         ].join('\n'))
                         .setColor(isIndebted ? PredefinedColors.Red : PredefinedColors.Gold)
                 ]

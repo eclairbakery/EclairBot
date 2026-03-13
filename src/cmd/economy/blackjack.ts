@@ -2,9 +2,8 @@ import * as dsc from 'discord.js';
 
 import { PredefinedColors } from '@/util/color.js';
 import { Command, CommandAPI, CommandFlags } from '@/bot/command.js';
-import { db } from '@/bot/apis/db/bot-db.js';
-import { cfg } from '@/bot/cfg.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import Money from '@/util/money.js';
 
 interface Card {
     name: string;
@@ -22,7 +21,7 @@ function drawCard(): Card {
 
 function calcHandValue(hand: Card[]): number {
     let value = 0, aces = 0;
-    for (const card of hand) { value += card.value; if (card.name === 'A') aces++; }
+    for (const card of hand) { value += card.value; if (card.name == 'A') aces++; }
     while (value > 21 && aces > 0) { value -= 10; aces--; }
     return value;
 }
@@ -46,14 +45,13 @@ export const blackjackCmd: Command = {
             name: 'amount',
             description: 'O ile gramy?',
             optional: false,
-            type: { base: 'float' }
+            type: { base: 'money', source: 'wallet' }
         }
     ],
 
     async execute(api: CommandAPI) {
-        const betArg = api.getTypedArg('amount', 'float');
-        const bet = betArg?.value as number;
-        if (!bet || bet <= 0) {
+        const bet = api.getTypedArg('amount', 'money').value;
+        if (bet.isZero() || bet.isNegative()) {
             return api.log.replyError(api, 'Namieszałeś z kwotą.', 'Podaj poprawną kwotę!');
         }
 
@@ -61,9 +59,9 @@ export const blackjackCmd: Command = {
         const player = api.executor;
         const playerBalance = await player.economy.getBalance();
 
-        if (playerBalance.wallet < bet)
+        if (playerBalance.wallet.lessThan(bet)) {
             return api.log.replyError(api, 'Nie masz wystarczającej ilości pieniędzy.', 'Może nie zdążyłeś ich wypłacić?');
-
+        }
 
         let playerHand: Card[] = [drawCard(), drawCard()];
         let dealerHand: Card[] = [drawCard(), drawCard()];
@@ -92,21 +90,22 @@ export const blackjackCmd: Command = {
 
         const collector = gameMsg.createMessageComponentCollector({
             time: 30000,
-            filter: ((i: dsc.ButtonInteraction) => i.user.id === userId) as any
+            filter: ((i: dsc.ButtonInteraction) => i.user.id == userId) as any
         });
 
         collector.on('collect', async (button: dsc.ButtonInteraction) => {
             if (gameOver) return;
 
-            if (button.customId === 'hit') {
+            if (button.customId == 'hit') {
                 playerHand.push(drawCard());
                 if (calcHandValue(playerHand) > 21) {
-                    await db.runSql('UPDATE economy SET money = money - ? WHERE user_id = ?', [bet, userId]);
+                    await player.economy.deductWalletMoney(bet);
                     gameOver = true;
                     await button.update({
                         embeds: [
                             getEmbed(false)
-                                .setDescription('💥 Przegrałeś! Przekroczyłeś 21.')
+                                .setDescription(`💥 Przegrałeś **${bet.format()}**! Przekroczyłeś 21.`)
+                                .setColor(PredefinedColors.Red)
                         ],
                         components: [],
                     });
@@ -121,21 +120,24 @@ export const blackjackCmd: Command = {
                 });
             }
 
-            if (button.customId === 'stand') {
+            if (button.customId == 'stand') {
                 while (calcHandValue(dealerHand) < 17) dealerHand.push(drawCard());
 
                 const playerValue = calcHandValue(playerHand);
                 const dealerValue = calcHandValue(dealerHand);
                 let result: string;
+                let color: number = PredefinedColors.Green;
 
                 if (dealerValue > 21 || playerValue > dealerValue) {
-                    player.economy.addWalletMoney(bet);
-                    result = '🏆 Wygrałeś!';
-                } else if (playerValue === dealerValue) {
+                    await player.economy.addWalletMoney(bet);
+                    result = `🏆 Wygrałeś **${bet.format()}**!`;
+                } else if (playerValue == dealerValue) {
                     result = '🤝 Remis!';
+                    color = PredefinedColors.Yellow;
                 } else {
-                    player.economy.deductWalletMoney(bet);
-                    result = '💥 Przegrałeś!';
+                    await player.economy.deductWalletMoney(bet);
+                    result = `💥 Przegrałeś **${bet.format()}**!`;
+                    color = PredefinedColors.Red;
                 }
 
                 gameOver = true;
@@ -143,6 +145,7 @@ export const blackjackCmd: Command = {
                     embeds: [
                         getEmbed(false)
                             .setDescription(result)
+                            .setColor(color)
                     ],
                     components: [],
                 });
@@ -156,9 +159,11 @@ export const blackjackCmd: Command = {
                     embeds: [
                         getEmbed(false)
                             .setDescription('⏳ Czas minął!')
+                            .setColor(PredefinedColors.Red)
                     ],
                     components: [],
                 });
+                await player.economy.deductWalletMoney(bet);
             }
         });
     }

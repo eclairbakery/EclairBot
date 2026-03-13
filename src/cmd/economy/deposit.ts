@@ -1,9 +1,5 @@
-import User from "@/bot/apis/db/user.js";
-import { formatMoney } from '@/util/math/format.js';
-import { cfg } from "@/bot/cfg.js";
 import { Command, CommandFlags, CommandAPI } from "@/bot/command.js";
 import { output } from "@/bot/logging.js";
-import * as log from '@/util/log.js';
 
 export const depositCmd: Command = {
     name: 'deposit',
@@ -19,35 +15,37 @@ export const depositCmd: Command = {
     },
     expectedArgs: [
         {
-            type: { base: 'float' },
+            type: { base: 'money', source: 'wallet' },
             optional: false,
             name: 'amount',
-            description: 'Kwota do wpłaty (liczba lub "all").',
+            description: 'Kwota do wpłaty (liczba, "all" lub %).',
         }
     ],
     async execute(api: CommandAPI) {
-        const amount = api.getTypedArg('amount', 'float')?.value as number;
-        if (isNaN(amount) || amount <= 0) {
+        const amount = api.getTypedArg('amount', 'money').value;
+        if (amount.isZero() || amount.isNegative()) {
             return api.log.replyError(api, 'Namieszałeś z kwotą.', 'Podaj poprawną kwotę!');
         }
 
         const user = api.executor;
-        const userBalance = await user.economy.getBalance();
 
         try {
-            if (userBalance.wallet < amount) {
+            const balanceBefore = await user.economy.getBalance();
+            if (balanceBefore.wallet.lessThan(amount)) {
                 return api.log.replyError(api, 'Nie masz wystarczającej ilości pieniędzy.', 'Może nie zdążyłeś ich wypłacić?');
             }
 
             await user.economy.depositToBank(amount);
+            const balanceAfter = await user.economy.getBalance();
+
             return api.log.replySuccess(
                 api,
                 'Udało się!',
                 [
-                    `Wpłacono ${amount}$ do banku.`,
+                    `Wpłacono **${amount.format()}** do banku.`,
                     `Nowy stan konta:`,
-                    `- ${formatMoney(userBalance.bank)} w banku`,
-                    `- ${formatMoney(userBalance.wallet)}$ w portfelu.`,
+                    `- **${balanceAfter.bank.format()}** w banku`,
+                    `- **${balanceAfter.wallet.format()}** w portfelu.`,
                 ].join('\n')
             );
         } catch (err) {

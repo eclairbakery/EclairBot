@@ -42,14 +42,15 @@ export const topecoCmd: Command = {
                 try {
                     const member = await api.guild!.members.fetch(user.id);
                     const userEcoRole = ecoRoles.filter(id => member.roles.cache.has(id)).at(-1);
+                    const balance = await user.economy.getBalance();
 
                     fields.push({
                         name: `${i} » ${member.user.username}`,
                         value: [
                             `${userEcoRole ? `<@&${userEcoRole}>` : 'Nowicjusz...'}`,
-                            `${(await user.economy.getBalance()).wallet + (await user.economy.getBalance()).bank}**$**`,
+                            `**${balance.wallet.add(balance.bank).format()}$**`,
                         ].join('\n'),
-                        inline: true
+                        inline: true,
                     });
                 } catch {};
             }
