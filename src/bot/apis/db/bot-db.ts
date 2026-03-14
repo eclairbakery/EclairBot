@@ -116,12 +116,12 @@ export class BotDatabase {
     }
 
     selectOne<T = any>(sql: string, params: any[] = []): Promise<T | undefined> {
-        const rows = [...this.raw.query(sql, this.processParams(params))];
+        const rows = [...this.raw.queryEntries(sql, this.processParams(params))];
         return Promise.resolve(rows[0] as T | undefined);
     }
 
     selectMany<T = any>(sql: string, params: any[] = []): Promise<T[]> {
-        const rows = [...this.raw.query(sql, this.processParams(params))];
+        const rows = [...this.raw.queryEntries(sql, this.processParams(params))];
         return Promise.resolve(rows as T[]);
     }
 
