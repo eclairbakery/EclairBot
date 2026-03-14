@@ -6,7 +6,7 @@ import Money from '@/util/money.js';
 
 export const buyCmd: Command = {
     name: 'buy',
-    aliases: ['kup'],
+    aliases: [],
     description: {
         main: 'Masz masę kasy i nie wiesz co z nią zrobić? Pomogę Ci! Kup coś!',
         short: 'Kupuje wybrany przedmiot.'

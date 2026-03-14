@@ -74,10 +74,13 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
 
     const user = new User(((context.interaction?.member as dsc.GuildMember) ?? context.msg?.member)!.id);
 
-    return {
+    const api: CommandAPI = {
         // -- args --
+        getEnumArg: <const O extends readonly string[]>(name: string, options: O) => {
+            return api.getTypedArg(name, { base: 'enum', options } as any) as any;
+        },
         getTypedArg: (name: string, type: any) => {
-            const types = flatTypesToUnion(Array.isArray(type) ? { base: 'union', variants: type.map(t => ({ base: t })) } : (typeof type == 'string' ? { base: type } : type));
+            const types = flatTypesToUnion(Array.isArray(type) ? { base: 'union', variants: type.map((t: any) => ({ base: t })) } : (typeof type == 'string' ? { base: type } : type));
             return parsedArgs.find(a => a.name == name && types.some((t: any) => t.base == a.type.base))! as any;
         },
 
@@ -120,4 +123,6 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
         preferShortenedEmbeds: cfg.commands.blocking.preferShortenedEmbeds.includes((context.interaction?.channel ?? context.msg!.channel!).id),
         invokedViaAlias: context.invokedviaalias
     };
+
+    return api;
 }

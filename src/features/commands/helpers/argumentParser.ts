@@ -17,6 +17,7 @@ import { NumberParseError } from '@/util/math/parse.js';
 
 import { ArgMustBeSomeTypeError, MissingRequiredArgError } from '../defs/errors.js';
 import { flatTypesToUnion } from './flat-types.js';
+import { output } from '@/bot/logging.js';
 
 async function parseUser(raw: string, name: string, context?: ParserContext): Promise<dsc.GuildMember | null> {
     try {

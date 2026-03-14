@@ -16,6 +16,16 @@ export function formatArgType(argType: CommandArgType | CommandArgType[]): strin
     switch (argType.base) {
     case 'string':
         return 'tekstem';
+    case 'enum':
+        const names = [...new Set(argType.options.map(t => `**${t}**`))];
+        const last = names.pop();
+        if (names.length > 1) {
+            return `${names.join(', ')} lub ${last}`;
+        } else if (names.length == 1) {
+            return last;
+        } else {
+            return undefined;
+        }
 
     case 'int':
     case 'float':

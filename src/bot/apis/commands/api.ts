@@ -8,6 +8,7 @@ import { EconomyExecutor } from "../economy/action.js";
 
 export interface CommandAPI {
     // ---- COMMAND INFO ----
+    getEnumArg<const O extends readonly string[]>(name: string, options: O): PreciseValuableArgument<{ base: 'enum', options: O }>;
     getTypedArg<T extends CommandArgType>(name: string, type: T): PreciseValuableArgument<T>;
     getTypedArg<B extends CommandArgBaseType>(name: string, base: B): Extract<CommandValuableArgument, { type: { base: B } }>;
     getTypedArg<B extends readonly CommandArgBaseType[]>(name: string, bases: B): Extract<CommandValuableArgument, { type: { base: B[number] } }>;

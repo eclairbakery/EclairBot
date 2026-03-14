@@ -27,7 +27,7 @@ export const ecomodCmd: Command = {
         {
             name: 'action',
             description: 'Tu powiedz co chcesz zrobić (add/set/remove)',
-            type: { base: 'string' },
+            type: { base: 'enum', options: ['add', 'set', 'remove'] as const },
             optional: false
         },
         {
@@ -39,7 +39,7 @@ export const ecomodCmd: Command = {
         {
             name: 'location',
             description: 'A tu czy w banku czy nie. Domyślnie w portfelu. (wallet/bank)',
-            type: { base: 'string' },
+            type: { base: 'enum', options: ['bank', 'wallet'] as const },
             optional: true
         },
     ],
@@ -49,21 +49,10 @@ export const ecomodCmd: Command = {
     },
 
     async execute(api) {
-        const rawAction = api.getTypedArg('action', 'string')?.value!;
+        const action = api.getEnumArg('action', ['add', 'set', 'remove'])?.value!;
         const amount = api.getTypedArg('amount', 'money')?.value!;
-        const rawLocation = (api.getTypedArg('location', 'string')?.value) || 'wallet';
+        const location = (api.getEnumArg('location', ['wallet', 'bank'])?.value) || 'wallet';
         const targetMember = api.getTypedArg('who', 'user-mention')?.value!;
-
-        const action = rawAction?.toLowerCase();
-        const location = rawLocation?.toLowerCase() as 'wallet' | 'bank';
-
-        if (!['add', 'set', 'remove'].includes(action)) {
-            return api.log.replyError(api, 'Nieprawidłowa akcja.', 'Użyj `add`, `set` lub `remove`.');
-        }
-
-        if (!['wallet', 'bank'].includes(location)) {
-            return api.log.replyError(api, 'Nieprawidłowa lokalizacja', 'Możesz użyć `wallet` lub `bank`.');
-        }
 
         if (amount.isNegative()) return api.log.replyError(api, 'Nieprawidłowa kwota', 'Nie może być ona ujemna.');
 
