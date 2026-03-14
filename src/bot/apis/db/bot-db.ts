@@ -102,13 +102,13 @@ export class BotDatabase {
 
         const op = sql.trim().split(" ")[0].toUpperCase();
         if (op === "INSERT") {
-            const row = [...this.raw.query("SELECT last_insert_rowid()")][0];
+            const row = [...this.raw.queryEntries("SELECT last_insert_rowid()")][0];
             lastID = row ? Number(row[0]) : null;
         }
         changes = this.raw.changes; 
 
         return { lastID, changes };
-    }
+    } 
 
     execSql(sql: string): Promise<void> {
         this.raw.execute(sql);
