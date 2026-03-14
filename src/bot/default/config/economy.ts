@@ -82,9 +82,32 @@ export const economyCfg: EconomyConfig = {
     ],
     items: [
         {
+            id: 'stone',
+            name: 'Kamień', 
+            desc: 'To jest kamień. Nie robi absolutnie nic, jest tylko kolekcjonerski',
+            onUse: [],
+        },
+        
+        {
+            id: 'mini-mysterybox',
+            name: 'Mini Mystery Box',
+            desc: 'Najtańszy i najsłabszy mysterybox. Pomocny w początkowej fazie gry',
+            directOfferId: 'buy-mini-mysterybox',
+            onUse: [
+                { op: 'random', variants: [
+                    { weight: 30, actions: [ { op: 'add-role', roleId: 'minivip' } ] },
+                    { weight: 5,  actions: [ { op: 'add-role', roleId: 'vip' } ] },
+                    { weight: 5,  actions: [ { op: 'add-item', itemId: 'basic-mysterybox' } ] },
+                    { weight: 30, actions: [ { op: 'add-money', amount: 3_500 } ] },
+                    { weight: 15, actions: [ { op: 'add-money', amount: 5_000 } ] },
+                    { weight: 15, actions: [ { op: 'add-money', amount: 10_000 } ] },
+                ] }
+            ],
+        },
+        {
             id: 'basic-mysterybox',
             name: 'Zwykły Mystery Box',
-            desc: 'Zwykły MysteryBox. Dobry na początek, zbalansowane nagrody.',
+            desc: 'Mysterybox dobry na początek, zbalansowane nagrody.',
             directOfferId: 'buy-basic-mysterybox',
             onUse: [
                 { op: 'random', variants: [
@@ -111,7 +134,8 @@ export const economyCfg: EconomyConfig = {
                     { weight: 5,  actions: [ { op: 'add-item', itemId: 'ultra-mysterybox' } ] },
                     { weight: 5,  actions: [ { op: 'add-item', itemId: 'mega-mysterybox' } ] },
                     { weight: 10, actions: [ { op: 'add-item', itemId: '5050-mysterybox' } ] },
-                    { weight: 15, actions: [ { op: 'add-money', amount: 250_000 } ] },
+                    { weight: 2,  actions: [ { op: 'add-item', itemId: 'stone' } ] },
+                    { weight: 13, actions: [ { op: 'add-money', amount: 250_000 } ] },
                     { weight: 10, actions: [ { op: 'add-money', amount: 450_000 } ] },
                     { weight: 8,  actions: [ { op: 'add-money', amount: 600_000 } ] },
                     { weight: 2,  actions: [ { op: 'add-money', amount: 1_000_000 } ] },
@@ -128,11 +152,12 @@ export const economyCfg: EconomyConfig = {
                     { weight: 25, actions: [ { op: 'add-money', amount: 600_000 } ] },
                     { weight: 20, actions: [ { op: 'add-money', amount: 1_000_000 } ] },
                     { weight: 10, actions: [ { op: 'add-money', amount: 1_500_000 } ] },
-                    { weight: 15, actions: [ { op: 'add-role', roleId: 'mvip' } ] },
+                    { weight: 13, actions: [ { op: 'add-role', roleId: 'mvip' } ] },
                     { weight: 10, actions: [ { op: 'add-role', roleId: 'pieczywo-vip' } ] },
                     { weight: 5,  actions: [ { op: 'add-role', roleId: 'hall-of-shame-access' } ] },
                     { weight: 10, actions: [ { op: 'add-item', itemId: 'ultra-mysterybox' } ] },
                     { weight: 5,  actions: [ { op: 'add-item', itemId: '5050-mysterybox' } ] },
+                    { weight: 2,  actions: [ { op: 'add-item', itemId: 'stone' } ] },
                 ] },
             ],
         },
@@ -229,9 +254,19 @@ export const economyCfg: EconomyConfig = {
         },
 
         {
+            id: 'buy-mini-mysterybox',
+            name: 'Mini Mystery Box',
+            desc: 'Kup Mini Mystery Box. Najtańszy mystery box, dobry w początkowej fazie gry',
+            price: 5_500,
+            buyOnce: false,
+            onBuy: [
+                { op: 'add-item', itemId: 'mini-mysterybox' },
+            ],
+        },
+        {
             id: 'buy-basic-mysterybox',
             name: 'Zwykły Mystery Box',
-            desc: 'Kup zwykły mystery box. Najtańszy mystery box, zbalansowane nagrody',
+            desc: 'Kup zwykły mystery box. Mystery box dobry na początek, zbalansowane nagrody',
             price: 45_000,
             buyOnce: false,
             onBuy: [
@@ -284,7 +319,7 @@ export const economyCfg: EconomyConfig = {
             desc: 'Misterne skrzynki. Otwórz i zgarnij świetne nagrody',
             color: PredefinedColors.Blurple,
             emoji: '📦',
-            items: [ 'buy-basic-mysterybox', 'buy-mega-mysterybox', 'buy-ultra-mysterybox', 'buy-5050-mysterybox' ],
+            items: [ 'buy-mini-mysterybox', 'buy-basic-mysterybox', 'buy-mega-mysterybox', 'buy-ultra-mysterybox', 'buy-5050-mysterybox' ],
         },
         {
             id: 'others',
