@@ -5,7 +5,7 @@ import { output } from '@/bot/logging.js';
 
 export const collectIncomeCmd: Command = {
     name: 'collect-income',
-    aliases: ['income', 'daily-income'],
+    aliases: ['income', 'daily-income', 'collectincome'],
     description: {
         main: 'Odbierz swój dzienny dochód wynikający z posiadanych rang.',
         short: 'Odbiera daily income.'
