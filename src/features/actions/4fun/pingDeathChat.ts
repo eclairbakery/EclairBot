@@ -1,5 +1,6 @@
 import { cfg } from '@/bot/cfg.js';
 import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.js';
+import capitalizeFirst from '@/util/capitalizeFirst.js';
 
 let deathChatTimeout: NodeJS.Timeout;
 
@@ -14,19 +15,42 @@ export const pings: Record<string, PingAPI> = {
     'death-chat': {
         roleId: '1411646441511714827',
         questions: [
-            'Masa pewnej gwiazdy to milion ton. Ile dzieci mają Ania i Bartek?',
-            'Czy liczba naturalna jest dodatnia? Jeżeli tak, to co z zerem?',
-            'Czy tylko mi, jak podzielę pisemnie zero przez zero, wychodzi nieskończoność na minusie?',
-            'Ile to 0 do 0-wej potęgi? Teoretycznie cokolwiek podniesione do 0-wej potęgi to jeden. Ale teoretycznie 0 do jakiejkolwiek potęgi to dalej 0.',
-            'Jaki film niedawno oglądałeś/-aś?',
-            'Co sądzisz o funkcji if() w CSS?',
-            'Czemu używasz akurat tego systemu operacyjnego, co używasz? Czemu nie NixOS albo Gentoo?',
-            'Masz bottleneck (jakaś część komputera ogranicza inną)?',
-            'Wolisz pisać w zwykłym html, css i js czy używać front-endowych frameworków jak react, next.js lub vue?',
-            'Piszesz zazwyczaj aplikacje terminalowe, gry, strony internetowe czy coś innego?',
-            'Lubisz rozmowy o polityce na generalu czy wolisz osobny kanał polityka?',
-            'Czy banie się śmierci nie jest baniem się przed utratą świadomości? W takim razie czemu takie osoby często nie boją się zasnąć?',
-            'Lubisz [Desaferio](<https://talk.shapes.inc/desaferio/dm>)?'
+            // life
+            'jakie filmy ostatnio oglądałeś',
+            'jakiej muzyki słuchasz',
+            'kawa czy herbata',
+            'koty czy psy',
+            'dzień czy noc',
+            'pizza czy burger',
+            'film czy serial',
+            'konsola czy PC',
+
+            // maths
+            'czy matematyka została odkryta czy wymyślona',
+            'czy gdyby PI było liczbą wymierną, świat wyglądałby inaczej',
+
+            // software
+            'taby czy spacje',
+            'Linux czy Windows',
+            'jakie distro linuxa wariacie',
+            'jaki był twój pierwszy język programowania',
+            'jaki język programowania najbardziej cię irytuje',
+            'co jest gorsze: PHP czy Java',
+            'ile masz otwartych tabów w przeglądarce',
+            'czy StackOverflow jeszcze żyje',
+            'umiesz czytać regexy',
+            'w jakie gry grasz',
+            'jakie projekty ostatnio robisz',
+
+            // hardware
+            'karty graficzne: Nvidia, AMD czy Intel',
+            'jaki producent CPU jest twoim ulubionym',
+            'ile masz RAMu Czy według ciebie to dużo czy mało',
+            'wolisz czarne czy białe podzespoły',
+            'lubisz RGB czy wolisz wyłączone',
+            'jaki rozmiar klawiatury jest najlepszy',
+            'ile portów USB masz i ile z nich używasz',
+            'ile masz monitorów a ile chciałbyś mieć',
         ],
         automatic: true,
         automaticWaitUntilLastMsgInterval: 2 * 60 * 60 * 1000
@@ -52,7 +76,7 @@ export const actionPing: Action<MessageEventCtx> = {
                     const pingConfig = pings['death-chat'];
                     if (pingConfig?.questions && msg.channel.isSendable()) {
                         const question = pingConfig.questions[Math.floor(Math.random() * pingConfig.questions.length)];
-                        msg.channel.send(`<@&${pingConfig.roleId}> ${question}`);
+                        msg.channel.send(`<@&${pingConfig.roleId}> ${capitalizeFirst(question)}${question.endsWith('?') ? '' : '?'}`);
                     }
                 }
             }, pings['death-chat'].automaticWaitUntilLastMsgInterval);
