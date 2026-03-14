@@ -71,17 +71,19 @@ export class EconomyExecutor {
         const res: ConfigEconomyAction[] = [];
         for (const action of actions) {
             switch (action.op) {
-            case 'if':
+            case 'if': {
                 if (await this.checkCondition(action.cond)) {
                     res.push(...await this.expandActions(action.then));
                 } else if (action.else) {
                     res.push(...await this.expandActions(action.else));
                 }
                 break;
-            case 'random':
+            }
+            case 'random': {
                 res.push(...await this.expandRandom(action.variants));
                 break;
-            case 'while':
+            }
+            case 'while': {
                 let iterations = 0;
                 const max = action.maxIterations ?? 100;
                 while (await this.checkCondition(action.cond) && iterations < max) {
@@ -89,14 +91,25 @@ export class EconomyExecutor {
                     iterations++;
                 }
                 break;
+            }
 
-            case 'rem-role':
+            case 'add-role': {
+                const role = this.getRoleById(action.roleId);
+                if (!role) break;
+                if (this.hasRole(role.id)) {
+                    res.push({ op: 'add-money', amount: role.refund });
+                    break;
+                }
+                res.push(action);
+            }
+            case 'rem-role': {
                 const role = this.getRoleById(action.roleId);
                 if (!this.hasRole(role!.id)) {
                     res.push({ op: 'sub-money', amount: role!.refund });
                     break;
                 }
                 res.push(action);
+            }
 
             default:
                 res.push(action);
