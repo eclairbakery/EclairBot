@@ -13,7 +13,8 @@ export type CommandArgBaseType =
     | 'int'
     | 'float'
     | 'money'
-    | 'command-ref';
+    | 'command-ref'
+    | 'enum';
 
 export type CommandArgType = 
     | { base: 'string', trailing?: boolean }
@@ -25,7 +26,8 @@ export type CommandArgType =
     | { base: 'float' }
     | { base: 'money', source?: 'wallet' | 'bank' }
     | { base: 'command-ref' }
-    | { base: 'union', variants: CommandArgType[] };
+    | { base: 'enum', trailing?: boolean, options: readonly string[] }
+    | { base: 'union', variants: readonly CommandArgType[] };
 
 export interface CommandArgument {
     name: string;
@@ -44,11 +46,24 @@ export type CommandArgValueMap = {
     'float': number;
     'money': Money;
     'command-ref': Command;
+    'enum': string;
 };
+
+export type ResolveArgValue<T extends CommandArgType> = 
+    T extends { base: 'enum', options: infer O } ? (O extends readonly string[] ? O[number] : string) :
+    T extends { base: 'union', variants: infer V } ? (V extends readonly CommandArgType[] ? ResolveArgValue<V[number]> : never) :
+    T extends { base: infer B } ? (B extends keyof CommandArgValueMap ? CommandArgValueMap[B] : never) :
+    never;
 
 export type CommandValuableArgument = {
     [K in CommandArgBaseType]: CommandArgument & {
         type: Extract<CommandArgType, { base: K }>;
-        value: CommandArgValueMap[K];
+        value: K extends 'enum' ? string : CommandArgValueMap[K];
     }
 }[CommandArgBaseType];
+
+// Do precyzyjnego typowania w kodzie komendy:
+export type PreciseValuableArgument<T extends CommandArgType> = CommandArgument & {
+    type: T;
+    value: ResolveArgValue<T>;
+};

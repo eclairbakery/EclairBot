@@ -73,103 +73,111 @@ async function tryParseArg(
     if (type.base == 'union') return null;
 
     switch (type.base) {
-        case 'string':
-            const val = type.trailing ? rawArgs.slice(argIndex).join(' ') : raw;
-            return { ...decl, type, value: val } as CommandValuableArgument;
-
-        case 'int': {
-            const isInt = /^-?\d+$/.test(raw);
-            if (!isInt) return null;
-
-            return { ...decl, type, value: BigInt(raw) } as CommandValuableArgument;
-        }
-
-        case 'float': {
-            const isFloat = /^-?\d+(\.\d+)?$/.test(raw);
-            if (!isFloat) return null;
-
-            return { ...decl, type, value: Number(raw) } as CommandValuableArgument;
-        }
-
-        case 'money': {
-            const input = raw.trim().toLowerCase();
-            const invokerId = context?.interaction?.user.id ?? context?.msg?.author.id;
-            
-            if (type.source && (input == 'all' || input.endsWith('%')) && invokerId) {
-                const balance = await new User(invokerId).economy.getBalance();
-                const sourceMoney = type.source == 'wallet' ? balance.wallet : balance.bank;
-
-                if (input == 'all') {
-                    return { ...decl, type, value: sourceMoney.clone() } as CommandValuableArgument;
-                }
-
-                const percentMatch = input.match(/^(\d+(?:[.,]\d+)?)%$/);
-                if (percentMatch) {
-                    const percent = parseFloat(percentMatch[1].replace(',', '.')) / 100;
-                    const amountCents = (sourceMoney.asCents() * BigInt(Math.round(percent * 10000))) / 10000n;
-                    return { ...decl, type, value: Money.fromCents(amountCents) } as CommandValuableArgument;
-                }
-            }
-
-            try {
-                const parsed = Money.parse(raw);
-                return { ...decl, type, value: parsed } as CommandValuableArgument;
-            } catch (e) {
-                if (e instanceof NumberParseError) return null;
-                throw e;
-            }
-        }
-
-        case 'timestamp': {
-            const ts = parseTimestamp(raw);
-            if (!ts) return null;
-            return { ...decl, type, value: ts } as CommandValuableArgument;
-        }
-
-        case 'user-mention': {
-            const user = await parseUser(raw, decl.name, context);
-            if (!user) return null;
-            return { ...decl, type, value: user } as CommandValuableArgument;
-        }
-
-        case 'role-mention': {
-            const match = raw.match(/^<@&(\d+)>$/);
-            const roleId = match?.[1];
-            let role: dsc.Role | null = null;
-
-            if (roleId && (context?.guild || context?.msg?.guild)) {
-                const guild = context?.guild ?? context?.msg?.guild!;
-                role = context?.msg?.mentions.roles?.get(roleId) ?? guild.roles.cache.get(roleId) ?? null;
-            }
-            if (!role) return null;
-            return { ...decl, type, value: role } as CommandValuableArgument;
-        }
-
-        case 'channel-mention': {
-            const match = raw.match(/^<#(\d+)>$/);
-            const channelID = match?.[1];
-            let channel: dsc.GuildChannel | null = null;
-
-            if (channelID && (context?.guild || context?.msg?.guild)) {
-                const guild = context?.guild ?? context?.msg?.guild!;
-                const foundChannel = context?.msg?.mentions.channels?.get(channelID) ?? guild.channels.cache.get(channelID);
-                if (foundChannel && foundChannel instanceof dsc.GuildChannel) {
-                    channel = foundChannel;
-                }
-            }
-            if (!channel) return null;
-            return { ...decl, type, value: channel } as CommandValuableArgument;
-        }
-
-        case 'command-ref': {
-            if (!context?.commands) return null;
-            const res = findCommand(raw, context.commands);
-            if (!res) return null;
-            return { ...decl, type, value: res.command } as CommandValuableArgument;
-        }
-
-        default:
+    case 'string': {
+        const val = type.trailing ? rawArgs.slice(argIndex).join(' ') : raw;
+        return { ...decl, type, value: val } as CommandValuableArgument;
+    }
+    case 'enum': {
+        const val = type.trailing ? rawArgs.slice(argIndex).join(' ') : raw;
+        const found = type.options.find(o => o.toLowerCase() == val.toLowerCase());
+        if (!found) {
             return null;
+        }
+        return { ...decl, type, value: found } as CommandValuableArgument;
+    }
+
+    case 'int': {
+        const isInt = /^-?\d+$/.test(raw);
+        if (!isInt) return null;
+
+        return { ...decl, type, value: BigInt(raw) } as CommandValuableArgument;
+    }
+    case 'float': {
+        const isFloat = /^-?\d+(\.\d+)?$/.test(raw);
+        if (!isFloat) return null;
+
+        return { ...decl, type, value: Number(raw) } as CommandValuableArgument;
+    }
+
+    case 'money': {
+        const input = raw.trim().toLowerCase();
+        const invokerId = context?.interaction?.user.id ?? context?.msg?.author.id;
+        
+        if (type.source && (input == 'all' || input.endsWith('%')) && invokerId) {
+            const balance = await new User(invokerId).economy.getBalance();
+            const sourceMoney = type.source == 'wallet' ? balance.wallet : balance.bank;
+
+            if (input == 'all') {
+                return { ...decl, type, value: sourceMoney.clone() } as CommandValuableArgument;
+            }
+
+            const percentMatch = input.match(/^(\d+(?:[.,]\d+)?)%$/);
+            if (percentMatch) {
+                const percent = parseFloat(percentMatch[1].replace(',', '.')) / 100;
+                const amountCents = (sourceMoney.asCents() * BigInt(Math.round(percent * 10000))) / 10000n;
+                return { ...decl, type, value: Money.fromCents(amountCents) } as CommandValuableArgument;
+            }
+        }
+
+        try {
+            const parsed = Money.parse(raw);
+            return { ...decl, type, value: parsed } as CommandValuableArgument;
+        } catch (e) {
+            if (e instanceof NumberParseError) return null;
+            throw e;
+        }
+    }
+
+    case 'timestamp': {
+        const ts = parseTimestamp(raw);
+        if (!ts) return null;
+        return { ...decl, type, value: ts } as CommandValuableArgument;
+    }
+
+    case 'user-mention': {
+        const user = await parseUser(raw, decl.name, context);
+        if (!user) return null;
+        return { ...decl, type, value: user } as CommandValuableArgument;
+    }
+
+    case 'role-mention': {
+        const match = raw.match(/^<@&(\d+)>$/);
+        const roleId = match?.[1];
+        let role: dsc.Role | null = null;
+
+        if (roleId && (context?.guild || context?.msg?.guild)) {
+            const guild = context?.guild ?? context?.msg?.guild!;
+            role = context?.msg?.mentions.roles?.get(roleId) ?? guild.roles.cache.get(roleId) ?? null;
+        }
+        if (!role) return null;
+        return { ...decl, type, value: role } as CommandValuableArgument;
+    }
+
+    case 'channel-mention': {
+        const match = raw.match(/^<#(\d+)>$/);
+        const channelID = match?.[1];
+        let channel: dsc.GuildChannel | null = null;
+
+        if (channelID && (context?.guild || context?.msg?.guild)) {
+            const guild = context?.guild ?? context?.msg?.guild!;
+            const foundChannel = context?.msg?.mentions.channels?.get(channelID) ?? guild.channels.cache.get(channelID);
+            if (foundChannel && foundChannel instanceof dsc.GuildChannel) {
+                channel = foundChannel;
+            }
+        }
+        if (!channel) return null;
+        return { ...decl, type, value: channel } as CommandValuableArgument;
+    }
+
+    case 'command-ref': {
+        if (!context?.commands) return null;
+        const res = findCommand(raw, context.commands);
+        if (!res) return null;
+        return { ...decl, type, value: res.command } as CommandValuableArgument;
+    }
+
+    default:
+        return null;
     }
 }
 
@@ -217,7 +225,7 @@ export async function parseArgs(
                 const result = await tryParseArg(typeObj, raw, argIndex, rawArgs, decl, context);
                 if (result) {
                     parsedArgs.push(result);
-                    if (typeObj.base == 'string' && typeObj.trailing) {
+                    if ('trailing' in typeObj && typeObj.trailing) {
                         return parsedArgs;
                     }
                     success = true;

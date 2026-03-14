@@ -1,6 +1,6 @@
 import User, { CooldownCheckResult } from "../db/user.js";
 import * as dsc from 'discord.js';
-import { CommandArgBaseType, CommandArgValueMap, CommandValuableArgument } from "./arguments.js";
+import { CommandArgBaseType, CommandArgType, CommandArgValueMap, CommandValuableArgument, PreciseValuableArgument } from "./arguments.js";
 import { Category } from "@/bot/categories.js";
 import { Command } from "./cmd.js";
 import type * as log from '@/util/log.js';
@@ -8,6 +8,7 @@ import { EconomyExecutor } from "../economy/action.js";
 
 export interface CommandAPI {
     // ---- COMMAND INFO ----
+    getTypedArg<T extends CommandArgType>(name: string, type: T): PreciseValuableArgument<T>;
     getTypedArg<B extends CommandArgBaseType>(name: string, base: B): Extract<CommandValuableArgument, { type: { base: B } }>;
     getTypedArg<B extends readonly CommandArgBaseType[]>(name: string, bases: B): Extract<CommandValuableArgument, { type: { base: B[number] } }>;
     invokedViaAlias: string;
