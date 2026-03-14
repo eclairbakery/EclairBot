@@ -25,8 +25,6 @@ export class Category {
             return 'economy';
         case Category.Leveling:
             return 'leveling';
-        case Category.Gifs:
-            return 'gifs';
         case Category.DevelopersOnly:
             return 'dev';
         case Category.ForFun:
@@ -57,10 +55,6 @@ export class Category {
         case 'level':
         case 'xp':
             return Category.Leveling;
-
-        case 'gify':
-        case 'gifs':
-            return Category.Gifs;
 
         case 'deweloperskie':
         case 'dev':
@@ -106,11 +100,6 @@ export class Category {
         'W tej kategorii znajdziesz kilka ciekawych komend do sprawdzania levela swojego lub innych.'
             + 'Jeśli jesteś adminem to dodatkowo masz tu komendy do zarządzania levelem uzytkowników.',
         PredefinedColors.Green,
-    );
-    static readonly Gifs = new Category(
-        '🎬', 'Gify', 'Poprostu pokazują ci losowe gify... co tu więcej mówić',
-        'Poprostu pokazują ci losowe gify... co tu więcej mówić',
-        PredefinedColors.Cyan,
     );
     static readonly ForFun = new Category(
         '🔥', '4fun', 'Komendy bez celu. Do zabawy czy coś.',

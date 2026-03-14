@@ -39,8 +39,6 @@ import { plusRepCmd } from '@/cmd/4fun/like.js';
 import { subRepCmd } from '@/cmd/4fun/dislike.js';
 import { reputationCmd } from '@/cmd/4fun/reputation.js';
 
-import { animalCmd, catCmd, dogCmd, parrotCmd } from '@/cmd/gif/gifs.js';
-
 import { wikiCmd } from '@/cmd/general/wiki.js';
 import { toprepCmd } from '@/cmd/4fun/toprep.js';
 import { replistCmd } from '@/cmd/4fun/replist.js';
@@ -87,12 +85,6 @@ export const commands: Map<Category, Command[]> = new Map([
             muteCmd, unmuteCmd,
             banCmd, kickCmd,
             refreshCmd, toggleCooldownBypassCmd, toggleCmdBlockCmd
-        ]
-    ],
-    [
-        Category.Gifs,
-        [
-            parrotCmd, dogCmd, catCmd, animalCmd
         ]
     ],
     [
