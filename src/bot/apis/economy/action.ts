@@ -101,6 +101,7 @@ export class EconomyExecutor {
                     break;
                 }
                 res.push(action);
+                break;
             }
             case 'rem-role': {
                 const role = this.getRoleById(action.roleId);
@@ -109,6 +110,7 @@ export class EconomyExecutor {
                     break;
                 }
                 res.push(action);
+                break;
             }
 
             default:
