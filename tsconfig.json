@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "strict": true,
+        "noFallthroughCasesInSwitch": true,
         "outDir": "dist",
         "module": "nodenext",
         "moduleResolution": "nodenext",
