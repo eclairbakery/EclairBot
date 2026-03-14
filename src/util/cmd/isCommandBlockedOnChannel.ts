@@ -1,6 +1,7 @@
 import * as dsc from 'discord.js';
 
-import { Command, CommandFlags } from "@/bot/command.js";
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
 import { BlockCommandsRules } from '@/bot/definitions/config/subtypes.js';
 import { cfg } from '@/bot/cfg.js';
 

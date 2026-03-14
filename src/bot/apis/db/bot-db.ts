@@ -1,4 +1,4 @@
-import sqlite from 'sqlite3';
+import { DB } from "sqlite";
 
 import type { UserDataRaw, Warn, WarnRaw, Rep, RepRaw } from './db-defs.js';
 import type { Balance, Cooldown, Cooldowns } from './db-defs.js';
@@ -16,10 +16,10 @@ export interface DBRunResult {
 }
 
 export class BotDatabase {
-    protected raw: sqlite.Database;
+    protected raw: DB;
 
     constructor(dbPath: string) {
-        this.raw = new sqlite.Database(dbPath);
+        this.raw = new DB(dbPath);
     }
 
     async init(): Promise<void> {
@@ -92,43 +92,37 @@ export class BotDatabase {
     // ------------------ low-level helpers ------------------
 
     private processParams(params: any[]): any[] {
-        return params.map(p => typeof p === 'bigint' ? Number(p) : p);
+        return params.map((p) => typeof p === "bigint" ? Number(p) : p);
     }
 
-    runSql(sql: string, params: any[] = []): Promise<DBRunResult> {
-        return new Promise((resolve, reject) => {
-            this.raw.run(sql, this.processParams(params), function (this: sqlite.RunResult, err) {
-                if (err) reject(err.message);
-                else resolve({ lastID: this.lastID, changes: this.changes });
-            });
-        });
+    async runSql(sql: string, params: any[] = []): Promise<DBRunResult> {
+        this.raw.query(sql, this.processParams(params));
+        let lastID: number | null = null;
+        let changes: number | null = null;
+
+        const op = sql.trim().split(" ")[0].toUpperCase();
+        if (op === "INSERT") {
+            const row = [...this.raw.query("SELECT last_insert_rowid()")][0];
+            lastID = row ? Number(row[0]) : null;
+        }
+        changes = this.raw.changes; 
+
+        return { lastID, changes };
     }
 
     execSql(sql: string): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.raw.exec(sql, (err) => {
-                if (err) reject(err.message);
-                else resolve();
-            });
-        });
+        this.raw.execute(sql);
+        return Promise.resolve();
     }
 
     selectOne<T = any>(sql: string, params: any[] = []): Promise<T | undefined> {
-        return new Promise((resolve, reject) => {
-            this.raw.get(sql, this.processParams(params), (err, row) => {
-                if (err) reject(err.message);
-                else resolve(row as T);
-            });
-        });
+        const rows = [...this.raw.query(sql, this.processParams(params))];
+        return Promise.resolve(rows[0] as T | undefined);
     }
 
     selectMany<T = any>(sql: string, params: any[] = []): Promise<T[]> {
-        return new Promise((resolve, reject) => {
-            this.raw.all(sql, this.processParams(params), (err, rows) => {
-                if (err) reject(err.message);
-                else resolve(rows as T[]);
-            });
-        });
+        const rows = [...this.raw.query(sql, this.processParams(params))];
+        return Promise.resolve(rows as T[]);
     }
 
     // ------------------ generic utils ------------------

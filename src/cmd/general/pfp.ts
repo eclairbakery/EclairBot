@@ -1,4 +1,5 @@
-import { Command, CommandFlags } from '@/bot/command.js';
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
 
 export const pfpCmd: Command = {
     name: 'pfp',

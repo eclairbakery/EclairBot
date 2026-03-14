@@ -8,16 +8,13 @@ import {
     CommandValuableArgument, 
     CommandArgType, 
 } from './apis/commands/arguments.js';
-import { CommandFlags, CommandViolatedRule } from './apis/commands/misc.js';
-import { CommandPermissions } from './apis/commands/permissions.js';
+import { CommandViolatedRule } from './apis/commands/misc.js';
 
-export { 
+export type { 
     Command, 
     CommandAPI, 
     CommandArgument, 
     CommandArgType, 
     CommandValuableArgument, 
-    CommandFlags, 
-    CommandPermissions,
     CommandViolatedRule
 };

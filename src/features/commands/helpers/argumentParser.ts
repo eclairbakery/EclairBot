@@ -3,7 +3,6 @@ import {
     CommandValuableArgument,
     CommandArgType,
     Command,
-    CommandFlags,
     Category
 } from '@/bot/command.js';
 

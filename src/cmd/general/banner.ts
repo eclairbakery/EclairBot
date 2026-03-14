@@ -1,6 +1,9 @@
-import { Command, CommandFlags } from '@/bot/command.js';
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
 
 import * as dsc from 'discord.js';
+
+import { Buffer } from "node:buffer";
 
 export const bannerCmd: Command = {
     name: 'banner',

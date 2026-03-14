@@ -43,7 +43,7 @@ export function scheduleWarnDeletion(warnId: number, expiresAt: number) {
                 'DELETE FROM warns WHERE rowid = ?',
                 [warnId],
             );
-        }, delay).unref();
+        }, delay);
     }
 }
 

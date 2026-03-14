@@ -5,7 +5,7 @@ import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 
 import { cfg } from '@/bot/cfg.js';
-import { CommandFlags } from '@/bot/command.js';
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
 import { client } from '../../client.js';
 import { commands } from '../../cmd/list.js';
 import { handleError } from './helpers/errorHandler.js';

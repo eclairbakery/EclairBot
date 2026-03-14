@@ -1,4 +1,4 @@
-import { Category, Command, CommandFlags } from '@/bot/command.js';
+import { Category, Command } from '@/bot/command.js';
 import { cfg } from '@/bot/cfg.js';
 
 import { PredefinedColors } from '@/util/color.js';
@@ -7,6 +7,7 @@ import canExecuteCmd from '@/util/cmd/canExecuteCmd.js';
 
 import * as dsc from 'discord.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { CommandFlags } from "../../bot/apis/commands/misc.ts";
 
 export const commandsCmd: Command = {
     name: 'commands',

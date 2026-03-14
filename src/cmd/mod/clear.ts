@@ -2,7 +2,10 @@ import * as dsc from 'discord.js';
 import { cfg } from '@/bot/cfg.js';
 
 import { PredefinedColors } from '@/util/color.js';
-import { Command, CommandAPI, CommandFlags, CommandPermissions } from '@/bot/command.js';
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
+import { CommandAPI } from '@/bot/apis/commands/api.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
 
 const cmdCfg = cfg.commands.configuration.warn;

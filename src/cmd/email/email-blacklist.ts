@@ -1,5 +1,8 @@
 import { db } from "@/bot/apis/db/bot-db.js";
-import { Command, CommandFlags, CommandPermissions } from "@/bot/command.js";
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
+import { CommandAPI } from '@/bot/apis/commands/api.js';
 
 export const emailBlacklistCmd: Command = {
     name: 'email-blacklist',

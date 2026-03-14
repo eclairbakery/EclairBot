@@ -1,6 +1,7 @@
 import * as dsc from 'discord.js';
 
-import { Command, CommandFlags } from '@/bot/command.js';
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
 
 import { db } from '@/bot/apis/db/bot-db.js';
 import { output } from '@/bot/logging.js';

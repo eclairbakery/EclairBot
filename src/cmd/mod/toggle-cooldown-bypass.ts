@@ -1,5 +1,6 @@
 import { cfg, getCommandOverride, saveConfigurationChanges } from "@/bot/cfg.js";
-import { Command, CommandFlags } from "@/bot/command.js";
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
 import { findCmdConfCategory } from "@/util/cmd/findCmdConfigObj.js";
 import { deepMerge } from "@/util/objects/objects.js";
 

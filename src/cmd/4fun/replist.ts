@@ -1,5 +1,6 @@
 import * as dsc from 'discord.js';
-import { Command, CommandFlags } from "@/bot/command.js";
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
 
 import { PredefinedColors } from '@/util/color.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';

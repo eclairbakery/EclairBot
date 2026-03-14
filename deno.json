@@ -1,0 +1,40 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "noFallthroughCasesInSwitch": true,
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "lib": [
+            "es2024",
+            "deno.ns", "deno.window"
+        ]
+    },
+    "fmt": {
+        "indentWidth": 4,
+        "useTabs": false,
+        "lineWidth": 100,
+        "semiColons": true,
+        "quoteProps": "asNeeded"
+    },
+    "lint": {
+        "rules": {
+            "exclude": [
+                "no-process-global",
+                "no-namespace",
+                "no-explicit-any",
+                "no-empty"
+            ]
+        }
+    },
+    "imports": {
+        "discord.js": "npm:discord.js@^14.25.1",
+        "dotenv": "npm:dotenv@^17.3.1",
+        "figlet": "npm:figlet@^1.11.0",
+        "imapflow": "npm:imapflow@^1.2.13",
+        "json5": "npm:json5@^2.2.3",
+        "mailparser": "npm:mailparser@^3.9.4",
+        "nodemailer": "npm:nodemailer@^8.0.2",
+        "sqlite": "https://deno.land/x/sqlite@v3.9.1/mod.ts",
+        "@/": "./src/"
+    }
+}

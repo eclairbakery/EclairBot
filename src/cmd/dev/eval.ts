@@ -1,5 +1,7 @@
 import { cfg } from '@/bot/cfg.js';
-import { Command, CommandFlags, CommandPermissions } from '@/bot/command.js';
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
 import { client } from '@/client.js';
 import { output } from '@/bot/logging.js';
 import { db } from '@/bot/apis/db/bot-db.js';

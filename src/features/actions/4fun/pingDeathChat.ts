@@ -2,7 +2,7 @@ import { cfg } from '@/bot/cfg.js';
 import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.js';
 import capitalizeFirst from '@/util/capitalizeFirst.js';
 
-let deathChatTimeout: NodeJS.Timeout;
+let deathChatTimeout: number;
 
 export interface PingAPI {
     roleId: `${number}`;

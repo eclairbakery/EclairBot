@@ -1,5 +1,4 @@
 import util from "node:util";
-
 import { GuildTextBasedChannel } from "discord.js";
 import { cfg } from "./cfg.js";
 import { client } from "@/client.js";
@@ -10,61 +9,34 @@ const encoder = new TextEncoder();
 
 const origWrite = process.stdout.write.bind(process.stdout);
 
-process.stdout.write = function (
-    chunk: any,
-    encoding?: any,
-    callback?: any
-): boolean {
+process.stdout.write = function (chunk: any, encoding?: any, callback?: any): boolean {
     let data: string | Uint8Array;
-
     if (typeof chunk === "string") {
-        const trimmed = chunk.trimEnd();
-        if (!trimmed.endsWith("--object-logged")) {
-            output.forward(trimmed);
-        }
-        data = chunk.replaceAll("--object-logged", "");
+        output.forward(chunk.trimEnd());
+        data = chunk;
     } else if (chunk instanceof Uint8Array) {
-        let str = decoder.decode(chunk);
-        const trimmed = str.trimEnd();
-        if (!trimmed.endsWith("--object-logged")) {
-            output.forward(trimmed);
-        }
-        str = str.replaceAll("--object-logged", "");
+        const str = decoder.decode(chunk);
+        output.forward(str.trimEnd());
         data = encoder.encode(str);
     } else {
         data = chunk;
     }
-
     return origWrite(data, encoding, callback);
 } as typeof process.stdout.write;
 
 const origErrWrite = process.stderr.write.bind(process.stderr);
-
-process.stderr.write = function (
-    chunk: any,
-    encoding?: any,
-    callback?: any
-): boolean {
+process.stderr.write = function (chunk: any, encoding?: any, callback?: any): boolean {
     let data: string | Uint8Array;
-
     if (typeof chunk === "string") {
-        const trimmed = chunk.trimEnd();
-        if (!trimmed.endsWith("--object-logged")) {
-            output.forward(trimmed);
-        }
-        data = chunk.replaceAll("--object-logged", "");
+        output.forward(chunk.trimEnd());
+        data = chunk;
     } else if (chunk instanceof Uint8Array) {
-        let str = decoder.decode(chunk);
-        const trimmed = str.trimEnd();
-        if (!trimmed.endsWith("--object-logged")) {
-            output.forward(trimmed);
-        }
-        str = str.replaceAll("--object-logged", "");
+        const str = decoder.decode(chunk);
+        output.forward(str.trimEnd());
         data = encoder.encode(str);
     } else {
         data = chunk;
     }
-
     return origErrWrite(data, encoding, callback);
 } as typeof process.stderr.write;
 
@@ -80,7 +52,6 @@ export namespace output {
     let stderrChannel: GuildTextBasedChannel;
     let stdwarnChannel: GuildTextBasedChannel;
 
-    // --- helpers ---
     function format(raw: any, ...args: any[]): string {
         let text = util.format(typeof raw === "object" ? JSON.stringify(raw) : raw, ...args);
         if (!text.endsWith("\n")) text += "\n";
@@ -108,7 +79,6 @@ export namespace output {
         }
     }
 
-    // --- public ---
     export async function init() {
         try {
             stdoutChannel = await client.channels.fetch(cfg.channels.eclairbot.stdout) as GuildTextBasedChannel;
@@ -120,21 +90,21 @@ export namespace output {
     export function log(msg: any, ...args: any[]) {
         const data = format(msg, ...args);
         const prefixed = decorate("LOG", colors.CYAN, data);
-        console.log(prefixed + " --object-logged");
+        console.log(prefixed);
         send("stdout", data);
     }
 
     export function warn(msg: any, ...args: any[]) {
         const data = format(msg, ...args);
         const prefixed = decorate("WARN", colors.YELLOW, data);
-        console.warn(prefixed + " --object-logged");
+        console.warn(prefixed);
         send("stdwarn", data);
     }
 
     export function err(msg: any, ...args: any[]) {
         const data = format(msg, ...args);
         const prefixed = decorate("ERR", colors.RED, data);
-        console.error(prefixed + " --object-logged");
+        console.error(prefixed);
         send("stderr", data);
     }
 

@@ -1,13 +1,10 @@
-all: jsbuild 
+all: check run
 
-dev:
-	npm run dev
+# please note that -A is unsafe
+# it was added here for easy and quick shipment
+# and will have to be removed as quickly as possible
+run: 
+	deno run -A --sloppy-imports src/main.ts
 
-depconfig:
-	npm install
-	npm audit
-	npm audit fix
-
-jsbuild:
-	npx tsc
-	npx tsc-alias
+check:
+	deno check --sloppy-imports src/main.ts

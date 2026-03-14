@@ -1,5 +1,6 @@
-import { Command, CommandFlags, CommandAPI } from "@/bot/command.js";
+import { Command, CommandAPI } from "@/bot/command.js";
 import { output } from "@/bot/logging.js";
+import { CommandFlags } from "../../bot/apis/commands/misc.ts";
 
 export const withdrawCmd: Command = {
     name: 'withdraw',

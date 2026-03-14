@@ -1,6 +1,9 @@
-import { Command, CommandAPI, CommandFlags, CommandPermissions } from "@/bot/command.js";
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
 import { addLvlRole, xpToLevel } from "@/bot/level.js";
 import actionsManager, { OnForceReloadTemplates } from "@/events/actions/templatesEvents.js";
+import { CommandAPI } from "../../bot/apis/commands/api.ts";
 
 export const refreshCmd: Command = {
     name: 'refresh',

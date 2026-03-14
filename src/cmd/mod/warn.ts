@@ -1,4 +1,6 @@
-import { Command, CommandFlags, CommandPermissions } from '@/bot/command.js';
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
 import { PredefinedColors } from '@/util/color.js';
 import { cfg } from '@/bot/cfg.js';
 

@@ -1,6 +1,7 @@
 import * as chars from '@/util/chars.js';
 
-import { Command, CommandFlags } from '@/bot/command.js';
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
 
 import figlet from 'figlet';
 import debugLog from '@/util/debugLog.js';

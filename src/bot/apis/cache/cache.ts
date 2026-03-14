@@ -1,5 +1,5 @@
-import path from 'path';
-import fs from 'fs/promises';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 
 function getCacheDir(): string {
     const cacheHome = process.env.XDG_CACHE_HOME;

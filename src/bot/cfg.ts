@@ -39,5 +39,5 @@ function makeConfig(): Config {
 
 export const cfg = makeConfig();
 
-export { Config };
+export type { Config };
 

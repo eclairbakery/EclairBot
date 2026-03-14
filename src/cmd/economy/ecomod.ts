@@ -1,6 +1,7 @@
 import { cfg } from "@/bot/cfg.js";
 import { db } from '@/bot/apis/db/bot-db.js';
-import { Command, CommandFlags } from "@/bot/command.js";
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
 import { PredefinedColors } from '@/util/color.js';
 import { output } from '@/bot/logging.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';

@@ -1,7 +1,8 @@
 import * as dsc from 'discord.js';
 import * as log from '@/util/log.js';
 
-import { Command, CommandFlags } from "@/bot/command.js";
+import { Command} from "@/bot/command.js";
+import { CommandFlags } from '@/bot/apis/commands/misc.js';
 
 import { getLastRepGivenByUser, getUserReputationProportion, } from '@/bot/apis/rep/rep.js';
 import { mkDualProgressBar } from '@/util/progressbar.js';
