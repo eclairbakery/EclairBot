@@ -52,7 +52,7 @@ export const muteCmd: Command = {
         const targetUser = api.getTypedArg("user", "user-mention")?.value as dsc.GuildMember;
         let reason = api.getTypedArg("reason", "string")?.value as string;
         const duration = api.getTypedArg("duration", "timestamp")?.value as Timestamp | null ?? 24 * Hour;
-        let expiresAt = duration != null ? Math.floor(Date.now() / 1000) + duration : null;
+        const expiresAt = duration != null ? Math.floor(Date.now() / 1000) + duration : null;
 
         if (!targetUser) {
             return api.log.replyError(api, "Nie podano celu", "Kolego co ty myślisz że ja się sam domyślę, komu ty to chcesz zrobić? Zgadłeś - nie domyślę się. Więc bądź tak miły i podaj użytkownika, dla którego odpalasz tą komendę.");

@@ -2,7 +2,6 @@ import { cfg } from "@/bot/cfg.ts";
 import { Command } from "@/bot/command.ts";
 import { CommandFlags } from "@/bot/apis/commands/misc.ts";
 import { CommandPermissions } from "@/bot/apis/commands/permissions.ts";
-import { CommandAPI } from "@/bot/apis/commands/api.ts";
 
 import * as email from "@/bot/apis/email/mail.ts";
 import { db } from "@/bot/apis/db/bot-db.ts";
@@ -120,7 +119,7 @@ export const sendEmailCmd: Command = {
         const prev_cooldown = (await api.executor.cooldowns.get()).lastEmailSent;
         await api.executor.cooldowns.set("email", Date.now());
 
-        let msg = await api.reply({
+        const msg = await api.reply({
             embeds: [
                 api.log.getInfoEmbed(
                     "Are you siur about that?",

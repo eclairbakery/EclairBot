@@ -7,7 +7,7 @@ import { deepMerge } from "@/util/objects/objects.ts";
 import * as dsc from "discord.js";
 
 function removeElement(arr: dsc.Snowflake[], target: dsc.Snowflake): dsc.Snowflake[] {
-    let result = [];
+    const result = [];
     for (const elem of arr) {
         if (elem != target) {
             result.push(elem);

@@ -3,10 +3,8 @@ import * as dsc from "discord.js";
 import { PredefinedColors } from "@/util/color.ts";
 import { Command } from "@/bot/command.ts";
 import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { CommandPermissions } from "@/bot/apis/commands/permissions.ts";
 import { CommandAPI } from "@/bot/apis/commands/api.ts";
 import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
-import Money from "@/util/money.ts";
 
 interface Card {
     name: string;
@@ -82,8 +80,8 @@ export const blackjackCmd: Command = {
             return api.log.replyError(api, "Nie masz wystarczającej ilości pieniędzy.", "Może nie zdążyłeś ich wypłacić?");
         }
 
-        let playerHand: Card[] = [drawCard(), drawCard()];
-        let dealerHand: Card[] = [drawCard(), drawCard()];
+        const playerHand: Card[] = [drawCard(), drawCard()];
+        const dealerHand: Card[] = [drawCard(), drawCard()];
 
         const hitBtn = new dsc.ButtonBuilder().setCustomId("hit").setLabel("Hit").setStyle(dsc.ButtonStyle.Primary);
         const standBtn = new dsc.ButtonBuilder().setCustomId("stand").setLabel("Stand").setStyle(dsc.ButtonStyle.Secondary);

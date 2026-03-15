@@ -55,7 +55,7 @@ export const warnCmd: Command = {
         let points = api.getTypedArg("points", "float")?.value as number ?? 1;
         let reason = api.getTypedArg("reason", "string")?.value as string ?? "";
         const duration = api.getTypedArg("duration", "timestamp")?.value as Timestamp | null;
-        let expiresAt = (duration != null ? Math.floor(Date.now() / 1000) + duration : null) ?? (Math.floor(Date.now() / 1000) + parseTimestamp("24h")!);
+        const expiresAt = (duration != null ? Math.floor(Date.now() / 1000) + duration : null) ?? (Math.floor(Date.now() / 1000) + parseTimestamp("24h")!);
 
         output.log("Warn command args:", { targetUser, points, reason });
 

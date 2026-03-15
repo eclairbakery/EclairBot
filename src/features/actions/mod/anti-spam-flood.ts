@@ -10,7 +10,7 @@ import { sendLog } from "@/bot/apis/log/send-log.ts";
 import { RarelyUsedColors } from "@/util/color.ts";
 
 const userMessagesAntiSpamMap: Map<Snowflake, number[]> = new Map();
-let userRecentlyInTheList: Record<Snowflake, boolean> = {};
+const userRecentlyInTheList: Record<Snowflake, boolean> = {};
 
 async function filterLog(msg: dsc.Message, system: string) {
     sendLog({
@@ -41,8 +41,6 @@ function isFlood(content: string) {
     cleaned = cleaned.replace(/\b(x+d+|xd+|ej+|-+|haha+|lol+)\b/gi, "").trim();
 
     if (!cleaned) return false;
-
-    const normalized = cleaned.replace(/\s+/g, "");
 
     const parts = cleaned.toLowerCase().split(/\s+/);
     for (let size = 2; size <= Math.min(10, Math.floor(parts.length / 2)); size++) {
@@ -103,7 +101,7 @@ export const antiSpamAndAntiFlood: Action<MessageEventCtx> = {
                     }
                 } catch {}
                 await filterLog(msg, "antispam/co ty odsigmiasz TM");
-                let expiresAt = Math.floor(Date.now() / 1000) + parseTimestamp("2d")!;
+                const expiresAt = Math.floor(Date.now() / 1000) + parseTimestamp("2d")!;
                 const result = await warn(msg.member!, {
                     reason: "nie spam",
                     mod: client.user!.id,
@@ -118,7 +116,7 @@ export const antiSpamAndAntiFlood: Action<MessageEventCtx> = {
             if (client.user!.id !== msg.author.id && isFlood(msg.content)) {
                 await (msg.channel as SendableChannel).send(`🚨 <@${msg.author.id}> za dużo floodu pozdrawiam`);
                 await filterLog(msg, "antiflood/za dużo floodu TM");
-                let expiresAt = Math.floor(Date.now() / 1000) + parseTimestamp("2d")!;
+                const expiresAt = Math.floor(Date.now() / 1000) + parseTimestamp("2d")!;
                 const result = await warn(msg.member!, {
                     reason: "nie flooduj",
                     mod: client.user!.id,

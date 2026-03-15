@@ -32,11 +32,11 @@ async function logAlarming(description: string, fatal: boolean, mem: dsc.GuildMe
 }
 
 export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | "kicked"> {
-    let defaultTrustScore = 5;
+    const defaultTrustScore = 5;
     let trustScore = defaultTrustScore;
 
     let fatal = false;
-    let issues: string[] = [];
+    const issues: string[] = [];
 
     if (cfg.features.watchdog.trustNewMembers) return true;
     if (cfg.features.watchdog.kickNewMembers) {

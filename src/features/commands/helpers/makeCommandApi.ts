@@ -22,21 +22,6 @@ type FirstArg<T> = T extends { (...args: infer A): any } ? A extends [infer F, .
 
 type ContentReply<T> = T & { content: string };
 
-function stringifyEmbed(embed: dsc.APIEmbed): string {
-    let out: string[] = [];
-
-    if (embed.title) out.push(`**${embed.title}**`);
-    if (embed.description) out.push(embed.description);
-
-    if (embed.fields?.length) {
-        for (const field of embed.fields) {
-            out.push(`\n**${field.name}**\n${field.value}`);
-        }
-    }
-
-    return out.join("\n");
-}
-
 function makeOptions(options: FirstArg<CommandAPI["reply"]>): any {
     let result: dsc.MessageReplyOptions;
 
@@ -45,10 +30,11 @@ function makeOptions(options: FirstArg<CommandAPI["reply"]>): any {
             result = { content: t(options) };
             break;
 
-        case "object":
-            let opts = options as ContentReply<typeof options>;
+        case "object": {
+            const opts = options as ContentReply<typeof options>;
             result = (opts.content ? deepMerge(opts, { content: t(opts.content) }) : opts) as any;
             break;
+        } 
 
         default:
             result = options;

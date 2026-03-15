@@ -22,7 +22,8 @@
                 "no-process-global",
                 "no-namespace",
                 "no-explicit-any",
-                "no-empty"
+                "no-empty",
+                "require-await"
             ]
         }
     },

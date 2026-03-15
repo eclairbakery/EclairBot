@@ -159,12 +159,14 @@ export class EconomyExecutor {
                 return this.hasRole(cond.roleId);
             case "has-item":
                 return await this.ctx.user.inventory.hasItem(cond.itemId);
-            case "money-gte":
+            case "money-gte": {
                 const balGte = await this.ctx.user.economy.getBalance();
                 return balGte.wallet.greaterThanOrEqual(Money.fromDollarsFloat(cond.amount));
-            case "money-lte":
+            }
+            case "money-lte": {
                 const balLte = await this.ctx.user.economy.getBalance();
                 return balLte.wallet.lessThanOrEqual(Money.fromDollarsFloat(cond.amount));
+            }
             case "random-chance":
                 return Math.random() * 100 <= cond.chance;
         }

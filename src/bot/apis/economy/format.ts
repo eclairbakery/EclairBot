@@ -37,23 +37,27 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
 
     private formatCondition(cond: ConfigEconomyCond): string | null {
         switch (cond.op) {
-            case "has-role":
+            case "has-role": {
                 const role = this.ctx.getRoleById(cond.roleId);
                 if (!role) return null;
                 return `masz rolę <@&${role.discordRoleId}>`;
+            }
 
-            case "has-item":
+            case "has-item": {
                 const item = this.ctx.getItemById(cond.itemId);
                 if (!item) return null;
                 return `masz item **${item.name}**`;
+            }
 
-            case "money-gte":
+            case "money-gte": {
                 const min = Money.fromDollarsFloat(cond.amount);
                 return `masz przynajmniej ${min.format()}`;
+            }
 
-            case "money-lte":
+            case "money-lte": {
                 const max = Money.fromDollarsFloat(cond.amount);
                 return `masz poniżej ${max.format()}`;
+            }
 
             case "random-chance":
                 return `tak się wylosuje **(${cond.chance}%)**`;
@@ -80,16 +84,18 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
     private formatActionSubject(action: ConfigEconomyAction): string | null {
         switch (action.op) {
             case "add-role":
-            case "rem-role":
+            case "rem-role": {
                 const role = this.ctx.getRoleById(action.roleId);
                 if (!role) break;
                 return `${this.isGood(action) ? "rolę" : "**usunięcie** roli"} <@&${role.discordRoleId}>`;
+            }
 
             case "add-item":
-            case "rem-item":
+            case "rem-item": {
                 const item = this.ctx.getItemById(action.itemId);
                 if (!item) break;
                 return `${this.isGood(action) ? "item" : "**usunięcie** itemu"} *${item.name}*`;
+            }
 
             case "add-money":
             case "sub-money":
@@ -100,7 +106,7 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
     }
 
     private formatRandom(action: ConfigEconomyAction & { op: "random" }, indent: string, header: string, allowExpansion: boolean): string[] {
-        let result: string[] = [header];
+        const result: string[] = [header];
 
         const sum = action.variants.reduce((acc, v) => acc + (v.weight ?? 1), 0);
         const variantsWithPercent = action.variants.map((v) => ({
@@ -156,7 +162,7 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
     }
 
     private formatActionsList(actions: ConfigEconomyAction[], indent: string, allowExpansion: boolean): string[] {
-        let result: string[] = [];
+        const result: string[] = [];
         for (const action of actions) {
             const linePrefix = indent ? this.config.zeroWidthSpace + indent : "";
 

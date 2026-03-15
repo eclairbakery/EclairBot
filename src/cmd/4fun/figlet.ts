@@ -8,7 +8,7 @@ import debugLog from "@/util/debugLog.ts";
 import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
 
 function tokenize(input: string): string[] {
-    let result: string[] = [];
+    const result: string[] = [];
     let current: string = "";
     for (const char of input) {
         if (chars.isIdentch(char)) {

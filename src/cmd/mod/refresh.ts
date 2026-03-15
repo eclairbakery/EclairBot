@@ -26,9 +26,9 @@ export const refreshCmd: Command = {
 
     async execute(api: CommandAPI) {
         // define constants & variables
-        let flags = (api.getTypedArg("flags", "string")?.value ?? "").split(" ");
-        let reloadedThings: string[] = [];
-        let failedThingsToReload: string[] = [];
+        const flags = (api.getTypedArg("flags", "string")?.value ?? "").split(" ");
+        const reloadedThings: string[] = [];
+        const failedThingsToReload: string[] = [];
         const user = api.executor;
 
         // help

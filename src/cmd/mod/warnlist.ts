@@ -30,8 +30,8 @@ export const warnlistCmd: Command = {
     },
 
     async execute(api) {
-        let client: dsc.Client = api.channel.client;
-        let guild: dsc.Guild = api.guild!;
+        const client: dsc.Client = api.channel.client;
+        const guild: dsc.Guild = api.guild!;
 
         const targetUser = api.getTypedArg("user", "user-mention")?.value as dsc.GuildMember | undefined;
         const limit = 5;
@@ -49,7 +49,7 @@ export const warnlistCmd: Command = {
             query += " ORDER BY id DESC LIMIT ? OFFSET ?";
             params.push(limit, (page - 1) * limit);
 
-            return db.selectMany(query, params);
+            return await db.selectMany(query, params);
         }
 
         async function renderPage(page: number) {
@@ -97,7 +97,7 @@ export const warnlistCmd: Command = {
             return { embed, components };
         }
 
-        let render = await renderPage(currentPage);
+        const render = await renderPage(currentPage);
         if (!render) {
             return api.log.replyError(api, "Brak wyników", targetUser ? `Nie znaleziono żadnych warnów dla ${targetUser.user.username}.` : "Nie ma żadnych warnów w bazie.");
         }

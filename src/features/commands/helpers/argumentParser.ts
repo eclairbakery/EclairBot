@@ -10,7 +10,6 @@ import { NumberParseError } from "@/util/math/parse.ts";
 
 import { ArgMustBeSomeTypeError, MissingRequiredArgError } from "../defs/errors.ts";
 import { flatTypesToUnion } from "./flat-types.ts";
-import { output } from "@/bot/logging.ts";
 
 async function parseUser(raw: string, name: string, context?: ParserContext): Promise<dsc.GuildMember | null> {
     try {
@@ -29,7 +28,7 @@ async function parseUser(raw: string, name: string, context?: ParserContext): Pr
     return null;
 }
 
-async function tryParseUserMentionOrRef(decl: CommandArgument, context?: ParserContext): Promise<dsc.GuildMember | null> {
+async function tryParseUserMentionOrRef(_decl: CommandArgument, context?: ParserContext): Promise<dsc.GuildMember | null> {
     if (context?.msg && context.msg.reference) {
         try {
             const refMessageId = context.msg.reference.messageId;

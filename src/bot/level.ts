@@ -110,7 +110,7 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
     await user.leveling.addXP(amount);
 
     if (newLevel > prevLevel) {
-        let gotNewRole = await addLvlRole(msg.guild!, newLevel, msg.author.id);
+        const gotNewRole = await addLvlRole(msg.guild!, newLevel, msg.author.id);
 
         const channelLvl = await msg.client.channels.fetch(cfg.features.leveling.levelChannel);
         if (!channelLvl || !channelLvl.isSendable()) return;

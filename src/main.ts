@@ -4,7 +4,7 @@ console.log('Welcome to EclairBOT!');
 import { client } from '@/client.ts';
 import { output, ft } from '@/bot/logging.ts';
 import * as dotenv from 'dotenv';
-process.on('uncaughtException', async (e) => {
+process.on('uncaughtException', (e) => {
     output.err(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
     if (e.message.includes('An invalid token was provided.')) {
         output.err('Automatic shutdown. Token is invalid.');
@@ -135,8 +135,8 @@ async function main() {
 
     setInterval(() => {
         if (!process.memoryUsage || !process.availableMemory) return;
-        let processHeap = process.memoryUsage().heapUsed;
-        let availableMemory = process.availableMemory();
+        const processHeap = process.memoryUsage().heapUsed;
+        const availableMemory = process.availableMemory();
         const treshold = 25 * 1024 * 1024; // 25MB
         if (processHeap > availableMemory - treshold) {
             output.warn(`Low on memory.\nUsing: ${processHeap} of ${availableMemory} available memory.\nEclairBOT will attempt to restart if this situation occurs more than 6 times in the next 10 seconds.`);

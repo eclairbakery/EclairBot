@@ -12,7 +12,6 @@ import findCommand from "@/util/cmd/findCommand.ts";
 import isCommandBlockedOnChannel from "@/util/cmd/isCommandBlockedOnChannel.ts";
 import actionsManager, { PredefinedActionEventTypes } from "../actions/index.ts";
 
-import { findCmdConfResolvable } from "@/util/cmd/findCmdConfigObj.ts";
 import { PredefinedColors } from "@/util/color.ts";
 
 import { handleError } from "./helpers/errorHandler.ts";

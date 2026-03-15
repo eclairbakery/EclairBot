@@ -98,7 +98,7 @@ export const commandsCmd: Command = {
                 text = "*brak komend możliwych do użycia w tej kategorii*";
             }
 
-            let categoryField: dsc.APIEmbedField = {
+            const categoryField: dsc.APIEmbedField = {
                 name: `${category.emoji} ${capitalizeFirst(category.name)}`,
                 value: text,
                 inline: false,

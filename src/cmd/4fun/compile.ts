@@ -2,7 +2,6 @@ import { cfg } from "@/bot/cfg.ts";
 import { Command } from "@/bot/command.ts";
 import { CommandFlags } from "@/bot/apis/commands/misc.ts";
 import { CommandPermissions } from "@/bot/apis/commands/permissions.ts";
-import { CommandAPI } from "@/bot/apis/commands/api.ts";
 
 export const compileCmd: Command = {
     name: "compile",
@@ -32,7 +31,7 @@ export const compileCmd: Command = {
     ],
 
     async execute(api) {
-        let msg = await api.log.replyInfo(
+        const msg = await api.log.replyInfo(
             api,
             "Kompiluje twój kod...",
             "Proszę uzbroić się w cierpliwość bo kompilacja jest zasobożerna.",
@@ -45,7 +44,7 @@ export const compileCmd: Command = {
         const is_codeblock = trimmed.startsWith("```") && trimmed.endsWith("```");
 
         if (is_codeblock) {
-            let inner = trimmed.slice(3, -3);
+            const inner = trimmed.slice(3, -3);
             const lines = inner.split("\n");
             const first = lines.shift() ?? "";
 

@@ -304,57 +304,57 @@ class ActionManager {
             client,
             "voiceStateUpdate",
             PredefinedActionEventTypes.OnVoiceChannelJoin,
-            (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
-            (action, oldState, newState) => newState.channelId && !oldState.channelId,
+            (_oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
+            (_action, oldState, newState) => newState.channelId && !oldState.channelId,
         );
         this.handleEvent(
             client,
             "voiceStateUpdate",
             PredefinedActionEventTypes.OnVoiceChannelQuit,
-            (oldState, newState) => ({ channel: oldState.channel, user: oldState.member.user }),
-            (action, oldState, newState) => oldState.channelId && !newState.channelId,
+            (oldState, _newState) => ({ channel: oldState.channel, user: oldState.member.user }),
+            (_action, oldState, newState) => oldState.channelId && !newState.channelId,
         );
         this.handleEvent(
             client,
             "voiceStateUpdate",
             PredefinedActionEventTypes.OnVoiceChannelStartStream,
-            (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
-            (action, oldState, newState) => newState.streaming && !oldState.streaming,
+            (_oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
+            (_action, oldState, newState) => newState.streaming && !oldState.streaming,
         );
         this.handleEvent(
             client,
             "voiceStateUpdate",
             PredefinedActionEventTypes.OnVoiceChannelEndStream,
-            (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
-            (action, oldState, newState) => oldState.streaming && !newState.streaming,
+            (_oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
+            (_action, oldState, newState) => oldState.streaming && !newState.streaming,
         );
         this.handleEvent(
             client,
             "voiceStateUpdate",
             PredefinedActionEventTypes.OnVoiceChannelMute,
-            (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
-            (action, oldState, newState) => !oldState.mute && newState.mute,
+            (_oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
+            (_action, oldState, newState) => !oldState.mute && newState.mute,
         );
         this.handleEvent(
             client,
             "voiceStateUpdate",
             PredefinedActionEventTypes.OnVoiceChannelSelfMute,
-            (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
-            (action, oldState, newState) => !oldState.selfMute && newState.selfMute,
+            (_oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
+            (_action, oldState, newState) => !oldState.selfMute && newState.selfMute,
         );
         this.handleEvent(
             client,
             "voiceStateUpdate",
             PredefinedActionEventTypes.OnVoiceChannelDeaf,
-            (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
-            (action, oldState, newState) => !oldState.deaf && newState.deaf,
+            (_oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
+            (_action, oldState, newState) => !oldState.deaf && newState.deaf,
         );
         this.handleEvent(
             client,
             "voiceStateUpdate",
             PredefinedActionEventTypes.OnVoiceChannelSelfDeaf,
-            (oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
-            (action, oldState, newState) => !oldState.selfDeaf && newState.selfDeaf,
+            (_oldState, newState) => ({ channel: newState.channel, user: newState.member.user }),
+            (_action, oldState, newState) => !oldState.selfDeaf && newState.selfDeaf,
         );
 
         this.handleEvent(client, "guildBanAdd", PredefinedActionEventTypes.OnUserBan, (ban: dsc.GuildBan) => ban);

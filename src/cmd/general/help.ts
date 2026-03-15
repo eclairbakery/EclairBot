@@ -1,6 +1,5 @@
 import { Command } from "@/bot/command.ts";
 import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { CommandPermissions } from "@/bot/apis/commands/permissions.ts";
 import { CommandAPI } from "@/bot/apis/commands/api.ts";
 import { cfg } from "@/bot/cfg.ts";
 
