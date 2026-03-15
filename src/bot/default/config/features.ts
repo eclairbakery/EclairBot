@@ -1,7 +1,7 @@
-import { Config } from "@/bot/cfg.js"
-import { channelsCfg } from "./channels.js"
-import { economyCfg } from "./economy.js"
-import { hierarchyCfg } from "./hierarchy.js";
+import { Config } from "@/bot/cfg.ts";
+import { channelsCfg } from "./channels.ts";
+import { economyCfg } from "./economy.ts";
+import { hierarchyCfg } from "./hierarchy.ts";
 
 export const featuresConfig: Config['features'] = {
     compilation: {

@@ -1,10 +1,10 @@
 import * as dsc from 'discord.js';
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
-import { PredefinedColors } from '@/util/color.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
-import User from '@/bot/apis/db/user.js';
+import { PredefinedColors } from '@/util/color.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import User from '@/bot/apis/db/user.ts';
 
 const DefaultLimit = 10;
 

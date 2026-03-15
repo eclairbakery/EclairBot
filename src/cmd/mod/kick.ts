@@ -1,12 +1,12 @@
 import * as dsc from 'discord.js';
-import { output } from '@/bot/logging.js';
+import { output } from '@/bot/logging.ts';
 
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { cfg } from '@/bot/cfg.js';
-import { PredefinedColors } from '@/util/color.js';
-import kick from '@/bot/apis/mod/kicks.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { cfg } from '@/bot/cfg.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import kick from '@/bot/apis/mod/kicks.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 const cmdCfg = cfg.commands.configuration.kick;
 

@@ -1,12 +1,12 @@
-import sleep from '@/util/sleep.js';
+import sleep from '@/util/sleep.ts';
 
-import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes } from '../index.js';
+import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes } from '../index.ts';
 export default actionsManager;
 
 import * as dsc from 'discord.js';
 
-import { cfg } from '@/bot/cfg.js';
-import fmtEmoji from '@/util/fmtEmoji.js';
+import { cfg } from '@/bot/cfg.ts';
+import fmtEmoji from '@/util/fmtEmoji.ts';
 
 export const countingChannelAction: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,

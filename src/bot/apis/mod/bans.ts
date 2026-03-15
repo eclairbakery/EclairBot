@@ -1,8 +1,8 @@
 import * as dsc from 'discord.js';
 
-import { PredefinedColors } from '@/util/color.js';
-import { sendLog } from '../log/send-log.js';
-import { ReplyEmbed } from '../translations/reply-embed.js';
+import { PredefinedColors } from '@/util/color.ts';
+import { sendLog } from '../log/send-log.ts';
+import { ReplyEmbed } from '../translations/reply-embed.ts';
 
 export default async function ban(
     member: dsc.GuildMember,

@@ -1,9 +1,9 @@
-import { Action, Skip, Ok, AnyAction, MessageEventCtx, PredefinedActionCallbacks, PredefinedActionConstraints } from '../index.js';
+import { Action, Skip, Ok, AnyAction, MessageEventCtx, PredefinedActionCallbacks, PredefinedActionConstraints } from '../index.ts';
 
-import { mkAutoreplyAction } from '../autoreply.js';
+import { mkAutoreplyAction } from '../autoreply.ts';
 
-import { cfg } from '@/bot/cfg.js'
-import { client } from '@/client.js';
+import { cfg } from '@/bot/cfg.ts'
+import { client } from '@/client.ts';
 
 export default class AutoModRules {
     static readonly msgAuthorIsNotImmuneToAutomod = (msg: MessageEventCtx) => {

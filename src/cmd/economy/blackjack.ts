@@ -1,12 +1,12 @@
 import * as dsc from 'discord.js';
 
-import { PredefinedColors } from '@/util/color.js';
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { CommandAPI } from '@/bot/apis/commands/api.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
-import Money from '@/util/money.js';
+import { PredefinedColors } from '@/util/color.ts';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import Money from '@/util/money.ts';
 
 interface Card {
     name: string;

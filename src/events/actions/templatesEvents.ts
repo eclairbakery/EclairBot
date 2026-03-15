@@ -1,4 +1,4 @@
-import actionsManager from '@/features/actions/index.js';
+import actionsManager from '@/features/actions/index.ts';
 export default actionsManager;
 
 export interface ForceReloadTemplatesEventCtx {

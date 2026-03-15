@@ -1,16 +1,16 @@
 import * as dsc from 'discord.js';
-import { output } from '@/bot/logging.js';
+import { output } from '@/bot/logging.ts';
 
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { cfg } from '@/bot/cfg.js';
-import { PredefinedColors } from '@/util/color.js';
-import { Hour, Timestamp } from '@/util/parseTimestamp.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { cfg } from '@/bot/cfg.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import { Hour, Timestamp } from '@/util/parseTimestamp.ts';
 
-import mute from '@/bot/apis/mod/muting.js';
-import { watchMute } from '@/bot/watchdog.js';
-import { sendLog } from '@/bot/apis/log/send-log.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import mute from '@/bot/apis/mod/muting.ts';
+import { watchMute } from '@/bot/watchdog.ts';
+import { sendLog } from '@/bot/apis/log/send-log.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 const cmdCfg = cfg.commands.configuration.mute;
 

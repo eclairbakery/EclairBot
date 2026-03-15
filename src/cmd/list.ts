@@ -1,64 +1,64 @@
-import { Category, Command } from '@/bot/command.js';
+import { Category, Command } from '@/bot/command.ts';
 
-import { helpCmd } from '@/cmd/general/help.js';
-import { commandsCmd } from '@/cmd/general/commands.js';
-import { manCmd } from '@/cmd/general/man.js';
-import { pfpCmd } from '@/cmd/general/pfp.js';
-import { bannerCmd } from '@/cmd/general/banner.js';
+import { helpCmd } from '@/cmd/general/help.ts';
+import { commandsCmd } from '@/cmd/general/commands.ts';
+import { manCmd } from '@/cmd/general/man.ts';
+import { pfpCmd } from '@/cmd/general/pfp.ts';
+import { bannerCmd } from '@/cmd/general/banner.ts';
 
-import { warnCmd } from '@/cmd/mod/warn.js';
-import { kickCmd } from '@/cmd/mod/kick.js';
-import { banCmd } from '@/cmd/mod/ban.js';
-import { warnlistCmd } from '@/cmd/mod/warnlist.js';
-import { muteCmd } from '@/cmd/mod/mute.js';
-import { unmuteCmd } from '@/cmd/mod/unmute.js';
-import { clearCmd } from '@/cmd/mod/clear.js';
-import { warnClearCmd } from '@/cmd/mod/warn-clear.js';
-import { toggleCooldownBypassCmd } from './mod/toggle-cooldown-bypass.js';
-import { toggleCmdBlockCmd } from './mod/toggle-cmd-block.js';
-import { resetCmd } from './dev/reset.js';
+import { warnCmd } from '@/cmd/mod/warn.ts';
+import { kickCmd } from '@/cmd/mod/kick.ts';
+import { banCmd } from '@/cmd/mod/ban.ts';
+import { warnlistCmd } from '@/cmd/mod/warnlist.ts';
+import { muteCmd } from '@/cmd/mod/mute.ts';
+import { unmuteCmd } from '@/cmd/mod/unmute.ts';
+import { clearCmd } from '@/cmd/mod/clear.ts';
+import { warnClearCmd } from '@/cmd/mod/warn-clear.ts';
+import { toggleCooldownBypassCmd } from './mod/toggle-cooldown-bypass.ts';
+import { toggleCmdBlockCmd } from './mod/toggle-cmd-block.ts';
+import { resetCmd } from './dev/reset.ts';
 
-import { workCmd } from '@/cmd/economy/work.js';
-import { slutCmd } from '@/cmd/economy/slut.js';
-import { crimeCmd } from '@/cmd/economy/crime.js';
-import { topecoCmd } from '@/cmd/economy/topeco.js';
-import { balCmd } from '@/cmd/economy/bal.js';
-import { blackjackCmd } from '@/cmd/economy/blackjack.js';
-import { robCmd } from '@/cmd/economy/rob.js';
-import { withdrawCmd } from './economy/withdraw.js';
-import { depositCmd } from './economy/deposit.js';
-import { shopCmd } from './economy/shop.js';
-import { useCmd } from './economy/use.js';
-import { itemInfoCmd } from './economy/iteminfo.js';
+import { workCmd } from '@/cmd/economy/work.ts';
+import { slutCmd } from '@/cmd/economy/slut.ts';
+import { crimeCmd } from '@/cmd/economy/crime.ts';
+import { topecoCmd } from '@/cmd/economy/topeco.ts';
+import { balCmd } from '@/cmd/economy/bal.ts';
+import { blackjackCmd } from '@/cmd/economy/blackjack.ts';
+import { robCmd } from '@/cmd/economy/rob.ts';
+import { withdrawCmd } from './economy/withdraw.ts';
+import { depositCmd } from './economy/deposit.ts';
+import { shopCmd } from './economy/shop.ts';
+import { useCmd } from './economy/use.ts';
+import { itemInfoCmd } from './economy/iteminfo.ts';
 
-import { xpCmd } from '@/cmd/leveling/xp.js';
-import { lvlCmd } from '@/cmd/leveling/lvl.js';
-import { toplvlCmd } from '@/cmd/leveling/toplvl.js';
+import { xpCmd } from '@/cmd/leveling/xp.ts';
+import { lvlCmd } from '@/cmd/leveling/lvl.ts';
+import { toplvlCmd } from '@/cmd/leveling/toplvl.ts';
 
-import { plusRepCmd } from '@/cmd/4fun/like.js';
-import { subRepCmd } from '@/cmd/4fun/dislike.js';
-import { reputationCmd } from '@/cmd/4fun/reputation.js';
+import { plusRepCmd } from '@/cmd/4fun/like.ts';
+import { subRepCmd } from '@/cmd/4fun/dislike.ts';
+import { reputationCmd } from '@/cmd/4fun/reputation.ts';
 
-import { wikiCmd } from '@/cmd/general/wiki.js';
-import { toprepCmd } from '@/cmd/4fun/toprep.js';
-import { replistCmd } from '@/cmd/4fun/replist.js';
-import { figletCmd } from '@/cmd/4fun/figlet.js';
+import { wikiCmd } from '@/cmd/general/wiki.ts';
+import { toprepCmd } from '@/cmd/4fun/toprep.ts';
+import { replistCmd } from '@/cmd/4fun/replist.ts';
+import { figletCmd } from '@/cmd/4fun/figlet.ts';
 
-import { restartCmd } from '@/cmd/dev/restart.js';
-import { evalCmd } from '@/cmd/dev/eval.js';
-import { configurationCommand } from './dev/configuration.js';
-import { ecomodCmd } from './economy/ecomod.js';
-import { enableCommandCmd } from './dev/enable-cmd.js';
-import { disableCommandCmd } from './dev/disable-cmd.js';
-import { echoCmd } from './dev/echo.js';
-import { sendEmailCmd } from './email/email.js';
-import { buyCmd } from './economy/buy.js';
-import { collectIncomeCmd } from './economy/collect-income.js';
-import { refreshCmd } from './mod/refresh.js';
-import { emailSignatureCmd } from './email/email-signature.js';
-import { emailDefaultTitleCmd } from './email/email-default-title.js';
-import { compileCmd } from './4fun/compile.js';
-import { emailBlacklistCmd } from './email/email-blacklist.js';
+import { restartCmd } from '@/cmd/dev/restart.ts';
+import { evalCmd } from '@/cmd/dev/eval.ts';
+import { configurationCommand } from './dev/configuration.ts';
+import { ecomodCmd } from './economy/ecomod.ts';
+import { enableCommandCmd } from './dev/enable-cmd.ts';
+import { disableCommandCmd } from './dev/disable-cmd.ts';
+import { echoCmd } from './dev/echo.ts';
+import { sendEmailCmd } from './email/email.ts';
+import { buyCmd } from './economy/buy.ts';
+import { collectIncomeCmd } from './economy/collect-income.ts';
+import { refreshCmd } from './mod/refresh.ts';
+import { emailSignatureCmd } from './email/email-signature.ts';
+import { emailDefaultTitleCmd } from './email/email-default-title.ts';
+import { compileCmd } from './4fun/compile.ts';
+import { emailBlacklistCmd } from './email/email-blacklist.ts';
 
 export const commands: Map<Category, Command[]> = new Map([
     [

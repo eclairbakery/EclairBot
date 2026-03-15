@@ -1,10 +1,10 @@
-import { cfg } from '@/bot/cfg.js';
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { client } from '@/client.js';
-import { output } from '@/bot/logging.js';
-import { db } from '@/bot/apis/db/bot-db.js';
+import { cfg } from '@/bot/cfg.ts';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { client } from '@/client.ts';
+import { output } from '@/bot/logging.ts';
+import { db } from '@/bot/apis/db/bot-db.ts';
 
 type AsynchronicFunction = () => PromiseLike<any>;
 

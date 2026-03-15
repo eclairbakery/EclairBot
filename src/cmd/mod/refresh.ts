@@ -1,8 +1,8 @@
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { addLvlRole, xpToLevel } from "@/bot/level.js";
-import actionsManager, { OnForceReloadTemplates } from "@/events/actions/templatesEvents.js";
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { addLvlRole, xpToLevel } from "@/bot/level.ts";
+import actionsManager, { OnForceReloadTemplates } from "@/events/actions/templatesEvents.ts";
 import { CommandAPI } from "../../bot/apis/commands/api.ts";
 
 export const refreshCmd: Command = {

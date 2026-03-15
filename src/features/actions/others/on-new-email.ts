@@ -1,11 +1,11 @@
-import { ReceivedNewEmailEvent, ReceivedNewEmail } from '@/bot/apis/email/actions.js';
-import { cfg } from '@/bot/cfg.js';
-import { client } from '@/client.js';
-import { Action } from '@/features/actions/index.js';
-import { sendLog } from '@/bot/apis/log/send-log.js';
-import { db } from '@/bot/apis/db/bot-db.js';
+import { ReceivedNewEmailEvent, ReceivedNewEmail } from '@/bot/apis/email/actions.ts';
+import { cfg } from '@/bot/cfg.ts';
+import { client } from '@/client.ts';
+import { Action } from '@/features/actions/index.ts';
+import { sendLog } from '@/bot/apis/log/send-log.ts';
+import { db } from '@/bot/apis/db/bot-db.ts';
 import { AddressObject } from 'mailparser';
-import { PredefinedColors } from '@/util/color.js';
+import { PredefinedColors } from '@/util/color.ts';
 
 async function isSpam(subject: string, text: string, sender: string) {
     // blacklist check

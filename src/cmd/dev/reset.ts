@@ -1,12 +1,12 @@
 import * as dsc from 'discord.js';
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { CommandAPI } from '@/bot/apis/commands/api.js';
-import { cfg } from '@/bot/cfg.js';
-import { db } from '@/bot/apis/db/bot-db.js';
-import { output } from '@/bot/logging.js';
-import { getWarnEmbed, getSuccessEmbed, getErrorEmbed } from '@/util/log.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { cfg } from '@/bot/cfg.ts';
+import { db } from '@/bot/apis/db/bot-db.ts';
+import { output } from '@/bot/logging.ts';
+import { getWarnEmbed, getSuccessEmbed, getErrorEmbed } from '@/util/log.ts';
 
 const cmdCfg = cfg.commands.configuration.reset;
 

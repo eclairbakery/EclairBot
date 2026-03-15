@@ -1,13 +1,13 @@
 import * as dsc from 'discord.js';
 
-import { cfg } from './cfg.js';
-import { PredefinedColors } from '@/util/color.js';
-import { client } from '@/client.js';
-import { output } from '@/bot/logging.js';
-import { Action, PredefinedActionEventTypes, UserEventCtx } from '@/features/actions/index.js';
-import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.js';
-import { ReplyEmbed } from './apis/translations/reply-embed.js';
-import { levenshtein } from '@/util/math/levenshtein.js';
+import { cfg } from './cfg.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import { client } from '@/client.ts';
+import { output } from '@/bot/logging.ts';
+import { Action, PredefinedActionEventTypes, UserEventCtx } from '@/features/actions/index.ts';
+import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.ts';
+import { ReplyEmbed } from './apis/translations/reply-embed.ts';
+import { levenshtein } from '@/util/math/levenshtein.ts';
 
 const recentJoins: { id: string; joinedAt: number; username: string }[] = [];
 

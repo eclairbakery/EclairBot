@@ -1,9 +1,9 @@
-import * as log from '@/util/log.js';
-import { ArgMustBeSomeTypeError, ArgParseError, ArgViolatesRules, MissingRequiredArgError } from '../defs/errors.js';
-import { output } from '@/bot/logging.js';
-import { formatArgType } from './argTypeFormat.js';
+import * as log from '@/util/log.ts';
+import { ArgMustBeSomeTypeError, ArgParseError, ArgViolatesRules, MissingRequiredArgError } from '../defs/errors.ts';
+import { output } from '@/bot/logging.ts';
+import { formatArgType } from './argTypeFormat.ts';
 import { DiscordAPIError } from 'discord.js';
-import { CommandViolatedRule } from '@/bot/command.js';
+import { CommandViolatedRule } from '@/bot/command.ts';
 
 function handleViolatedRule(v: CommandViolatedRule) {
     switch (v) {

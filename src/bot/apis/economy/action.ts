@@ -1,13 +1,13 @@
 import {
     ConfigEconomyCond, ConfigEconomyAction, ConfigEconomyRandomVariant,
     ConfigEconomyMultiplierKind, ConfigEconomyRole
-} from '@/bot/definitions/config/economy.js';
-import { cfg } from '@/bot/cfg.js';
+} from '@/bot/definitions/config/economy.ts';
+import { cfg } from '@/bot/cfg.ts';
 
 import * as dsc from 'discord.js';
 
-import User from '@/bot/apis/db/user.js';
-import Money from '@/util/money.js';
+import User from '@/bot/apis/db/user.ts';
+import Money from '@/util/money.ts';
 
 export interface EconomyExecutorContext {
     user: User;

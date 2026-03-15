@@ -1,7 +1,7 @@
 import util from "node:util";
 import { GuildTextBasedChannel } from "discord.js";
-import { cfg } from "./cfg.js";
-import { client } from "@/client.js";
+import { cfg } from "./cfg.ts";
+import { client } from "@/client.ts";
 import { TextDecoder, TextEncoder } from "node:util";
 
 const decoder = new TextDecoder();

@@ -1,9 +1,9 @@
-import { cfg } from '@/bot/cfg.js';
-import { output } from '@/bot/logging.js';
-import sleep from '@/util/sleep.js';
+import { cfg } from '@/bot/cfg.ts';
+import { output } from '@/bot/logging.ts';
+import sleep from '@/util/sleep.ts';
 import * as dsc from 'discord.js';
-import { Action, PredefinedActionEventTypes, ReactionEventCtx } from '../index.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { Action, PredefinedActionEventTypes, ReactionEventCtx } from '../index.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 let alreadyInHallOfFame: dsc.Snowflake[] = [];
 

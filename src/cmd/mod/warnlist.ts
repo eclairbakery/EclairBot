@@ -1,10 +1,10 @@
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { cfg } from '@/bot/cfg.js';
-import { db } from '@/bot/apis/db/bot-db.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { cfg } from '@/bot/cfg.ts';
+import { db } from '@/bot/apis/db/bot-db.ts';
 import * as dsc from 'discord.js';
-import { PredefinedColors } from '@/util/color.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { PredefinedColors } from '@/util/color.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 export const warnlistCmd: Command = {
     name: 'warnlist',

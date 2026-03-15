@@ -1,9 +1,9 @@
 import * as dsc from 'discord.js';
 
-import { db } from '@/bot/apis/db/bot-db.js';
-import { scheduleWarnDeletion } from '@/features/deleteExpiredWarns.js';
-import actionsManager from '@/features/actions/index.js';
-import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.js';
+import { db } from '@/bot/apis/db/bot-db.ts';
+import { scheduleWarnDeletion } from '@/features/deleteExpiredWarns.ts';
+import actionsManager from '@/features/actions/index.ts';
+import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.ts';
 
 export default async function warn(
     member: dsc.GuildMember,

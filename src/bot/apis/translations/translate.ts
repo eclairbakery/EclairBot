@@ -1,4 +1,4 @@
-import { cfg } from "@/bot/cfg.js";
+import { cfg } from "@/bot/cfg.ts";
 
 export type TranslateableObject = {[key: string | number | symbol] : any} | any[];
 export type Translateable = TranslateableObject | string | number;

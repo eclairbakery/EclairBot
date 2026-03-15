@@ -1,8 +1,8 @@
 console.log('Welcome to EclairBOT!');
 
 // preparation & basic imports
-import { client } from '@/client.js';
-import { output, ft } from '@/bot/logging.js';
+import { client } from '@/client.ts';
+import { output, ft } from '@/bot/logging.ts';
 import * as dotenv from 'dotenv';
 process.on('uncaughtException', async (e) => {
     output.err(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
@@ -17,46 +17,46 @@ dotenv.config({ quiet: true });
 import * as dsc from 'discord.js';
 
 // configuration
-import { cfg } from './bot/cfg.js';
+import { cfg } from './bot/cfg.ts';
 
 // actions
-import AutoModRules from '@/features/actions/mod/automod.js';
-import { initExpiredWarnsDeleter } from '@/features/deleteExpiredWarns.js';
-import { welcomeNewUserAction, sayGoodbyeAction } from '@/features/actions/others/welcomer.js';
-import { countingChannelAction } from '@/features/actions/4fun/countingChannel.js';
-import { lastLetterChannelAction } from '@/features/actions/4fun/lastLetterChannel.js';
-import { mediaChannelAction } from '@/features/actions/4fun/mediaChannelAction.js';
-import { antiSpamAndAntiFlood } from '@/features/actions/mod/anti-spam-flood.js';
-import { basicMsgCreateActions } from '@/features/actions/others/basicMsgCreateActions.js';
-import { registerTemplateChannels } from '@/features/actions/channels/registerTemplateChannels.js';
-import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher, setUpWatchdog } from './bot/watchdog.js';
-import { actionPing } from '@/features/actions/4fun/pingDeathChat.js';
-import { hallOfFameAction } from './features/actions/4fun/hallOfFame.js';
-import { onReceivedEmailAction } from './features/actions/others/on-new-email.js';
+import AutoModRules from '@/features/actions/mod/automod.ts';
+import { initExpiredWarnsDeleter } from '@/features/deleteExpiredWarns.ts';
+import { welcomeNewUserAction, sayGoodbyeAction } from '@/features/actions/others/welcomer.ts';
+import { countingChannelAction } from '@/features/actions/4fun/countingChannel.ts';
+import { lastLetterChannelAction } from '@/features/actions/4fun/lastLetterChannel.ts';
+import { mediaChannelAction } from '@/features/actions/4fun/mediaChannelAction.ts';
+import { antiSpamAndAntiFlood } from '@/features/actions/mod/anti-spam-flood.ts';
+import { basicMsgCreateActions } from '@/features/actions/others/basicMsgCreateActions.ts';
+import { registerTemplateChannels } from '@/features/actions/channels/registerTemplateChannels.ts';
+import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher, setUpWatchdog } from './bot/watchdog.ts';
+import { actionPing } from '@/features/actions/4fun/pingDeathChat.ts';
+import { hallOfFameAction } from './features/actions/4fun/hallOfFame.ts';
+import { onReceivedEmailAction } from './features/actions/others/on-new-email.ts';
 
 // events
-import { registerChannelCreateDscEvents } from './events/client/channelCreate.js';
-import { registerChannelDeleteDscEvents } from './events/client/channelDelete.js';
-import { registerMsgEditDscEvents } from './events/client/messageUpdate.js';
-import { registerMsgDeleteDscEvents } from './events/client/messageDelete.js';
+import { registerChannelCreateDscEvents } from './events/client/channelCreate.ts';
+import { registerChannelDeleteDscEvents } from './events/client/channelDelete.ts';
+import { registerMsgEditDscEvents } from './events/client/messageUpdate.ts';
+import { registerMsgDeleteDscEvents } from './events/client/messageDelete.ts';
 
 // commands
-import * as slashCommands from '@/features/commands/slash.js';
-import * as legacyCommands from '@/features/commands/legacy.js';
+import * as slashCommands from '@/features/commands/slash.ts';
+import * as legacyCommands from '@/features/commands/legacy.ts';
 
-import * as email from '@/bot/apis/email/mail.js';
-import * as cache from '@/bot/apis/cache/cache.js';
+import * as email from '@/bot/apis/email/mail.ts';
+import * as cache from '@/bot/apis/cache/cache.ts';
 
-import * as log from '@/util/log.js';
+import * as log from '@/util/log.ts';
 
 // misc
-import actionsManager from '@/features/actions/index.js';
-import { db } from '@/bot/apis/db/bot-db.js';
+import actionsManager from '@/features/actions/index.ts';
+import { db } from '@/bot/apis/db/bot-db.ts';
 
-import { initEmailActionsIntegration } from '@/bot/apis/email/actions.js';
-import { getChannel } from '@/features/actions/channels/templateChannels.js';
-import { warnGivenLogAction } from '@/features/actions/mod/warn-given.js';
-import { setUpStatusGenerator } from '@/util/generateStatusQuote.js';
+import { initEmailActionsIntegration } from '@/bot/apis/email/actions.ts';
+import { getChannel } from '@/features/actions/channels/templateChannels.ts';
+import { warnGivenLogAction } from '@/features/actions/mod/warn-given.ts';
+import { setUpStatusGenerator } from '@/util/generateStatusQuote.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {

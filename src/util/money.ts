@@ -1,6 +1,6 @@
-import { cfg } from '@/bot/cfg.js';
-import { formatBigint } from './math/format.js';
-import { parseBigint } from './math/parse.js';
+import { cfg } from '@/bot/cfg.ts';
+import { formatBigint } from './math/format.ts';
+import { parseBigint } from './math/parse.ts';
 
 export default class Money {
     static readonly SCALE = 100n;

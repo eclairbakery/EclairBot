@@ -1,11 +1,11 @@
-import * as chars from '@/util/chars.js';
+import * as chars from '@/util/chars.ts';
 
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
 import figlet from 'figlet';
-import debugLog from '@/util/debugLog.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import debugLog from '@/util/debugLog.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 function tokenize(input: string): string[] {
     let result: string[] = [];

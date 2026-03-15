@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
 
-import { computeReputationScales, computeReputationScores } from "./rep.js";
-import { db } from '../db/bot-db.js';
+import { computeReputationScales, computeReputationScores } from "./rep.ts";
+import { db } from '../db/bot-db.ts';
 
 export async function getTopRep(count: number): Promise<[dsc.Snowflake, number][]> {
     const reps = await db.reputation.getAll();

@@ -1,9 +1,9 @@
 import * as dsc from "discord.js";
-import { LogData } from "./log-defs.js";
-import { cfg } from "@/bot/cfg.js";
-import { PredefinedColors } from "@/util/color.js";
-import { client } from "@/client.js";
-import { ReplyEmbed } from "../translations/reply-embed.js";
+import { LogData } from "./log-defs.ts";
+import { cfg } from "@/bot/cfg.ts";
+import { PredefinedColors } from "@/util/color.ts";
+import { client } from "@/client.ts";
+import { ReplyEmbed } from "../translations/reply-embed.ts";
 
 export async function sendLog(logData: LogData, additionalChannels: dsc.Snowflake[] = []) {
     let where = logData.where ?? cfg.channels.mod.logs;

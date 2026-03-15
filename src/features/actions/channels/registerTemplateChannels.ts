@@ -1,9 +1,9 @@
 import * as dsc from 'discord.js';
 
-import { PredefinedActionEventTypes } from '../index.js';
-import { OnForceReloadTemplates } from '../../../events/actions/templatesEvents.js';
-import { addTemplateChannel, getChannel } from './templateChannels.js';
-import { makeChannelName } from '@/util/makeChannelName.js';
+import { PredefinedActionEventTypes } from '../index.ts';
+import { OnForceReloadTemplates } from '../../../events/actions/templatesEvents.ts';
+import { addTemplateChannel, getChannel } from './templateChannels.ts';
+import { makeChannelName } from '@/util/makeChannelName.ts';
 
 function getNextGoal(memberCount: number): number {
     const base = Math.floor(memberCount / 50) * 50;

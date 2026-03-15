@@ -1,6 +1,6 @@
-import { cfg, overrideCfg, saveConfigurationChanges } from "@/bot/cfg.js";
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
+import { cfg, overrideCfg, saveConfigurationChanges } from "@/bot/cfg.ts";
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
 export const configurationCommand: Command = {
     name: 'configuration',

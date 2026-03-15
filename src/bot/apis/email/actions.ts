@@ -1,6 +1,6 @@
-import actionsManager from '@/features/actions/index.js';
+import actionsManager from '@/features/actions/index.ts';
 
-import * as email from './mail.js';
+import * as email from './mail.ts';
 
 export interface ReceivedNewEmail {
     email: email.ReceivedEmail;

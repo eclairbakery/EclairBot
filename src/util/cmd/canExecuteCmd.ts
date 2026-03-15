@@ -1,4 +1,4 @@
-import { Command } from "@/bot/command.js";
+import { Command } from "@/bot/command.ts";
 
 import * as dsc from 'discord.js';
 

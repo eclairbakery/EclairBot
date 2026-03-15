@@ -1,7 +1,7 @@
-import { Config } from "@/bot/cfg.js";
-import { hierarchyCfg } from "./hierarchy.js";
-import { channelsCfg } from "./channels.js";
-import { featuresConfig } from "./features.js";
+import { Config } from "@/bot/cfg.ts";
+import { hierarchyCfg } from "./hierarchy.ts";
+import { channelsCfg } from "./channels.ts";
+import { featuresConfig } from "./features.ts";
 
 const commandsCfg: Config['commands']['configuration'] = {
     ban: {

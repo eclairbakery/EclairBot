@@ -1,13 +1,13 @@
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { PredefinedColors } from '@/util/color.js';
-import { cfg } from '@/bot/cfg.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import { cfg } from '@/bot/cfg.ts';
 
-import findCommand from '@/util/cmd/findCommand.js';
-import { Category } from '@/bot/command.js';
-import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
-import fmtEmoji from '@/util/fmtEmoji.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import findCommand from '@/util/cmd/findCommand.ts';
+import { Category } from '@/bot/command.ts';
+import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.ts';
+import fmtEmoji from '@/util/fmtEmoji.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 export const manCmd: Command = {
     name: 'man',

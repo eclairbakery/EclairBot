@@ -1,9 +1,9 @@
-import { PredefinedColors, Color } from '@/util/color.js';
-import { SendableChannel } from '../defs.js';
+import { PredefinedColors, Color } from '@/util/color.ts';
+import { SendableChannel } from '../defs.ts';
 
 import * as dsc from 'discord.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
-import { t } from '@/bot/apis/translations/translate.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { t } from '@/bot/apis/translations/translate.ts';
 
 export interface Replyable {
     reply:

@@ -1,6 +1,6 @@
 import * as dsc from 'discord.js';
 
-import actionsManager from '@/features/actions/index.js';
+import actionsManager from '@/features/actions/index.ts';
 export default actionsManager;
 
 export const OnWarnGiven = actionsManager.mkEvent('OnWarnGiven');

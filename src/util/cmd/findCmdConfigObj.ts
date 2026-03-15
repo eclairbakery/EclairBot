@@ -1,8 +1,8 @@
-import { cfg } from '@/bot/cfg.js';
-import { Command } from '@/bot/command.js';
-import { commands } from '@/cmd/list.js';
+import { cfg } from '@/bot/cfg.ts';
+import { Command } from '@/bot/command.ts';
+import { commands } from '@/cmd/list.ts';
 
-import { AnyCommandConfig } from '@/bot/definitions/config/subtypes.js';
+import { AnyCommandConfig } from '@/bot/definitions/config/subtypes.ts';
 
 export function findCmdConfCategory(commandName: string): string | undefined {
     for (const [category, content] of Object.entries(cfg.commands.configuration)) {

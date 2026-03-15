@@ -1,9 +1,9 @@
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { output } from '@/bot/logging.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { output } from '@/bot/logging.ts';
 
-import * as cache from '@/bot/apis/cache/cache.js';
+import * as cache from '@/bot/apis/cache/cache.ts';
 
 export const restartCmd: Command = {
     name: 'restart',

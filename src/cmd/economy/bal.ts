@@ -1,13 +1,13 @@
-import User from '@/bot/apis/db/user.js';
+import User from '@/bot/apis/db/user.ts';
 
 import * as dsc from 'discord.js';
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { CommandAPI } from '@/bot/apis/commands/api.js';
-import { PredefinedColors } from '@/util/color.js';
-import { output } from '@/bot/logging.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import { output } from '@/bot/logging.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 export const balCmd: Command = {
     name: 'bal',

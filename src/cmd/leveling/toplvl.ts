@@ -1,12 +1,12 @@
 import * as dsc from 'discord.js';
 
-import { cfg } from '@/bot/cfg.js';
-import { lvlRoles } from '@/bot/level.js';
+import { cfg } from '@/bot/cfg.ts';
+import { lvlRoles } from '@/bot/level.ts';
 
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { output } from '@/bot/logging.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { output } from '@/bot/logging.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 function calculateLevel(xp: number, levelDivider: number): number {
     return Math.floor(

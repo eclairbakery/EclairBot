@@ -1,4 +1,4 @@
-import { Config } from "@/bot/cfg.js";
+import { Config } from "@/bot/cfg.ts";
 
 export const channelsCfg: Config['channels'] = {
     settings: {

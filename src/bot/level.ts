@@ -1,13 +1,13 @@
 import * as dsc from 'discord.js';
 
-import User from './apis/db/user.js';
+import User from './apis/db/user.ts';
 
-import { cfg } from '@/bot/cfg.js';
-import actionsManager, { Action } from '@/features/actions/index.js';
-import { client } from '@/client.js';
-import { mkProgressBar } from '@/util/progressbar.js';
-import { output } from './logging.js';
-import { findLowerClosestKey } from '@/util/objects/findLowerClosestKey.js';
+import { cfg } from '@/bot/cfg.ts';
+import actionsManager, { Action } from '@/features/actions/index.ts';
+import { client } from '@/client.ts';
+import { mkProgressBar } from '@/util/progressbar.ts';
+import { output } from './logging.ts';
+import { findLowerClosestKey } from '@/util/objects/findLowerClosestKey.ts';
 
 export const OnSetXpEvent = actionsManager.mkEvent('OnSetXpEvent');
 export interface XpEventCtx {

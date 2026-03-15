@@ -1,4 +1,4 @@
-import { PredefinedColors, RarelyUsedColors } from "@/util/color.js";
+import { PredefinedColors, RarelyUsedColors } from "@/util/color.ts";
 import { APIEmbedField, Snowflake } from "discord.js";
 
 export interface LogData {

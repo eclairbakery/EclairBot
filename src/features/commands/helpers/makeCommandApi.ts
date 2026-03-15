@@ -1,17 +1,17 @@
 import * as dsc from 'discord.js';
-import * as log from '@/util/log.js';
+import * as log from '@/util/log.ts';
 
-import User from '@/bot/apis/db/user.js';
+import User from '@/bot/apis/db/user.ts';
 
-import { Command, CommandAPI } from '@/bot/command.js';
-import { parseArgs } from './argumentParser.js';
-import { t } from '@/bot/apis/translations/translate.js';
-import { deepMerge } from '@/util/objects/objects.js';
-import { cfg } from '@/bot/cfg.js';
-import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
-import { commands } from '@/cmd/list.js';
-import { EconomyExecutor } from '@/bot/apis/economy/action.js';
-import { flatTypesToUnion } from './flat-types.js';
+import { Command, CommandAPI } from '@/bot/command.ts';
+import { parseArgs } from './argumentParser.ts';
+import { t } from '@/bot/apis/translations/translate.ts';
+import { deepMerge } from '@/util/objects/objects.ts';
+import { cfg } from '@/bot/cfg.ts';
+import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.ts';
+import { commands } from '@/cmd/list.ts';
+import { EconomyExecutor } from '@/bot/apis/economy/action.ts';
+import { flatTypesToUnion } from './flat-types.ts';
 
 type FirstArg<T> =
     T extends { (...args: infer A): any } ?

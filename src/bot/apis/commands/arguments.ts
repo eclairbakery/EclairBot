@@ -1,8 +1,8 @@
-import { Timestamp } from '@/util/parseTimestamp.js';
+import { Timestamp } from '@/util/parseTimestamp.ts';
 import * as dsc from 'discord.js';
-import Money from '@/util/money.js';
+import Money from '@/util/money.ts';
 
-import type { Command } from './cmd.js';
+import type { Command } from './cmd.ts';
 
 export type CommandArgBaseType =
     | 'string'

@@ -1,18 +1,18 @@
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { CommandAPI } from '@/bot/apis/commands/api.js';
-import { cfg } from '@/bot/cfg.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { cfg } from '@/bot/cfg.ts';
 
-import { PredefinedColors } from '@/util/color.js';
-import capitalizeFirst from '@/util/capitalizeFirst.js';
+import { PredefinedColors } from '@/util/color.ts';
+import capitalizeFirst from '@/util/capitalizeFirst.ts';
 
 import * as dsc from 'discord.js';
-import Money from '@/util/money.js';
+import Money from '@/util/money.ts';
 
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
-import { ConfigEconomyShopCategory, ConfigEconomyShopOffer } from '@/bot/definitions/config/economy.js';
-import { MinimalActionsFormatter } from '@/bot/apis/economy/format.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { ConfigEconomyShopCategory, ConfigEconomyShopOffer } from '@/bot/definitions/config/economy.ts';
+import { MinimalActionsFormatter } from '@/bot/apis/economy/format.ts';
 
 function buildSelectMenu(categories: ConfigEconomyShopCategory[]): dsc.StringSelectMenuBuilder {
     return new dsc.StringSelectMenuBuilder()

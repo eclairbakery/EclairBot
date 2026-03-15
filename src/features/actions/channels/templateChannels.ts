@@ -1,9 +1,9 @@
-import { AnyAction, ActionCallback, ConstraintCallback, AnyEventCtx, ActionEventType } from '../index.js';
-import { ChannelEventCtx } from '../index.js';
+import { AnyAction, ActionCallback, ConstraintCallback, AnyEventCtx, ActionEventType } from '../index.ts';
+import { ChannelEventCtx } from '../index.ts';
 
-import actionsManager from '../index.js';
+import actionsManager from '../index.ts';
 
-import { RenameableChannel } from '../../../defs.js';
+import { RenameableChannel } from '../../../defs.ts';
 
 import * as dsc from 'discord.js';
 

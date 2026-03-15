@@ -1,12 +1,12 @@
-import { Category, Command } from '@/bot/command.js';
-import { cfg } from '@/bot/cfg.js';
+import { Category, Command } from '@/bot/command.ts';
+import { cfg } from '@/bot/cfg.ts';
 
-import { PredefinedColors } from '@/util/color.js';
-import capitalizeFirst from '@/util/capitalizeFirst.js';
-import canExecuteCmd from '@/util/cmd/canExecuteCmd.js';
+import { PredefinedColors } from '@/util/color.ts';
+import capitalizeFirst from '@/util/capitalizeFirst.ts';
+import canExecuteCmd from '@/util/cmd/canExecuteCmd.ts';
 
 import * as dsc from 'discord.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { CommandFlags } from "../../bot/apis/commands/misc.ts";
 
 export const commandsCmd: Command = {

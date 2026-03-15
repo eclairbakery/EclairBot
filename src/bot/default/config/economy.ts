@@ -1,5 +1,5 @@
-import EconomyConfig from "@/bot/definitions/config/economy.js";
-import { PredefinedColors } from "@/util/color.js";
+import EconomyConfig from "@/bot/definitions/config/economy.ts";
+import { PredefinedColors } from "@/util/color.ts";
 
 export const economyCfg: EconomyConfig = {
     roles: [

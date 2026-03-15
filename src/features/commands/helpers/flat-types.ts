@@ -1,4 +1,4 @@
-import { CommandArgType } from "@/bot/command.js";
+import { CommandArgType } from "@/bot/command.ts";
 
 export function flatTypesToUnion(type: CommandArgType): CommandArgType[] {
     if (type.base == 'union') {

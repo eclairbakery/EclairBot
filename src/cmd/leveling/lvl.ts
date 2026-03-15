@@ -1,17 +1,17 @@
 import * as dsc from 'discord.js';
 
-import { cfg } from '@/bot/cfg.js';
+import { cfg } from '@/bot/cfg.ts';
 
-import { PredefinedColors } from '@/util/color.js';
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { CommandAPI } from '@/bot/apis/commands/api.js';
-import { xpToLevel, mkLvlProgressBar } from '@/bot/level.js';
-import { output } from '@/bot/logging.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { PredefinedColors } from '@/util/color.ts';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { xpToLevel, mkLvlProgressBar } from '@/bot/level.ts';
+import { output } from '@/bot/logging.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
-import User from '@/bot/apis/db/user.js';
+import User from '@/bot/apis/db/user.ts';
 
 export const lvlCmd: Command = {
     name: 'lvl',

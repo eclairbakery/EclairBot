@@ -1,9 +1,9 @@
-import { ConfigEconomyAction, ConfigEconomyCond } from '@/bot/definitions/config/economy.js';
-import { EconomyExecutor } from './action.js';
+import { ConfigEconomyAction, ConfigEconomyCond } from '@/bot/definitions/config/economy.ts';
+import { EconomyExecutor } from './action.ts';
 
-import Money from '@/util/money.js';
-import { Ternary } from '@/defs.js';
-import { cfg } from '@/bot/cfg.js';
+import Money from '@/util/money.ts';
+import { Ternary } from '@/defs.ts';
+import { cfg } from '@/bot/cfg.ts';
 
 export interface EconomyActionsFormatterConfig {
     indentStep?: string;

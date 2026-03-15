@@ -1,14 +1,14 @@
 import { DB } from "sqlite";
 
-import type { UserDataRaw, Warn, WarnRaw, Rep, RepRaw } from './db-defs.js';
-import type { Balance, Cooldown, Cooldowns } from './db-defs.js';
-import { warnFromRaw, repFromRaw } from './db-defs.js';
+import type { UserDataRaw, Warn, WarnRaw, Rep, RepRaw } from './db-defs.ts';
+import type { Balance, Cooldown, Cooldowns } from './db-defs.ts';
+import { warnFromRaw, repFromRaw } from './db-defs.ts';
 
 export type { UserDataRaw, Warn, WarnRaw, Rep, RepRaw };
 export type { Balance, Cooldown, Cooldowns };
 export { warnFromRaw, repFromRaw };
 
-import User from './user.js';
+import User from './user.ts';
 
 export interface DBRunResult {
     lastID: number | null;

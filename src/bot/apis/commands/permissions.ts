@@ -1,5 +1,5 @@
-import { cfg as cfg2 } from "@/bot/cfg.js";
-import { Command } from "./cmd.js";
+import { cfg as cfg2 } from "@/bot/cfg.ts";
+import { Command } from "./cmd.ts";
 
 export namespace CommandPermissions {
     export function everyone(): Command['permissions'] {

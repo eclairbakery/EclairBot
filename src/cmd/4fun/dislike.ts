@@ -1,11 +1,11 @@
 import * as dsc from 'discord.js';
-import * as log from '@/util/log.js';
+import * as log from '@/util/log.ts';
 
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
-import { getLastRepGivenByUser, getUserReputationProportion, } from '@/bot/apis/rep/rep.js';
-import { mkDualProgressBar } from '@/util/progressbar.js';
+import { getLastRepGivenByUser, getUserReputationProportion, } from '@/bot/apis/rep/rep.ts';
+import { mkDualProgressBar } from '@/util/progressbar.ts';
 
 export const subRepCmd: Command = {
     name: 'dislike',

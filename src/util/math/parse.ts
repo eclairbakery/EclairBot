@@ -1,4 +1,4 @@
-import suffixes from './num-suffixes.js';
+import suffixes from './num-suffixes.ts';
 
 export class NumberParseError extends Error {
     constructor(message: string) { super(message); }

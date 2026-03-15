@@ -1,9 +1,9 @@
-import { db } from '@/bot/apis/db/bot-db.js';
+import { db } from '@/bot/apis/db/bot-db.ts';
 
-import { Warn, WarnRaw, Rep, RepRaw, Balance } from './db-defs.js';
-import { Cooldowns } from './db-defs.js';
-import { repFromRaw, warnFromRaw } from './db-defs.js';
-import Money from '@/util/money.js';
+import { Warn, WarnRaw, Rep, RepRaw, Balance } from './db-defs.ts';
+import { Cooldowns } from './db-defs.ts';
+import { repFromRaw, warnFromRaw } from './db-defs.ts';
+import Money from '@/util/money.ts';
 
 const CooldownMap = {
     'work':           { col: 'last_worked',         prop: 'lastWorked'        },

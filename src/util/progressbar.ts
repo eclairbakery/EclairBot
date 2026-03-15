@@ -1,6 +1,6 @@
 import assert from "node:assert";
-import fmtEmoji from "./fmtEmoji.js";
-import { cfg } from "@/bot/cfg.js";
+import fmtEmoji from "./fmtEmoji.ts";
+import { cfg } from "@/bot/cfg.ts";
 
 export function mkDualProgressBar(red: number, green: number, totalLength: number = 10) {
     const maxHalf = totalLength / 2;

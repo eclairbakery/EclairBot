@@ -1,6 +1,6 @@
-import { cfg } from '@/bot/cfg.js';
-import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.js';
-import capitalizeFirst from '@/util/capitalizeFirst.js';
+import { cfg } from '@/bot/cfg.ts';
+import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.ts';
+import capitalizeFirst from '@/util/capitalizeFirst.ts';
 
 let deathChatTimeout: number;
 

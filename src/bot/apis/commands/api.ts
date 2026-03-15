@@ -1,10 +1,10 @@
-import User, { CooldownCheckResult } from "../db/user.js";
+import User, { CooldownCheckResult } from "../db/user.ts";
 import * as dsc from 'discord.js';
-import { CommandArgBaseType, CommandArgType, CommandArgValueMap, CommandValuableArgument, PreciseValuableArgument } from "./arguments.js";
-import { Category } from "@/bot/categories.js";
-import { Command } from "./cmd.js";
-import type * as log from '@/util/log.js';
-import { EconomyExecutor } from "../economy/action.js";
+import { CommandArgBaseType, CommandArgType, CommandArgValueMap, CommandValuableArgument, PreciseValuableArgument } from "./arguments.ts";
+import { Category } from "@/bot/categories.ts";
+import { Command } from "./cmd.ts";
+import type * as log from '@/util/log.ts';
+import { EconomyExecutor } from "../economy/action.ts";
 
 export interface CommandAPI {
     // ---- COMMAND INFO ----

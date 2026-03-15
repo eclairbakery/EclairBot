@@ -1,15 +1,15 @@
-import { client } from '../../../client.js';
+import { client } from '../../../client.ts';
 
-import sleep from '@/util/sleep.js';
+import sleep from '@/util/sleep.ts';
 
-import actionsManager, { Action, UserEventCtx, PredefinedActionEventTypes, PredefinedActionConstraints, PredefinedActionCallbacks, Ok, Skip, MagicSkipAllActions } from '../index.js';
+import actionsManager, { Action, UserEventCtx, PredefinedActionEventTypes, PredefinedActionConstraints, PredefinedActionCallbacks, Ok, Skip, MagicSkipAllActions } from '../index.ts';
 export default actionsManager;
 
 import * as dsc from 'discord.js';
 
-import { cfg } from '@/bot/cfg.js';
-import { watchNewMember } from '@/bot/watchdog.js';
-import { output } from '@/bot/logging.js';
+import { cfg } from '@/bot/cfg.ts';
+import { watchNewMember } from '@/bot/watchdog.ts';
+import { output } from '@/bot/logging.ts';
 
 const StartItId = '572906387382861835';
 

@@ -1,11 +1,11 @@
 import * as dsc from 'discord.js';
 
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
-import { db } from '@/bot/apis/db/bot-db.js';
-import { output } from '@/bot/logging.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { db } from '@/bot/apis/db/bot-db.ts';
+import { output } from '@/bot/logging.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 let ecoRoles = [
     "1235548306550161451"

@@ -4,19 +4,19 @@ import {
     CommandArgType,
     Command,
     Category
-} from '@/bot/command.js';
+} from '@/bot/command.ts';
 
 import * as dsc from 'discord.js';
 
-import parseTimestamp from '@/util/parseTimestamp.js';
-import findCommand from '@/util/cmd/findCommand.js';
-import User from '@/bot/apis/db/user.js';
-import Money from '@/util/money.js';
-import { NumberParseError } from '@/util/math/parse.js';
+import parseTimestamp from '@/util/parseTimestamp.ts';
+import findCommand from '@/util/cmd/findCommand.ts';
+import User from '@/bot/apis/db/user.ts';
+import Money from '@/util/money.ts';
+import { NumberParseError } from '@/util/math/parse.ts';
 
-import { ArgMustBeSomeTypeError, MissingRequiredArgError } from '../defs/errors.js';
-import { flatTypesToUnion } from './flat-types.js';
-import { output } from '@/bot/logging.js';
+import { ArgMustBeSomeTypeError, MissingRequiredArgError } from '../defs/errors.ts';
+import { flatTypesToUnion } from './flat-types.ts';
+import { output } from '@/bot/logging.ts';
 
 async function parseUser(raw: string, name: string, context?: ParserContext): Promise<dsc.GuildMember | null> {
     try {

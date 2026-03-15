@@ -1,13 +1,13 @@
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { CommandAPI } from '@/bot/apis/commands/api.js';
-import { PredefinedColors } from '@/util/color.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
-import { output } from '@/bot/logging.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { output } from '@/bot/logging.ts';
 
-import { ConfigEconomyAction } from '@/bot/definitions/config/economy.js';
-import Money from '@/util/money.js';
+import { ConfigEconomyAction } from '@/bot/definitions/config/economy.ts';
+import Money from '@/util/money.ts';
 
 export function formatAction(api: CommandAPI, action: ConfigEconomyAction): ReplyEmbed | null {
     const SuccessColor = PredefinedColors.Green;

@@ -1,16 +1,16 @@
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { PredefinedColors } from '@/util/color.js';
-import { cfg } from '@/bot/cfg.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import { cfg } from '@/bot/cfg.ts';
 
 import * as dsc from 'discord.js';
-import { output } from '@/bot/logging.js';
+import { output } from '@/bot/logging.ts';
 
-import warn from '@/bot/apis/mod/warns.js';
-import parseTimestamp, { Timestamp } from '@/util/parseTimestamp.js';
-import clamp from '@/util/math/clamp.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import warn from '@/bot/apis/mod/warns.ts';
+import parseTimestamp, { Timestamp } from '@/util/parseTimestamp.ts';
+import clamp from '@/util/math/clamp.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 export const warnCmd: Command = {
     name: 'warn',

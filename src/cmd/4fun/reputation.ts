@@ -1,11 +1,11 @@
 import * as dsc from 'discord.js';
 
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { output } from '@/bot/logging.js';
-import { getUserReputation, Reputation } from '@/bot/apis/rep/rep.js';
-import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { output } from '@/bot/logging.ts';
+import { getUserReputation, Reputation } from '@/bot/apis/rep/rep.ts';
+import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 function getReputationDescription(user: dsc.GuildMember, reputation: Reputation): string {
     let firstSentence: string = '', secondSentence: string = '', thirdSentence: string = '';

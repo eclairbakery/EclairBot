@@ -1,14 +1,14 @@
-import { getRandomInt } from '@/util/math/rand.js';
+import { getRandomInt } from '@/util/math/rand.ts';
 
-import { PredefinedColors } from '@/util/color.js';
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { CommandAPI } from '@/bot/apis/commands/api.js';
-import { output } from '@/bot/logging.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { PredefinedColors } from '@/util/color.ts';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { output } from '@/bot/logging.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
-import Money from '@/util/money.js';
+import Money from '@/util/money.ts';
 
 const CooldownMs = 10 * 1000;
 const WorkAmountMin = 50;

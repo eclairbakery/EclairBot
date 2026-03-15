@@ -1,4 +1,4 @@
-import { CommandArgType, CommandViolatedRule } from "@/bot/command.js";
+import { CommandArgType, CommandViolatedRule } from "@/bot/command.ts";
 
 export class ArgParseError extends Error {};
 

@@ -1,6 +1,6 @@
 import * as dsc from 'discord.js';
-import { AnyCommandConfig, BlockCommandsRules, Emoji, PermissionDefinitionConfig } from './subtypes.js';
-import { ConfigFeatures } from './features.js';
+import { AnyCommandConfig, BlockCommandsRules, Emoji, PermissionDefinitionConfig } from './subtypes.ts';
+import { ConfigFeatures } from './features.ts';
 
 export interface Config {
     hierarchy: {

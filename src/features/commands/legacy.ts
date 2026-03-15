@@ -1,23 +1,23 @@
-import * as log from '@/util/log.js';
+import * as log from '@/util/log.ts';
 import * as dsc from 'discord.js';
-import { output } from '@/bot/logging.js';
+import { output } from '@/bot/logging.ts';
 
-import { cfg } from '@/bot/cfg.js';
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { commands } from '@/cmd/list.js';
+import { cfg } from '@/bot/cfg.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { commands } from '@/cmd/list.ts';
 
-import canExecuteCmd from '@/util/cmd/canExecuteCmd.js';
-import findCommand from '@/util/cmd/findCommand.js';
+import canExecuteCmd from '@/util/cmd/canExecuteCmd.ts';
+import findCommand from '@/util/cmd/findCommand.ts';
 
-import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.js';
-import actionsManager, { PredefinedActionEventTypes } from '../actions/index.js';
+import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.ts';
+import actionsManager, { PredefinedActionEventTypes } from '../actions/index.ts';
 
-import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
-import { PredefinedColors } from '@/util/color.js';
+import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.ts';
+import { PredefinedColors } from '@/util/color.ts';
 
-import { handleError } from './helpers/errorHandler.js';
-import { makeCommandApi } from './helpers/makeCommandApi.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { handleError } from './helpers/errorHandler.ts';
+import { makeCommandApi } from './helpers/makeCommandApi.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 function waitForButton(interaction: dsc.Message, buttonId: string, time = 15000) {
     return new Promise((resolve, reject) => {

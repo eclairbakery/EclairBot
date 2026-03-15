@@ -1,13 +1,13 @@
 import * as dsc from 'discord.js';
-import actionsManager from '@/features/actions/index.js';
+import actionsManager from '@/features/actions/index.ts';
 
-import { cfg } from '@/bot/cfg.js';
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { CommandAPI } from '@/bot/apis/commands/api.js';
-import { levelToXp, OnSetXpEvent } from '@/bot/level.js';
-import { output } from '@/bot/logging.js';
+import { cfg } from '@/bot/cfg.ts';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { levelToXp, OnSetXpEvent } from '@/bot/level.ts';
+import { output } from '@/bot/logging.ts';
 
 export const xpCmd: Command = {
     name: 'xp',

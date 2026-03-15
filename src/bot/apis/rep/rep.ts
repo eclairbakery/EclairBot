@@ -1,9 +1,9 @@
 import * as dsc from 'discord.js';
 
-import { db, repFromRaw } from '../db/bot-db.js';
+import { db, repFromRaw } from '../db/bot-db.ts';
 
-import User from '@/bot/apis/db/user.js';
-import type { Rep, RepRaw } from '@/bot/apis/db/db-defs.js';
+import User from '@/bot/apis/db/user.ts';
+import type { Rep, RepRaw } from '@/bot/apis/db/db-defs.ts';
 export type { Rep };
 
 export interface RepProportion {

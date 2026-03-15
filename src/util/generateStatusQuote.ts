@@ -1,6 +1,6 @@
-import { client } from "@/client.js";
+import { client } from "@/client.ts";
 import { ActivityType } from "discord.js";
-import { getRandomInt } from "./math/rand.js";
+import { getRandomInt } from "./math/rand.ts";
 
 type DiscordStatus = {
     type: ActivityType,

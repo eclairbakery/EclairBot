@@ -1,4 +1,4 @@
-import Money from "@/util/money.js";
+import Money from "@/util/money.ts";
 
 export interface UserDataRaw {
     user_id: string;

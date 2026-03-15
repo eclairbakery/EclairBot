@@ -1,4 +1,4 @@
-import suffixes from './num-suffixes.js';
+import suffixes from './num-suffixes.ts';
 
 export function formatNumber(value: number): string {
     const abs = Math.abs(value);

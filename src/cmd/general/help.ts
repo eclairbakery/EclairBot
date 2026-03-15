@@ -1,16 +1,16 @@
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.js';
-import { CommandAPI } from '@/bot/apis/commands/api.js';
-import { cfg } from '@/bot/cfg.js';
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { cfg } from '@/bot/cfg.ts';
 
-import { PredefinedColors } from '@/util/color.js';
-import capitalizeFirst from '@/util/capitalizeFirst.js';
-import canExecuteCmd from '@/util/cmd/canExecuteCmd.js';
+import { PredefinedColors } from '@/util/color.ts';
+import capitalizeFirst from '@/util/capitalizeFirst.ts';
+import canExecuteCmd from '@/util/cmd/canExecuteCmd.ts';
 
 import * as dsc from 'discord.js';
-import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.js';
+import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { Category } from "../../bot/categories.ts";
 
 function buildSelectMenu(commands: Map<Category, Command[]>): dsc.StringSelectMenuBuilder {

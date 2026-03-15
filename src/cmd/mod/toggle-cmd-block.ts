@@ -1,8 +1,8 @@
-import { cfg, getCommandOverride, saveConfigurationChanges } from "@/bot/cfg.js";
-import { Command} from "@/bot/command.js";
-import { CommandFlags } from '@/bot/apis/commands/misc.js';
-import { findCmdConfCategory } from "@/util/cmd/findCmdConfigObj.js";
-import { deepMerge } from "@/util/objects/objects.js";
+import { cfg, getCommandOverride, saveConfigurationChanges } from "@/bot/cfg.ts";
+import { Command} from "@/bot/command.ts";
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { findCmdConfCategory } from "@/util/cmd/findCmdConfigObj.ts";
+import { deepMerge } from "@/util/objects/objects.ts";
 
 import * as dsc from 'discord.js';
 

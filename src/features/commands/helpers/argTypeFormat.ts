@@ -1,4 +1,4 @@
-import { CommandArgType } from "@/bot/command.js";
+import { CommandArgType } from "@/bot/command.ts";
 
 export function formatArgType(argType: CommandArgType | CommandArgType[]): string | undefined {
     if (Array.isArray(argType)) {

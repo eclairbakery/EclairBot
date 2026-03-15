@@ -4,7 +4,7 @@ all: check run
 # it was added here for easy and quick shipment
 # and will have to be removed as quickly as possible
 run: 
-	deno run -A --sloppy-imports src/main.ts
+	deno run -A src/main.ts
 
 check:
-	deno check --sloppy-imports src/main.ts
+	deno check src/main.ts

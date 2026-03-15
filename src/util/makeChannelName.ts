@@ -1,5 +1,5 @@
-import { cfg } from "@/bot/cfg.js";
-import { output } from "@/bot/logging.js";
+import { cfg } from "@/bot/cfg.ts";
+import { output } from "@/bot/logging.ts";
 
 export interface ChannelName { name: string; emoji: string; leaveSpaces?: boolean };
 

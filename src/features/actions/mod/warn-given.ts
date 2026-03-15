@@ -1,16 +1,16 @@
-import ban from '@/bot/apis/mod/bans.js';
-import kick from '@/bot/apis/mod/kicks.js';
-import mute from '@/bot/apis/mod/muting.js';
+import ban from '@/bot/apis/mod/bans.ts';
+import kick from '@/bot/apis/mod/kicks.ts';
+import mute from '@/bot/apis/mod/muting.ts';
 
-import { db } from '@/bot/apis/db/bot-db.js';
-import { sendLog } from '@/bot/apis/log/send-log.js';
+import { db } from '@/bot/apis/db/bot-db.ts';
+import { sendLog } from '@/bot/apis/log/send-log.ts';
 
-import { cfg } from '@/bot/cfg.js';
-import { client } from '@/client.js';
-import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.js';
-import { Action } from '@/features/actions/index.js';
-import { PredefinedColors } from '@/util/color.js';
-import { Hour } from '@/util/parseTimestamp.js';
+import { cfg } from '@/bot/cfg.ts';
+import { client } from '@/client.ts';
+import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.ts';
+import { Action } from '@/features/actions/index.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import { Hour } from '@/util/parseTimestamp.ts';
 
 export const warnGivenLogAction: Action<WarnEventCtx> = {
     activationEventType: OnWarnGiven,

@@ -1,6 +1,6 @@
-import { sendLog } from "@/bot/apis/log/send-log.js";
-import { cfg } from "@/bot/cfg.js";
-import { PredefinedColors } from "@/util/color.js";
+import { sendLog } from "@/bot/apis/log/send-log.ts";
+import { cfg } from "@/bot/cfg.ts";
+import { PredefinedColors } from "@/util/color.ts";
 import * as dsc from 'discord.js';
 
 export function registerMsgEditDscEvents(client: dsc.Client) {
