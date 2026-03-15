@@ -30,57 +30,56 @@ export const toplvlCmd: Command = {
     expectedArgs: [],
 
     async execute(api) {
-        try {
-            const rows = await api.executor.leveling.getEveryoneXPWithLimit(50);
+        const rows = await api.executor.leveling.getEveryoneXPWithLimit(50);
 
-            if (rows.length == 0) {
-                await api.reply("Nie ma żadnego w bazie poziomu :sob:");
-            }
+        if (rows.length == 0) {
+            await api.reply("Nie ma żadnego w bazie poziomu :sob:");
+        }
 
-            const fields: dsc.APIEmbedField[] = [];
-            let i = 0;
+        const fields: dsc.APIEmbedField[] = [];
+        let i = 0;
 
-            for (const row of rows) {
-                if (++i > 12) break;
+        for (const row of rows) {
+            if (++i > 12) break;
 
-                try {
-                    const member = await api.guild?.members.fetch(row.user_id);
-                    if (!member) {
-                        i--;
-                        continue;
-                    }
-
-                    const userLvlRole = lvlRoles.filter((id) => member.roles.cache.has(id)).at(-1);
-                    fields.push({
-                        name: `${i} » ${member.user.username}`,
-                        value: `${userLvlRole ? `<@&${userLvlRole}>` : "Nowicjusz..."}\n**Lvl**: ${calculateLevel(row.xp, cfg.features.leveling.levelDivider)}\n**XP**: ${row.xp}${i % 2 === 1 ? "‎" : ""}`,
-                        inline: true,
-                    });
-                } catch (e) {
-                    output.warn(e);
+            try {
+                const member = await api.guild?.members.fetch(row.user_id);
+                if (!member) {
                     i--;
                     continue;
                 }
+
+                const userLvlRole = lvlRoles.filter((id) => member.roles.cache.has(id)).at(-1);
+                fields.push({
+                    name: `${i} » ${member.user.username}`,
+                    value: `${userLvlRole ? `<@&${userLvlRole}>` : "Nowicjusz..."}\n**Lvl**: ${calculateLevel(row.xp, cfg.features.leveling.levelDivider)}\n**XP**: ${row.xp}${i % 2 === 1 ? "‎" : ""}`,
+                    inline: true,
+                });
+            } catch (e) {
+                output.warn(e);
+                i--;
+                continue;
             }
+        }
 
-            const serverXP = await api.executor.leveling.getTotalServerXP();
+        const serverXP = await api.executor.leveling.getTotalServerXP();
 
-            await api.reply({
-                components: [
-                    new dsc.ContainerBuilder()
-                        .addFileComponents(
-                            (f) => f.setURL("https://cdn.discordapp.com/attachments/1404396223934369844/1404397238578577491/toplvl_image.png?ex=689b0a5a&is=6899b8da&hm=eac2a0db46bfad2dd34fa1ef8dbf9b918e46913229f7b1a9c470d952982787e8&"),
-                        )
-                        .addSeparatorComponents((separator) => separator)
-                        .addTextDisplayComponents(
-                            (td) => td.setContent("- " + fields.join("\n- ")),
-                        )
-                        .addSeparatorComponents((separator) => separator)
-                        .addTextDisplayComponents(
-                            (td) => td.setContent(`-# Poziom serwera: + ${calculateLevel(serverXP, cfg.features.leveling.levelDivider)} (${serverXP} XP)`),
-                        ),
-                ],
-                /**
+        await api.reply({
+            components: [
+                new dsc.ContainerBuilder()
+                    .addFileComponents(
+                        (f) => f.setURL("https://cdn.discordapp.com/attachments/1404396223934369844/1404397238578577491/toplvl_image.png?ex=689b0a5a&is=6899b8da&hm=eac2a0db46bfad2dd34fa1ef8dbf9b918e46913229f7b1a9c470d952982787e8&"),
+                    )
+                    .addSeparatorComponents((separator) => separator)
+                    .addTextDisplayComponents(
+                        (td) => td.setContent("- " + fields.join("\n- ")),
+                    )
+                    .addSeparatorComponents((separator) => separator)
+                    .addTextDisplayComponents(
+                        (td) => td.setContent(`-# Poziom serwera: + ${calculateLevel(serverXP, cfg.features.leveling.levelDivider)} (${serverXP} XP)`),
+                    ),
+            ],
+            /**
                 embeds: [
                     new ReplyEmbed()
                         .setFields(fields)
@@ -90,11 +89,7 @@ export const toplvlCmd: Command = {
                         }),
                 ],
                 */
-                flags: dsc.MessageFlags.IsComponentsV2,
-            });
-        } catch (err) {
-            output.err(err);
-            await api.reply("❌ Wystąpił błąd podczas pobierania topu poziomów.");
-        }
+            flags: dsc.MessageFlags.IsComponentsV2,
+        });
     },
 };
