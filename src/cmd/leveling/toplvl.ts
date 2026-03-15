@@ -67,16 +67,16 @@ export const toplvlCmd: Command = {
         await api.reply({
             components: [
                 new dsc.ContainerBuilder()
-                    .addFileComponents(
-                        (f) => f.setURL("https://cdn.discordapp.com/attachments/1404396223934369844/1404397238578577491/toplvl_image.png?ex=689b0a5a&is=6899b8da&hm=eac2a0db46bfad2dd34fa1ef8dbf9b918e46913229f7b1a9c470d952982787e8&"),
+                    .addFileComponents((f) => f.setURL("https://cdn.discordapp.com/attachments/1404396223934369844/1404397238578577491/toplvl_image.png?ex=689b0a5a&is=6899b8da&hm=eac2a0db46bfad2dd34fa1ef8dbf9b918e46913229f7b1a9c470d952982787e8&"))
+                    .setAccentColor(0x1ebfd5)
+                    .addSectionComponents((section) =>
+                        section
+                            .addTextDisplayComponents((td) => td.setContent("- " + fields.join("\n- ")))
                     )
-                    .addSeparatorComponents((separator) => separator)
-                    .addTextDisplayComponents(
-                        (td) => td.setContent("- " + fields.join("\n- ")),
-                    )
-                    .addSeparatorComponents((separator) => separator)
-                    .addTextDisplayComponents(
-                        (td) => td.setContent(`-# Poziom serwera: + ${calculateLevel(serverXP, cfg.features.leveling.levelDivider)} (${serverXP} XP)`),
+                    .addSectionComponents((section) =>
+                        section.addTextDisplayComponents(
+                            (td) => td.setContent(`Poziom serwera: ${calculateLevel(serverXP, cfg.features.leveling.levelDivider)} (${serverXP} XP)`),
+                        )
                     ),
             ],
             /**
