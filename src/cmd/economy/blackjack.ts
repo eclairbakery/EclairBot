@@ -74,11 +74,19 @@ export const blackjackCmd: Command = {
 
         const userId = api.invoker.id;
         const player = api.executor;
+
+        const activeGames = await player.games.getActive();
+        if (activeGames.length > 0) {
+            return api.log.replyError(api, 'Już grasz w jakąś grę!', `Musisz najpierw skończyć gre w ${activeGames.map(s => `**${s}**`).join(', ')}`);
+        }
+
         const playerBalance = await player.economy.getBalance();
 
         if (playerBalance.wallet.lessThan(bet)) {
             return api.log.replyError(api, 'Nie masz wystarczającej ilości pieniędzy.', 'Może nie zdążyłeś ich wypłacić?');
         }
+
+        await player.games.add('blackjack');
 
         const playerHand: Card[] = [drawCard(), drawCard()];
         const dealerHand: Card[] = [drawCard(), drawCard()];
@@ -117,6 +125,7 @@ export const blackjackCmd: Command = {
                 playerHand.push(drawCard());
                 if (calcHandValue(playerHand) > 21) {
                     await player.economy.deductWalletMoney(bet);
+                    await player.games.remove('blackjack');
                     gameOver = true;
                     await button.update({
                         embeds: [
@@ -157,6 +166,7 @@ export const blackjackCmd: Command = {
                     color = PredefinedColors.Red;
                 }
 
+                await player.games.remove('blackjack');
                 gameOver = true;
                 await button.update({
                     embeds: [
@@ -172,6 +182,7 @@ export const blackjackCmd: Command = {
 
         collector.on('end', async () => {
             if (!gameOver) {
+                await player.games.remove('blackjack');
                 await gameMsg.edit({
                     embeds: [
                         getEmbed(false)
