@@ -78,6 +78,9 @@ export const toplvlCmd: Command = {
                     .setContent(`Poziom serwera: ${calculateLevel(serverXP, cfg.features.leveling.levelDivider)} (${serverXP} XP)`),
             ],
             flags: dsc.MessageFlags.IsComponentsV2,
+            allowedMentions: {
+                parse: []
+            }
         });
     },
 };
