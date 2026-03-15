@@ -4,6 +4,7 @@ import { deepMerge } from '@/util/objects/objects.ts';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { Config } from './definitions/config/config.ts';
 import { defaultCfg } from './default/config/index.ts';
+import { AnyCommandConfig } from './definitions/config/subtypes.ts';
 
 export let overrideCfg: Partial<Config> = {};
 
@@ -20,15 +21,16 @@ export function saveConfigurationChanges() {
     writeFileSync('bot/config.js', `(${JSON5.stringify(overrideCfg, null, 4)})`, 'utf-8');
 }
 
-export function getCommandOverride(commandName: string): any {
+export function getCommandOverride(commandName: string): AnyCommandConfig {
     if (!overrideCfg.commands) {
-        (overrideCfg as any).legacy.commands = {};
+        (overrideCfg as Partial<{commands: Record<PropertyKey, never>}>).commands = {};
     }
 
     if (!overrideCfg.commands!.configuration) {
-        (overrideCfg as any).legacy.commands.configuration = {};
+        (overrideCfg as Config).commands.configuration = {};
     }
 
+    // deno-lint-ignore no-explicit-any
     const cmds = overrideCfg.commands!.configuration as any;
     cmds[commandName] ??= {};
     return cmds[commandName];

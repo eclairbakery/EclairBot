@@ -1,5 +1,6 @@
 import { cfg } from '@/bot/cfg.ts';
 
+// deno-lint-ignore no-explicit-any
 export type TranslateableObject = { [key: string | number | symbol]: any } | any[];
 export type Translateable = TranslateableObject | string | number;
 
@@ -54,7 +55,8 @@ function translateObj<T extends TranslateableObject>(what: T): T {
     if (Array.isArray(what)) {
         return what.map((v) => translate(v)) as T;
     }
-
+    
+    // deno-lint-ignore no-explicit-any
     const output: Record<string, any> = { ...what };
 
     for (const key of Object.keys(output)) {

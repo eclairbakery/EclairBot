@@ -1,3 +1,5 @@
+// deno-lint-ignore-file
+
 import util from 'node:util';
 
 export function deepMerge<T>(base: T, override: Partial<T>): T {

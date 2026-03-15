@@ -136,7 +136,7 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
                         const item = this.ctx.getItemById(subAction.itemId);
                         if (item && item.onUse && item.onUse.length > 0) {
                             if (item.onUse.length === 1 && item.onUse[0].op === 'random') {
-                                result.push(...this.formatRandom(item.onUse[0] as any, nextIndent, `${nextLinePrefix}**${percent}%** na ${subject} który losowo:`, false));
+                                result.push(...this.formatRandom(item.onUse[0], nextIndent, `${nextLinePrefix}**${percent}%** na ${subject} który losowo:`, false));
                                 continue;
                             }
                             result.push(`${nextLinePrefix}**${percent}%** na ${subject} który:`);
@@ -177,7 +177,7 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
                         const item = this.ctx.getItemById(action.itemId);
                         if (item && item.onUse && item.onUse.length > 0) {
                             if (item.onUse.length === 1 && item.onUse[0].op === 'random') {
-                                result.push(...this.formatRandom(item.onUse[0] as any, indent, `${linePrefix}${this.config.goodEmoji} Daję ${subject} który losowo:`, false));
+                                result.push(...this.formatRandom(item.onUse[0], indent, `${linePrefix}${this.config.goodEmoji} Daję ${subject} który losowo:`, false));
                                 break;
                             }
                             result.push(`${linePrefix}${this.config.goodEmoji} Daję ${subject} który:`);

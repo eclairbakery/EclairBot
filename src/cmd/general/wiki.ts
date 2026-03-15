@@ -28,11 +28,11 @@ interface WikiSummaryResponse {
 async function getDisambiguationTitles(title: string): Promise<string[]> {
     const url = `https://pl.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(title)}&prop=links&format=json`;
     const res = await fetch(url);
-    const data = await res.json() as any;
+    const data = await res.json() as { parse?: { links: { ns: number, "*": string }[] } };
 
     if (!data.parse?.links) return [];
 
-    return data.parse.links.filter((l: any) => l.ns === 0).map((l: any) => l['*']);
+    return data.parse.links.filter((l) => l.ns === 0).map((l) => l['*']);
 }
 
 async function downloadFromWikipedia(languageVersions: string[], args: string[]) {

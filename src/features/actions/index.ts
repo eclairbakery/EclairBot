@@ -1,6 +1,8 @@
 import * as log from '@/util/log.ts';
 import * as dsc from 'discord.js';
 
+// deno-lint-ignore-file
+
 // import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx }
 export type MessageEventCtx = dsc.Message;
 export type ReactionEventCtx = { reaction: dsc.MessageReaction; user: dsc.User };
@@ -17,12 +19,13 @@ export type AnyEventCtx =
     | ThreadEventCtx
     | ChannelEventCtx
     | ReactionEventCtx
-    | BanEventCtx
+    | BanEventCtx 
+    // deno-lint-ignore no-explicit-any
     | any /* for custom events */;
 
 export const MagicSkipAllActions = Symbol('MagicSkipAllActions');
 
-export type ActionCallback<CtxType> = (ctx: CtxType) => void | Promise<any> | symbol | Promise<symbol>;
+export type ActionCallback<CtxType> = (ctx: CtxType) => void | Promise<unknown> | symbol | Promise<symbol>;
 export type AnyActionCallback = (ctx: AnyEventCtx) => void;
 
 export type ConstraintCallback<CtxType> = (ctx: CtxType) => boolean;
@@ -189,10 +192,12 @@ class ActionManager {
         client: dsc.Client,
         eventName: string,
         eventType: ActionEventType,
-        getCtx: (...args: any[]) => T,
+        // deno-lint-ignore no-explicit-any
+        getCtx: (...args: (any)[]) => T,
+        // deno-lint-ignore no-explicit-any
         actionFilter?: (action: AnyAction, ...args: any[]) => boolean,
     ) {
-        client.on(eventName, async (...args: any[]) => {
+        client.on(eventName, async (...args: unknown[]) => {
             const ctx = getCtx(...args);
 
             if (eventName == 'messageCreate') {
@@ -369,15 +374,15 @@ class ActionManager {
         for (const action of actions) {
             // check constraints
             for (const constraint of action.constraints) {
-                if (constraint(ctx as any) == Skip) {
+                if (constraint(ctx) == Skip) {
                     continue actionsLoop;
                 }
             }
 
             // execute callbacks
             for (const callback of action.callbacks) {
-                const result = callback(ctx as any);
-                if (result && typeof (result as any).then === 'function') {
+                const result = callback(ctx as PromiseLike<unknown>);
+                if (result && typeof (result as PromiseLike<unknown>).then === 'function') {
                     if (await result == MagicSkipAllActions) {
                         break actionsLoop;
                     }

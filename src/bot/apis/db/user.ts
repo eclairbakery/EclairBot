@@ -1,6 +1,6 @@
 import { db } from '@/bot/apis/db/bot-db.ts';
 
-import { Balance, Rep, RepRaw, Warn, WarnRaw } from './db-defs.ts';
+import { Balance, Rep, RepRaw, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
 import { Cooldowns } from './db-defs.ts';
 import { repFromRaw, warnFromRaw } from './db-defs.ts';
 import Money from '@/util/money.ts';
@@ -347,12 +347,12 @@ export default class User {
         get: async (): Promise<Cooldowns> => {
             await this.ensureExists();
             const cols = Object.values(CooldownMap).map((v) => v.col).join(', ');
-            const row = await db.selectOne<any>(
+            const row = await db.selectOne<UserDataRaw>(
                 `SELECT ${cols} FROM users WHERE user_id = ?`,
                 [this.id],
             );
 
-            const result = {} as any;
+            const result = {} as unknown as Cooldowns;
             for (const key of Object.keys(CooldownMap)) {
                 const k = key as CooldownKey;
                 result[CooldownMap[k].prop] = row?.[CooldownMap[k].col] ?? null;

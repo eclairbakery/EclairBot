@@ -27,5 +27,5 @@ export interface Command {
         allowedUsers: dsc.Snowflake[] | null;
     };
     /** The execute function */
-    execute: (api: CommandAPI) => any | PromiseLike<any>;
+    execute: (api: CommandAPI) => unknown;
 }

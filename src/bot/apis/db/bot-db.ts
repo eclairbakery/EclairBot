@@ -1,4 +1,4 @@
-import { DB } from 'sqlite';
+import { DB, QueryParameterSet } from 'sqlite';
 
 import type { Rep, RepRaw, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
 import type { Balance, Cooldown, Cooldowns } from './db-defs.ts';
@@ -97,12 +97,12 @@ export class BotDatabase {
 
     // ------------------ low-level helpers ------------------
 
-    private processParams(params: any[]): any[] {
+    private processParams(params: unknown[]): unknown[] {
         return params.map((p) => typeof p === 'bigint' ? Number(p) : p);
     }
 
-    async runSql(sql: string, params: any[] = []): Promise<DBRunResult> {
-        this.raw.query(sql, this.processParams(params));
+    async runSql(sql: string, params: unknown[] = []): Promise<DBRunResult> {
+        this.raw.query(sql, this.processParams(params) as QueryParameterSet);
         let lastID: number | null = null;
         let changes: number | null = null;
 
@@ -121,19 +121,21 @@ export class BotDatabase {
         return Promise.resolve();
     }
 
-    selectOne<T = any>(sql: string, params: any[] = []): Promise<T | undefined> {
-        const rows = [...this.raw.queryEntries(sql, this.processParams(params))];
+    // deno-lint-ignore no-explicit-any
+    selectOne<T = any>(sql: string, params: unknown[] = []): Promise<T | undefined> {
+        const rows = [...this.raw.queryEntries(sql, this.processParams(params) as QueryParameterSet)];
         return Promise.resolve(rows[0] as T | undefined);
     }
 
-    selectMany<T = any>(sql: string, params: any[] = []): Promise<T[]> {
-        const rows = [...this.raw.queryEntries(sql, this.processParams(params))];
+    // deno-lint-ignore no-explicit-any
+    selectMany<T = any>(sql: string, params: unknown[] = []): Promise<T[]> {
+        const rows = [...this.raw.queryEntries(sql, this.processParams(params) as QueryParameterSet)];
         return Promise.resolve(rows as T[]);
     }
 
     // ------------------ generic utils ------------------
 
-    async transaction(fn: () => Promise<any>): Promise<any> {
+    async transaction<T>(fn: () => Promise<T>): Promise<T> {
         await this.execSql('BEGIN');
         try {
             const result = await fn();

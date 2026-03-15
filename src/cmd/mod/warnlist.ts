@@ -1,7 +1,7 @@
 import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { cfg } from '@/bot/cfg.ts';
-import { db } from '@/bot/apis/db/bot-db.ts';
+import { db, WarnRaw } from '@/bot/apis/db/bot-db.ts';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
@@ -39,7 +39,7 @@ export const warnlistCmd: Command = {
 
         async function fetchWarns(page: number) {
             let query = 'SELECT * FROM warns';
-            const params: any[] = [];
+            const params: unknown[] = [];
 
             if (targetUser) {
                 query += ' WHERE user_id = ?';
@@ -49,7 +49,7 @@ export const warnlistCmd: Command = {
             query += ' ORDER BY id DESC LIMIT ? OFFSET ?';
             params.push(limit, (page - 1) * limit);
 
-            return await db.selectMany(query, params);
+            return await db.selectMany<WarnRaw & {user_id: string}>(query, params);
         }
 
         async function renderPage(page: number) {

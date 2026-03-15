@@ -56,7 +56,7 @@ export const hallOfFameAction: Action<ReactionEventCtx> = {
                             value: 'Aby dostać się na Hall of Fame, musisz zdobyć co najmniej trzy emotki ⭐, 🔥 lub 💎. Więcej informacji [tutaj](<https://canary.discord.com/channels/1235534146722463844/1392128976574484592/1392129983714955425>).',
                         },
                     ])
-                    .setFooter({ text: `Wysłano w ${(msg.channel as any)?.name ?? 'Polsce'}` });
+                    .setFooter({ text: `Wysłano w ${(msg.channel as {name: string})?.name ?? 'Polsce'}` });
                 if (msg.attachments.size > 0) {
                     const first = msg.attachments.first();
                     if (first?.contentType?.startsWith('image/')) {

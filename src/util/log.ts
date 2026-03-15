@@ -6,6 +6,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { t } from '@/bot/apis/translations/translate.ts';
 
 export interface Replyable {
+    // deno-lint-ignore no-explicit-any
     reply: (options: any) => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;
 }
 

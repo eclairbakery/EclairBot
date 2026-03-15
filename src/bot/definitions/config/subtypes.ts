@@ -40,6 +40,7 @@ export interface CommandConfigBase {
     cooldownBypassUsers?: dsc.Snowflake[];
     cooldownBypassRoles?: dsc.Snowflake[];
 }
+// deno-lint-ignore no-explicit-any
 export type AnyCommandConfig = CommandConfigBase & { [key: string]: any };
 
 export interface ModCommandConfig extends CommandConfigBase {

@@ -3,7 +3,7 @@ import * as log from '@/util/log.ts';
 
 import User from '@/bot/apis/db/user.ts';
 
-import { Command, CommandAPI } from '@/bot/command.ts';
+import { Command, CommandAPI, CommandArgType } from '@/bot/command.ts';
 import { parseArgs } from './argumentParser.ts';
 import { t } from '@/bot/apis/translations/translate.ts';
 import { deepMerge } from '@/util/objects/objects.ts';
@@ -13,16 +13,22 @@ import { commands } from '@/cmd/list.ts';
 import { EconomyExecutor } from '@/bot/apis/economy/action.ts';
 import { flatTypesToUnion } from './flat-types.ts';
 
-type FirstArg<T> = T extends { (...args: infer A): any } ? A extends [infer F, ...any[]] ? F : never
-    : T extends { call(this: any, ...args: infer A): any } ? A extends [any, infer F, ...any[]] ? F : never
-    : T extends { apply(this: any, args: infer A): any } ? A extends [infer Arr] ? Arr extends [infer F, ...any[]] ? F : never
-        : never
-    : T extends abstract new (...args: infer A) => any ? A extends [infer F, ...any[]] ? F : never
+type FirstArg<T> =
+    T extends { (...args: infer A): unknown }
+        ? A extends [infer F, ...unknown[]] ? F : never
+    : T extends { call(this: unknown, ...args: infer A): unknown }
+        ? A extends [unknown, infer F, ...unknown[]] ? F : never
+    : T extends { apply(this: unknown, args: infer A): unknown }
+        ? A extends [infer Arr]
+            ? Arr extends [infer F, ...unknown[]] ? F : never
+            : never
+    : T extends abstract new (...args: infer A) => unknown
+        ? A extends [infer F, ...unknown[]] ? F : never
     : never;
 
 type ContentReply<T> = T & { content: string };
 
-function makeOptions(options: FirstArg<CommandAPI['reply']>): any {
+function makeOptions(options: FirstArg<CommandAPI['reply']>): object {
     let result: dsc.MessageReplyOptions;
 
     switch (typeof options) {
@@ -32,6 +38,7 @@ function makeOptions(options: FirstArg<CommandAPI['reply']>): any {
 
         case 'object': {
             const opts = options as ContentReply<typeof options>;
+            // deno-lint-ignore no-explicit-any
             result = (opts.content ? deepMerge(opts, { content: t(opts.content) }) : opts) as any;
             break;
         }
@@ -54,11 +61,12 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
     const api: CommandAPI = {
         // -- args --
         getEnumArg: <const O extends readonly string[]>(name: string, options: O) => {
-            return api.getTypedArg(name, { base: 'enum', options } as any) as any;
+            return api.getTypedArg(name, { base: 'enum', options });
         },
-        getTypedArg: (name: string, type: any) => {
-            const types = flatTypesToUnion(Array.isArray(type) ? { base: 'union', variants: type.map((t: any) => ({ base: t })) } : (typeof type == 'string' ? { base: type } : type));
-            return parsedArgs.find((a) => a.name == name && types.some((t: any) => t.base == a.type.base))! as any;
+        getTypedArg: (name: string, type: CommandArgType) => {
+            const types = flatTypesToUnion(Array.isArray(type) ? { base: 'union', variants: type.map((t) => ({ base: t })) } : (typeof type == 'string' ? { base: type } : type));
+            // deno-lint-ignore no-explicit-any
+            return parsedArgs.find((a) => a.name == name && types.some((t) => t.base == a.type.base))! as any;
         },
 
         // -- invoker --
@@ -79,7 +87,7 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
         channel: context.interaction?.channel ?? context.msg!.channel,
         guild: context.interaction?.guild ?? context.msg?.guild ?? undefined,
 
-        checkCooldown: async (field: any, cooldownMs: number) => {
+        checkCooldown: async (field, cooldownMs: number) => {
             const config = findCmdConfResolvable(commandObj.name);
 
             if (config.cooldownBypassUsers?.includes(user.id)) return { can: true };
@@ -89,7 +97,7 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
                 }
             }
 
-            return await user.cooldowns.check(field, cooldownMs);
+            return await user.cooldowns.check(field as "work", cooldownMs);
         },
 
         raw: {

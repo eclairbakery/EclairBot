@@ -115,7 +115,7 @@ export const blackjackCmd: Command = {
 
         const collector = gameMsg.createMessageComponentCollector({
             time: 30000,
-            filter: ((i: dsc.ButtonInteraction) => i.user.id == userId) as any,
+            filter: ((i) => i.user.id == userId),
         });
 
         collector.on('collect', async (button: dsc.ButtonInteraction) => {

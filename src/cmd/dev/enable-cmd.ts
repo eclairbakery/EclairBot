@@ -27,8 +27,8 @@ export const enableCommandCmd: Command = {
         const cmd = api.getTypedArg('arg', 'command-ref').value;
         const name = cmd.name;
 
-        if (!overrideCfg.commands) (overrideCfg as any).commands = {};
-        if (!overrideCfg.commands?.configuration) (overrideCfg as any).commands.configuration = {};
+        if (!overrideCfg.commands) (overrideCfg as Partial<{commands: Record<PropertyKey, unknown>}>).commands = {};
+        if (!overrideCfg.commands?.configuration) overrideCfg.commands!.configuration = {};
 
         overrideCfg!.commands!.configuration! ??= {};
         overrideCfg!.commands!.configuration![name] ??= cfg.commands.defaultConfiguration;

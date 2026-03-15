@@ -9,7 +9,7 @@ const encoder = new TextEncoder();
 
 const origWrite = process.stdout.write.bind(process.stdout);
 
-process.stdout.write = function (chunk: any, encoding?: any, callback?: any): boolean {
+process.stdout.write = function (chunk: string | Uint8Array, encoding?: NodeJS.BufferEncoding, callback?: () => unknown): boolean {
     let data: string | Uint8Array;
     if (typeof chunk === 'string') {
         output.forward(chunk.trimEnd());
@@ -25,7 +25,7 @@ process.stdout.write = function (chunk: any, encoding?: any, callback?: any): bo
 } as typeof process.stdout.write;
 
 const origErrWrite = process.stderr.write.bind(process.stderr);
-process.stderr.write = function (chunk: any, encoding?: any, callback?: any): boolean {
+process.stderr.write = function (chunk: string | Uint8Array, encoding?: NodeJS.BufferEncoding, callback?:() => unknown): boolean {
     let data: string | Uint8Array;
     if (typeof chunk === 'string') {
         output.forward(chunk.trimEnd());
@@ -52,7 +52,7 @@ export namespace output {
     let stderrChannel: GuildTextBasedChannel;
     let stdwarnChannel: GuildTextBasedChannel;
 
-    function format(raw: any, ...args: any[]): string {
+    function format(raw: string | object | unknown, ...args: unknown[]): string {
         let text = util.format(typeof raw === 'object' ? JSON.stringify(raw) : raw, ...args);
         if (!text.endsWith('\n')) text += '\n';
         return text.trimEnd();
@@ -93,21 +93,21 @@ export namespace output {
         } catch {}
     }
 
-    export function log(msg: any, ...args: any[]) {
+    export function log(msg: string | object | unknown, ...args: unknown[]) {
         const data = format(msg, ...args);
         const prefixed = decorate('LOG', colors.CYAN, data);
         console.log(prefixed);
         send('stdout', data);
     }
 
-    export function warn(msg: any, ...args: any[]) {
+    export function warn(msg: string | object | unknown, ...args: unknown[]) {
         const data = format(msg, ...args);
         const prefixed = decorate('WARN', colors.YELLOW, data);
         console.warn(prefixed);
         send('stdwarn', data);
     }
 
-    export function err(msg: any, ...args: any[]) {
+    export function err(msg: string | object | unknown, ...args: unknown[]) {
         const data = format(msg, ...args);
         const prefixed = decorate('ERR', colors.RED, data);
         console.error(prefixed);

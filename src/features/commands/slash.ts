@@ -52,7 +52,7 @@ client.on('interactionCreate', async (int: Interaction) => {
     const { command, config } = result;
 
     const replyable: log.Replyable = {
-        reply: async (options: any) => {
+        reply: async (options) => {
             if (int.replied || int.deferred) {
                 return await int.editReply(options);
             }
@@ -61,7 +61,7 @@ client.on('interactionCreate', async (int: Interaction) => {
         },
     };
 
-    if (!canExecuteCmd(command, int.member! as any)) {
+    if (!canExecuteCmd(command, int.member! as dsc.GuildMember)) {
         return log.replyError(
             replyable,
             'Hej, a co ty odpie*dalasz?',
@@ -151,7 +151,7 @@ client.on('interactionCreate', async (int: Interaction) => {
         });
         await command.execute(api);
     } catch (err) {
-        handleError(err, { reply: (options: any) => int.editReply(options as any) });
+        handleError(err, { reply: (options) => int.editReply(options) });
     }
 });
 

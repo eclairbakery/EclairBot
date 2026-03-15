@@ -14,7 +14,7 @@ function handleViolatedRule(v: CommandViolatedRule) {
     }
 }
 
-export function handleError(err: any, msg: log.Replyable) {
+export function handleError(err: Error | unknown, msg: log.Replyable) {
     if (err instanceof ArgParseError) {
         if (err instanceof MissingRequiredArgError) {
             return log.replyError(

@@ -23,12 +23,12 @@ function getBoxFilepath(box: string): string {
     return path.join(getCacheDir(), box + '.json');
 }
 
-async function readBox(boxpath: string): Promise<Record<string, any>> {
+async function readBox(boxpath: string): Promise<Record<string, unknown>> {
     try {
         const content = await fs.readFile(boxpath, 'utf8');
         return JSON.parse(content);
-    } catch (err: any) {
-        if (err.code === 'ENOENT') {
+    } catch (err: unknown) {
+        if ((err as Error & {code: string})?.code === 'ENOENT') {
             return {};
         }
         throw err;

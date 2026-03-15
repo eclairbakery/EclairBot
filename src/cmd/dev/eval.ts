@@ -6,7 +6,7 @@ import { client } from '@/client.ts';
 import { output } from '@/bot/logging.ts';
 import { db } from '@/bot/apis/db/bot-db.ts';
 
-type AsynchronicFunction = () => PromiseLike<any>;
+type AsynchronicFunction = () => PromiseLike<unknown>;
 
 export const evalCmd: Command = {
     name: 'eval',

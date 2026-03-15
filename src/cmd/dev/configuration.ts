@@ -34,20 +34,20 @@ export const configurationCommand: Command = {
         const value = api.getTypedArg('value', 'string')?.value as string | undefined;
 
         const keys = property.split('.');
-        let target: any = cfg;
-        let targetOverride: any = overrideCfg;
+        let target: { [k: string]: unknown } = cfg as unknown as { [k: string]: unknown };
+        let targetOverride: Partial<{ [k: string]: unknown }> = overrideCfg as Partial<{ [k: string]: unknown }>;
 
         for (let i = 0; i < keys.length - 1; i++) {
             const key = keys[i];
             if (!(key in target)) {
                 return api.reply(`❌ klucz "${key}" nie istnieje w konfiguracji (nie, nie możesz robić nowych).`);
             }
-            target = target[key];
+            target = target[key] as { [k: string]: unknown };
 
             if (!(key in targetOverride)) {
                 targetOverride[key] = {};
             }
-            targetOverride = targetOverride[key];
+            targetOverride = targetOverride[key] as { [k: string]: unknown };
         }
 
         const lastKey = keys[keys.length - 1];
@@ -61,7 +61,7 @@ export const configurationCommand: Command = {
             const text = `🔍 wartość \`${property}\` = \`\`\`${JSON.stringify(currentValue, null, 4)}\`\`\``;
             if (text.length > 1900) {
                 if (typeof currentValue === 'object') {
-                    return api.reply(`⚠️ \`${property}\` jest trochę za długie by je tu wyświetlić, ale jest obiektem, więc mogę Ci podać klucze, pod którymi może znajdziesz swoją wymarzoną wartość: \`[${Object.keys(currentValue).join(', ')}]\``);
+                    return api.reply(`⚠️ \`${property}\` jest trochę za długie by je tu wyświetlić, ale jest obiektem, więc mogę Ci podać klucze, pod którymi może znajdziesz swoją wymarzoną wartość: \`[${Object.keys(currentValue as object).join(', ')}]\``);
                 }
                 return api.reply(`❌ \`${property}\` jest trochę za długie by je tu wyświetlić i nie jest obiektem, więc niestety nic nie mogę zrobić, by ci pomóc`);
             } else {
@@ -74,7 +74,7 @@ export const configurationCommand: Command = {
             sanitizedValue = sanitizedValue.slice(3, -3).trim();
         }
 
-        let evaluatedValue: any;
+        let evaluatedValue: unknown;
         try {
             evaluatedValue = (0, eval)('(' + sanitizedValue + ')');
         } catch (e) {
