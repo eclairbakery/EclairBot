@@ -1,13 +1,13 @@
-import * as dsc from 'discord.js';
+import * as dsc from "discord.js";
 
-import { cfg } from './cfg.ts';
-import { PredefinedColors } from '@/util/color.ts';
-import { client } from '@/client.ts';
-import { output } from '@/bot/logging.ts';
-import { Action, PredefinedActionEventTypes, UserEventCtx } from '@/features/actions/index.ts';
-import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.ts';
-import { ReplyEmbed } from './apis/translations/reply-embed.ts';
-import { levenshtein } from '@/util/math/levenshtein.ts';
+import { cfg } from "./cfg.ts";
+import { PredefinedColors } from "@/util/color.ts";
+import { client } from "@/client.ts";
+import { output } from "@/bot/logging.ts";
+import { Action, PredefinedActionEventTypes, UserEventCtx } from "@/features/actions/index.ts";
+import { OnWarnGiven, WarnEventCtx } from "@/events/actions/warnEvents.ts";
+import { ReplyEmbed } from "./apis/translations/reply-embed.ts";
+import { levenshtein } from "@/util/math/levenshtein.ts";
 
 const recentJoins: { id: string; joinedAt: number; username: string }[] = [];
 
@@ -18,23 +18,20 @@ async function logAlarming(description: string, fatal: boolean, mem: dsc.GuildMe
         embeds: [
             new ReplyEmbed()
                 .setAuthor({
-                    name: 'EclairBOT'
+                    name: "EclairBOT",
                 })
                 .setColor(fatal ? PredefinedColors.Red : PredefinedColors.Yellow)
                 .setTitle(
-                    '❌ ' + (fatal 
-                        ? 'Podejmij działania na temat użytkownika <user>!'.replaceAll('<user>', mem.user.username) 
-                        : `<user> może być podejrzany.`.replaceAll('<user>', mem.user.username)
-                    )
+                    "❌ " + (fatal ? "Podejmij działania na temat użytkownika <user>!".replaceAll("<user>", mem.user.username) : `<user> może być podejrzany.`.replaceAll("<user>", mem.user.username)),
                 )
                 .setDescription(
-                    `Nastąpiły te problemy z tym użytkownikiem:\n\n${description}${'\n\nWyliczyłem i ma <score> punktów reputacji.'.replaceAll('<score>', score.toString())} A! Co prawda nie spingowałem, ale sorki za mały flood.`
-                )
-        ]
+                    `Nastąpiły te problemy z tym użytkownikiem:\n\n${description}${"\n\nWyliczyłem i ma <score> punktów reputacji.".replaceAll("<score>", score.toString())} A! Co prawda nie spingowałem, ale sorki za mały flood.`,
+                ),
+        ],
     });
 }
 
-export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'kicked'> {
+export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | "kicked"> {
     let defaultTrustScore = 5;
     let trustScore = defaultTrustScore;
 
@@ -44,60 +41,60 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
     if (cfg.features.watchdog.trustNewMembers) return true;
     if (cfg.features.watchdog.kickNewMembers) {
         await mem.kick();
-        return 'kicked';
+        return "kicked";
     }
     if (!cfg.features.watchdog.allowNewBots && mem.user.bot) {
         const notifyChan = await client.channels.fetch(cfg.channels.mod.eclairBotAlerts);
         if (notifyChan && notifyChan.isSendable()) {
-            await notifyChan.send('dodawanie botów jest wyłączone w konfiguracji')
-            await notifyChan.send('aby dodać innego bota, włącz cfg.features.watchdog.allowNewBots');
-            if (mem.user.id == '572906387382861835') await notifyChan.send('a i btw to jest zacznijTO więc i tak bym go wywalił bo jest gejem');
+            await notifyChan.send("dodawanie botów jest wyłączone w konfiguracji");
+            await notifyChan.send("aby dodać innego bota, włącz cfg.features.watchdog.allowNewBots");
+            if (mem.user.id == "572906387382861835") await notifyChan.send("a i btw to jest zacznijTO więc i tak bym go wywalił bo jest gejem");
         } else {
-            output.warn('New bot joined, but cannot find the channel to notify everyone about it.');
+            output.warn("New bot joined, but cannot find the channel to notify everyone about it.");
         }
-        await mem.kick('zasada cfg.features.watchdog.allowNewBots nie pozwala na dodawanie nowych botów');
-        return 'kicked';
+        await mem.kick("zasada cfg.features.watchdog.allowNewBots nie pozwala na dodawanie nowych botów");
+        return "kicked";
     }
 
     const created = mem.user.createdAt;
     const now = new Date();
     const accountAge = (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
     if (accountAge < 30) {
-        issues.push('Konto jest dziwnie młode (młodsze niż miesiąc).');
+        issues.push("Konto jest dziwnie młode (młodsze niż miesiąc).");
         trustScore -= 2;
     }
     if (accountAge < 7) {
-        issues.push('Konto jest naprawdę świeże (młodsze niż tydzień).');
+        issues.push("Konto jest naprawdę świeże (młodsze niż tydzień).");
         trustScore -= 5;
     }
 
     if (!mem.user.avatar) {
         trustScore -= 1;
-        issues.push('Konto nie ma avatara (ciekawe).');
+        issues.push("Konto nie ma avatara (ciekawe).");
     }
 
     const susWords = ["free nitro", "discord.gg", "http://", "https://", ".ru", "▒", "░"];
-    if (susWords.some(w => (mem.user.username.toLowerCase().includes(w)) || mem.user.displayName.toLowerCase().includes(w))) {
+    if (susWords.some((w) => (mem.user.username.toLowerCase().includes(w)) || mem.user.displayName.toLowerCase().includes(w))) {
         trustScore -= 1;
-        issues.push('Ma jakiś nick z adresem url, losowymi znakami unicode, invite do serwera, reklamą na Discord Nitro i/lub ruską domeną.');
+        issues.push("Ma jakiś nick z adresem url, losowymi znakami unicode, invite do serwera, reklamą na Discord Nitro i/lub ruską domeną.");
     }
 
-    if (mem.user.id == '572906387382861835') {
+    if (mem.user.id == "572906387382861835") {
         trustScore -= 3;
-        issues.push('Nikt go tu nie chce, wywalać StartIT w tej chwili!');
+        issues.push("Nikt go tu nie chce, wywalać StartIT w tej chwili!");
     }
 
     recentJoins.push({ id: mem.id, joinedAt: Date.now(), username: mem.user.username });
     const windowStart = Date.now() - cfg.features.watchdog.massJoinWindow;
-    const recent = recentJoins.filter(e => e.joinedAt > windowStart);
+    const recent = recentJoins.filter((e) => e.joinedAt > windowStart);
     if (recent.length >= cfg.features.watchdog.massJoinThreshold) {
-        issues.push(`Wykryto masowe dołączenia nowych członków - <count> w bliskim do siebie czasie.`.replaceAll('<count>', recent.length.toString()));
+        issues.push(`Wykryto masowe dołączenia nowych członków - <count> w bliskim do siebie czasie.`.replaceAll("<count>", recent.length.toString()));
         trustScore -= 3;
     }
 
-    for (const prev of recent.filter(e => e.id !== mem.id)) {
+    for (const prev of recent.filter((e) => e.id !== mem.id)) {
         if (levenshtein(prev.username.toLowerCase(), mem.user.username.toLowerCase()) <= cfg.features.watchdog.similarityThreshold) {
-            issues.push(`Nick podobny do innego niedawnego użytkownika: <user>`.replaceAll('<user>', prev.username));
+            issues.push(`Nick podobny do innego niedawnego użytkownika: <user>`.replaceAll("<user>", prev.username));
             trustScore -= 2;
         }
     }
@@ -106,9 +103,9 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
         if (trustScore <= 0) {
             fatal = true;
         }
-        issues.push('Ma trust score mniejszy od domyślnego.');
+        issues.push("Ma trust score mniejszy od domyślnego.");
 
-        let issuesString = '';
+        let issuesString = "";
         issues.forEach((issue) => {
             issuesString += `- ${issue}\n`;
         });
@@ -136,13 +133,13 @@ async function downgradeRole(member: dsc.GuildMember) {
         output.log(`watchdog: kicked ${member.user.username} from the administration`);
     } else {
         const memberRoles = member.roles.cache;
-        const highestRoleId = roleHierarchy.find(rid => memberRoles.has(rid));
+        const highestRoleId = roleHierarchy.find((rid) => memberRoles.has(rid));
         if (!highestRoleId) return;
         const currentIndex = roleHierarchy.indexOf(highestRoleId);
-        if (currentIndex === roleHierarchy.length - 1) return; 
+        if (currentIndex === roleHierarchy.length - 1) return;
         const newRoleId = roleHierarchy[currentIndex + 1];
-        await member.roles.remove(highestRoleId, 'watchdog');
-        await member.roles.add(newRoleId, 'watchdog');
+        await member.roles.remove(highestRoleId, "watchdog");
+        await member.roles.add(newRoleId, "watchdog");
         output.log(`watchdog: degraded ${member.user.username} from ${highestRoleId} to ${newRoleId}`);
     }
 }
@@ -168,7 +165,7 @@ const channelAddWatcher: Action<any> = {
     constraints: [
         () => {
             return cfg.features.watchdog.shallAutoDegrade;
-        }
+        },
     ],
     callbacks: [
         async (ctx) => {
@@ -184,8 +181,8 @@ const channelAddWatcher: Action<any> = {
                 await downgradeRole(member);
             }
             return;
-        }
-    ]
+        },
+    ],
 };
 
 const channelDeleteWatcher: Action<any> = {
@@ -193,7 +190,7 @@ const channelDeleteWatcher: Action<any> = {
     constraints: [
         () => {
             return cfg.features.watchdog.shallAutoDegrade;
-        }
+        },
     ],
     callbacks: [
         async (ctx) => {
@@ -209,8 +206,8 @@ const channelDeleteWatcher: Action<any> = {
                 await downgradeRole(member);
             }
             return;
-        }
-    ]
+        },
+    ],
 };
 
 const onWarnGivenWatcher: Action<WarnEventCtx> = {
@@ -218,22 +215,22 @@ const onWarnGivenWatcher: Action<WarnEventCtx> = {
     constraints: [
         () => {
             return cfg.features.watchdog.shallAutoDegrade;
-        }
+        },
     ],
     callbacks: [
         async (ctx) => {
-            output.log('watchdog: warn given');
+            output.log("watchdog: warn given");
             if (!ctx.moderator) {
                 return;
-            };
+            }
             const member = await client.guilds.cache.first()?.members.fetch(ctx.moderator);
             if (!member) return;
             if (addAction(ctx.moderator, "warn")) {
                 output.log(`watchdog: about to downgrade role for ${member.user.username} [warning too many times per minute]`);
                 await downgradeRole(member);
             }
-        }
-    ]
+        },
+    ],
 };
 
 const onMuteGivenWatcher: Action<UserEventCtx> = {
@@ -241,26 +238,26 @@ const onMuteGivenWatcher: Action<UserEventCtx> = {
     constraints: [
         () => {
             return cfg.features.watchdog.shallAutoDegrade;
-        }
+        },
     ],
     callbacks: [
         async (ctx) => {
-            output.log('watchdog: mute given');
+            output.log("watchdog: mute given");
             if (ctx.user.id == ctx.client.user.id) {
-                output.log('watchdog: ignoring mute, given by eclairbot');
+                output.log("watchdog: ignoring mute, given by eclairbot");
                 return;
             }
             if (addAction(ctx.id, "mute")) {
                 output.log(`watchdog: about to downgrade role for ${ctx.user.username} [muting too many times per minute]`);
                 await downgradeRole(ctx);
             }
-        }
-    ]
+        },
+    ],
 };
 
-export async function watchMute(executor: dsc.GuildMember) {   
+export async function watchMute(executor: dsc.GuildMember) {
     if (!cfg.features.watchdog.shallAutoDegrade) return;
-    output.log('watchdog: mute given by commmand');
+    output.log("watchdog: mute given by commmand");
     if (addAction(executor.id, "mute")) {
         output.log(`watchdog: about to downgrade role for ${executor.user.username} [muting too many times per minute]`);
         await downgradeRole(executor);
@@ -271,7 +268,7 @@ const dangerousPerms: dsc.PermissionsString[] = ["Administrator", "ModerateMembe
 
 export async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.PermissionsString[]) {
     const current = role.permissions.toArray();
-    const dangerous = permissionsAdded.filter(p => dangerousPerms.includes(p));
+    const dangerous = permissionsAdded.filter((p) => dangerousPerms.includes(p));
 
     if (dangerous.length === 0) return;
 
@@ -282,7 +279,7 @@ export async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.Per
         return;
     }
 
-    const cleaned = current.filter(p => !dangerous.includes(p));
+    const cleaned = current.filter((p) => !dangerous.includes(p));
 
     await role.setPermissions(cleaned);
 
@@ -292,13 +289,13 @@ export async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.Per
 }
 
 export function setUpWatchdog() {
-    client.on('roleCreate', (newRole: dsc.Role) => {
+    client.on("roleCreate", (newRole: dsc.Role) => {
         watchRoleChanges(newRole, newRole.permissions.toArray());
     });
-    
-    client.on('roleUpdate', (oldRole: dsc.Role, newRole: dsc.Role) => {
-        watchRoleChanges(newRole, newRole.permissions.toArray().filter(p => !oldRole.permissions.toArray().includes(p)));
+
+    client.on("roleUpdate", (oldRole: dsc.Role, newRole: dsc.Role) => {
+        watchRoleChanges(newRole, newRole.permissions.toArray().filter((p) => !oldRole.permissions.toArray().includes(p)));
     });
 }
 
-export {channelAddWatcher, channelDeleteWatcher, onWarnGivenWatcher, onMuteGivenWatcher};
+export { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher };

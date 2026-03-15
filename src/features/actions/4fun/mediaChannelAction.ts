@@ -1,12 +1,12 @@
-import sleep from '@/util/sleep.ts';
+import sleep from "@/util/sleep.ts";
 
-import actionsManager, { Action, PredefinedActionEventTypes, MessageEventCtx } from '../index.ts';
+import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes } from "../index.ts";
 export default actionsManager;
 
-import * as dsc from 'discord.js';
+import * as dsc from "discord.js";
 
-import { cfg } from '@/bot/cfg.ts';
-import fmtEmoji from '@/util/fmtEmoji.ts';
+import { cfg } from "@/bot/cfg.ts";
+import fmtEmoji from "@/util/fmtEmoji.ts";
 
 export const mediaChannelAction: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreate,
@@ -16,7 +16,7 @@ export const mediaChannelAction: Action<MessageEventCtx> = {
             const channel = cfg.features.forFun.media.find((mc) => mc.channel == msg.channelId);
             if (channel == null || channel == undefined) return false;
             return true;
-        }
+        },
     ],
     callbacks: [
         async (msg: dsc.Message) => {
@@ -37,8 +37,8 @@ export const mediaChannelAction: Action<MessageEventCtx> = {
             if (check) {
                 if (channelConfig.shallCreateThread) {
                     await msg.startThread({
-                        name: 'Odpowiedzi!',
-                        reason: 'Tutaj się pisze odpowiedzi czy coś.'
+                        name: "Odpowiedzi!",
+                        reason: "Tutaj się pisze odpowiedzi czy coś.",
                     });
                 }
                 for (const reaction of channelConfig.addReactions) {
@@ -51,6 +51,6 @@ export const mediaChannelAction: Action<MessageEventCtx> = {
                 await reply.delete();
                 return;
             }
-        }
-    ]
-}
+        },
+    ],
+};

@@ -10,7 +10,6 @@ export enum CommandFlags {
     WorksInDM = 1 << 3,
     Unsafe = 1 << 4,
     Deprecated = 1 << 5,
-};
+}
 
-
-export type CommandViolatedRule = 'used-infinity' | 'non-int-passed';
+export type CommandViolatedRule = "used-infinity" | "non-int-passed";

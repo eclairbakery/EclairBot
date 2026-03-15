@@ -1,10 +1,10 @@
 import { cfg, getCommandOverride, saveConfigurationChanges } from "@/bot/cfg.ts";
-import { Command} from "@/bot/command.ts";
-import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { Command } from "@/bot/command.ts";
+import { CommandFlags } from "@/bot/apis/commands/misc.ts";
 import { findCmdConfCategory } from "@/util/cmd/findCmdConfigObj.ts";
 import { deepMerge } from "@/util/objects/objects.ts";
 
-import * as dsc from 'discord.js';
+import * as dsc from "discord.js";
 
 function removeElement(arr: dsc.Snowflake[], target: dsc.Snowflake): dsc.Snowflake[] {
     let result = [];
@@ -17,31 +17,31 @@ function removeElement(arr: dsc.Snowflake[], target: dsc.Snowflake): dsc.Snowfla
 }
 
 export const toggleCmdBlockCmd: Command = {
-    name: 'toggle-cmd-block',
+    name: "toggle-cmd-block",
     description: {
-        main: 'Zablokuj komuś możliwość używania danej komendy.',
-        short: 'Zablokuj komendę dla kogoś'
+        main: "Zablokuj komuś możliwość używania danej komendy.",
+        short: "Zablokuj komendę dla kogoś",
     },
-    aliases: ['block-cmd-for-user'],
+    aliases: ["block-cmd-for-user"],
     expectedArgs: [
         {
-            name: 'cmd',
-            description: 'komenda którą chcesz zablokować',
-            type: { base: 'command-ref' },
-            optional: false
+            name: "cmd",
+            description: "komenda którą chcesz zablokować",
+            type: { base: "command-ref" },
+            optional: false,
         },
         {
-            name: 'target',
-            description: 'użytkownik lub rola do zablokowania/odblokowania',
+            name: "target",
+            description: "użytkownik lub rola do zablokowania/odblokowania",
             type: {
-                base: 'union',
+                base: "union",
                 variants: [
-                    { base: 'user-mention', includeRefMessageAuthor: true },
-                    { base: 'role-mention' }
-                ]
+                    { base: "user-mention", includeRefMessageAuthor: true },
+                    { base: "role-mention" },
+                ],
             },
-            optional: false
-        }
+            optional: false,
+        },
     ],
     flags: CommandFlags.None,
     permissions: {
@@ -50,37 +50,37 @@ export const toggleCmdBlockCmd: Command = {
     },
 
     async execute(api) {
-        const cmd = api.getTypedArg('cmd', 'command-ref')?.value;
-        const target = api.getTypedArg('target', ['user-mention', 'role-mention']);
+        const cmd = api.getTypedArg("cmd", "command-ref")?.value;
+        const target = api.getTypedArg("target", ["user-mention", "role-mention"]);
 
         const cmdName = cmd.name;
         const cat = findCmdConfCategory(cmdName);
 
-        if (!cat) return api.log.replyError(api, 'Błąd', `Nie znaleziono komendy **${cmdName}**!`);
+        if (!cat) return api.log.replyError(api, "Błąd", `Nie znaleziono komendy **${cmdName}**!`);
 
         const cmdOverride = getCommandOverride(cmdName);
         const currentMerged = (cfg.commands.configuration && cfg.commands.configuration[cmdName]) ? cfg.commands.configuration[cmdName] : cfg.commands.defaultConfiguration;
-        
+
         let opText: string | undefined;
-        if (target.type.base == 'user-mention') {
+        if (target.type.base == "user-mention") {
             const userId = target.value.id;
             const currentList = currentMerged.disallowedUsers ?? [];
             if (currentList.includes(userId)) {
                 cmdOverride.disallowedUsers = removeElement(currentList, userId);
-                opText = 'Odblokowano';
+                opText = "Odblokowano";
             } else {
                 cmdOverride.disallowedUsers = [...currentList, userId];
-                opText = 'Zablokowano';
+                opText = "Zablokowano";
             }
-        } else if (target.type.base == 'role-mention') {
+        } else if (target.type.base == "role-mention") {
             const roleId = target.value.id;
             const currentList = currentMerged.disallowedRoles ?? [];
             if (currentList.includes(roleId)) {
                 cmdOverride.disallowedRoles = removeElement(currentList, roleId);
-                opText = 'Odblokowano';
+                opText = "Odblokowano";
             } else {
                 cmdOverride.disallowedRoles = [...currentList, roleId];
-                opText = 'Zablokowano';
+                opText = "Zablokowano";
             }
         }
 
@@ -88,6 +88,6 @@ export const toggleCmdBlockCmd: Command = {
         cfg.commands.configuration[cmdName] = deepMerge(currentMerged, cmdOverride);
 
         saveConfigurationChanges();
-        api.log.replySuccess(api, 'Udało się!', `**${opText}** dostęp do komendy **${cmdName}** dla podanego celu!`);
-    }
+        api.log.replySuccess(api, "Udało się!", `**${opText}** dostęp do komendy **${cmdName}** dla podanego celu!`);
+    },
 };

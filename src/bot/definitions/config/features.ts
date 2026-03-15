@@ -1,11 +1,11 @@
-import * as dsc from 'discord.js';
-import { ConfigTranslation } from './subtypes.ts';
-import EconomyConfig from './economy.ts'
+import * as dsc from "discord.js";
+import { ConfigTranslation } from "./subtypes.ts";
+import EconomyConfig from "./economy.ts";
 
 export interface ConfigFeatures {
     compilation: {
-        replaceCompilerMap: Record<string, string>
-    },
+        replaceCompilerMap: Record<string, string>;
+    };
     automod: {
         antiFloodEnabled: boolean;
         antiSpamEnabled: boolean;
@@ -39,18 +39,18 @@ export interface ConfigFeatures {
             enabled: boolean;
             channels: dsc.Snowflake[];
             multiplier: number;
-        },
+        };
     };
     hallOfFame: {
         enabled: boolean;
         channel: dsc.Snowflake;
         eligibleChannels: dsc.Snowflake[];
-    },
+    };
     economy: EconomyConfig;
     email: {
         listenerChannel: dsc.Snowflake;
     };
-    translations: ConfigTranslation[],
+    translations: ConfigTranslation[];
     watchdog: {
         trustNewMembers: boolean;
         kickNewMembers: boolean;
@@ -71,5 +71,5 @@ export interface ConfigFeatures {
             maxChannelCreations: number;
             maxChannelDeletions: number;
         };
-    },
+    };
 }

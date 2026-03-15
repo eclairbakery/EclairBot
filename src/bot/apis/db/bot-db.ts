@@ -1,14 +1,14 @@
 import { DB } from "sqlite";
 
-import type { UserDataRaw, Warn, WarnRaw, Rep, RepRaw } from './db-defs.ts';
-import type { Balance, Cooldown, Cooldowns } from './db-defs.ts';
-import { warnFromRaw, repFromRaw } from './db-defs.ts';
+import type { Rep, RepRaw, UserDataRaw, Warn, WarnRaw } from "./db-defs.ts";
+import type { Balance, Cooldown, Cooldowns } from "./db-defs.ts";
+import { repFromRaw, warnFromRaw } from "./db-defs.ts";
 
-export type { UserDataRaw, Warn, WarnRaw, Rep, RepRaw };
+export type { Rep, RepRaw, UserDataRaw, Warn, WarnRaw };
 export type { Balance, Cooldown, Cooldowns };
-export { warnFromRaw, repFromRaw };
+export { repFromRaw, warnFromRaw };
 
-import User from './user.ts';
+import User from "./user.ts";
 
 export interface DBRunResult {
     lastID: number | null;
@@ -105,10 +105,10 @@ export class BotDatabase {
             const row = [...this.raw.queryEntries("SELECT last_insert_rowid()")][0];
             lastID = row ? Number(row[0]) : null;
         }
-        changes = this.raw.changes; 
+        changes = this.raw.changes;
 
         return { lastID, changes };
-    } 
+    }
 
     execSql(sql: string): Promise<void> {
         this.raw.execute(sql);
@@ -128,13 +128,13 @@ export class BotDatabase {
     // ------------------ generic utils ------------------
 
     async transaction(fn: () => Promise<any>): Promise<any> {
-        await this.execSql('BEGIN');
+        await this.execSql("BEGIN");
         try {
             const result = await fn();
-            await this.execSql('COMMIT');
+            await this.execSql("COMMIT");
             return result;
         } catch (e) {
-            await this.execSql('ROLLBACK');
+            await this.execSql("ROLLBACK");
             throw e;
         }
     }
@@ -142,7 +142,7 @@ export class BotDatabase {
     async userExists(userId: string): Promise<boolean> {
         const row = await this.selectOne(
             `SELECT user_id FROM users WHERE user_id = ?`,
-            [userId]
+            [userId],
         );
         return !!row;
     }
@@ -152,26 +152,26 @@ export class BotDatabase {
             `INSERT INTO users (user_id)
             VALUES (?)
             ON CONFLICT(user_id) DO NOTHING`,
-            [userId]
+            [userId],
         );
         await this.runSql(
             `INSERT INTO economy (user_id)
             VALUES (?)
             ON CONFLICT(user_id) DO NOTHING`,
-            [userId]
+            [userId],
         );
     }
 
     protected async selectTop(
         column: string,
         limit: number | null = null,
-        tableName: string = 'users'
+        tableName: string = "users",
     ): Promise<string[]> {
         const sql = `
             SELECT user_id
             FROM ${tableName}
             ORDER BY ${column} DESC
-            ${limit ? 'LIMIT ?' : ''}
+            ${limit ? "LIMIT ?" : ""}
         `;
         const params = limit ? [limit] : [];
         const rows = await this.selectMany<{ user_id: string }>(sql, params);
@@ -180,20 +180,19 @@ export class BotDatabase {
 
     readonly economy = {
         getTopWallet: async (max: number | null = null): Promise<User[]> => {
-            const ids = await this.selectTop('wallet_money', max, 'economy');
+            const ids = await this.selectTop("wallet_money", max, "economy");
             return ids.map((id) => new User(id));
         },
 
         getTopBank: async (max: number | null = null): Promise<User[]> => {
-            const ids = await this.selectTop('bank_money', max, 'economy');
+            const ids = await this.selectTop("bank_money", max, "economy");
             return ids.map((id) => new User(id));
         },
 
         getTopTotal: async (max: number | null = null): Promise<User[]> => {
-            const sql =
-                `SELECT user_id FROM economy
+            const sql = `SELECT user_id FROM economy
                  ORDER BY (wallet_money + bank_money) DESC
-                 ${max ? 'LIMIT ?' : ''}`;
+                 ${max ? "LIMIT ?" : ""}`;
             const params = max ? [max] : [];
             const rows = await this.selectMany<{ user_id: string }>(sql, params);
             return rows.map((r) => new User(r.user_id));
@@ -202,7 +201,7 @@ export class BotDatabase {
 
     readonly leveling = {
         getTop: async (max: number | null = null): Promise<User[]> => {
-            const ids = await this.selectTop('xp', max, 'users');
+            const ids = await this.selectTop("xp", max, "users");
             return ids.map((id) => new User(id));
         },
     };
@@ -210,8 +209,8 @@ export class BotDatabase {
     readonly reputation = {
         getAll: async (max: number | null = null): Promise<Rep[]> => {
             const rows = await this.selectMany<RepRaw>(
-                `SELECT * FROM reputation ${max ? 'LIMIT ?' : ''}`,
-                max ? [max] : []
+                `SELECT * FROM reputation ${max ? "LIMIT ?" : ""}`,
+                max ? [max] : [],
             );
             return rows.map(repFromRaw);
         },
@@ -220,8 +219,8 @@ export class BotDatabase {
     readonly warns = {
         getAll: async (max: number | null = null): Promise<Warn[]> => {
             const rows = await this.selectMany<WarnRaw>(
-                `SELECT * FROM warns ${max ? 'LIMIT ?' : ''}`,
-                max ? [max] : []
+                `SELECT * FROM warns ${max ? "LIMIT ?" : ""}`,
+                max ? [max] : [],
             );
             return rows.map(warnFromRaw);
         },
@@ -260,7 +259,7 @@ export class BotDatabase {
                 last_slutted = 0, 
                 last_crimed = 0, 
                 last_email_sent = 0
-                ${userId ? 'WHERE user_id = ?' : ''}
+                ${userId ? "WHERE user_id = ?" : ""}
             `;
             await this.runSql(sql, userId ? [userId] : []);
         },
@@ -288,8 +287,8 @@ export class BotDatabase {
             await this.reset.cooldowns(userId);
             await this.reset.reputation(userId);
             await this.reset.warns(userId);
-        }
+        },
     };
 }
 
-export const db = new BotDatabase('bot.db');
+export const db = new BotDatabase("bot.db");

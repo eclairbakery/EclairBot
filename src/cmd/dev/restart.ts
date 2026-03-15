@@ -1,15 +1,15 @@
-import { Command} from "@/bot/command.ts";
-import { CommandFlags } from '@/bot/apis/commands/misc.ts';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
-import { output } from '@/bot/logging.ts';
+import { Command } from "@/bot/command.ts";
+import { CommandFlags } from "@/bot/apis/commands/misc.ts";
+import { CommandPermissions } from "@/bot/apis/commands/permissions.ts";
+import { output } from "@/bot/logging.ts";
 
-import * as cache from '@/bot/apis/cache/cache.ts';
+import * as cache from "@/bot/apis/cache/cache.ts";
 
 export const restartCmd: Command = {
-    name: 'restart',
+    name: "restart",
     description: {
-        main: 'Restartuje bota... Nie tykaj!',
-        short: 'Szybki restart bota!',
+        main: "Restartuje bota... Nie tykaj!",
+        short: "Szybki restart bota!",
     },
     flags: CommandFlags.Important,
     expectedArgs: [],
@@ -17,12 +17,12 @@ export const restartCmd: Command = {
     permissions: CommandPermissions.devOnly(),
 
     async execute(api) {
-        output.log('Issued restart. This will work due to the behaviour of Pterodactyl Daemon.');
-        await api.reply('jusz siem restartujem plis łejt plis plis plis łejt');
-        
+        output.log("Issued restart. This will work due to the behaviour of Pterodactyl Daemon.");
+        await api.reply("jusz siem restartujem plis łejt plis plis plis łejt");
+
         if (api.raw.msg) {
-            await cache.store('session', 'last-restart-command-message-id', api.raw.msg?.id);
-            await cache.store('session', 'last-restart-command-channel-id', api.channel?.id);
+            await cache.store("session", "last-restart-command-message-id", api.raw.msg?.id);
+            await cache.store("session", "last-restart-command-channel-id", api.channel?.id);
         }
         process.exit(1);
     },

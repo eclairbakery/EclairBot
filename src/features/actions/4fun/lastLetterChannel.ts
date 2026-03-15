@@ -1,12 +1,12 @@
-import sleep from '@/util/sleep.ts';
+import sleep from "@/util/sleep.ts";
 
-import actionsManager, { Action, PredefinedActionEventTypes, MessageEventCtx } from '../index.ts';
+import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes } from "../index.ts";
 export default actionsManager;
 
-import * as dsc from 'discord.js';
+import * as dsc from "discord.js";
 
-import { cfg } from '@/bot/cfg.ts';
-import fmtEmoji from '@/util/fmtEmoji.ts';
+import { cfg } from "@/bot/cfg.ts";
+import fmtEmoji from "@/util/fmtEmoji.ts";
 
 export const lastLetterChannelAction: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
@@ -15,7 +15,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
             if (msg.author.bot) return false;
             if (msg.channelId !== cfg.features.forFun.lastLetterChannel) return false;
             return true;
-        }
+        },
     ],
     callbacks: [
         async (msg: dsc.Message) => {
@@ -29,7 +29,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
             }
 
             const messages = await msg.channel.messages.fetch({ limit: 2 });
-            const lastMsg = messages.filter(m => m.id !== msg.id).first();
+            const lastMsg = messages.filter((m) => m.id !== msg.id).first();
 
             if (lastMsg) {
                 const lastWord = lastMsg.content.trim();
@@ -46,13 +46,13 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                     }
                 }
             }
-            if (msg.content.endsWith('ą')) {
+            if (msg.content.endsWith("ą")) {
                 const reply = await msg.reply(`no ej no przeczytałeś kanał opis? ${fmtEmoji(cfg.emojis.heartAttackEmoji)}`);
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();
                 return;
             }
-        }
-    ]
-    };
+        },
+    ],
+};

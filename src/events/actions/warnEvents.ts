@@ -1,10 +1,10 @@
-import * as dsc from 'discord.js';
+import * as dsc from "discord.js";
 
-import actionsManager from '@/features/actions/index.ts';
+import actionsManager from "@/features/actions/index.ts";
 export default actionsManager;
 
-export const OnWarnGiven = actionsManager.mkEvent('OnWarnGiven');
-export const OnWarnDeleted = actionsManager.mkEvent('OnWarnDeleted');
+export const OnWarnGiven = actionsManager.mkEvent("OnWarnGiven");
+export const OnWarnDeleted = actionsManager.mkEvent("OnWarnDeleted");
 
 export interface WarnEventCtx {
     id: number;
@@ -14,4 +14,4 @@ export interface WarnEventCtx {
     points: number;
     previousPoints?: number;
     expiresAt?: number;
-};
+}

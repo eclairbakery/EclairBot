@@ -1,26 +1,26 @@
-import * as dsc from 'discord.js';
+import * as dsc from "discord.js";
 
-import User from './apis/db/user.ts';
+import User from "./apis/db/user.ts";
 
-import { cfg } from '@/bot/cfg.ts';
-import actionsManager, { Action } from '@/features/actions/index.ts';
-import { client } from '@/client.ts';
-import { mkProgressBar } from '@/util/progressbar.ts';
-import { output } from './logging.ts';
-import { findLowerClosestKey } from '@/util/objects/findLowerClosestKey.ts';
+import { cfg } from "@/bot/cfg.ts";
+import actionsManager, { Action } from "@/features/actions/index.ts";
+import { client } from "@/client.ts";
+import { mkProgressBar } from "@/util/progressbar.ts";
+import { output } from "./logging.ts";
+import { findLowerClosestKey } from "@/util/objects/findLowerClosestKey.ts";
 
-export const OnSetXpEvent = actionsManager.mkEvent('OnSetXpEvent');
+export const OnSetXpEvent = actionsManager.mkEvent("OnSetXpEvent");
 export interface XpEventCtx {
     userID: dsc.Snowflake;
     user?: dsc.GuildMember | undefined;
     guild: dsc.Guild;
-    action: 'set' | 'add' | 'delete';
+    action: "set" | "add" | "delete";
     amount: number;
-};
+}
 
 export function xpToLevel(xp: number, levelDivider: number = cfg.features.leveling.levelDivider): number {
     return Math.floor(
-        (1 + Math.sqrt(1 + 8 * xp / levelDivider)) / 2
+        (1 + Math.sqrt(1 + 8 * xp / levelDivider)) / 2,
     );
 }
 
@@ -31,7 +31,7 @@ export function levelToXp(level: number, levelDivider: number = cfg.features.lev
 export const lvlRoles = Object.values(cfg.features.leveling.milestoneRoles);
 
 function getMention(user: dsc.GuildMember, ping: boolean = cfg.features.leveling.shallPingWhenNewLevel) {
-    return ping ? `<@${user.user.id}>` : `**${user.displayName.replace('**', '\*\*')}**`;
+    return ping ? `<@${user.user.id}>` : `**${user.displayName.replace("**", "\*\*")}**`;
 }
 
 export function mkLvlProgressBar(xp: number, levelDivider: number, totalLength: number = 10): string {
@@ -48,9 +48,8 @@ export function mkLvlProgressBar(xp: number, levelDivider: number, totalLength: 
 export async function addLvlRole(
     guild: dsc.Guild,
     newLevel: number,
-    user: dsc.Snowflake
+    user: dsc.Snowflake,
 ): Promise<boolean> {
-
     const milestones = cfg.features.leveling.milestoneRoles || {};
     const milestoneRoleId = milestones[findLowerClosestKey(milestones, newLevel)];
     if (!milestoneRoleId) return false;
@@ -117,7 +116,7 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
         if (!channelLvl || !channelLvl.isSendable()) return;
 
         let content = `${getMention(msg.member!)} wbił poziom ${newLevel}! Wow co za osiągnięcie!`;
-        if (gotNewRole) content += 'I btw nową rolę zdobyłeś!';
+        if (gotNewRole) content += "I btw nową rolę zdobyłeś!";
         channelLvl.send(content);
     }
 }
@@ -132,9 +131,15 @@ const updateXpAction: Action<XpEventCtx> = {
 
             let newXp: number;
             switch (ctx.action) {
-            case 'set':    newXp = ctx.amount;                       break;
-            case 'add':    newXp = prevXp + ctx.amount;              break;
-            case 'delete': newXp = Math.max(0, prevXp - ctx.amount); break;
+                case "set":
+                    newXp = ctx.amount;
+                    break;
+                case "add":
+                    newXp = prevXp + ctx.amount;
+                    break;
+                case "delete":
+                    newXp = Math.max(0, prevXp - ctx.amount);
+                    break;
             }
 
             await user.leveling.setXP(newXp);
@@ -144,7 +149,7 @@ const updateXpAction: Action<XpEventCtx> = {
                 member = ctx.user;
             } else {
                 member = await ctx.guild.members.fetch(ctx.userID);
-                if (member == null) throw new Error;
+                if (member == null) throw new Error();
             }
 
             let content: string;
@@ -162,9 +167,9 @@ const updateXpAction: Action<XpEventCtx> = {
                 if (prevXp == newXp) {
                     content = `Administrator próbował zmienić level użytkownika ${getMention(member)}, ale ma autyzm i ustawił dokladnie taki sam jaki był wcześniej czyli ${prevLevel} level. Nic tylko pogratulować`;
                 } else {
-                    content = `Level użytkownika ${getMention(member)} został zmieniony, co prawda dalej ma ${prevLevel} level, ale tym razem ${newXp}xp zamiast ${prevXp}xp?`
-                        + ` Dobra przestane yappowac tych nerdowskich liczb i dam ci progress bar do następnego levela:` +
-                        '\n' + mkLvlProgressBar(newXp, levelToXp(xpToLevel(newXp) + 1));
+                    content = `Level użytkownika ${getMention(member)} został zmieniony, co prawda dalej ma ${prevLevel} level, ale tym razem ${newXp}xp zamiast ${prevXp}xp?` +
+                        ` Dobra przestane yappowac tych nerdowskich liczb i dam ci progress bar do następnego levela:` +
+                        "\n" + mkLvlProgressBar(newXp, levelToXp(xpToLevel(newXp) + 1));
                 }
             }
 

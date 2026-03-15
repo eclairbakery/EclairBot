@@ -1,61 +1,61 @@
 import { cfg } from "@/bot/cfg.ts";
-import { db } from '@/bot/apis/db/bot-db.ts';
-import { Command} from "@/bot/command.ts";
-import { CommandFlags } from '@/bot/apis/commands/misc.ts';
-import { PredefinedColors } from '@/util/color.ts';
-import { output } from '@/bot/logging.ts';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { db } from "@/bot/apis/db/bot-db.ts";
+import { Command } from "@/bot/command.ts";
+import { CommandFlags } from "@/bot/apis/commands/misc.ts";
+import { PredefinedColors } from "@/util/color.ts";
+import { output } from "@/bot/logging.ts";
+import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
 
 import User from "@/bot/apis/db/user.ts";
 import Money from "@/util/money.ts";
 
 export const ecomodCmd: Command = {
-    name: 'ecomod',
+    name: "ecomod",
     description: {
-        main: 'Coś poszło nie tak? Naprawisz to ręcznie. Chyba...',
-        short: 'Ustawia ilość pieniędzy danej osobie.'
+        main: "Coś poszło nie tak? Naprawisz to ręcznie. Chyba...",
+        short: "Ustawia ilość pieniędzy danej osobie.",
     },
-    aliases: ['moneymod', 'modeco'],
+    aliases: ["moneymod", "modeco"],
     flags: CommandFlags.Economy | CommandFlags.Unsafe,
 
     expectedArgs: [
         {
-            name: 'who',
-            description: 'Na kim chcesz wykonać tą komendę?',
-            type: { base: 'user-mention', includeRefMessageAuthor: true },
-            optional: false
+            name: "who",
+            description: "Na kim chcesz wykonać tą komendę?",
+            type: { base: "user-mention", includeRefMessageAuthor: true },
+            optional: false,
         },
         {
-            name: 'action',
-            description: 'Tu powiedz co chcesz zrobić (add/set/remove)',
-            type: { base: 'enum', options: ['add', 'set', 'remove'] as const },
-            optional: false
+            name: "action",
+            description: "Tu powiedz co chcesz zrobić (add/set/remove)",
+            type: { base: "enum", options: ["add", "set", "remove"] as const },
+            optional: false,
         },
         {
-            name: 'amount',
-            description: 'Tu powiedz na jakiej ilości hajsu chcesz to zrobić',
-            type: { base: 'money' },
-            optional: false
+            name: "amount",
+            description: "Tu powiedz na jakiej ilości hajsu chcesz to zrobić",
+            type: { base: "money" },
+            optional: false,
         },
         {
-            name: 'location',
-            description: 'A tu czy w banku czy nie. Domyślnie w portfelu. (wallet/bank)',
-            type: { base: 'enum', options: ['bank', 'wallet'] as const },
-            optional: true
+            name: "location",
+            description: "A tu czy w banku czy nie. Domyślnie w portfelu. (wallet/bank)",
+            type: { base: "enum", options: ["bank", "wallet"] as const },
+            optional: true,
         },
     ],
     permissions: {
         allowedRoles: [cfg.hierarchy.administration.eclair25, cfg.hierarchy.administration.headAdmin],
-        allowedUsers: []
+        allowedUsers: [],
     },
 
     async execute(api) {
-        const action = api.getEnumArg('action', ['add', 'set', 'remove'])?.value!;
-        const amount = api.getTypedArg('amount', 'money')?.value!;
-        const location = (api.getEnumArg('location', ['wallet', 'bank'])?.value) || 'wallet';
-        const targetMember = api.getTypedArg('who', 'user-mention')?.value!;
+        const action = api.getEnumArg("action", ["add", "set", "remove"])?.value!;
+        const amount = api.getTypedArg("amount", "money")?.value!;
+        const location = (api.getEnumArg("location", ["wallet", "bank"])?.value) || "wallet";
+        const targetMember = api.getTypedArg("who", "user-mention")?.value!;
 
-        if (amount.isNegative()) return api.log.replyError(api, 'Nieprawidłowa kwota', 'Nie może być ona ujemna.');
+        if (amount.isNegative()) return api.log.replyError(api, "Nieprawidłowa kwota", "Nie może być ona ujemna.");
 
         const targetId = targetMember.id;
         const targetUser = new User(targetId);
@@ -68,11 +68,11 @@ export const ecomodCmd: Command = {
                 const current = bal[location];
                 before = current.clone();
 
-                if (action == 'add') {
+                if (action == "add") {
                     after = current.add(amount);
-                } else if (action == 'set') {
+                } else if (action == "set") {
                     after = amount.clone();
-                } else if (action == 'remove') {
+                } else if (action == "remove") {
                     after = current.sub(amount);
                     if (after.isNegative()) after = Money.zero();
                 }
@@ -85,19 +85,19 @@ export const ecomodCmd: Command = {
                 embeds: [
                     new ReplyEmbed()
                         .setColor(PredefinedColors.Green)
-                        .setTitle('Operacja zakończona!')
+                        .setTitle("Operacja zakończona!")
                         .setDescription([
                             `Użytkownik: <@${targetId}>`,
-                            `Typ: ${location == 'wallet' ? 'Portfel' : 'Bank'}`,
+                            `Typ: ${location == "wallet" ? "Portfel" : "Bank"}`,
                             `Akcja: ${action}`,
                             `Przed: **${before!.format()}**`,
                             `Po: **${after!.format()}**`,
-                        ].join('\n')),
-                ]
+                        ].join("\n")),
+                ],
             });
         } catch (err) {
             output.err(err);
-            return api.log.replyError(api, 'Błąd bazy danych', 'Operacja nie mogła zostać zakończona.');
+            return api.log.replyError(api, "Błąd bazy danych", "Operacja nie mogła zostać zakończona.");
         }
     },
 };

@@ -1,12 +1,12 @@
-import sleep from '@/util/sleep.ts';
+import sleep from "@/util/sleep.ts";
 
-import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes } from '../index.ts';
+import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes } from "../index.ts";
 export default actionsManager;
 
-import * as dsc from 'discord.js';
+import * as dsc from "discord.js";
 
-import { cfg } from '@/bot/cfg.ts';
-import fmtEmoji from '@/util/fmtEmoji.ts';
+import { cfg } from "@/bot/cfg.ts";
+import fmtEmoji from "@/util/fmtEmoji.ts";
 
 export const countingChannelAction: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
@@ -15,7 +15,7 @@ export const countingChannelAction: Action<MessageEventCtx> = {
             if (msg.author.bot) return false;
             if (msg.channelId !== cfg.features.forFun.countingChannel) return false;
             return true;
-        }
+        },
     ],
     callbacks: [
         async (msg: dsc.Message) => {
@@ -29,7 +29,7 @@ export const countingChannelAction: Action<MessageEventCtx> = {
             }
 
             const messages = await msg.channel.messages.fetch({ limit: 2 });
-            const lastMsg = messages.filter(m => m.id !== msg.id).first();
+            const lastMsg = messages.filter((m) => m.id !== msg.id).first();
 
             let lastNumber = 0;
             if (lastMsg) {
@@ -48,6 +48,6 @@ export const countingChannelAction: Action<MessageEventCtx> = {
                 await reply.delete();
                 return;
             }
-        }
-    ]
+        },
+    ],
 };

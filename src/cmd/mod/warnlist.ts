@@ -1,27 +1,27 @@
-import { Command} from "@/bot/command.ts";
-import { CommandFlags } from '@/bot/apis/commands/misc.ts';
-import { cfg } from '@/bot/cfg.ts';
-import { db } from '@/bot/apis/db/bot-db.ts';
-import * as dsc from 'discord.js';
-import { PredefinedColors } from '@/util/color.ts';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { Command } from "@/bot/command.ts";
+import { CommandFlags } from "@/bot/apis/commands/misc.ts";
+import { cfg } from "@/bot/cfg.ts";
+import { db } from "@/bot/apis/db/bot-db.ts";
+import * as dsc from "discord.js";
+import { PredefinedColors } from "@/util/color.ts";
+import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
 
 export const warnlistCmd: Command = {
-    name: 'warnlist',
-    aliases: ['warn-list', 'warnlista'],
+    name: "warnlist",
+    aliases: ["warn-list", "warnlista"],
     description: {
-        main: 'Lubisz warnować? No to przeczytaj log tych warnów...',
-        short: 'Pokazuje liste warnów',
+        main: "Lubisz warnować? No to przeczytaj log tych warnów...",
+        short: "Pokazuje liste warnów",
     },
     flags: CommandFlags.Important,
 
     expectedArgs: [
         {
-            name: 'user',
-            type: { base: 'user-mention' },
-            description: 'Użytkownik, którego warny chcesz zobaczyć (opcjonalne).',
-            optional: true
-        }
+            name: "user",
+            type: { base: "user-mention" },
+            description: "Użytkownik, którego warny chcesz zobaczyć (opcjonalne).",
+            optional: true,
+        },
     ],
 
     permissions: {
@@ -33,20 +33,20 @@ export const warnlistCmd: Command = {
         let client: dsc.Client = api.channel.client;
         let guild: dsc.Guild = api.guild!;
 
-        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | undefined;
+        const targetUser = api.getTypedArg("user", "user-mention")?.value as dsc.GuildMember | undefined;
         const limit = 5;
         let currentPage = 1;
 
         async function fetchWarns(page: number) {
-            let query = 'SELECT * FROM warns';
+            let query = "SELECT * FROM warns";
             const params: any[] = [];
 
             if (targetUser) {
-                query += ' WHERE user_id = ?';
+                query += " WHERE user_id = ?";
                 params.push(targetUser.id);
             }
 
-            query += ' ORDER BY id DESC LIMIT ? OFFSET ?';
+            query += " ORDER BY id DESC LIMIT ? OFFSET ?";
             params.push(limit, (page - 1) * limit);
 
             return db.selectMany(query, params);
@@ -62,38 +62,36 @@ export const warnlistCmd: Command = {
             for (const row of rows) {
                 i++;
                 const user = await client.users.fetch(row.user_id).catch(() => null);
-                const moderator = row.moderator_id
-                    ? await guild.members.fetch(row.moderator_id).catch(() => null)
-                    : null;
+                const moderator = row.moderator_id ? await guild.members.fetch(row.moderator_id).catch(() => null) : null;
 
                 let value = `\`${row.reason_string}\` (punktów: ${row.points}, id: ${row.id})`;
-                if (moderator) value += `\n**Moderator:** <@${moderator.id}>`
-                          else value += `\n**Moderator:** nieznany (warn pewnie pochodzi sprzed dodania moderator_id)`;
+                if (moderator) value += `\n**Moderator:** <@${moderator.id}>`;
+                else value += `\n**Moderator:** nieznany (warn pewnie pochodzi sprzed dodania moderator_id)`;
                 if (row.expires_at) value += `\n**Wygasa:** <t:${row.expires_at}:R>`;
 
                 fields.push({
-                    name: `${i}. Upomnienie dla ${user ? user.username : 'Nieznany użytkownik'}`,
-                    value
+                    name: `${i}. Upomnienie dla ${user ? user.username : "Nieznany użytkownik"}`,
+                    value,
                 });
             }
 
             const embed = new ReplyEmbed()
-                .setTitle(`:loudspeaker: Warny ${targetUser ? `dla ${targetUser.user.username}` : 'na serwerze'}`)
+                .setTitle(`:loudspeaker: Warny ${targetUser ? `dla ${targetUser.user.username}` : "na serwerze"}`)
                 .setFields(fields)
                 .setColor(PredefinedColors.Blurple)
                 .setFooter({ text: `Strona ${page}` });
 
             const components = new dsc.ActionRowBuilder<dsc.ButtonBuilder>().addComponents(
                 new dsc.ButtonBuilder()
-                    .setCustomId('prev')
-                    .setLabel('◀️')
+                    .setCustomId("prev")
+                    .setLabel("◀️")
                     .setStyle(dsc.ButtonStyle.Secondary)
                     .setDisabled(page === 1),
                 new dsc.ButtonBuilder()
-                    .setCustomId('next')
-                    .setLabel('▶️')
+                    .setCustomId("next")
+                    .setLabel("▶️")
                     .setStyle(dsc.ButtonStyle.Secondary)
-                    .setDisabled(rows.length < limit)
+                    .setDisabled(rows.length < limit),
             );
 
             return { embed, components };
@@ -101,37 +99,35 @@ export const warnlistCmd: Command = {
 
         let render = await renderPage(currentPage);
         if (!render) {
-            return api.log.replyError(api, 'Brak wyników', targetUser
-                ? `Nie znaleziono żadnych warnów dla ${targetUser.user.username}.`
-                : 'Nie ma żadnych warnów w bazie.');
+            return api.log.replyError(api, "Brak wyników", targetUser ? `Nie znaleziono żadnych warnów dla ${targetUser.user.username}.` : "Nie ma żadnych warnów w bazie.");
         }
 
         const msg = await api.reply({
             embeds: [render.embed],
-            components: [render.components]
+            components: [render.components],
         });
 
         const collector = msg.createMessageComponentCollector({
             time: 60_000,
-            filter: (i) => i.user.id === api.invoker.id
+            filter: (i) => i.user.id === api.invoker.id,
         });
 
-        collector.on('collect', async (interaction) => {
+        collector.on("collect", async (interaction) => {
             if (!interaction.isButton()) return;
-            if (interaction.customId === 'prev' && currentPage > 1) currentPage--;
-            else if (interaction.customId === 'next') currentPage++;
+            if (interaction.customId === "prev" && currentPage > 1) currentPage--;
+            else if (interaction.customId === "next") currentPage++;
 
             const newRender = await renderPage(currentPage);
             if (!newRender) return interaction.deferUpdate();
 
             await interaction.update({
                 embeds: [newRender.embed],
-                components: [newRender.components]
+                components: [newRender.components],
             });
         });
 
-        collector.on('end', async () => {
+        collector.on("end", async () => {
             await msg.edit({ components: [] }).catch(() => {});
         });
-    }
+    },
 };

@@ -1,15 +1,13 @@
-import { PredefinedColors, Color } from '@/util/color.ts';
-import { SendableChannel } from '../defs.ts';
+import { Color, PredefinedColors } from "@/util/color.ts";
+import { SendableChannel } from "../defs.ts";
 
-import * as dsc from 'discord.js';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
-import { t } from '@/bot/apis/translations/translate.ts';
+import * as dsc from "discord.js";
+import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
+import { t } from "@/bot/apis/translations/translate.ts";
 
 export interface Replyable {
-    reply:
-        (options: any)
-        => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>
-};
+    reply: (options: any) => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;
+}
 
 enum LogType {
     Success,
@@ -21,18 +19,18 @@ enum LogType {
 
 function getEmbed(type: LogType, title: string, desc: string) {
     const settings = {
-        [LogType.Success]: { emoji: '✅', color: PredefinedColors.Green  },
-        [LogType.Info]:    { emoji: 'ℹ️', color: PredefinedColors.Cyan   },
-        [LogType.Tip]:     { emoji: '💡', color: PredefinedColors.Purple },
-        [LogType.Warn]:    { emoji: '⚠️', color: PredefinedColors.Orange },
-        [LogType.Error]:   { emoji: '💔', color: PredefinedColors.Red    }
+        [LogType.Success]: { emoji: "✅", color: PredefinedColors.Green },
+        [LogType.Info]: { emoji: "ℹ️", color: PredefinedColors.Cyan },
+        [LogType.Tip]: { emoji: "💡", color: PredefinedColors.Purple },
+        [LogType.Warn]: { emoji: "⚠️", color: PredefinedColors.Orange },
+        [LogType.Error]: { emoji: "💔", color: PredefinedColors.Red },
     };
 
     return new ReplyEmbed()
-            .setTitle(`${settings[type].emoji} ${title}`)
-            .setColor(settings[type].color)
-            .setAuthor({ name: 'EclairBOT' })
-            .setDescription(desc)
+        .setTitle(`${settings[type].emoji} ${title}`)
+        .setColor(settings[type].color)
+        .setAuthor({ name: "EclairBOT" })
+        .setDescription(desc);
 }
 
 export function getErrorEmbed(title: string, desc: string) {
@@ -55,7 +53,6 @@ export function getTipEmbed(title: string, desc: string) {
     return getEmbed(LogType.Tip, t(title), t(desc));
 }
 
-
 export async function replyError(msg: Replyable, title: string, desc: string) {
     return msg.reply({ embeds: [getErrorEmbed(title, desc)] });
 }
@@ -75,7 +72,6 @@ export async function replySuccess(msg: Replyable, title: string, desc: string) 
 export async function replyTip(msg: Replyable, title: string, desc: string) {
     return msg.reply({ embeds: [getTipEmbed(title, desc)] });
 }
-
 
 export async function sendError(channel: SendableChannel, title: string, desc: string) {
     return channel.send({ embeds: [getErrorEmbed(title, desc)] });

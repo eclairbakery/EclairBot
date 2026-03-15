@@ -1,21 +1,21 @@
-import * as dsc from 'discord.js';
+import * as dsc from "discord.js";
 
-import { Command} from "@/bot/command.ts";
-import { CommandFlags } from '@/bot/apis/commands/misc.ts';
-import { output } from '@/bot/logging.ts';
-import { getUserReputation, Reputation } from '@/bot/apis/rep/rep.ts';
-import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.ts';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { Command } from "@/bot/command.ts";
+import { CommandFlags } from "@/bot/apis/commands/misc.ts";
+import { output } from "@/bot/logging.ts";
+import { getUserReputation, Reputation } from "@/bot/apis/rep/rep.ts";
+import { mkDualProgressBar, mkProgressBar } from "@/util/progressbar.ts";
+import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
 
 function getReputationDescription(user: dsc.GuildMember, reputation: Reputation): string {
-    let firstSentence: string = '', secondSentence: string = '', thirdSentence: string = '';
+    let firstSentence: string = "", secondSentence: string = "", thirdSentence: string = "";
 
     const { repProportion } = reputation;
     if (repProportion.plus < 2) {
         firstSentence = `<@${user.id}> nie posiada zbyt wielu dobrych opini.`;
 
         if (repProportion.sub < 2) {
-            secondSentence = `Złych opini również nie posiada... Wygląda na to że poprostu nie został jeszcze oceniany.`
+            secondSentence = `Złych opini również nie posiada... Wygląda na to że poprostu nie został jeszcze oceniany.`;
         } else if (repProportion.sub >= 2 && repProportion.sub <= 3) {
             secondSentence = `Ale za to posiada całkiem dużo złych! Chyba użytkownicy go nie lubią...`;
         } else if (repProportion.sub >= 4) {
@@ -25,7 +25,7 @@ function getReputationDescription(user: dsc.GuildMember, reputation: Reputation)
         firstSentence = `<@${user.id}> ma całkiem dużo dobrych opini!`;
 
         if (repProportion.sub < 2) {
-            secondSentence = `Złych opini za to nie ma. Wygląda na całkiem miłego użytkownika!`
+            secondSentence = `Złych opini za to nie ma. Wygląda na całkiem miłego użytkownika!`;
         } else if (repProportion.sub >= 2 && repProportion.sub <= 3) {
             secondSentence = `Podobną ilość ma też złych opini. Ten użytkownik wydaje się dość kontrowersyjny`;
         } else if (repProportion.sub >= 4) {
@@ -35,7 +35,7 @@ function getReputationDescription(user: dsc.GuildMember, reputation: Reputation)
         firstSentence = `<@${user.id}> ma mase chwalących go opini!`;
 
         if (repProportion.sub < 2) {
-            secondSentence = `Złych opini za to nie ma. Wygląda na bardzo dobrego użytkownika!`
+            secondSentence = `Złych opini za to nie ma. Wygląda na bardzo dobrego użytkownika!`;
         } else if (repProportion.sub >= 2 && repProportion.sub <= 3) {
             secondSentence = `Ma też troche gorszych opini, ale dalej te dobre przewyższają!`;
         } else if (repProportion.sub >= 4) {
@@ -56,19 +56,19 @@ function getReputationDescription(user: dsc.GuildMember, reputation: Reputation)
 }
 
 export const reputationCmd: Command = {
-    name: 'reputation',
-    aliases: ['rep'],
+    name: "reputation",
+    aliases: ["rep"],
     description: {
-        main: 'To polecenie wyświetla ci reputacje danego użytkownika oraz kilka najnowszych opinii!',
-        short: 'Wyświetla reputacje użytkownika',
+        main: "To polecenie wyświetla ci reputacje danego użytkownika oraz kilka najnowszych opinii!",
+        short: "Wyświetla reputacje użytkownika",
     },
     flags: CommandFlags.None,
 
     expectedArgs: [
         {
-            name: 'user',
-            description: 'Użytkownik którego reputacje chcesz sprawdzić',
-            type: { base: 'user-mention', includeRefMessageAuthor: true },
+            name: "user",
+            description: "Użytkownik którego reputacje chcesz sprawdzić",
+            type: { base: "user-mention", includeRefMessageAuthor: true },
             optional: false,
         },
     ],
@@ -78,7 +78,7 @@ export const reputationCmd: Command = {
     },
 
     async execute(api) {
-        const user = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
+        const user = api.getTypedArg("user", "user-mention").value as dsc.GuildMember;
 
         const userReputation = await getUserReputation(user.user.id);
         output.log(userReputation);
@@ -88,12 +88,12 @@ export const reputationCmd: Command = {
             .setDescription(getReputationDescription(user, userReputation))
             .addFields(
                 {
-                    name: 'Reputacja',
+                    name: "Reputacja",
                     value: mkDualProgressBar(userReputation.repProportion.sub, userReputation.repProportion.plus),
                     inline: false,
                 },
                 {
-                    name: 'Ranking',
+                    name: "Ranking",
                     value: mkProgressBar(userReputation.repScale, 10),
                     inline: false,
                 },

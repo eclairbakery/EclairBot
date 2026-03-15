@@ -12,7 +12,7 @@ export async function sendLog(logData: LogData, additionalChannels: dsc.Snowflak
     let description = logData.description;
     let fields = logData.fields ?? [];
 
-    let channels: dsc.Channel[] = [ (await client.channels.fetch(where))! ];
+    let channels: dsc.Channel[] = [(await client.channels.fetch(where))!];
     for (const chan of additionalChannels) {
         channels.push((await client.channels.fetch(chan))!);
     }
@@ -27,9 +27,9 @@ export async function sendLog(logData: LogData, additionalChannels: dsc.Snowflak
                     .setColor(color)
                     .setFields(fields)
                     .setAuthor({
-                        name: 'EclairBOT'
-                    })
-            ]
+                        name: "EclairBOT",
+                    }),
+            ],
         });
     }
 }

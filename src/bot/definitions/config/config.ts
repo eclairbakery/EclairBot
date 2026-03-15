@@ -1,10 +1,10 @@
-import * as dsc from 'discord.js';
-import { AnyCommandConfig, BlockCommandsRules, Emoji, PermissionDefinitionConfig } from './subtypes.ts';
-import { ConfigFeatures } from './features.ts';
+import * as dsc from "discord.js";
+import { AnyCommandConfig, BlockCommandsRules, Emoji, PermissionDefinitionConfig } from "./subtypes.ts";
+import { ConfigFeatures } from "./features.ts";
 
 export interface Config {
     hierarchy: {
-        developers: PermissionDefinitionConfig,
+        developers: PermissionDefinitionConfig;
 
         administration: {
             eclair25: dsc.Snowflake;
@@ -13,14 +13,14 @@ export interface Config {
             headMod: dsc.Snowflake;
             mod: dsc.Snowflake;
             helper: dsc.Snowflake;
-        },
+        };
 
         automodBypassRoles: dsc.Snowflake[];
-    },
+    };
 
     commands: {
-        prefix: string,
-        alternativePrefixes: string[],
+        prefix: string;
+        alternativePrefixes: string[];
 
         confirmUnsafeCommands: boolean;
         confirmDeprecatedCommands: boolean;
@@ -30,12 +30,12 @@ export interface Config {
             fullExceptImportant: BlockCommandsRules;
             spammy: BlockCommandsRules;
             economy: BlockCommandsRules;
-            preferShortenedEmbeds: string[]
-        },
+            preferShortenedEmbeds: string[];
+        };
 
-        configuration: Record<string, AnyCommandConfig>,
-        defaultConfiguration: AnyCommandConfig
-    }
+        configuration: Record<string, AnyCommandConfig>;
+        defaultConfiguration: AnyCommandConfig;
+    };
 
     database: {
         backups: {
@@ -45,18 +45,18 @@ export interface Config {
         };
 
         path: string;
-    }
+    };
 
     channels: {
         settings: {
-            emojiPlacement: 'after-name' | 'before-name';
+            emojiPlacement: "after-name" | "before-name";
             characters: {
                 beforeEmoji: string;
                 afterEmoji: string;
             };
             /** can be null if none (default: -) */
             spaceReplacement: string | null;
-        }
+        };
 
         mod: {
             modGeneral: dsc.Snowflake;
@@ -108,7 +108,7 @@ export interface Config {
         };
     };
 
-    features: ConfigFeatures,
+    features: ConfigFeatures;
 
     emojis: {
         darkRedBlock: Emoji;

@@ -1,9 +1,9 @@
 import { cfg } from "@/bot/cfg.ts";
 
-export type TranslateableObject = {[key: string | number | symbol] : any} | any[];
+export type TranslateableObject = { [key: string | number | symbol]: any } | any[];
 export type Translateable = TranslateableObject | string | number;
 
-function translatePatternToRegex(input: string): { regex: RegExp, groups: number } {
+function translatePatternToRegex(input: string): { regex: RegExp; groups: number } {
     let escaped = input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
     let groups = 0;
@@ -52,7 +52,7 @@ function translateString(what: string) {
 
 function translateObj<T extends TranslateableObject>(what: T): T {
     if (Array.isArray(what)) {
-        return what.map(v => translate(v)) as T;
+        return what.map((v) => translate(v)) as T;
     }
 
     const output: Record<string, any> = { ...what };

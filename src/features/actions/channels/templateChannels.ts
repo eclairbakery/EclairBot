@@ -1,11 +1,11 @@
-import { AnyAction, ActionCallback, ConstraintCallback, AnyEventCtx, ActionEventType } from '../index.ts';
-import { ChannelEventCtx } from '../index.ts';
+import { ActionCallback, ActionEventType, AnyAction, AnyEventCtx, ConstraintCallback } from "../index.ts";
+import { ChannelEventCtx } from "../index.ts";
 
-import actionsManager from '../index.ts';
+import actionsManager from "../index.ts";
 
-import { RenameableChannel } from '../../../defs.ts';
+import { RenameableChannel } from "../../../defs.ts";
 
-import * as dsc from 'discord.js';
+import * as dsc from "discord.js";
 
 export async function getChannel(id: dsc.Snowflake, client: dsc.Client): Promise<dsc.Channel> {
     let channel = client.channels.cache.get(id);
@@ -41,7 +41,7 @@ export function mkTemplateChannelUpdateAction({ channel, updateOnEvents, format,
             },
             ...additionalCallbacks || [],
         ],
-    }
+    };
 }
 
 export function addTemplateChannel(options: TemplateChannel) {

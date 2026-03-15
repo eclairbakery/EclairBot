@@ -1,6 +1,6 @@
 import { Command } from "@/bot/command.ts";
 
-import * as dsc from 'discord.js';
+import * as dsc from "discord.js";
 
 export default function canExecuteCmd(cmd: Command, user: dsc.GuildMember) {
     if (cmd.permissions.allowedUsers == null) return true;

@@ -1,50 +1,52 @@
-import {output as debug} from '@/bot/logging.ts';
+import { output as debug } from "@/bot/logging.ts";
 
-import { Interaction } from 'discord.js';
-import * as dsc from 'discord.js';
-import * as log from '@/util/log.ts';
+import { Interaction } from "discord.js";
+import * as dsc from "discord.js";
+import * as log from "@/util/log.ts";
 
-import { cfg } from '@/bot/cfg.ts';
-import { CommandFlags } from '@/bot/apis/commands/misc.ts';
-import { client } from '../../client.ts';
-import { commands } from '../../cmd/list.ts';
-import { handleError } from './helpers/errorHandler.ts';
-import { makeCommandApi } from './helpers/makeCommandApi.ts';
-import { makeSlashCommandDesc, makeSlashCommandOptionDesc } from './helpers/makeSlashCommandDescs.ts';
+import { cfg } from "@/bot/cfg.ts";
+import { CommandFlags } from "@/bot/apis/commands/misc.ts";
+import { client } from "../../client.ts";
+import { commands } from "../../cmd/list.ts";
+import { handleError } from "./helpers/errorHandler.ts";
+import { makeCommandApi } from "./helpers/makeCommandApi.ts";
+import { makeSlashCommandDesc, makeSlashCommandOptionDesc } from "./helpers/makeSlashCommandDescs.ts";
 
-import findCommand from '@/util/cmd/findCommand.ts';
-import canExecuteCmd from '@/util/cmd/canExecuteCmd.ts';
-import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.ts';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
-import { PredefinedColors } from '@/util/color.ts';
+import findCommand from "@/util/cmd/findCommand.ts";
+import canExecuteCmd from "@/util/cmd/canExecuteCmd.ts";
+import isCommandBlockedOnChannel from "@/util/cmd/isCommandBlockedOnChannel.ts";
+import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
+import { PredefinedColors } from "@/util/color.ts";
 
 function waitForButton(int: dsc.ChatInputCommandInteraction, buttonId: string, time = 15000) {
     return new Promise((resolve, reject) => {
         const collector = int.channel!.createMessageComponentCollector({
-            filter: function (i) {return i.customId === buttonId && i.user.id === int.user.id},
-            time
+            filter: function (i) {
+                return i.customId === buttonId && i.user.id === int.user.id;
+            },
+            time,
         });
 
-        collector.on('collect', async i => {
-            await i.deferUpdate(); 
-            collector.stop('clicked');
-            resolve(i); 
+        collector.on("collect", async (i) => {
+            await i.deferUpdate();
+            collector.stop("clicked");
+            resolve(i);
         });
 
-        collector.on('end', (_, reason) => {
-            if (reason !== 'clicked') {
-                reject(new Error('Button not clicked in time'));
+        collector.on("end", (_, reason) => {
+            if (reason !== "clicked") {
+                reject(new Error("Button not clicked in time"));
             }
         });
     });
 }
 
-client.on('interactionCreate', async (int: Interaction) => {
+client.on("interactionCreate", async (int: Interaction) => {
     if (!int.isChatInputCommand()) return;
 
     const result = findCommand(int.commandName, commands);
     if (!result) {
-        return int.reply({ content: 'Nie znam takiej komendy', ephemeral: true });
+        return int.reply({ content: "Nie znam takiej komendy", ephemeral: true });
     }
 
     const { command, config } = result;
@@ -56,25 +58,26 @@ client.on('interactionCreate', async (int: Interaction) => {
             }
             await int.reply(options);
             return await int.fetchReply();
-        }
+        },
     };
 
     if (!canExecuteCmd(command, int.member! as any)) {
         return log.replyError(
             replyable,
-            'Hej, a co ty odpie*dalasz?',
-            'Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...'
+            "Hej, a co ty odpie*dalasz?",
+            "Wiesz że nie masz uprawnień? Poczekaj aż hubix się tobą zajmie...",
         );
     }
 
     const isBlocked = isCommandBlockedOnChannel(command, int.channelId, !int.guild);
     if (isBlocked) {
-        return int.reply({ content: '❌', ephemeral: true });
+        return int.reply({ content: "❌", ephemeral: true });
     }
 
     if (!int.guild && !(command.flags & CommandFlags.WorksInDM)) {
         return log.replyError(
-            replyable, 'Ta komenda nie jest przeznaczona do tego trybu gadania!',
+            replyable,
+            "Ta komenda nie jest przeznaczona do tego trybu gadania!",
             `Taka komenda jak **${command.name}** może być wykonana tylko na serwerach no sorki no!`,
         );
     }
@@ -82,39 +85,38 @@ client.on('interactionCreate', async (int: Interaction) => {
     if (
         (cfg.commands.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
         (cfg.commands.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
-    ) { 
+    ) {
         const row = new dsc.ActionRowBuilder<dsc.ButtonBuilder>()
             .addComponents(
                 new dsc.ButtonBuilder()
-                .setCustomId('confirm')
-                .setLabel('Tak, uruchom')
-                .setStyle(dsc.ButtonStyle.Danger)
+                    .setCustomId("confirm")
+                    .setLabel("Tak, uruchom")
+                    .setStyle(dsc.ButtonStyle.Danger),
             );
 
-        await int.reply({ embeds: [
-            new ReplyEmbed()
-                .setColor(PredefinedColors.Red)
-                .setTitle('Czy na pewno chcesz uruchomić tą komendę?')
-                .setDescription(`Została ona oznaczona jako ${
-                    ((command.flags & CommandFlags.Unsafe) && (command.flags & CommandFlags.Deprecated))
-                        ? 'potencjalnie niebezpieczna i przestarzała'
-                        : (command.flags & CommandFlags.Deprecated) ? 'przestarzała' : 'potencjalnie niebezpieczna'
-                }.`)
-        ], components: [row] });
+        await int.reply({
+            embeds: [
+                new ReplyEmbed()
+                    .setColor(PredefinedColors.Red)
+                    .setTitle("Czy na pewno chcesz uruchomić tą komendę?")
+                    .setDescription(`Została ona oznaczona jako ${((command.flags & CommandFlags.Unsafe) && (command.flags & CommandFlags.Deprecated)) ? "potencjalnie niebezpieczna i przestarzała" : (command.flags & CommandFlags.Deprecated) ? "przestarzała" : "potencjalnie niebezpieczna"}.`),
+            ],
+            components: [row],
+        });
 
         try {
-            await waitForButton(int, 'confirm', 20000);
-            await int.editReply({ components: [], embeds: [], content: '⏳' }); 
+            await waitForButton(int, "confirm", 20000);
+            await int.editReply({ components: [], embeds: [], content: "⏳" });
         } catch {
             return;
         }
     }
 
-    if (!config.enabled && command.name != 'configuration') {
+    if (!config.enabled && command.name != "configuration") {
         return log.replyWarn(
             replyable,
-            'Ta komenda jest wyłączona',
-            'Eklerka coś tam gadał, że go wkurza bloat, więc dodałem wyłączanie komend. Trzeba będzie wszystko dodać jako możliwe do wyłączenia w konfiguracji XD.'
+            "Ta komenda jest wyłączona",
+            "Eklerka coś tam gadał, że go wkurza bloat, więc dodałem wyłączanie komend. Trzeba będzie wszystko dodać jako możliwe do wyłączenia w konfiguracji XD.",
         );
     }
 
@@ -132,7 +134,7 @@ client.on('interactionCreate', async (int: Interaction) => {
     }
 
     if (isDisallowed) {
-        return await log.replyWarn(replyable, 'Nie dla psa kiełbasa...', 'Niestety ktoś mądry pomyślał, by specjalnie dla ciebie wyłączyć tę komendę.');
+        return await log.replyWarn(replyable, "Nie dla psa kiełbasa...", "Niestety ktoś mądry pomyślał, by specjalnie dla ciebie wyłączyć tę komendę.");
     }
 
     if (!int.deferred && !int.replied) {
@@ -140,23 +142,22 @@ client.on('interactionCreate', async (int: Interaction) => {
     }
 
     try {
-        const argsRaw = command.expectedArgs.map(arg => int.options.get(arg.name)?.value?.toString() ?? '');
+        const argsRaw = command.expectedArgs.map((arg) => int.options.get(arg.name)?.value?.toString() ?? "");
         const api = await makeCommandApi(command, argsRaw, {
             interaction: int,
             cmd: command,
             guild: int.guild ?? undefined,
-            invokedviaalias: int.commandName
+            invokedviaalias: int.commandName,
         });
         await command.execute(api);
-
     } catch (err) {
-        handleError(err, { reply: (options: any) => int.editReply(options as any), });
+        handleError(err, { reply: (options: any) => int.editReply(options as any) });
     }
 });
 
 export async function init() {
     const commandsArray: dsc.RESTPostAPIApplicationCommandsJSONBody[] = [];
-    const rest = new dsc.REST({ version: '10' }).setToken(process.env.TOKEN!);
+    const rest = new dsc.REST({ version: "10" }).setToken(process.env.TOKEN!);
 
     for (const [, cmds] of commands) {
         for (const cmd of cmds) {
@@ -169,60 +170,60 @@ export async function init() {
                 const type = types[0]; // Use first type for slash command representation
 
                 switch (type.base) {
-                case 'string':
-                    scb.addStringOption(option =>
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, 'Podaj wartość'))
-                            .setRequired(!arg.optional)
-                    );
-                    break;
+                    case "string":
+                        scb.addStringOption((option) =>
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, "Podaj wartość"))
+                                .setRequired(!arg.optional)
+                        );
+                        break;
 
-                case 'float':
-                case 'int':
-                    scb.addNumberOption(option =>
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, 'Podaj liczbę'))
-                            .setRequired(!arg.optional)
-                    );
-                    break;
+                    case "float":
+                    case "int":
+                        scb.addNumberOption((option) =>
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, "Podaj liczbę"))
+                                .setRequired(!arg.optional)
+                        );
+                        break;
 
-                case 'user-mention':
-                    scb.addStringOption(option =>
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż użytkownika'))
-                            .setRequired(!arg.optional)
-                    );
-                    break;
+                    case "user-mention":
+                        scb.addStringOption((option) =>
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, "Wskaż użytkownika"))
+                                .setRequired(!arg.optional)
+                        );
+                        break;
 
-                case 'role-mention':
-                    scb.addRoleOption(option =>
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż rolę'))
-                            .setRequired(!arg.optional)
-                    );
-                    break;
+                    case "role-mention":
+                        scb.addRoleOption((option) =>
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, "Wskaż rolę"))
+                                .setRequired(!arg.optional)
+                        );
+                        break;
 
-                case 'channel-mention':
-                    scb.addChannelOption(option =>
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż kanał'))
-                            .setRequired(!arg.optional)
-                    );
-                    break;
+                    case "channel-mention":
+                        scb.addChannelOption((option) =>
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, "Wskaż kanał"))
+                                .setRequired(!arg.optional)
+                        );
+                        break;
 
-                case 'timestamp':
-                    scb.addStringOption(option =>
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, 'Podaj czas (timestamp)'))
-                            .setRequired(!arg.optional)
-                    );
-                    break;
+                    case "timestamp":
+                        scb.addStringOption((option) =>
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, "Podaj czas (timestamp)"))
+                                .setRequired(!arg.optional)
+                        );
+                        break;
                 }
             }
 
@@ -233,10 +234,10 @@ export async function init() {
     try {
         await rest.put(
             dsc.Routes.applicationCommands(client.application!.id),
-            { body: commandsArray }
+            { body: commandsArray },
         );
-        debug.log('Slash commands registered');
+        debug.log("Slash commands registered");
     } catch (err) {
-        debug.err('Slash commands error: ' + err);
+        debug.err("Slash commands error: " + err);
     }
 }

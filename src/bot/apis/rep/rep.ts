@@ -1,15 +1,15 @@
-import * as dsc from 'discord.js';
+import * as dsc from "discord.js";
 
-import { db, repFromRaw } from '../db/bot-db.ts';
+import { db, repFromRaw } from "../db/bot-db.ts";
 
-import User from '@/bot/apis/db/user.ts';
-import type { Rep, RepRaw } from '@/bot/apis/db/db-defs.ts';
+import User from "@/bot/apis/db/user.ts";
+import type { Rep, RepRaw } from "@/bot/apis/db/db-defs.ts";
 export type { Rep };
 
 export interface RepProportion {
     plus: number;
     sub: number;
-};
+}
 
 function buildRepsMap(reps: Rep[]): Map<dsc.Snowflake, Rep[]> {
     const map: Map<dsc.Snowflake, Rep[]> = new Map();
@@ -53,7 +53,7 @@ export function computeReputationScores(reps: Rep[], opts?: { maxIter?: number; 
             for (const r of incoming) {
                 const voterRep = reputations.get(r.authorId) ?? 0;
                 const weight = Math.max(0.5, voterRep / 10); // prevent zero weight
-                const val = r.type === '+rep' ? 1 : -1;
+                const val = r.type === "+rep" ? 1 : -1;
                 weightedSum += val * weight;
                 totalWeight += weight;
             }
@@ -74,7 +74,7 @@ export function computeReputationScores(reps: Rep[], opts?: { maxIter?: number; 
     return reputations;
 }
 
-function scaleTwoNumbers(a: number, b: number, newMax: number, threshold: number): { a: number, b: number } {
+function scaleTwoNumbers(a: number, b: number, newMax: number, threshold: number): { a: number; b: number } {
     if (a == 0 && b == 0) {
         return { a: 0, b: 0 };
     }
@@ -113,8 +113,8 @@ export async function getUserReputationProportion(userId: dsc.Snowflake): Promis
     const user = new User(userId);
     const userReps = await user.reputation.getReceived();
 
-    const userPlusRepsCount = userReps.reduce((acc, rep) => acc + (rep.type === '+rep' ? 1 : 0), 0);
-    const userSubRepsCount =  userReps.reduce((acc, rep) => acc + (rep.type === '-rep' ? 1 : 0), 0);
+    const userPlusRepsCount = userReps.reduce((acc, rep) => acc + (rep.type === "+rep" ? 1 : 0), 0);
+    const userSubRepsCount = userReps.reduce((acc, rep) => acc + (rep.type === "-rep" ? 1 : 0), 0);
 
     const { a: userPlusRepsCountScaled, b: userSubRepsCountScaled } = scaleTwoNumbers(userPlusRepsCount, userSubRepsCount, 5, 5);
     return { plus: userPlusRepsCountScaled, sub: userSubRepsCountScaled };
@@ -181,10 +181,13 @@ export async function getUserReputation(userId: dsc.Snowflake): Promise<Reputati
 }
 
 export async function getLastRepGivenByUser(authorId: string): Promise<Rep | null> {
-    const row = await db.selectOne<RepRaw>(`
+    const row = await db.selectOne<RepRaw>(
+        `
         SELECT * FROM reputation WHERE author_id = ?
         ORDER BY created_at DESC
         LIMIT 1
-    `, [authorId]);
+    `,
+        [authorId],
+    );
     return row ? repFromRaw(row) : null;
 }

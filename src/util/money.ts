@@ -1,13 +1,13 @@
-import { cfg } from '@/bot/cfg.ts';
-import { formatBigint } from './math/format.ts';
-import { parseBigint } from './math/parse.ts';
+import { cfg } from "@/bot/cfg.ts";
+import { formatBigint } from "./math/format.ts";
+import { parseBigint } from "./math/parse.ts";
 
 export default class Money {
     static readonly SCALE = 100n;
     static readonly DECIMALS = 2;
 
     private value: bigint;
-    
+
     private constructor(value: bigint) {
         this.value = value;
     }
@@ -37,9 +37,9 @@ export default class Money {
         const sign = cfg.features.economy.currencySign;
         const placement = cfg.features.economy.currencySignPlacement;
 
-        if (placement == 'left' && cleaned.startsWith(sign)) {
+        if (placement == "left" && cleaned.startsWith(sign)) {
             cleaned = cleaned.slice(sign.length).trim();
-        } else if (placement == 'right' && cleaned.endsWith(sign)) {
+        } else if (placement == "right" && cleaned.endsWith(sign)) {
             cleaned = cleaned.slice(0, -sign.length).trim();
         }
 
@@ -107,21 +107,27 @@ export default class Money {
         return this.value >= other.value;
     }
 
-    isZero(): boolean { return this.value == 0n; }
-    isPositive(): boolean { return this.value > 0n; }
-    isNegative(): boolean { return this.value < 0n; }
+    isZero(): boolean {
+        return this.value == 0n;
+    }
+    isPositive(): boolean {
+        return this.value > 0n;
+    }
+    isNegative(): boolean {
+        return this.value < 0n;
+    }
 
     format(): string {
         const formatted = formatBigint(this.value, Money.DECIMALS);
         switch (cfg.features.economy.currencySignPlacement) {
-        case 'left':
-            return cfg.features.economy.currencySign + formatted;
-        case 'right':
-            return formatted + cfg.features.economy.currencySign;
+            case "left":
+                return cfg.features.economy.currencySign + formatted;
+            case "right":
+                return formatted + cfg.features.economy.currencySign;
         }
     }
 
     toString(): string {
         return this.format();
     }
-};
+}

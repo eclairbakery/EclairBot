@@ -1,50 +1,50 @@
-import * as dsc from 'discord.js';
-import { cfg } from '@/bot/cfg.ts';
+import * as dsc from "discord.js";
+import { cfg } from "@/bot/cfg.ts";
 
-import { PredefinedColors } from '@/util/color.ts';
-import { Command} from "@/bot/command.ts";
-import { CommandFlags } from '@/bot/apis/commands/misc.ts';
-import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
-import { CommandAPI } from '@/bot/apis/commands/api.ts';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { PredefinedColors } from "@/util/color.ts";
+import { Command } from "@/bot/command.ts";
+import { CommandFlags } from "@/bot/apis/commands/misc.ts";
+import { CommandPermissions } from "@/bot/apis/commands/permissions.ts";
+import { CommandAPI } from "@/bot/apis/commands/api.ts";
+import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
 
 const cmdCfg = cfg.commands.configuration.warn;
 
 export const clearCmd: Command = {
-    name: 'clear',
+    name: "clear",
     aliases: cmdCfg.aliases,
     description: {
-        main: 'Ktoś spami? Ta komenda pomoże Ci ogarnąć usuwanie wiadomości!',
-        short: 'Wywala wiadomości!',
+        main: "Ktoś spami? Ta komenda pomoże Ci ogarnąć usuwanie wiadomości!",
+        short: "Wywala wiadomości!",
     },
     flags: CommandFlags.Important,
 
     expectedArgs: [
         {
-            type: { base: 'float' },
+            type: { base: "float" },
             optional: false,
-            name: 'amount',
-            description: 'Liczba wiadomości do usunięcia',
+            name: "amount",
+            description: "Liczba wiadomości do usunięcia",
         },
         {
-            type: { base: 'user-mention' },
+            type: { base: "user-mention" },
             optional: true,
-            name: 'user',
-            description: 'Opcjonalnie, usuń wiadomości tylko tego użytkownika',
-        }
+            name: "user",
+            description: "Opcjonalnie, usuń wiadomości tylko tego użytkownika",
+        },
     ],
     permissions: CommandPermissions.fromCommandConfig(cmdCfg),
 
     async execute(api: CommandAPI) {
-        const amount = api.getTypedArg('amount', 'float')?.value as number;
-        const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember;
+        const amount = api.getTypedArg("amount", "float")?.value as number;
+        const who = api.getTypedArg("user", "user-mention")?.value as dsc.GuildMember;
 
         if (!amount || amount < 1) {
             return api.reply({
                 embeds: [
                     new ReplyEmbed()
-                        .setTitle('Hej!')
-                        .setDescription('Pierwszy argument to liczba wiadomości do usunięcia!')
+                        .setTitle("Hej!")
+                        .setDescription("Pierwszy argument to liczba wiadomości do usunięcia!")
                         .setColor(PredefinedColors.Red),
                 ],
             });
@@ -55,7 +55,7 @@ export const clearCmd: Command = {
         if (who) {
             const fetched = await channel.messages.fetch({ limit: 100 });
             const filtered = fetched
-                .filter(m => m.author.id === who.id && m.id !== api.invoker.id)
+                .filter((m) => m.author.id === who.id && m.id !== api.invoker.id)
                 .first(amount);
 
             await channel.bulkDelete(filtered, true);
@@ -64,13 +64,15 @@ export const clearCmd: Command = {
             await channel.bulkDelete(fetched, true);
         }
 
-        if (api.channel.isSendable()) await api.channel.send({
-            embeds: [
-                new ReplyEmbed()
-                    .setTitle('Już!')
-                    .setDescription(`Usunąłem ${amount} wiadomości${who ? ` od ${who.user.tag}` : ''}.`)
-                    .setColor(PredefinedColors.YellowGreen),
-            ],
-        });
-    }
+        if (api.channel.isSendable()) {
+            await api.channel.send({
+                embeds: [
+                    new ReplyEmbed()
+                        .setTitle("Już!")
+                        .setDescription(`Usunąłem ${amount} wiadomości${who ? ` od ${who.user.tag}` : ""}.`)
+                        .setColor(PredefinedColors.YellowGreen),
+                ],
+            });
+        }
+    },
 };

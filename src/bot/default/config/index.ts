@@ -3,13 +3,13 @@ import { hierarchyCfg } from "./hierarchy.ts";
 import { channelsCfg } from "./channels.ts";
 import { featuresConfig } from "./features.ts";
 
-const commandsCfg: Config['commands']['configuration'] = {
+const commandsCfg: Config["commands"]["configuration"] = {
     ban: {
         enabled: true,
         aliases: [],
         allowedRoles: [hierarchyCfg.administration.eclair25, hierarchyCfg.administration.headAdmin, hierarchyCfg.administration.admin, hierarchyCfg.administration.headMod],
         allowedUsers: [],
-        reasonRequired: false
+        reasonRequired: false,
     },
     kick: {
         enabled: true,
@@ -39,7 +39,7 @@ const commandsCfg: Config['commands']['configuration'] = {
         enabledForNormalAdministrators: true,
         allowedRoles: [hierarchyCfg.administration.eclair25, hierarchyCfg.administration.headAdmin, hierarchyCfg.administration.admin, hierarchyCfg.administration.headMod, hierarchyCfg.administration.mod, hierarchyCfg.administration.helper],
         allowedUsers: [],
-        enabled: true
+        enabled: true,
     },
     reset: {
         enabled: true,
@@ -56,8 +56,8 @@ const commandsCfg: Config['commands']['configuration'] = {
         cooldown: 15 * 60 * 1000,
         maximumCrimeAmount: 8000,
         minimumCrimeAmount: 2500,
-        successRatio: 0.4
-    }
+        successRatio: 0.4,
+    },
 };
 
 export const defaultCfg: Config = {
@@ -66,31 +66,31 @@ export const defaultCfg: Config = {
     channels: channelsCfg,
 
     commands: {
-        prefix: 'sudo ',
+        prefix: "sudo ",
         alternativePrefixes: [
-            '.'
+            ".",
         ],
         confirmUnsafeCommands: false,
         confirmDeprecatedCommands: false,
 
         blocking: {
             full: {
-                default: 'allow',
+                default: "allow",
                 deny: [],
             },
             fullExceptImportant: {
-                default: 'allow',
+                default: "allow",
                 deny: [...Object.values(channelsCfg.forfun), channelsCfg.general.media],
             },
             spammy: {
-                default: 'block',
+                default: "block",
                 allow: [channelsCfg.general.commands, channelsCfg.mod.modCommands, channelsCfg.mod.modGeneral, channelsCfg.forfun.unfiltred],
             },
             economy: {
-                default: 'block',
+                default: "block",
                 allow: [channelsCfg.other.economy, channelsCfg.mod.modCommands],
             },
-            preferShortenedEmbeds: [channelsCfg.general.general]
+            preferShortenedEmbeds: [channelsCfg.general.general],
         },
 
         configuration: commandsCfg,
@@ -100,37 +100,37 @@ export const defaultCfg: Config = {
 
             allowedUsers: null,
             allowedRoles: null,
-        }
+        },
     },
 
     database: {
-        path: 'bot.db',
+        path: "bot.db",
 
         backups: {
             enabled: true,
-            msg: '🗄️ automatyczny backup masz tutaj',
-            interval: 2 * 60 * 60 * 1000
-        }
+            msg: "🗄️ automatyczny backup masz tutaj",
+            interval: 2 * 60 * 60 * 1000,
+        },
     },
 
     features: featuresConfig,
 
     emojis: {
-        darkRedBlock:      { name: 'dark_red_block',    id: '1416021203331715082' },
-        lightRedBlock:     { name: 'light_red_block',   id: '1416021243379056700' },
-        darkGreenBlock:    { name: 'dark_green_block',  id: '1416021182964043856' },
-        lightGreenBlock:   { name: 'light_green_block', id: '1416021218485600357' },
+        darkRedBlock: { name: "dark_red_block", id: "1416021203331715082" },
+        lightRedBlock: { name: "light_red_block", id: "1416021243379056700" },
+        darkGreenBlock: { name: "dark_green_block", id: "1416021182964043856" },
+        lightGreenBlock: { name: "light_green_block", id: "1416021218485600357" },
 
         circleProgressBar: {
-            '0/4': { name: 'circle_progress_bar_04', id: '1416021170750492775' },
-            '1/4': { name: 'circle_progress_bar_14', id: '1416021158779945020' },
-            '2/4': { name: 'circle_progress_bar_24', id: '1416021143315546162' },
-            '3/4': { name: 'circle_progress_bar_34', id: '1416021126890655894' },
+            "0/4": { name: "circle_progress_bar_04", id: "1416021170750492775" },
+            "1/4": { name: "circle_progress_bar_14", id: "1416021158779945020" },
+            "2/4": { name: "circle_progress_bar_24", id: "1416021143315546162" },
+            "3/4": { name: "circle_progress_bar_34", id: "1416021126890655894" },
         },
 
-        heartAttackEmoji: { name: 'joe_zatrzymanie_akcji_serca', id: '1308174897758994443' },
-        sadEmoji: { name: 'joe_smutny', id: '1317904814025474088' },
-        wowEmoji: { name: 'joe_wow', id: '1308174905489100820' },
-        idkEmoji: { name: 'joe_noniewiemno', id: '1317904812779503676' }
+        heartAttackEmoji: { name: "joe_zatrzymanie_akcji_serca", id: "1308174897758994443" },
+        sadEmoji: { name: "joe_smutny", id: "1317904814025474088" },
+        wowEmoji: { name: "joe_wow", id: "1308174905489100820" },
+        idkEmoji: { name: "joe_noniewiemno", id: "1317904812779503676" },
     },
 };

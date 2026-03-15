@@ -42,10 +42,10 @@ process.stderr.write = function (chunk: any, encoding?: any, callback?: any): bo
 
 export namespace output {
     export namespace colors {
-        export const RESET   = "\x1b[0m";
-        export const RED     = "\x1b[31m";
-        export const YELLOW  = "\x1b[33m";
-        export const CYAN    = "\x1b[36m";
+        export const RESET = "\x1b[0m";
+        export const RED = "\x1b[31m";
+        export const YELLOW = "\x1b[33m";
+        export const CYAN = "\x1b[36m";
     }
 
     let stdoutChannel: GuildTextBasedChannel;
@@ -61,16 +61,22 @@ export namespace output {
     function decorate(level: "LOG" | "WARN" | "ERR", color: string, msg: string): string {
         return msg
             .split("\n")
-            .map(line => `${colors.RESET}[${color} ${level} ${colors.RESET}] ${line}${colors.RESET}`)
+            .map((line) => `${colors.RESET}[${color} ${level} ${colors.RESET}] ${line}${colors.RESET}`)
             .join("\n");
     }
 
     async function send(where: "stdout" | "stderr" | "stdwarn", msg: string) {
         let target: GuildTextBasedChannel | undefined;
         switch (where) {
-            case "stdout": target = stdoutChannel; break;
-            case "stderr": target = stderrChannel; break;
-            case "stdwarn": target = stdwarnChannel; break;
+            case "stdout":
+                target = stdoutChannel;
+                break;
+            case "stderr":
+                target = stderrChannel;
+                break;
+            case "stdwarn":
+                target = stdwarnChannel;
+                break;
         }
         if (target) {
             try {

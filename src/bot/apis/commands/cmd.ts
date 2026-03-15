@@ -1,7 +1,7 @@
-import * as dsc from 'discord.js';
-import { CommandAPI } from './api.ts';
-import { CommandArgument } from './arguments.ts';
-import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import * as dsc from "discord.js";
+import { CommandAPI } from "./api.ts";
+import { CommandArgument } from "./arguments.ts";
+import { CommandFlags } from "@/bot/apis/commands/misc.ts";
 
 export interface Command {
     name: string;

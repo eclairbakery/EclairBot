@@ -7,10 +7,10 @@ export function mkDualProgressBar(red: number, green: number, totalLength: numbe
     red = Math.min(red, maxHalf);
     green = Math.min(green, maxHalf);
 
-    return fmtEmoji(cfg.emojis.darkRedBlock).repeat(maxHalf - red)
-        + fmtEmoji(cfg.emojis.lightRedBlock).repeat(red)
-        + fmtEmoji(cfg.emojis.lightGreenBlock).repeat(green)
-        + fmtEmoji(cfg.emojis.darkGreenBlock).repeat(maxHalf - green);
+    return fmtEmoji(cfg.emojis.darkRedBlock).repeat(maxHalf - red) +
+        fmtEmoji(cfg.emojis.lightRedBlock).repeat(red) +
+        fmtEmoji(cfg.emojis.lightGreenBlock).repeat(green) +
+        fmtEmoji(cfg.emojis.darkGreenBlock).repeat(maxHalf - green);
 }
 
 export function mkProgressBar(fillLength: number, max: number, totalLength: number = 13) {
@@ -18,5 +18,5 @@ export function mkProgressBar(fillLength: number, max: number, totalLength: numb
     const filledLength = Math.floor(totalLength * progress);
     const emptyLength = totalLength - filledLength;
 
-    return `${'█'.repeat(filledLength)}${'░'.repeat(emptyLength)}`;
+    return `${"█".repeat(filledLength)}${"░".repeat(emptyLength)}`;
 }

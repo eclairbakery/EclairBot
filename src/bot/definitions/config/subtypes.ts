@@ -1,31 +1,31 @@
-import * as dsc from 'discord.js';
+import * as dsc from "discord.js";
 
 export type BlockCommandsRules = {
-    default: 'block';
+    default: "block";
     allow: dsc.Snowflake[];
 } | {
-    default: 'allow';
+    default: "allow";
     deny: dsc.Snowflake[];
 };
 
 export interface Emoji {
     name: string;
     id: dsc.Snowflake;
-};
+}
 
 export interface ConfigTranslation {
-    input: string[] | string,
-    output: string
-};
+    input: string[] | string;
+    output: string;
+}
 
 export interface RegexExpressionDefinition {
-    regex: string,
-    flags: `i` | undefined
+    regex: string;
+    flags: `i` | undefined;
 }
 
 export interface ConfigCommandARgumentRulesForNumbers {
-    allowInfinity: boolean,
-    onlyIntegers: boolean,
+    allowInfinity: boolean;
+    onlyIntegers: boolean;
 }
 
 ////////////// command config base & commands ///////////////
@@ -39,21 +39,21 @@ export interface CommandConfigBase {
     disallowedRoles?: dsc.Snowflake[];
     cooldownBypassUsers?: dsc.Snowflake[];
     cooldownBypassRoles?: dsc.Snowflake[];
-};
+}
 export type AnyCommandConfig = CommandConfigBase & { [key: string]: any };
 
 export interface ModCommandConfig extends CommandConfigBase {
     reasonRequired?: boolean;
-};
+}
 
 export interface WarnCommandConfig extends ModCommandConfig {
     maxPoints: number;
     minPoints: number;
-};
+}
 
 export interface IzolatkaCommandConfig extends CommandConfigBase {
     enabledForNormalAdministrators: boolean;
-};
+}
 
 export interface CrimeCommandConfig extends CommandConfigBase {
     cooldown: number;
@@ -80,6 +80,6 @@ export type EconomyCommandsConfig = {
 
 ////////////// permissions ///////////////
 export interface PermissionDefinitionConfig {
-    allowedUsers: dsc.Snowflake[],
-    allowedRoles: dsc.Snowflake[]
-};
+    allowedUsers: dsc.Snowflake[];
+    allowedRoles: dsc.Snowflake[];
+}
