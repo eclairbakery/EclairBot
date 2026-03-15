@@ -1,26 +1,26 @@
-import { cfg } from "@/bot/cfg.ts";
+import { cfg } from '@/bot/cfg.ts';
 
 export type TranslateableObject = { [key: string | number | symbol]: any } | any[];
 export type Translateable = TranslateableObject | string | number;
 
 function translatePatternToRegex(input: string): { regex: RegExp; groups: number } {
-    let escaped = input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    let escaped = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     let groups = 0;
     escaped = escaped.replace(/\\\[\\\*\\\*\\\]/g, () => {
         groups++;
-        return "(.*)";
+        return '(.*)';
     });
-    escaped = escaped.replace(/\\\[\\\*\\\]/g, ".*");
+    escaped = escaped.replace(/\\\[\\\*\\\]/g, '.*');
 
-    const regex = new RegExp(`^${escaped}$`, "i");
+    const regex = new RegExp(`^${escaped}$`, 'i');
 
     return { regex, groups };
 }
 
 function translateString(what: string) {
     const translation = cfg.features.translations.find((val) => {
-        const inputs = typeof val.input === "string" ? [val.input] : val.input;
+        const inputs = typeof val.input === 'string' ? [val.input] : val.input;
 
         return inputs.some((pattern: string) => {
             const { regex } = translatePatternToRegex(pattern);
@@ -30,7 +30,7 @@ function translateString(what: string) {
 
     if (!translation) return what;
 
-    const inputs = typeof translation.input === "string" ? [translation.input] : translation.input;
+    const inputs = typeof translation.input === 'string' ? [translation.input] : translation.input;
 
     for (const pattern of inputs) {
         const { regex, groups } = translatePatternToRegex(pattern);
@@ -40,7 +40,7 @@ function translateString(what: string) {
             let output = translation.output;
 
             for (let i = 1; i <= groups; i++) {
-                output = output.replace(new RegExp(`\\$${i}`, "g"), match[i] ?? "");
+                output = output.replace(new RegExp(`\\$${i}`, 'g'), match[i] ?? '');
             }
 
             return output;
@@ -69,14 +69,14 @@ function translate(what: number): number;
 function translate<T extends TranslateableObject>(what: T): T;
 function translate(what: Translateable): Translateable {
     switch (typeof what) {
-        case "object":
+        case 'object':
             return translateObj(what);
 
-        case "string":
+        case 'string':
             return translateString(what);
 
-        case "number":
-        case "bigint":
+        case 'number':
+        case 'bigint':
         default:
             return what;
     }

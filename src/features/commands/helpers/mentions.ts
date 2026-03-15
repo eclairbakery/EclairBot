@@ -1,4 +1,4 @@
-import * as dsc from "discord.js";
+import * as dsc from 'discord.js';
 
 export function parseMentionsFromStrings(args: string[], guild: dsc.Guild) {
     const users = new dsc.Collection<string, dsc.User>();

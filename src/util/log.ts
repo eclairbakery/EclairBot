@@ -1,9 +1,9 @@
-import { PredefinedColors } from "@/util/color.ts";
-import { SendableChannel } from "../defs.ts";
+import { PredefinedColors } from '@/util/color.ts';
+import { SendableChannel } from '../defs.ts';
 
-import * as dsc from "discord.js";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
-import { t } from "@/bot/apis/translations/translate.ts";
+import * as dsc from 'discord.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { t } from '@/bot/apis/translations/translate.ts';
 
 export interface Replyable {
     reply: (options: any) => Promise<dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>> | dsc.Message<boolean>>;
@@ -19,17 +19,17 @@ enum LogType {
 
 function getEmbed(type: LogType, title: string, desc: string) {
     const settings = {
-        [LogType.Success]: { emoji: "✅", color: PredefinedColors.Green },
-        [LogType.Info]: { emoji: "ℹ️", color: PredefinedColors.Cyan },
-        [LogType.Tip]: { emoji: "💡", color: PredefinedColors.Purple },
-        [LogType.Warn]: { emoji: "⚠️", color: PredefinedColors.Orange },
-        [LogType.Error]: { emoji: "💔", color: PredefinedColors.Red },
+        [LogType.Success]: { emoji: '✅', color: PredefinedColors.Green },
+        [LogType.Info]: { emoji: 'ℹ️', color: PredefinedColors.Cyan },
+        [LogType.Tip]: { emoji: '💡', color: PredefinedColors.Purple },
+        [LogType.Warn]: { emoji: '⚠️', color: PredefinedColors.Orange },
+        [LogType.Error]: { emoji: '💔', color: PredefinedColors.Red },
     };
 
     return new ReplyEmbed()
         .setTitle(`${settings[type].emoji} ${title}`)
         .setColor(settings[type].color)
-        .setAuthor({ name: "EclairBOT" })
+        .setAuthor({ name: 'EclairBOT' })
         .setDescription(desc);
 }
 

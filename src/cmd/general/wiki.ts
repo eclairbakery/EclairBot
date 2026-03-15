@@ -1,7 +1,7 @@
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { CommandAPI } from "@/bot/apis/commands/api.ts";
-import { PredefinedColors } from "@/util/color.ts";
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { PredefinedColors } from '@/util/color.ts';
 
 interface WikiSummaryResponse {
     type: string;
@@ -32,13 +32,13 @@ async function getDisambiguationTitles(title: string): Promise<string[]> {
 
     if (!data.parse?.links) return [];
 
-    return data.parse.links.filter((l: any) => l.ns === 0).map((l: any) => l["*"]);
+    return data.parse.links.filter((l: any) => l.ns === 0).map((l: any) => l['*']);
 }
 
 async function downloadFromWikipedia(languageVersions: string[], args: string[]) {
     let fetched: Response;
     for (const lang of languageVersions) {
-        const url = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(args.join("_"))}`;
+        const url = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(args.join('_'))}`;
         fetched = await fetch(url);
         if (!fetched.ok) continue;
         break;
@@ -47,20 +47,20 @@ async function downloadFromWikipedia(languageVersions: string[], args: string[])
 }
 
 export const wikiCmd: Command = {
-    name: "wiki",
+    name: 'wiki',
     aliases: [],
     description: {
-        main: "Generalnie pobiera artykuł z Wikipedii. Super użyteczne!",
-        short: "Pobiera rzecz z Wikipedii!",
+        main: 'Generalnie pobiera artykuł z Wikipedii. Super użyteczne!',
+        short: 'Pobiera rzecz z Wikipedii!',
     },
     flags: CommandFlags.None | CommandFlags.WorksInDM,
 
     expectedArgs: [
         {
-            name: "query",
-            type: { base: "string", trailing: true },
+            name: 'query',
+            type: { base: 'string', trailing: true },
             optional: false,
-            description: "No, podaj jaki jest ten twój artykuł do pobrania!",
+            description: 'No, podaj jaki jest ten twój artykuł do pobrania!',
         },
     ],
     permissions: {
@@ -68,31 +68,31 @@ export const wikiCmd: Command = {
         allowedUsers: null,
     },
     execute: async (api: CommandAPI) => {
-        const rawQuery = api.getTypedArg("query", "string")?.value as string;
+        const rawQuery = api.getTypedArg('query', 'string')?.value as string;
 
-        const query = rawQuery == "hubix" ? "pedał" : rawQuery;
+        const query = rawQuery == 'hubix' ? 'pedał' : rawQuery;
 
-        if (!query) return api.reply("Musisz podać, czego szukasz na Wikipedii!");
+        if (!query) return api.reply('Musisz podać, czego szukasz na Wikipedii!');
 
         const lowerQuery = query.toLowerCase();
-        if (["auroros", "eklerka", "piekarnia eklerki", "gorciu", "maqix"].some((bad) => lowerQuery.includes(bad))) {
+        if (['auroros', 'eklerka', 'piekarnia eklerki', 'gorciu', 'maqix'].some((bad) => lowerQuery.includes(bad))) {
             return api.reply({
                 embeds: [{
-                    author: { name: "EclairBOT" },
-                    title: "Ta komenda nie jest do tego!",
-                    description: "Rzeczy takie jak `eklerka`, `aurorOS`, `piekarnia eklerki`, `gorciu`, `maqix`, itd. nie są na wikipedii... Po prostu nie spodziewaj się, że jest to wiki serwera.",
+                    author: { name: 'EclairBOT' },
+                    title: 'Ta komenda nie jest do tego!',
+                    description: 'Rzeczy takie jak `eklerka`, `aurorOS`, `piekarnia eklerki`, `gorciu`, `maqix`, itd. nie są na wikipedii... Po prostu nie spodziewaj się, że jest to wiki serwera.',
                     color: PredefinedColors.Blurple,
                 }],
             });
         }
 
-        const fetched = await downloadFromWikipedia(["pl", "simple", "en"], [query]);
+        const fetched = await downloadFromWikipedia(['pl', 'simple', 'en'], [query]);
         if (!fetched || !fetched.ok) {
             return api.reply({
                 embeds: [{
-                    author: { name: "EclairBOT" },
-                    title: "Tego artykułu nie ma na Wikipedii!",
-                    description: "Wiem, to niemożliwe...",
+                    author: { name: 'EclairBOT' },
+                    title: 'Tego artykułu nie ma na Wikipedii!',
+                    description: 'Wiem, to niemożliwe...',
                     color: PredefinedColors.Orange,
                 }],
             });
@@ -100,13 +100,13 @@ export const wikiCmd: Command = {
 
         const json = await fetched.json() as WikiSummaryResponse;
 
-        if (json.description?.includes("strona ujednoznaczniająca") || json.description?.includes("may refer to")) {
+        if (json.description?.includes('strona ujednoznaczniająca') || json.description?.includes('may refer to')) {
             const titles = await getDisambiguationTitles(json.title);
             return api.reply({
                 embeds: [{
-                    author: { name: "EclairBOT" },
-                    title: "Doprecyzuj!",
-                    description: `Natrafiłeś na stronę ujednoznaczniającą. Ona wyświetla różne znaczenia wyrazu...\n${titles.join(", ")}`,
+                    author: { name: 'EclairBOT' },
+                    title: 'Doprecyzuj!',
+                    description: `Natrafiłeś na stronę ujednoznaczniającą. Ona wyświetla różne znaczenia wyrazu...\n${titles.join(', ')}`,
                     url: json.content_urls.desktop.page,
                     color: PredefinedColors.Cyan,
                 }],
@@ -115,7 +115,7 @@ export const wikiCmd: Command = {
 
         return api.reply({
             embeds: [{
-                author: { name: "EclairBOT" },
+                author: { name: 'EclairBOT' },
                 title: json.titles.normalized,
                 description: json.extract,
                 url: json.content_urls.desktop.page,

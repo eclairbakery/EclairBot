@@ -1,5 +1,5 @@
-import { db } from "@/bot/apis/db/bot-db.ts";
-import { output } from "@/bot/logging.ts";
+import { db } from '@/bot/apis/db/bot-db.ts';
+import { output } from '@/bot/logging.ts';
 
 const EXPIRED_WARNS_CHECK_INTERVAL = 10 * 60 * 1000; // 10m in ms
 const SHORT_TERM_THRESHOLD = 10 * 60; // 10m in seconds
@@ -28,7 +28,7 @@ function checkLongTermWarns() {
     const now = Math.floor(Date.now() / 1000);
 
     db.runSql(
-        "DELETE FROM warns WHERE expires_at < ?",
+        'DELETE FROM warns WHERE expires_at < ?',
         [now],
     );
 }
@@ -40,7 +40,7 @@ export function scheduleWarnDeletion(warnId: number, expiresAt: number) {
     if (delay <= SHORT_TERM_THRESHOLD * 1000) {
         setTimeout(() => {
             db.runSql(
-                "DELETE FROM warns WHERE rowid = ?",
+                'DELETE FROM warns WHERE rowid = ?',
                 [warnId],
             );
         }, delay);
@@ -52,7 +52,7 @@ function restoreTimers() {
     const threshold = now + SHORT_TERM_THRESHOLD;
 
     db.selectMany<WarnRow>(
-        "SELECT rowid, expires_at FROM warns WHERE expires_at BETWEEN ? AND ?",
+        'SELECT rowid, expires_at FROM warns WHERE expires_at BETWEEN ? AND ?',
         [now, threshold],
     );
 }

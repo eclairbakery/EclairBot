@@ -1,21 +1,21 @@
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
 export const pfpCmd: Command = {
-    name: "pfp",
-    aliases: ["profilowe", "avatar", "awatar"],
+    name: 'pfp',
+    aliases: ['profilowe', 'avatar', 'awatar'],
     description: {
         main: "Któżby się spodziewał że komenda 'pfp' wyświetli czyjeś pfp?",
-        short: "Wyświetla czyjeś pfp",
+        short: 'Wyświetla czyjeś pfp',
     },
     flags: CommandFlags.None,
 
     expectedArgs: [
         {
-            name: "user",
-            description: "Użytkownik generalnie...",
+            name: 'user',
+            description: 'Użytkownik generalnie...',
             optional: false,
-            type: { base: "user-mention" },
+            type: { base: 'user-mention' },
         },
     ],
     permissions: {
@@ -24,7 +24,7 @@ export const pfpCmd: Command = {
     },
 
     execute(api) {
-        const user = api.getTypedArg("user", "user-mention").value?.user ?? api.invoker.user;
-        api.reply({ content: "Tu masz profilowe i nie marudź:", files: [user.displayAvatarURL()] });
+        const user = api.getTypedArg('user', 'user-mention').value?.user ?? api.invoker.user;
+        api.reply({ content: 'Tu masz profilowe i nie marudź:', files: [user.displayAvatarURL()] });
     },
 };

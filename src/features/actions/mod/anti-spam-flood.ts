@@ -1,29 +1,29 @@
-import { cfg } from "@/bot/cfg.ts";
-import { SendableChannel, Snowflake } from "../../../defs.ts";
-import * as dsc from "discord.js";
-import { Action, MagicSkipAllActions, MessageEventCtx, PredefinedActionEventTypes } from "../index.ts";
-import { client } from "../../../client.ts";
-import parseTimestamp from "@/util/parseTimestamp.ts";
-import { scheduleWarnDeletion } from "../../deleteExpiredWarns.ts";
-import warn from "@/bot/apis/mod/warns.ts";
-import { sendLog } from "@/bot/apis/log/send-log.ts";
-import { RarelyUsedColors } from "@/util/color.ts";
+import { cfg } from '@/bot/cfg.ts';
+import { SendableChannel, Snowflake } from '../../../defs.ts';
+import * as dsc from 'discord.js';
+import { Action, MagicSkipAllActions, MessageEventCtx, PredefinedActionEventTypes } from '../index.ts';
+import { client } from '../../../client.ts';
+import parseTimestamp from '@/util/parseTimestamp.ts';
+import { scheduleWarnDeletion } from '../../deleteExpiredWarns.ts';
+import warn from '@/bot/apis/mod/warns.ts';
+import { sendLog } from '@/bot/apis/log/send-log.ts';
+import { RarelyUsedColors } from '@/util/color.ts';
 
 const userMessagesAntiSpamMap: Map<Snowflake, number[]> = new Map();
 const userRecentlyInTheList: Record<Snowflake, boolean> = {};
 
 async function filterLog(msg: dsc.Message, system: string) {
     sendLog({
-        title: "Wiadomość została usunięta przez filtry anti-spam/anti-flood",
+        title: 'Wiadomość została usunięta przez filtry anti-spam/anti-flood',
         description: `Tu masz autora co nie: <@${msg.author.id}>\nA tu masz link co nie: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`,
         color: RarelyUsedColors.Red,
         fields: [
             {
-                name: "Wiadomość",
+                name: 'Wiadomość',
                 value: msg.content.slice(1, 1020),
             },
             {
-                name: "System moderacyjny",
+                name: 'System moderacyjny',
                 value: system,
             },
         ],
@@ -33,21 +33,21 @@ async function filterLog(msg: dsc.Message, system: string) {
 function isFlood(content: string) {
     if (!cfg.features.automod.antiFloodEnabled) return false;
     let cleaned = content
-        .replace(/<@!?\d+>/g, "")
-        .replace(/<@&\d+>/g, "")
-        .replace(/<#\d+>/g, "")
+        .replace(/<@!?\d+>/g, '')
+        .replace(/<@&\d+>/g, '')
+        .replace(/<#\d+>/g, '')
         .trim();
 
-    cleaned = cleaned.replace(/\b(x+d+|xd+|ej+|-+|haha+|lol+)\b/gi, "").trim();
+    cleaned = cleaned.replace(/\b(x+d+|xd+|ej+|-+|haha+|lol+)\b/gi, '').trim();
 
     if (!cleaned) return false;
 
     const parts = cleaned.toLowerCase().split(/\s+/);
     for (let size = 2; size <= Math.min(10, Math.floor(parts.length / 2)); size++) {
-        const chunk = parts.slice(0, size).join(" ");
+        const chunk = parts.slice(0, size).join(' ');
         let repeats = 0;
         for (let i = 0; i < parts.length; i += size) {
-            if (parts.slice(i, i + size).join(" ") === chunk) {
+            if (parts.slice(i, i + size).join(' ') === chunk) {
                 repeats++;
             } else {
                 break;
@@ -84,7 +84,7 @@ export const antiSpamAndAntiFlood: Action<MessageEventCtx> = {
                 userRecentlyInTheList[msg.author.id] = true;
                 await (msg.channel as SendableChannel).send(`🚨 <@${msg.author.id}> co ty odsigmiasz`);
                 try {
-                    await msg.member!.timeout(5 * 60 * 1000, "co ty odsigmiasz? czemu spamisz?");
+                    await msg.member!.timeout(5 * 60 * 1000, 'co ty odsigmiasz? czemu spamisz?');
                 } catch {}
                 setTimeout(() => {
                     userRecentlyInTheList[msg.author.id] = false; // prevents from bot's spamming
@@ -100,10 +100,10 @@ export const antiSpamAndAntiFlood: Action<MessageEventCtx> = {
                         } catch {}
                     }
                 } catch {}
-                await filterLog(msg, "antispam/co ty odsigmiasz TM");
-                const expiresAt = Math.floor(Date.now() / 1000) + parseTimestamp("2d")!;
+                await filterLog(msg, 'antispam/co ty odsigmiasz TM');
+                const expiresAt = Math.floor(Date.now() / 1000) + parseTimestamp('2d')!;
                 const result = await warn(msg.member!, {
-                    reason: "nie spam",
+                    reason: 'nie spam',
                     mod: client.user!.id,
                     points: 1,
                     expiresAt,
@@ -115,10 +115,10 @@ export const antiSpamAndAntiFlood: Action<MessageEventCtx> = {
             // antiflood
             if (client.user!.id !== msg.author.id && isFlood(msg.content)) {
                 await (msg.channel as SendableChannel).send(`🚨 <@${msg.author.id}> za dużo floodu pozdrawiam`);
-                await filterLog(msg, "antiflood/za dużo floodu TM");
-                const expiresAt = Math.floor(Date.now() / 1000) + parseTimestamp("2d")!;
+                await filterLog(msg, 'antiflood/za dużo floodu TM');
+                const expiresAt = Math.floor(Date.now() / 1000) + parseTimestamp('2d')!;
                 const result = await warn(msg.member!, {
-                    reason: "nie flooduj",
+                    reason: 'nie flooduj',
                     mod: client.user!.id,
                     points: 1,
                     expiresAt,

@@ -1,13 +1,13 @@
-import { getRandomInt } from "@/util/math/rand.ts";
+import { getRandomInt } from '@/util/math/rand.ts';
 
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { PredefinedColors } from "@/util/color.ts";
-import { output } from "@/bot/logging.ts";
-import { cfg } from "@/bot/cfg.ts";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import { output } from '@/bot/logging.ts';
+import { cfg } from '@/bot/cfg.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
-import Money from "@/util/money.ts";
+import Money from '@/util/money.ts';
 
 const CrimeAmountMin = cfg.commands.configuration.crime.minimumCrimeAmount;
 const CrimeAmountMax = cfg.commands.configuration.crime.maximumCrimeAmount;
@@ -61,10 +61,10 @@ const CrimeFailMessages: MessageCallback[] = [
 ];
 
 export const crimeCmd: Command = {
-    name: "crime",
+    name: 'crime',
     description: {
-        main: "Ohohohoho! Mamy na serwerze przestępców. Możesz popełnić przestępstwo i wygrać albo przegrać kasę!",
-        short: "Sprawdź swoje szczęście w kryminalnym świecie.",
+        main: 'Ohohohoho! Mamy na serwerze przestępców. Możesz popełnić przestępstwo i wygrać albo przegrać kasę!',
+        short: 'Sprawdź swoje szczęście w kryminalnym świecie.',
     },
     flags: CommandFlags.Economy,
 
@@ -82,17 +82,17 @@ export const crimeCmd: Command = {
         if (balance.wallet.lessThanOrEqual(minBalance)) {
             const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.DarkBlue)
-                .setTitle("Ta możliwość jest zablokowana!")
+                .setTitle('Ta możliwość jest zablokowana!')
                 .setDescription(`Z racji, iż mógłbyś się zadłużyć i nie móc z tego wyjść potem bez resetu ekonomii, dokonywanie przestępstw jest dozwolone tylko, jeżeli masz więcej niż ${minBalance.format()}.`);
             return api.reply({ embeds: [embed] });
         }
 
         try {
-            const result = await api.checkCooldown("crime", Cooldown);
+            const result = await api.checkCooldown('crime', Cooldown);
             if (!result.can) {
                 const embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Yellow)
-                    .setTitle("Chwila przerwy!")
+                    .setTitle('Chwila przerwy!')
                     .setDescription(`Musisz odczekać **${result.discordTime}** zanim znowu popełnisz przestępstwo.`);
                 return api.reply({ embeds: [embed] });
             }
@@ -100,26 +100,26 @@ export const crimeCmd: Command = {
             const baseAmount = getRandomInt(CrimeAmountMin, CrimeAmountMax);
             const win = Math.random() < Percentage;
 
-            const multiplier = api.economy.getMultiplier("crime");
+            const multiplier = api.economy.getMultiplier('crime');
             const totalMoney = Money.fromDollarsFloat(win ? (baseAmount * multiplier) : baseAmount);
 
             if (win) await api.executor.economy.addWalletMoney(totalMoney);
             else await api.executor.economy.deductWalletMoney(totalMoney);
 
-            await api.executor.cooldowns.set("crime", Date.now());
+            await api.executor.cooldowns.set('crime', Date.now());
 
             let embed: ReplyEmbed;
             if (win) {
                 const genMessage = CrimeSuccessMessages[getRandomInt(0, CrimeSuccessMessages.length - 1)];
                 embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Blue)
-                    .setTitle("Yay")
+                    .setTitle('Yay')
                     .setDescription(genMessage(totalMoney));
             } else {
                 const genMessage = CrimeFailMessages[getRandomInt(0, CrimeFailMessages.length - 1)];
                 embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Red)
-                    .setTitle("Przestępstwo nie zawsze się opłaca...")
+                    .setTitle('Przestępstwo nie zawsze się opłaca...')
                     .setDescription(genMessage(totalMoney));
             }
 
@@ -128,8 +128,8 @@ export const crimeCmd: Command = {
             output.err(error);
             const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Red)
-                .setTitle("Błąd")
-                .setDescription("Coś się złego odwaliło z tą ekonomią...")
+                .setTitle('Błąd')
+                .setDescription('Coś się złego odwaliło z tą ekonomią...')
                 .setTimestamp();
             return api.reply({ embeds: [embed] });
         }

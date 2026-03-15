@@ -1,25 +1,25 @@
-import { Category, Command, CommandArgType, CommandArgument, CommandValuableArgument } from "@/bot/command.ts";
+import { Category, Command, CommandArgType, CommandArgument, CommandValuableArgument } from '@/bot/command.ts';
 
-import * as dsc from "discord.js";
+import * as dsc from 'discord.js';
 
-import parseTimestamp from "@/util/parseTimestamp.ts";
-import findCommand from "@/util/cmd/findCommand.ts";
-import User from "@/bot/apis/db/user.ts";
-import Money from "@/util/money.ts";
-import { NumberParseError } from "@/util/math/parse.ts";
+import parseTimestamp from '@/util/parseTimestamp.ts';
+import findCommand from '@/util/cmd/findCommand.ts';
+import User from '@/bot/apis/db/user.ts';
+import Money from '@/util/money.ts';
+import { NumberParseError } from '@/util/math/parse.ts';
 
-import { ArgMustBeSomeTypeError, MissingRequiredArgError } from "../defs/errors.ts";
-import { flatTypesToUnion } from "./flat-types.ts";
+import { ArgMustBeSomeTypeError, MissingRequiredArgError } from '../defs/errors.ts';
+import { flatTypesToUnion } from './flat-types.ts';
 
 async function parseUser(raw: string, name: string, context?: ParserContext): Promise<dsc.GuildMember | null> {
     try {
         if (context?.interaction) {
             const memberStr = (context.interaction as dsc.ChatInputCommandInteraction).options.getString(name);
             if (!memberStr) return null;
-            const id = memberStr.replace(/[<@!>]/g, "");
+            const id = memberStr.replace(/[<@!>]/g, '');
             return await context.interaction.guild!.members.fetch(id).catch(() => null);
         } else if (context?.msg) {
-            const id = raw.replace(/[<@!>]/g, "");
+            const id = raw.replace(/[<@!>]/g, '');
             return await context.msg.guild!.members.fetch(id).catch(() => null);
         }
     } catch {
@@ -36,7 +36,7 @@ async function tryParseUserMentionOrRef(_decl: CommandArgument, context?: Parser
 
             const channel = await context.msg.guild!.channels.fetch(refChannelId);
             if (channel && channel.isTextBased()) {
-                const refMessage = await (channel as dsc.TextChannel).messages.fetch({ message: refMessageId ?? "", force: false });
+                const refMessage = await (channel as dsc.TextChannel).messages.fetch({ message: refMessageId ?? '', force: false });
                 return await context.msg.guild!.members.fetch(refMessage.author.id).catch(() => null);
             }
         } catch {
@@ -63,15 +63,15 @@ async function tryParseArg(
     decl: CommandArgument,
     context?: ParserContext,
 ): Promise<CommandValuableArgument | null> {
-    if (type.base == "union") return null;
+    if (type.base == 'union') return null;
 
     switch (type.base) {
-        case "string": {
-            const val = type.trailing ? rawArgs.slice(argIndex).join(" ") : raw;
+        case 'string': {
+            const val = type.trailing ? rawArgs.slice(argIndex).join(' ') : raw;
             return { ...decl, type, value: val } as CommandValuableArgument;
         }
-        case "enum": {
-            const val = type.trailing ? rawArgs.slice(argIndex).join(" ") : raw;
+        case 'enum': {
+            const val = type.trailing ? rawArgs.slice(argIndex).join(' ') : raw;
             const found = type.options.find((o) => o.toLowerCase() == val.toLowerCase());
             if (!found) {
                 return null;
@@ -79,34 +79,34 @@ async function tryParseArg(
             return { ...decl, type, value: found } as CommandValuableArgument;
         }
 
-        case "int": {
+        case 'int': {
             const isInt = /^-?\d+$/.test(raw);
             if (!isInt) return null;
 
             return { ...decl, type, value: BigInt(raw) } as CommandValuableArgument;
         }
-        case "float": {
+        case 'float': {
             const isFloat = /^-?\d+(\.\d+)?$/.test(raw);
             if (!isFloat) return null;
 
             return { ...decl, type, value: Number(raw) } as CommandValuableArgument;
         }
 
-        case "money": {
+        case 'money': {
             const input = raw.trim().toLowerCase();
             const invokerId = context?.interaction?.user.id ?? context?.msg?.author.id;
 
-            if (type.source && (input == "all" || input.endsWith("%")) && invokerId) {
+            if (type.source && (input == 'all' || input.endsWith('%')) && invokerId) {
                 const balance = await new User(invokerId).economy.getBalance();
-                const sourceMoney = type.source == "wallet" ? balance.wallet : balance.bank;
+                const sourceMoney = type.source == 'wallet' ? balance.wallet : balance.bank;
 
-                if (input == "all") {
+                if (input == 'all') {
                     return { ...decl, type, value: sourceMoney.clone() } as CommandValuableArgument;
                 }
 
                 const percentMatch = input.match(/^(\d+(?:[.,]\d+)?)%$/);
                 if (percentMatch) {
-                    const percent = parseFloat(percentMatch[1].replace(",", ".")) / 100;
+                    const percent = parseFloat(percentMatch[1].replace(',', '.')) / 100;
                     const amountCents = (sourceMoney.asCents() * BigInt(Math.round(percent * 10000))) / 10000n;
                     return { ...decl, type, value: Money.fromCents(amountCents) } as CommandValuableArgument;
                 }
@@ -121,19 +121,19 @@ async function tryParseArg(
             }
         }
 
-        case "timestamp": {
+        case 'timestamp': {
             const ts = parseTimestamp(raw);
             if (!ts) return null;
             return { ...decl, type, value: ts } as CommandValuableArgument;
         }
 
-        case "user-mention": {
+        case 'user-mention': {
             const user = await parseUser(raw, decl.name, context);
             if (!user) return null;
             return { ...decl, type, value: user } as CommandValuableArgument;
         }
 
-        case "role-mention": {
+        case 'role-mention': {
             const match = raw.match(/^<@&(\d+)>$/);
             const roleId = match?.[1];
             let role: dsc.Role | null = null;
@@ -146,7 +146,7 @@ async function tryParseArg(
             return { ...decl, type, value: role } as CommandValuableArgument;
         }
 
-        case "channel-mention": {
+        case 'channel-mention': {
             const match = raw.match(/^<#(\d+)>$/);
             const channelID = match?.[1];
             let channel: dsc.GuildChannel | null = null;
@@ -162,7 +162,7 @@ async function tryParseArg(
             return { ...decl, type, value: channel } as CommandValuableArgument;
         }
 
-        case "command-ref": {
+        case 'command-ref': {
             if (!context?.commands) return null;
             const res = findCommand(raw, context.commands);
             if (!res) return null;
@@ -192,7 +192,7 @@ export async function parseArgs(
         let consumedRaw = false;
 
         for (const typeObj of types) {
-            if (typeObj.base == "user-mention" && typeObj.includeRefMessageAuthor) {
+            if (typeObj.base == 'user-mention' && typeObj.includeRefMessageAuthor) {
                 let user: dsc.GuildMember | null = null;
                 if (raw) {
                     user = await parseUser(raw, decl.name, context);
@@ -218,7 +218,7 @@ export async function parseArgs(
                 const result = await tryParseArg(typeObj, raw, argIndex, rawArgs, decl, context);
                 if (result) {
                     parsedArgs.push(result);
-                    if ("trailing" in typeObj && typeObj.trailing) {
+                    if ('trailing' in typeObj && typeObj.trailing) {
                         return parsedArgs;
                     }
                     success = true;

@@ -1,13 +1,13 @@
-import { getRandomInt } from "@/util/math/rand.ts";
+import { getRandomInt } from '@/util/math/rand.ts';
 
-import { PredefinedColors } from "@/util/color.ts";
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { CommandAPI } from "@/bot/apis/commands/api.ts";
-import { output } from "@/bot/logging.ts";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
+import { PredefinedColors } from '@/util/color.ts';
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { output } from '@/bot/logging.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
-import Money from "@/util/money.ts";
+import Money from '@/util/money.ts';
 
 const CooldownMs = 10 * 1000;
 const WorkAmountMin = 50;
@@ -70,11 +70,11 @@ const WorkMessages: MessageCallback[] = [
 ];
 
 export const workCmd: Command = {
-    name: "work",
+    name: 'work',
     aliases: [],
     description: {
-        main: "Pr\\*ca dla pana, pr\\*ca za darmo! Niewolnikiem naszym bądź... dobra, nie mam talentu do wierszy. Po prostu ekonomia.",
-        short: "Pr\\*ca dla pana, pr\\*ca za darmo!",
+        main: 'Pr\\*ca dla pana, pr\\*ca za darmo! Niewolnikiem naszym bądź... dobra, nie mam talentu do wierszy. Po prostu ekonomia.',
+        short: 'Pr\\*ca dla pana, pr\\*ca za darmo!',
     },
     flags: CommandFlags.Economy,
 
@@ -86,27 +86,27 @@ export const workCmd: Command = {
 
     async execute(api: CommandAPI) {
         try {
-            const result = await api.checkCooldown("work", CooldownMs);
+            const result = await api.checkCooldown('work', CooldownMs);
             if (!result.can) {
                 const embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Yellow)
-                    .setTitle("Chwila przerwy!")
+                    .setTitle('Chwila przerwy!')
                     .setDescription(`Ktoś tam Ci każe czekać ${result.discordTime} sekund zanim znowu popr*cujesz, żebyś nie naspamił komendami w chuja hajsu...`);
 
                 return api.reply({ embeds: [embed] });
             }
 
             const baseAmount = getRandomInt(WorkAmountMin, WorkAmountMax);
-            const multiplier = api.economy.getMultiplier("work");
+            const multiplier = api.economy.getMultiplier('work');
             const totalMoney = Money.fromDollarsFloat(baseAmount * multiplier);
 
             await api.executor.economy.addWalletMoney(totalMoney);
-            await api.executor.cooldowns.set("work", Date.now());
+            await api.executor.cooldowns.set('work', Date.now());
 
             const genMessage = WorkMessages[getRandomInt(0, WorkMessages.length - 1)];
             const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Blue)
-                .setTitle("Ciężka praca popłaca! ")
+                .setTitle('Ciężka praca popłaca! ')
                 .setDescription(genMessage(totalMoney));
 
             return api.reply({ embeds: [embed] });
@@ -115,8 +115,8 @@ export const workCmd: Command = {
 
             const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Red)
-                .setTitle("Błąd")
-                .setDescription("Coś się złego odwaliło z tą ekonomią...")
+                .setTitle('Błąd')
+                .setDescription('Coś się złego odwaliło z tą ekonomią...')
                 .setTimestamp();
 
             return api.reply({ embeds: [embed] });

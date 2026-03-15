@@ -1,18 +1,18 @@
-import path from "node:path";
-import fs from "node:fs/promises";
+import path from 'node:path';
+import fs from 'node:fs/promises';
 
 function getCacheDir(): string {
     const cacheHome = process.env.XDG_CACHE_HOME;
     if (cacheHome) {
-        return path.join(cacheHome, "eclairbot");
+        return path.join(cacheHome, 'eclairbot');
     }
 
     const home = process.env.HOME;
     if (home) {
-        return path.join(home, ".cache", "eclairbot");
+        return path.join(home, '.cache', 'eclairbot');
     }
 
-    return path.join("/", "tmp", "eb-cache");
+    return path.join('/', 'tmp', 'eb-cache');
 }
 
 export async function init() {
@@ -20,15 +20,15 @@ export async function init() {
 }
 
 function getBoxFilepath(box: string): string {
-    return path.join(getCacheDir(), box + ".json");
+    return path.join(getCacheDir(), box + '.json');
 }
 
 async function readBox(boxpath: string): Promise<Record<string, any>> {
     try {
-        const content = await fs.readFile(boxpath, "utf8");
+        const content = await fs.readFile(boxpath, 'utf8');
         return JSON.parse(content);
     } catch (err: any) {
-        if (err.code === "ENOENT") {
+        if (err.code === 'ENOENT') {
             return {};
         }
         throw err;

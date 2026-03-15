@@ -1,12 +1,12 @@
-import { getRandomInt } from "@/util/math/rand.ts";
+import { getRandomInt } from '@/util/math/rand.ts';
 
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { PredefinedColors } from "@/util/color.ts";
-import { output } from "@/bot/logging.ts";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import { output } from '@/bot/logging.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
-import Money from "@/util/money.ts";
+import Money from '@/util/money.ts';
 
 const CooldownMs = 2 * 60 * 1000;
 const SlutAmountMin = 500;
@@ -70,11 +70,11 @@ const SlutFailMessages: MessageCallback[] = [
 ];
 
 export const slutCmd: Command = {
-    name: "slut",
+    name: 'slut',
     aliases: [],
     description: {
-        main: "Któżby się spodziewał, że będziesz pracować dorywczo?",
-        short: "Któżby się spodziewał, że będziesz pracować dorywczo?",
+        main: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
+        short: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
     },
     flags: CommandFlags.Economy,
 
@@ -86,11 +86,11 @@ export const slutCmd: Command = {
 
     async execute(api) {
         try {
-            const result = await api.checkCooldown("slut", CooldownMs);
+            const result = await api.checkCooldown('slut', CooldownMs);
             if (!result.can) {
                 const embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Yellow)
-                    .setTitle("Chwila przerwy!")
+                    .setTitle('Chwila przerwy!')
                     .setDescription(`Ktoś tam Ci każe czekać ${result.discordTime} sekund zanim znowu popr*cujesz dorywczo, żebyś nie naspamił komendami w chuja hajsu...`);
 
                 return api.reply({ embeds: [embed] });
@@ -99,27 +99,27 @@ export const slutCmd: Command = {
             const amount = getRandomInt(SlutAmountMin, SlutAmountMax);
             const win = Math.random() < Percentage;
 
-            const multiplier = api.economy.getMultiplier("slut");
+            const multiplier = api.economy.getMultiplier('slut');
             const total = win ? (amount * multiplier) : amount;
             const totalMoney = Money.fromDollarsFloat(total);
 
             if (win) await api.executor.economy.addWalletMoney(totalMoney);
             else await api.executor.economy.deductWalletMoney(totalMoney);
 
-            await api.executor.cooldowns.set("slut", Date.now());
+            await api.executor.cooldowns.set('slut', Date.now());
 
             let embed: ReplyEmbed;
             if (win) {
                 const genMessage = SlutSuccessMessages[getRandomInt(0, SlutSuccessMessages.length - 1)];
                 embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Blue)
-                    .setTitle("Sukces!")
+                    .setTitle('Sukces!')
                     .setDescription(genMessage(totalMoney));
             } else {
                 const genMessage = SlutFailMessages[getRandomInt(0, SlutFailMessages.length - 1)];
                 embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Red)
-                    .setTitle("Niestety, nie tym razem...")
+                    .setTitle('Niestety, nie tym razem...')
                     .setDescription(genMessage(totalMoney));
             }
 
@@ -129,8 +129,8 @@ export const slutCmd: Command = {
 
             const embed = new ReplyEmbed()
                 .setColor(PredefinedColors.Red)
-                .setTitle("Błąd")
-                .setDescription("Coś się złego odwaliło z tą ekonomią...")
+                .setTitle('Błąd')
+                .setDescription('Coś się złego odwaliło z tą ekonomią...')
                 .setTimestamp();
 
             return api.reply({ embeds: [embed] });

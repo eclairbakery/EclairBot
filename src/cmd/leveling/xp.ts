@@ -1,19 +1,19 @@
-import * as dsc from "discord.js";
-import actionsManager from "@/features/actions/index.ts";
+import * as dsc from 'discord.js';
+import actionsManager from '@/features/actions/index.ts';
 
-import { cfg } from "@/bot/cfg.ts";
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { CommandAPI } from "@/bot/apis/commands/api.ts";
-import { levelToXp, OnSetXpEvent } from "@/bot/level.ts";
-import { output } from "@/bot/logging.ts";
+import { cfg } from '@/bot/cfg.ts';
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { levelToXp, OnSetXpEvent } from '@/bot/level.ts';
+import { output } from '@/bot/logging.ts';
 
 export const xpCmd: Command = {
-    name: "xp",
+    name: 'xp',
     aliases: [],
     description: {
-        main: "Dodaj komuś levela... Jak nadużyjesz, no to, chyba nie wiesz z jaką siłą igrasz! Pospólstwo jak pomyśli, że sobie za darmoszkę doda poziomów, no to nie! Do widzenia.",
-        short: "Komenda dla adminów, by bawić się levelem...",
+        main: 'Dodaj komuś levela... Jak nadużyjesz, no to, chyba nie wiesz z jaką siłą igrasz! Pospólstwo jak pomyśli, że sobie za darmoszkę doda poziomów, no to nie! Do widzenia.',
+        short: 'Komenda dla adminów, by bawić się levelem...',
     },
     flags: CommandFlags.None | CommandFlags.Unsafe,
 
@@ -23,50 +23,50 @@ export const xpCmd: Command = {
     },
     expectedArgs: [
         {
-            type: { base: "user-mention" },
+            type: { base: 'user-mention' },
             optional: false,
-            name: "user",
-            description: "Użytkownik, którego chcesz zjeść... lub mu delikatnie pomóc z levelem...",
+            name: 'user',
+            description: 'Użytkownik, którego chcesz zjeść... lub mu delikatnie pomóc z levelem...',
         },
         {
-            type: { base: "string" },
+            type: { base: 'string' },
             optional: false,
-            name: "action",
-            description: "Co chcesz zrobić z levelem? `add`, `set` lub `delete`",
+            name: 'action',
+            description: 'Co chcesz zrobić z levelem? `add`, `set` lub `delete`',
         },
         {
-            type: { base: "float" },
+            type: { base: 'float' },
             optional: false,
-            name: "amount",
-            description: "Ile levela lub XP chcesz dodać/ustawić/usunąć",
+            name: 'amount',
+            description: 'Ile levela lub XP chcesz dodać/ustawić/usunąć',
         },
         {
-            type: { base: "string" },
+            type: { base: 'string' },
             optional: true,
-            name: "affect",
-            description: "Czy dotyczy `levels` czy `xp` (domyślnie levels)",
+            name: 'affect',
+            description: 'Czy dotyczy `levels` czy `xp` (domyślnie levels)',
         },
     ],
 
     async execute(api: CommandAPI) {
-        const targetUser = api.getTypedArg("user", "user-mention")?.value as dsc.GuildMember ?? api.invoker.member;
-        const actionStr = api.getTypedArg("action", "string")?.value as string;
-        let amount = api.getTypedArg("amount", "float")?.value as number;
-        const affect = api.getTypedArg("affect", "string")?.value as string ?? "levels";
+        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.invoker.member;
+        const actionStr = api.getTypedArg('action', 'string')?.value as string;
+        let amount = api.getTypedArg('amount', 'float')?.value as number;
+        const affect = api.getTypedArg('affect', 'string')?.value as string ?? 'levels';
 
         if (!targetUser || !actionStr || amount === undefined) {
-            return api.log.replyError(api, "Niepoprawne argumenty", "Sprawdź składnię komendy i spróbuj ponownie.");
+            return api.log.replyError(api, 'Niepoprawne argumenty', 'Sprawdź składnię komendy i spróbuj ponownie.');
         }
 
-        const shouldLeveler = affect === "levels";
+        const shouldLeveler = affect === 'levels';
         if (shouldLeveler) {
             amount = levelToXp(amount, cfg.features.leveling.levelDivider);
         }
 
-        if (actionStr != "set" && actionStr != "add" && actionStr != "delete") {
-            return api.log.replyError(api, "Nie poprawna akcja", "Argument `action` powinien być `set`, `add` lub `delete`!");
+        if (actionStr != 'set' && actionStr != 'add' && actionStr != 'delete') {
+            return api.log.replyError(api, 'Nie poprawna akcja', 'Argument `action` powinien być `set`, `add` lub `delete`!');
         }
-        const action = actionStr as "set" | "add" | "delete";
+        const action = actionStr as 'set' | 'add' | 'delete';
 
         try {
             await actionsManager.emit(OnSetXpEvent, {
@@ -77,10 +77,10 @@ export const xpCmd: Command = {
                 amount: amount,
             });
 
-            api.log.replySuccess(api, "Udało się!", `Wykonałem akcję na użytkowniku **${targetUser.user.tag}**`);
+            api.log.replySuccess(api, 'Udało się!', `Wykonałem akcję na użytkowniku **${targetUser.user.tag}**`);
         } catch (err) {
             output.err(err);
-            api.log.replyError(api, "Błąd wykonania", "Coś poszło nie tak podczas modyfikacji XP/levela.");
+            api.log.replyError(api, 'Błąd wykonania', 'Coś poszło nie tak podczas modyfikacji XP/levela.');
         }
     },
 };

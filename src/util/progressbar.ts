@@ -1,5 +1,5 @@
-import fmtEmoji from "./fmtEmoji.ts";
-import { cfg } from "@/bot/cfg.ts";
+import fmtEmoji from './fmtEmoji.ts';
+import { cfg } from '@/bot/cfg.ts';
 
 export function mkDualProgressBar(red: number, green: number, totalLength: number = 10) {
     const maxHalf = totalLength / 2;
@@ -17,5 +17,5 @@ export function mkProgressBar(fillLength: number, max: number, totalLength: numb
     const filledLength = Math.floor(totalLength * progress);
     const emptyLength = totalLength - filledLength;
 
-    return `${"█".repeat(filledLength)}${"░".repeat(emptyLength)}`;
+    return `${'█'.repeat(filledLength)}${'░'.repeat(emptyLength)}`;
 }

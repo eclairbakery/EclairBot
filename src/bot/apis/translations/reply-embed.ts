@@ -1,6 +1,6 @@
-import { PredefinedColors, RarelyUsedColors } from "@/util/color.ts";
-import { APIEmbed, APIEmbedField, APIEmbedFooter, EmbedAuthorOptions, EmbedBuilder, RestOrArray } from "discord.js";
-import { t } from "./translate.ts";
+import { PredefinedColors, RarelyUsedColors } from '@/util/color.ts';
+import { APIEmbed, APIEmbedField, APIEmbedFooter, EmbedAuthorOptions, EmbedBuilder, RestOrArray } from 'discord.js';
+import { t } from './translate.ts';
 
 export class ReplyEmbed {
     private embedBuilder: EmbedBuilder = new EmbedBuilder();

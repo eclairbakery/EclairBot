@@ -1,25 +1,25 @@
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { cfg } from "@/bot/cfg.ts";
-import { db } from "@/bot/apis/db/bot-db.ts";
-import * as dsc from "discord.js";
-import { PredefinedColors } from "@/util/color.ts";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { cfg } from '@/bot/cfg.ts';
+import { db } from '@/bot/apis/db/bot-db.ts';
+import * as dsc from 'discord.js';
+import { PredefinedColors } from '@/util/color.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 export const warnlistCmd: Command = {
-    name: "warnlist",
-    aliases: ["warn-list", "warnlista"],
+    name: 'warnlist',
+    aliases: ['warn-list', 'warnlista'],
     description: {
-        main: "Lubisz warnować? No to przeczytaj log tych warnów...",
-        short: "Pokazuje liste warnów",
+        main: 'Lubisz warnować? No to przeczytaj log tych warnów...',
+        short: 'Pokazuje liste warnów',
     },
     flags: CommandFlags.Important,
 
     expectedArgs: [
         {
-            name: "user",
-            type: { base: "user-mention" },
-            description: "Użytkownik, którego warny chcesz zobaczyć (opcjonalne).",
+            name: 'user',
+            type: { base: 'user-mention' },
+            description: 'Użytkownik, którego warny chcesz zobaczyć (opcjonalne).',
             optional: true,
         },
     ],
@@ -33,20 +33,20 @@ export const warnlistCmd: Command = {
         const client: dsc.Client = api.channel.client;
         const guild: dsc.Guild = api.guild!;
 
-        const targetUser = api.getTypedArg("user", "user-mention")?.value as dsc.GuildMember | undefined;
+        const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | undefined;
         const limit = 5;
         let currentPage = 1;
 
         async function fetchWarns(page: number) {
-            let query = "SELECT * FROM warns";
+            let query = 'SELECT * FROM warns';
             const params: any[] = [];
 
             if (targetUser) {
-                query += " WHERE user_id = ?";
+                query += ' WHERE user_id = ?';
                 params.push(targetUser.id);
             }
 
-            query += " ORDER BY id DESC LIMIT ? OFFSET ?";
+            query += ' ORDER BY id DESC LIMIT ? OFFSET ?';
             params.push(limit, (page - 1) * limit);
 
             return await db.selectMany(query, params);
@@ -70,26 +70,26 @@ export const warnlistCmd: Command = {
                 if (row.expires_at) value += `\n**Wygasa:** <t:${row.expires_at}:R>`;
 
                 fields.push({
-                    name: `${i}. Upomnienie dla ${user ? user.username : "Nieznany użytkownik"}`,
+                    name: `${i}. Upomnienie dla ${user ? user.username : 'Nieznany użytkownik'}`,
                     value,
                 });
             }
 
             const embed = new ReplyEmbed()
-                .setTitle(`:loudspeaker: Warny ${targetUser ? `dla ${targetUser.user.username}` : "na serwerze"}`)
+                .setTitle(`:loudspeaker: Warny ${targetUser ? `dla ${targetUser.user.username}` : 'na serwerze'}`)
                 .setFields(fields)
                 .setColor(PredefinedColors.Blurple)
                 .setFooter({ text: `Strona ${page}` });
 
             const components = new dsc.ActionRowBuilder<dsc.ButtonBuilder>().addComponents(
                 new dsc.ButtonBuilder()
-                    .setCustomId("prev")
-                    .setLabel("◀️")
+                    .setCustomId('prev')
+                    .setLabel('◀️')
                     .setStyle(dsc.ButtonStyle.Secondary)
                     .setDisabled(page === 1),
                 new dsc.ButtonBuilder()
-                    .setCustomId("next")
-                    .setLabel("▶️")
+                    .setCustomId('next')
+                    .setLabel('▶️')
                     .setStyle(dsc.ButtonStyle.Secondary)
                     .setDisabled(rows.length < limit),
             );
@@ -99,7 +99,7 @@ export const warnlistCmd: Command = {
 
         const render = await renderPage(currentPage);
         if (!render) {
-            return api.log.replyError(api, "Brak wyników", targetUser ? `Nie znaleziono żadnych warnów dla ${targetUser.user.username}.` : "Nie ma żadnych warnów w bazie.");
+            return api.log.replyError(api, 'Brak wyników', targetUser ? `Nie znaleziono żadnych warnów dla ${targetUser.user.username}.` : 'Nie ma żadnych warnów w bazie.');
         }
 
         const msg = await api.reply({
@@ -112,10 +112,10 @@ export const warnlistCmd: Command = {
             filter: (i) => i.user.id === api.invoker.id,
         });
 
-        collector.on("collect", async (interaction) => {
+        collector.on('collect', async (interaction) => {
             if (!interaction.isButton()) return;
-            if (interaction.customId === "prev" && currentPage > 1) currentPage--;
-            else if (interaction.customId === "next") currentPage++;
+            if (interaction.customId === 'prev' && currentPage > 1) currentPage--;
+            else if (interaction.customId === 'next') currentPage++;
 
             const newRender = await renderPage(currentPage);
             if (!newRender) return interaction.deferUpdate();
@@ -126,7 +126,7 @@ export const warnlistCmd: Command = {
             });
         });
 
-        collector.on("end", async () => {
+        collector.on('end', async () => {
             await msg.edit({ components: [] }).catch(() => {});
         });
     },

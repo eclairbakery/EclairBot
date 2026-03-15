@@ -1,12 +1,12 @@
-import { Config } from "@/bot/cfg.ts";
-import { channelsCfg } from "./channels.ts";
-import { economyCfg } from "./economy.ts";
-import { hierarchyCfg } from "./hierarchy.ts";
+import { Config } from '@/bot/cfg.ts';
+import { channelsCfg } from './channels.ts';
+import { economyCfg } from './economy.ts';
+import { hierarchyCfg } from './hierarchy.ts';
 
-export const featuresConfig: Config["features"] = {
+export const featuresConfig: Config['features'] = {
     compilation: {
         replaceCompilerMap: {
-            c: "gcc-13.2.0",
+            c: 'gcc-13.2.0',
         },
     },
     automod: {
@@ -30,25 +30,25 @@ export const featuresConfig: Config["features"] = {
             `<mention> opuścił nasz serwer, ale zawsze może wrócić! (nie wróci)`,
         ],
         freeRolesForEveryone: [
-            "1235548306550161451",
+            '1235548306550161451',
             // roles for appereance
-            "1235540123576176652",
-            "1415582195564806154",
-            "1235541500889137273",
-            "1235540273556361268",
+            '1235540123576176652',
+            '1415582195564806154',
+            '1235541500889137273',
+            '1235540273556361268',
         ],
     },
     forFun: {
         media: [
             {
                 channel: channelsCfg.general.media,
-                addReactions: ["👍", "👎", "😭", "🙏", "🤣", "<:joe_i_git:1376096877610799205>"],
+                addReactions: ['👍', '👎', '😭', '🙏', '🤣', '<:joe_i_git:1376096877610799205>'],
                 deleteMessageIfNotMedia: true,
                 shallCreateThread: true,
             },
             {
                 channel: channelsCfg.mod.hallOfShame,
-                addReactions: ["🙏"],
+                addReactions: ['🙏'],
                 deleteMessageIfNotMedia: false,
                 shallCreateThread: false,
             },
@@ -60,20 +60,20 @@ export const featuresConfig: Config["features"] = {
         xpPerMessage: 4,
         levelDivider: 100,
         excludedChannels: [],
-        canChangeXP: ["1404392144441180221", hierarchyCfg.administration.eclair25],
+        canChangeXP: ['1404392144441180221', hierarchyCfg.administration.eclair25],
         milestoneRoles: {
-            3: "1297559525989158912",
-            5: "1235550102563852348",
-            10: "1235550105751392276",
-            15: "1235550109891035218",
-            20: "1235570092218122251",
-            25: "1235594078305914880",
-            30: "1235594081556627577",
-            50: "1235594083544858667",
-            75: "1235594085188767835",
-            100: "1390802440739356762",
+            3: '1297559525989158912',
+            5: '1235550102563852348',
+            10: '1235550105751392276',
+            15: '1235550109891035218',
+            20: '1235570092218122251',
+            25: '1235594078305914880',
+            30: '1235594081556627577',
+            50: '1235594083544858667',
+            75: '1235594085188767835',
+            100: '1390802440739356762',
         },
-        levelChannel: "1235592947831930993",
+        levelChannel: '1235592947831930993',
         shallPingWhenNewLevel: false,
         currentEvent: {
             enabled: false,
@@ -82,7 +82,7 @@ export const featuresConfig: Config["features"] = {
         },
     },
     hallOfFame: {
-        channel: "1392128976574484592",
+        channel: '1392128976574484592',
         eligibleChannels: [channelsCfg.general.general, channelsCfg.general.offtopic, channelsCfg.general.media, channelsCfg.mod.hallOfShame],
         enabled: false,
     },

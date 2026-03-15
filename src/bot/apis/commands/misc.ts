@@ -12,4 +12,4 @@ export enum CommandFlags {
     Deprecated = 1 << 5,
 }
 
-export type CommandViolatedRule = "used-infinity" | "non-int-passed";
+export type CommandViolatedRule = 'used-infinity' | 'non-int-passed';

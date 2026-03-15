@@ -1,6 +1,6 @@
-import * as dsc from "discord.js";
-import { ConfigTranslation } from "./subtypes.ts";
-import EconomyConfig from "./economy.ts";
+import * as dsc from 'discord.js';
+import { ConfigTranslation } from './subtypes.ts';
+import EconomyConfig from './economy.ts';
 
 export interface ConfigFeatures {
     compilation: {

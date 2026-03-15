@@ -1,10 +1,10 @@
-import * as dsc from "discord.js";
+import * as dsc from 'discord.js';
 
 export type BlockCommandsRules = {
-    default: "block";
+    default: 'block';
     allow: dsc.Snowflake[];
 } | {
-    default: "allow";
+    default: 'allow';
     deny: dsc.Snowflake[];
 };
 

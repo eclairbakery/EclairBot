@@ -1,31 +1,31 @@
-import { Category, Command } from "@/bot/command.ts";
-import { cfg } from "@/bot/cfg.ts";
+import { Category, Command } from '@/bot/command.ts';
+import { cfg } from '@/bot/cfg.ts';
 
-import { PredefinedColors } from "@/util/color.ts";
-import capitalizeFirst from "@/util/capitalizeFirst.ts";
-import canExecuteCmd from "@/util/cmd/canExecuteCmd.ts";
+import { PredefinedColors } from '@/util/color.ts';
+import capitalizeFirst from '@/util/capitalizeFirst.ts';
+import canExecuteCmd from '@/util/cmd/canExecuteCmd.ts';
 
-import * as dsc from "discord.js";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
-import { CommandFlags } from "../../bot/apis/commands/misc.ts";
+import * as dsc from 'discord.js';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { CommandFlags } from '../../bot/apis/commands/misc.ts';
 
 export const commandsCmd: Command = {
-    name: "commands",
+    name: 'commands',
     description: {
-        main: "Pokazuje pełną listę dostępnych komend bota.",
-        short: "Lista komend",
+        main: 'Pokazuje pełną listę dostępnych komend bota.',
+        short: 'Lista komend',
     },
     flags: CommandFlags.None,
 
     expectedArgs: [
         {
-            name: "category",
-            description: "Kategoria komend, którą chcesz zobaczyć. Jeśli nie podasz, pokaże wszystkie. Oddziel je przecinkiem!",
+            name: 'category',
+            description: 'Kategoria komend, którą chcesz zobaczyć. Jeśli nie podasz, pokaże wszystkie. Oddziel je przecinkiem!',
             optional: true,
-            type: { base: "string" },
+            type: { base: 'string' },
         },
     ],
-    aliases: ["cmds", "komendy"],
+    aliases: ['cmds', 'komendy'],
     permissions: {
         allowedRoles: null,
         allowedUsers: null,
@@ -35,17 +35,17 @@ export const commandsCmd: Command = {
         const commands = api.commands;
         let categoriesToShow: Set<Category> = new Set();
 
-        const categoriesArg = api.getTypedArg("categories", "string");
+        const categoriesArg = api.getTypedArg('categories', 'string');
 
         if (
             !categoriesArg ||
             !categoriesArg.value ||
-            categoriesArg.value.includes("all")
+            categoriesArg.value.includes('all')
         ) {
             categoriesToShow = new Set([...commands.keys()]);
         } else {
             const categoriesList = categoriesArg.value
-                .split(",")
+                .split(',')
                 .map((s: string) => s.trim().toLowerCase());
 
             for (const arg of categoriesList) {
@@ -53,7 +53,7 @@ export const commandsCmd: Command = {
                 if (!category) {
                     api.log.replyError(
                         api,
-                        "Nieznana kategoria",
+                        'Nieznana kategoria',
                         `Nie znam kategori ${arg}. Czy możesz powtórzyć?`,
                     );
                     return;
@@ -71,12 +71,12 @@ export const commandsCmd: Command = {
         }
 
         const embed = new ReplyEmbed()
-            .setTitle("📢 Moje komendy, władzco!")
-            .setDescription("O to lista komend podzielona na kategorie! A, no i o czywiście by nie śmiecić to sie nie wyświetlają komendy do których nie masz uprawnień.")
+            .setTitle('📢 Moje komendy, władzco!')
+            .setDescription('O to lista komend podzielona na kategorie! A, no i o czywiście by nie śmiecić to sie nie wyświetlają komendy do których nie masz uprawnień.')
             .setColor(PredefinedColors.Cyan);
 
         for (const category of categoriesToShow) {
-            let text: string = "";
+            let text: string = '';
 
             const cmds = commands.get(category) || [];
             for (let i = 0; i < cmds.length; i++) {
@@ -94,8 +94,8 @@ export const commandsCmd: Command = {
                 text += i == 0 ? `${formattedName}` : `, ${formattedName}`;
             }
 
-            if (text == "") {
-                text = "*brak komend możliwych do użycia w tej kategorii*";
+            if (text == '') {
+                text = '*brak komend możliwych do użycia w tej kategorii*';
             }
 
             const categoryField: dsc.APIEmbedField = {

@@ -1,25 +1,25 @@
-import * as chars from "@/util/chars.ts";
+import * as chars from '@/util/chars.ts';
 
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
-import figlet from "figlet";
-import debugLog from "@/util/debugLog.ts";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
+import figlet from 'figlet';
+import debugLog from '@/util/debugLog.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 function tokenize(input: string): string[] {
     const result: string[] = [];
-    let current: string = "";
+    let current: string = '';
     for (const char of input) {
         if (chars.isIdentch(char)) {
             current += char;
         } else {
             result.push(current);
             result.push(char);
-            current = "";
+            current = '';
         }
     }
-    if (current != "") result.push(current);
+    if (current != '') result.push(current);
     return result;
 }
 
@@ -33,7 +33,7 @@ function figletFonts(): Promise<string[]> {
 }
 
 function fmtArr(arr: string[]): string {
-    let result: string = "";
+    let result: string = '';
     for (let i = 0; i < arr.length - 1; ++i) {
         result += `\`${arr[i]}\``;
     }
@@ -41,14 +41,14 @@ function fmtArr(arr: string[]): string {
     return result;
 }
 
-function renderWord(word: string, font: string = "Standard") {
-    return figlet.textSync(word, { horizontalLayout: "full", font }).split("\n");
+function renderWord(word: string, font: string = 'Standard') {
+    return figlet.textSync(word, { horizontalLayout: 'full', font }).split('\n');
 }
 
 function concatAsciiLine(lineA: string[], lineB: string[]): string[] {
     const maxLen = Math.max(lineA.length, lineB.length);
-    const a = [...lineA, ...Array(maxLen - lineA.length).fill("")];
-    const b = [...lineB, ...Array(maxLen - lineB.length).fill("")];
+    const a = [...lineA, ...Array(maxLen - lineA.length).fill('')];
+    const b = [...lineB, ...Array(maxLen - lineB.length).fill('')];
     return a.map((row, i) => row + b[i]);
 }
 
@@ -97,7 +97,7 @@ function renderFigletWrapped(words: string[], font: string, maxWidth: number = 4
                 continue;
             }
 
-            const letters = word.split("");
+            const letters = word.split('');
             debugLog(letters);
             for (const letter of letters) {
                 const renderedLetter = renderWord(letter, font);
@@ -112,17 +112,17 @@ function renderFigletWrapped(words: string[], font: string, maxWidth: number = 4
     return lines;
 }
 
-function renderFigletWrappedString(words: string[], font: string = "Standard", maxWidth: number = 40): string {
+function renderFigletWrappedString(words: string[], font: string = 'Standard', maxWidth: number = 40): string {
     const blocks: string[][] = renderFigletWrapped(words, font, maxWidth);
-    return blocks.map((block) => block.join("\n")).join("\n\n");
+    return blocks.map((block) => block.join('\n')).join('\n\n');
 }
 
 export const figletCmd: Command = {
-    name: "figlet",
-    aliases: ["render-ascii-text"],
+    name: 'figlet',
+    aliases: ['render-ascii-text'],
     description: {
-        main: "Ta komenda renderuje ci taki fajny ascii text, podobnie do terminalowej komendy `figlet`.",
-        short: "Renderuje tekst jako ascii art",
+        main: 'Ta komenda renderuje ci taki fajny ascii text, podobnie do terminalowej komendy `figlet`.',
+        short: 'Renderuje tekst jako ascii art',
     },
     flags: CommandFlags.Spammy | CommandFlags.WorksInDM,
 
@@ -134,9 +134,9 @@ export const figletCmd: Command = {
         //    optional: true,
         //},
         {
-            name: "text",
-            description: "Tekst który chcesz wyrenderować",
-            type: { base: "string", trailing: true },
+            name: 'text',
+            description: 'Tekst który chcesz wyrenderować',
+            type: { base: 'string', trailing: true },
             optional: false,
         },
     ],
@@ -146,16 +146,16 @@ export const figletCmd: Command = {
     },
 
     async execute(api) {
-        const font = /*api.getArg('font').value as string ??*/ "Standard";
-        const textArg = api.getTypedArg("text", "string").value as string;
+        const font = /*api.getArg('font').value as string ??*/ 'Standard';
+        const textArg = api.getTypedArg('text', 'string').value as string;
 
-        const text = textArg == "hubix" ? "pedał" : textArg == "eclair bot" ? "istota wyższa" : textArg;
+        const text = textArg == 'hubix' ? 'pedał' : textArg == 'eclair bot' ? 'istota wyższa' : textArg;
 
         const availableFonts = await figletFonts();
         if (!availableFonts.includes(font)) {
             return api.log.replyError(
                 api,
-                "Nieznana czcionka!",
+                'Nieznana czcionka!',
                 `Nie znam czionki o nazwie ${font}.\n**Spróbuj tak:** ${fmtArr(availableFonts)}`,
             );
         }
@@ -164,7 +164,7 @@ export const figletCmd: Command = {
         const result = renderFigletWrappedString(words, font, 40);
 
         return api.reply({
-            embeds: [new ReplyEmbed().setTitle("Wynik").setDescription(`\`\`\`${result}\`\`\``)],
+            embeds: [new ReplyEmbed().setTitle('Wynik').setDescription(`\`\`\`${result}\`\`\``)],
         });
     },
 };

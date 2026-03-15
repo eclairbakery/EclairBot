@@ -1,4 +1,4 @@
-import suffixes from "./num-suffixes.ts";
+import suffixes from './num-suffixes.ts';
 
 export class NumberParseError extends Error {
     constructor(message: string) {
@@ -7,8 +7,8 @@ export class NumberParseError extends Error {
 }
 
 export function parseNumber(input: string): number {
-    const cleaned = input.trim().replace(/\s/g, "").replace(",", ".");
-    if (!cleaned) throw new NumberParseError("Input is empty");
+    const cleaned = input.trim().replace(/\s/g, '').replace(',', '.');
+    if (!cleaned) throw new NumberParseError('Input is empty');
 
     let multiplier = 1;
     let numberPart = cleaned;
@@ -28,10 +28,10 @@ export function parseNumber(input: string): number {
 }
 
 export function parseBigint(input: string, decimals: number): bigint {
-    let cleaned = input.trim().replace(/\s/g, "");
-    if (!cleaned) throw new NumberParseError("Input is empty");
+    let cleaned = input.trim().replace(/\s/g, '');
+    if (!cleaned) throw new NumberParseError('Input is empty');
 
-    const isNegative = cleaned.startsWith("-");
+    const isNegative = cleaned.startsWith('-');
     if (isNegative) cleaned = cleaned.slice(1);
 
     let scale: bigint | null = null;
@@ -48,7 +48,7 @@ export function parseBigint(input: string, decimals: number): bigint {
     const base = 10n ** BigInt(decimals);
     const finalScale = scale === null ? base : scale * base;
 
-    const [wholeStr, fractionalStr] = numberPart.split(",");
+    const [wholeStr, fractionalStr] = numberPart.split(',');
 
     let value = 0n;
     if (wholeStr) {
@@ -58,7 +58,7 @@ export function parseBigint(input: string, decimals: number): bigint {
             throw new NumberParseError(`Invalid integer part: ${wholeStr}`);
         }
     } else if (!fractionalStr) {
-        throw new NumberParseError("Invalid number format");
+        throw new NumberParseError('Invalid number format');
     }
 
     if (fractionalStr) {

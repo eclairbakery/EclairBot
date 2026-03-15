@@ -1,30 +1,30 @@
-import * as dsc from "discord.js";
+import * as dsc from 'discord.js';
 
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
-import { getUserReputation } from "@/bot/apis/rep/rep.ts";
-import { mkDualProgressBar, mkProgressBar } from "@/util/progressbar.ts";
-import { getTopRep } from "@/bot/apis/rep/top.ts";
-import { PredefinedColors } from "@/util/color.ts";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
+import { getUserReputation } from '@/bot/apis/rep/rep.ts';
+import { mkDualProgressBar, mkProgressBar } from '@/util/progressbar.ts';
+import { getTopRep } from '@/bot/apis/rep/top.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 const DefaultCount = 6;
 
 export const toprepCmd: Command = {
-    name: "toprep",
-    aliases: ["reptop", "reputationtop", "reputation-top", "topreputation", "top-reputation"],
+    name: 'toprep',
+    aliases: ['reptop', 'reputationtop', 'reputation-top', 'topreputation', 'top-reputation'],
     description: {
-        main: "Ogólnie to polecenie wyświetla topke reputacji",
-        short: "Wyświetla topke reputacji",
+        main: 'Ogólnie to polecenie wyświetla topke reputacji',
+        short: 'Wyświetla topke reputacji',
     },
     flags: CommandFlags.None,
 
     expectedArgs: [
         {
-            name: "count",
+            name: 'count',
             description: `Tu ogólnie możesz podać ile miejsc w topce. Domyślnie to ${DefaultCount}.`,
-            type: { base: "float" },
+            type: { base: 'float' },
             optional: true,
         },
     ],
@@ -34,10 +34,10 @@ export const toprepCmd: Command = {
     },
 
     async execute(api) {
-        const count = api.getTypedArg("count", "float").value as number | null ?? DefaultCount;
+        const count = api.getTypedArg('count', 'float').value as number | null ?? DefaultCount;
 
         if (count > 18) {
-            return api.log.replyError(api, "Ej nie przesadzaj!", "Nie pozwole ci więcej niż 18 pól bo zrobi się flood!");
+            return api.log.replyError(api, 'Ej nie przesadzaj!', 'Nie pozwole ci więcej niż 18 pól bo zrobi się flood!');
         }
 
         const top = await getTopRep(50);
@@ -66,10 +66,10 @@ export const toprepCmd: Command = {
             embeds: [
                 new ReplyEmbed()
                     .setColor(PredefinedColors.Cyan)
-                    .setDescription("-# eklerka dalej nie zrobił obrazka na top reputacji"),
+                    .setDescription('-# eklerka dalej nie zrobił obrazka na top reputacji'),
                 new ReplyEmbed()
                     .setColor(PredefinedColors.Cyan)
-                    .setDescription("Najlepsi w grę reputacji")
+                    .setDescription('Najlepsi w grę reputacji')
                     .setFields(fields),
             ],
         });

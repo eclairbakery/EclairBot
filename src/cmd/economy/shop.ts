@@ -1,22 +1,22 @@
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { CommandAPI } from "@/bot/apis/commands/api.ts";
-import { cfg } from "@/bot/cfg.ts";
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { cfg } from '@/bot/cfg.ts';
 
-import { PredefinedColors } from "@/util/color.ts";
-import capitalizeFirst from "@/util/capitalizeFirst.ts";
+import { PredefinedColors } from '@/util/color.ts';
+import capitalizeFirst from '@/util/capitalizeFirst.ts';
 
-import * as dsc from "discord.js";
-import Money from "@/util/money.ts";
+import * as dsc from 'discord.js';
+import Money from '@/util/money.ts';
 
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
-import { ConfigEconomyShopCategory, ConfigEconomyShopOffer } from "@/bot/definitions/config/economy.ts";
-import { MinimalActionsFormatter } from "@/bot/apis/economy/format.ts";
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { ConfigEconomyShopCategory, ConfigEconomyShopOffer } from '@/bot/definitions/config/economy.ts';
+import { MinimalActionsFormatter } from '@/bot/apis/economy/format.ts';
 
 function buildSelectMenu(categories: ConfigEconomyShopCategory[]): dsc.StringSelectMenuBuilder {
     return new dsc.StringSelectMenuBuilder()
-        .setCustomId("shop-select-category")
-        .setPlaceholder("⚡ Wybierz kategorię...")
+        .setCustomId('shop-select-category')
+        .setPlaceholder('⚡ Wybierz kategorię...')
         .addOptions(
             categories.map((category) => ({
                 label: capitalizeFirst(category.name).slice(0, 100),
@@ -29,7 +29,7 @@ function buildSelectMenu(categories: ConfigEconomyShopCategory[]): dsc.StringSel
 
 function buildCategoryEmbed(category: ConfigEconomyShopCategory, offers: ConfigEconomyShopOffer[], api: CommandAPI): ReplyEmbed {
     const embed = new ReplyEmbed()
-        .setTitle(`${category.emoji ?? "💳"} ${category.name}`)
+        .setTitle(`${category.emoji ?? '💳'} ${category.name}`)
         .setDescription(category.desc)
         .setColor(category.color);
 
@@ -39,7 +39,7 @@ function buildCategoryEmbed(category: ConfigEconomyShopCategory, offers: ConfigE
         const value = [
             `**${Money.fromDollarsFloat(offer.price).format()}** - ${offer.desc}`,
             ...formatter.format(offer.onBuy),
-        ].join("\n");
+        ].join('\n');
 
         embed.addFields([{
             name: offer.name.slice(0, 256),
@@ -50,7 +50,7 @@ function buildCategoryEmbed(category: ConfigEconomyShopCategory, offers: ConfigE
 
     if (offers.length === 0) {
         embed.addFields([{
-            name: "\u200b",
+            name: '\u200b',
             value: `W tej kategorii nic nie ma.`,
             inline: false,
         }]);
@@ -60,11 +60,11 @@ function buildCategoryEmbed(category: ConfigEconomyShopCategory, offers: ConfigE
 }
 
 export const shopCmd: Command = {
-    name: "shop",
+    name: 'shop',
     aliases: [],
     description: {
-        main: "Idź do jakiegoś Times Square i kup jakiś bezsensowny bullshit 10 razy drożej niż gdzie indziej.",
-        short: "Odwiedź sklep.",
+        main: 'Idź do jakiegoś Times Square i kup jakiś bezsensowny bullshit 10 razy drożej niż gdzie indziej.',
+        short: 'Odwiedź sklep.',
     },
     flags: CommandFlags.Economy,
 
@@ -74,9 +74,9 @@ export const shopCmd: Command = {
     },
     expectedArgs: [
         {
-            name: "category",
+            name: 'category',
             description: 'Kategoria lub "all" aby zobaczyć wszystkie',
-            type: { base: "string", trailing: true },
+            type: { base: 'string', trailing: true },
             optional: true,
         },
     ],
@@ -90,11 +90,11 @@ export const shopCmd: Command = {
             const row = new dsc.ActionRowBuilder<dsc.StringSelectMenuBuilder>().addComponents(selectMenu);
 
             const introEmbed = new ReplyEmbed()
-                .setTitle("💳 Sklep")
+                .setTitle('💳 Sklep')
                 .setDescription([
-                    "Wybierz kategorię z menu poniżej!",
+                    'Wybierz kategorię z menu poniżej!',
                     `**Tip na przyszłość:** Możesz poprostu użyć \`${cfg.commands.prefix}shop <category>\`!`,
-                ].join("\n"))
+                ].join('\n'))
                 .setColor(PredefinedColors.LuminousVividPink);
 
             const replyMsg = await api.reply({ embeds: [introEmbed], components: [row] });
@@ -104,15 +104,15 @@ export const shopCmd: Command = {
                 time: 60_000,
             });
 
-            collector.on("collect", async (interaction: dsc.StringSelectMenuInteraction) => {
+            collector.on('collect', async (interaction: dsc.StringSelectMenuInteraction) => {
                 if (interaction.user.id != api.invoker.id) {
-                    await interaction.reply({ content: "To menu nie jest dla Ciebie!", flags: ["Ephemeral"] });
+                    await interaction.reply({ content: 'To menu nie jest dla Ciebie!', flags: ['Ephemeral'] });
                     return;
                 }
 
                 const chosenCategory = categories.find((c) => c.id == interaction.values[0]);
                 if (!chosenCategory) {
-                    await interaction.reply({ content: "Nie znaleziono tej kategorii!", flags: ["Ephemeral"] });
+                    await interaction.reply({ content: 'Nie znaleziono tej kategorii!', flags: ['Ephemeral'] });
                     return;
                 }
 
@@ -127,14 +127,14 @@ export const shopCmd: Command = {
                 await interaction.update({ embeds: [embed], components: [row] });
             });
 
-            collector.on("end", async () => {
+            collector.on('end', async () => {
                 const disabledRow = new dsc.ActionRowBuilder<dsc.StringSelectMenuBuilder>()
                     .addComponents(selectMenu.setDisabled(true));
                 await replyMsg.edit({ components: [disabledRow] }).catch(() => {});
             });
         };
 
-        const categoriesArg = api.getTypedArg("categories", "string");
+        const categoriesArg = api.getTypedArg('categories', 'string');
         if (!categoriesArg || !categoriesArg.value) {
             await sendInteractiveMenu();
             return;
@@ -143,13 +143,13 @@ export const shopCmd: Command = {
         const values = (categoriesArg.value as string).split(/\s+/);
         let categoriesToShow: ConfigEconomyShopCategory[] = [];
 
-        if (values.includes("all")) {
+        if (values.includes('all')) {
             categoriesToShow = categories;
         } else {
             for (const val of values) {
                 const category = categories.find((c) => c.id == val);
                 if (!category) {
-                    api.log.replyError(api, "Nieznana kategoria", `Nie znam kategorii ${val}. Czy możesz powtórzyć?`);
+                    api.log.replyError(api, 'Nieznana kategoria', `Nie znam kategorii ${val}. Czy możesz powtórzyć?`);
                     return;
                 }
                 categoriesToShow.push(category);
@@ -157,7 +157,7 @@ export const shopCmd: Command = {
         }
 
         const introEmbed = new ReplyEmbed()
-            .setTitle("💳 Sklep")
+            .setTitle('💳 Sklep')
             .setDescription(`Oto nasz asortyment, wybierz co chcesz a potem użyj \`${cfg.commands.prefix}buy <item>\` by to kupić.`)
             .setColor(PredefinedColors.LuminousVividPink);
 

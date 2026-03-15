@@ -1,35 +1,35 @@
-import * as dsc from "discord.js";
-import { output } from "@/bot/logging.ts";
+import * as dsc from 'discord.js';
+import { output } from '@/bot/logging.ts';
 
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { cfg } from "@/bot/cfg.ts";
-import { PredefinedColors } from "@/util/color.ts";
-import kick from "@/bot/apis/mod/kicks.ts";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { cfg } from '@/bot/cfg.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import kick from '@/bot/apis/mod/kicks.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 const cmdCfg = cfg.commands.configuration.kick;
 
 export const kickCmd: Command = {
-    name: "kick",
+    name: 'kick',
     aliases: cmdCfg.aliases,
     description: {
-        main: "Ta komenda istnieje po to by pozbyć się z serwera lekko wkurzających ludzi, tak żeby im nie dawać bana, a oni żeby myśleli że mają bana. A pospólstwo to ręce z daleka od moderacji!",
-        short: "Wywala danego użytkownika z serwera",
+        main: 'Ta komenda istnieje po to by pozbyć się z serwera lekko wkurzających ludzi, tak żeby im nie dawać bana, a oni żeby myśleli że mają bana. A pospólstwo to ręce z daleka od moderacji!',
+        short: 'Wywala danego użytkownika z serwera',
     },
     flags: CommandFlags.Important,
 
     expectedArgs: [
         {
-            name: "user",
-            description: "W tej chwili dawaj użytkownika do skopniakowania!",
-            type: { base: "user-mention", includeRefMessageAuthor: true },
+            name: 'user',
+            description: 'W tej chwili dawaj użytkownika do skopniakowania!',
+            type: { base: 'user-mention', includeRefMessageAuthor: true },
             optional: false,
         },
         {
-            name: "reason",
-            description: "Powód wywalenia użytkownika",
-            type: { base: "string", trailing: true },
+            name: 'reason',
+            description: 'Powód wywalenia użytkownika',
+            type: { base: 'string', trailing: true },
             optional: !cmdCfg.reasonRequired,
         },
     ],
@@ -39,17 +39,17 @@ export const kickCmd: Command = {
     },
 
     async execute(api) {
-        const targetUser = api.getTypedArg("user", "user-mention").value as dsc.GuildMember;
-        let reason = api.getTypedArg("reason", "string").value as string || null;
+        const targetUser = api.getTypedArg('user', 'user-mention').value as dsc.GuildMember;
+        let reason = api.getTypedArg('reason', 'string').value as string || null;
 
         if (!targetUser) {
-            return api.log.replyError(api, "Nie podano celu", "Kolego, myślisz że ja sie sam domyślę komu ty chcesz dać kopniaka? Użycie: odpowiedzi na wiadomość lub !kick <@user> <powód>");
+            return api.log.replyError(api, 'Nie podano celu', 'Kolego, myślisz że ja sie sam domyślę komu ty chcesz dać kopniaka? Użycie: odpowiedzi na wiadomość lub !kick <@user> <powód>');
         }
 
         if (!reason && cmdCfg.reasonRequired) {
-            return api.log.replyError(api, "Musisz podać powód!", "Bratku... dlaczego ty chcesz to zrobić? Możesz mi chociaż powiedzieć, a nie wysuwać pochopne wnioski i banować/warnować/mute'ować ludzi bez powodu?");
+            return api.log.replyError(api, 'Musisz podać powód!', "Bratku... dlaczego ty chcesz to zrobić? Możesz mi chociaż powiedzieć, a nie wysuwać pochopne wnioski i banować/warnować/mute'ować ludzi bez powodu?");
         } else if (!reason) {
-            reason = "Moderator nie poszczycił się znajomością komendy i nie podał powodu... Ale moze to i lepiej...";
+            reason = 'Moderator nie poszczycił się znajomością komendy i nie podał powodu... Ale moze to i lepiej...';
         }
 
         try {
@@ -57,7 +57,7 @@ export const kickCmd: Command = {
                 await targetUser.send({
                     embeds: [
                         new ReplyEmbed()
-                            .setTitle("📢 Zostałeś wywalony z serwera Piekarnia eklerki!")
+                            .setTitle('📢 Zostałeś wywalony z serwera Piekarnia eklerki!')
                             .setDescription(`To straszne wiem. Powód kicka brzmi: ${reason}`)
                             .setColor(PredefinedColors.Orange),
                     ],
@@ -72,16 +72,16 @@ export const kickCmd: Command = {
                         .setTitle(`📢 ${targetUser.user.username} został wywalony!`)
                         .setDescription(`Ukróciłem jego zagrania! Miejmy nadzieję, że nie wbije znowu...`)
                         .addFields(
-                            { name: "Moderator", value: `<@${api.invoker.id}>`, inline: true },
-                            { name: "Użytkownik", value: `<@${targetUser.id}>`, inline: true },
-                            { name: "Powód", value: reason, inline: false },
+                            { name: 'Moderator', value: `<@${api.invoker.id}>`, inline: true },
+                            { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
+                            { name: 'Powód', value: reason, inline: false },
                         )
                         .setColor(PredefinedColors.Orange),
                 ],
             });
         } catch (err) {
             output.err(err);
-            return api.log.replyError(api, "Brak permisji", "Coś Ty Eklerka znowu pozmieniał? No chyba że kickujesz admina...");
+            return api.log.replyError(api, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że kickujesz admina...');
         }
     },
 };

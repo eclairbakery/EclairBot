@@ -1,6 +1,6 @@
-import * as dsc from "discord.js";
-import { AnyCommandConfig, BlockCommandsRules, Emoji, PermissionDefinitionConfig } from "./subtypes.ts";
-import { ConfigFeatures } from "./features.ts";
+import * as dsc from 'discord.js';
+import { AnyCommandConfig, BlockCommandsRules, Emoji, PermissionDefinitionConfig } from './subtypes.ts';
+import { ConfigFeatures } from './features.ts';
 
 export interface Config {
     hierarchy: {
@@ -49,7 +49,7 @@ export interface Config {
 
     channels: {
         settings: {
-            emojiPlacement: "after-name" | "before-name";
+            emojiPlacement: 'after-name' | 'before-name';
             characters: {
                 beforeEmoji: string;
                 afterEmoji: string;

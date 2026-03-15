@@ -1,4 +1,4 @@
-import suffixes from "./num-suffixes.ts";
+import suffixes from './num-suffixes.ts';
 
 export function formatNumber(value: number): string {
     const abs = Math.abs(value);
@@ -8,19 +8,19 @@ export function formatNumber(value: number): string {
             const scaled = value / Number(limit);
             const rounded = scaled >= 100 ? Math.round(scaled).toString() : scaled >= 10 ? scaled.toFixed(1) : scaled.toFixed(2);
 
-            return rounded.replace(".", ",") + suffix;
+            return rounded.replace('.', ',') + suffix;
         }
     }
 
     const rounded = abs >= 100 ? Math.round(value).toString() : abs >= 10 ? value.toFixed(1) : value.toFixed(2);
 
-    return rounded.replace(".", ",");
+    return rounded.replace('.', ',');
 }
 
 export function formatBigint(value: bigint, decimals: number): string {
     const base = 10n ** BigInt(decimals);
 
-    const sign = value < 0n ? "-" : "";
+    const sign = value < 0n ? '-' : '';
     const abs = value < 0n ? -value : value;
 
     const whole = abs / base;
@@ -37,7 +37,7 @@ export function formatBigint(value: bigint, decimals: number): string {
         }
 
         const decimal = (remainder * 100n) / scale;
-        const d = decimal.toString().padStart(2, "0");
+        const d = decimal.toString().padStart(2, '0');
         return `${intPart},${d}`;
     }
 

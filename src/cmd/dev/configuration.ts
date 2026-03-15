@@ -1,25 +1,25 @@
-import { cfg, overrideCfg, saveConfigurationChanges } from "@/bot/cfg.ts";
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
+import { cfg, overrideCfg, saveConfigurationChanges } from '@/bot/cfg.ts';
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
 export const configurationCommand: Command = {
-    name: "configuration",
+    name: 'configuration',
     description: {
-        main: "Zmień konfigurację bota, bo exec robi to źle!",
-        short: "Zmienia config bota.",
+        main: 'Zmień konfigurację bota, bo exec robi to źle!',
+        short: 'Zmienia config bota.',
     },
-    aliases: ["cfg", "setcfg"],
+    aliases: ['cfg', 'setcfg'],
     expectedArgs: [
         {
-            name: "arg",
-            description: "Argument generalnie który chcesz zmodyfikować w konfiguracji, np. `masterSecurity.fuckNewMembers`.",
-            type: { base: "string" },
+            name: 'arg',
+            description: 'Argument generalnie który chcesz zmodyfikować w konfiguracji, np. `masterSecurity.fuckNewMembers`.',
+            type: { base: 'string' },
             optional: false,
         },
         {
-            name: "value",
-            description: "Wartość. Ostrzeżenie: Pod spodem uruchamia eval, więc jest unsafe. Możesz skipnąć i wtedy masz wartość ;)",
-            type: { base: "string", trailing: true },
+            name: 'value',
+            description: 'Wartość. Ostrzeżenie: Pod spodem uruchamia eval, więc jest unsafe. Możesz skipnąć i wtedy masz wartość ;)',
+            type: { base: 'string', trailing: true },
             optional: true,
         },
     ],
@@ -30,10 +30,10 @@ export const configurationCommand: Command = {
     },
 
     async execute(api) {
-        const property = api.getTypedArg("arg", "string")?.value as string;
-        const value = api.getTypedArg("value", "string")?.value as string | undefined;
+        const property = api.getTypedArg('arg', 'string')?.value as string;
+        const value = api.getTypedArg('value', 'string')?.value as string | undefined;
 
-        const keys = property.split(".");
+        const keys = property.split('.');
         let target: any = cfg;
         let targetOverride: any = overrideCfg;
 
@@ -60,8 +60,8 @@ export const configurationCommand: Command = {
             const currentValue = target[lastKey];
             const text = `🔍 wartość \`${property}\` = \`\`\`${JSON.stringify(currentValue, null, 4)}\`\`\``;
             if (text.length > 1900) {
-                if (typeof currentValue === "object") {
-                    return api.reply(`⚠️ \`${property}\` jest trochę za długie by je tu wyświetlić, ale jest obiektem, więc mogę Ci podać klucze, pod którymi może znajdziesz swoją wymarzoną wartość: \`[${Object.keys(currentValue).join(", ")}]\``);
+                if (typeof currentValue === 'object') {
+                    return api.reply(`⚠️ \`${property}\` jest trochę za długie by je tu wyświetlić, ale jest obiektem, więc mogę Ci podać klucze, pod którymi może znajdziesz swoją wymarzoną wartość: \`[${Object.keys(currentValue).join(', ')}]\``);
                 }
                 return api.reply(`❌ \`${property}\` jest trochę za długie by je tu wyświetlić i nie jest obiektem, więc niestety nic nie mogę zrobić, by ci pomóc`);
             } else {
@@ -70,13 +70,13 @@ export const configurationCommand: Command = {
         }
 
         let sanitizedValue = value.trim();
-        if (sanitizedValue.startsWith("```") && sanitizedValue.endsWith("```")) {
+        if (sanitizedValue.startsWith('```') && sanitizedValue.endsWith('```')) {
             sanitizedValue = sanitizedValue.slice(3, -3).trim();
         }
 
         let evaluatedValue: any;
         try {
-            evaluatedValue = (0, eval)("(" + sanitizedValue + ")");
+            evaluatedValue = (0, eval)('(' + sanitizedValue + ')');
         } catch (e) {
             return api.reply(`❌ nie udało się sparsować wartości: ${e}`);
         }

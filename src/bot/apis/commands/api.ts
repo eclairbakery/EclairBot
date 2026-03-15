@@ -1,14 +1,14 @@
-import User, { CooldownCheckResult } from "../db/user.ts";
-import * as dsc from "discord.js";
-import { CommandArgBaseType, CommandArgType, CommandValuableArgument, PreciseValuableArgument } from "./arguments.ts";
-import { Category } from "@/bot/categories.ts";
-import { Command } from "./cmd.ts";
-import type * as log from "@/util/log.ts";
-import { EconomyExecutor } from "../economy/action.ts";
+import User, { CooldownCheckResult } from '../db/user.ts';
+import * as dsc from 'discord.js';
+import { CommandArgBaseType, CommandArgType, CommandValuableArgument, PreciseValuableArgument } from './arguments.ts';
+import { Category } from '@/bot/categories.ts';
+import { Command } from './cmd.ts';
+import type * as log from '@/util/log.ts';
+import { EconomyExecutor } from '../economy/action.ts';
 
 export interface CommandAPI {
     // ---- COMMAND INFO ----
-    getEnumArg<const O extends readonly string[]>(name: string, options: O): PreciseValuableArgument<{ base: "enum"; options: O }>;
+    getEnumArg<const O extends readonly string[]>(name: string, options: O): PreciseValuableArgument<{ base: 'enum'; options: O }>;
     getTypedArg<T extends CommandArgType>(name: string, type: T): PreciseValuableArgument<T>;
     getTypedArg<B extends CommandArgBaseType>(name: string, base: B): Extract<CommandValuableArgument, { type: { base: B } }>;
     getTypedArg<B extends readonly CommandArgBaseType[]>(name: string, bases: B): Extract<CommandValuableArgument, { type: { base: B[number] } }>;

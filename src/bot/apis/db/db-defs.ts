@@ -1,4 +1,4 @@
-import Money from "@/util/money.ts";
+import Money from '@/util/money.ts';
 
 export interface UserDataRaw {
     user_id: string;
@@ -7,6 +7,7 @@ export interface UserDataRaw {
     last_robbed: number;
     last_slutted: number;
     last_crimed: number;
+    last_collect_income: number;
     last_email_sent: number;
 }
 
@@ -48,7 +49,7 @@ export interface RepRaw {
     author_id: string;
     target_user_id: string;
     comment: string | null;
-    type: "+rep" | "-rep";
+    type: '+rep' | '-rep';
 }
 
 export interface Rep {
@@ -57,7 +58,7 @@ export interface Rep {
     authorId: string;
     targetUserId: string;
     comment: string | null;
-    type: "+rep" | "-rep";
+    type: '+rep' | '-rep';
 }
 
 export function repFromRaw(raw: RepRaw): Rep {

@@ -14,7 +14,7 @@
         "useTabs": false,
         "lineWidth": 500,
         "semiColons": true,
-        "quoteProps": "asNeeded"
+        "singleQuote": true
     },
     "lint": {
         "rules": {

@@ -1,6 +1,6 @@
-import { Category, Command } from "@/bot/command.ts";
-import { AnyCommandConfig } from "@/bot/definitions/config/subtypes.ts";
-import { findCmdConfigObjOrDefault } from "./findCmdConfigObj.ts";
+import { Category, Command } from '@/bot/command.ts';
+import { AnyCommandConfig } from '@/bot/definitions/config/subtypes.ts';
+import { findCmdConfigObjOrDefault } from './findCmdConfigObj.ts';
 
 export type FindResult = { command: Command; category: Category; config: AnyCommandConfig };
 

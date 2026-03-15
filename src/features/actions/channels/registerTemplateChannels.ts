@@ -1,9 +1,9 @@
-import * as dsc from "discord.js";
+import * as dsc from 'discord.js';
 
-import { PredefinedActionEventTypes } from "../index.ts";
-import { OnForceReloadTemplates } from "../../../events/actions/templatesEvents.ts";
-import { addTemplateChannel, getChannel } from "./templateChannels.ts";
-import { makeChannelName } from "@/util/makeChannelName.ts";
+import { PredefinedActionEventTypes } from '../index.ts';
+import { OnForceReloadTemplates } from '../../../events/actions/templatesEvents.ts';
+import { addTemplateChannel, getChannel } from './templateChannels.ts';
+import { makeChannelName } from '@/util/makeChannelName.ts';
 
 function getNextGoal(memberCount: number): number {
     const base = Math.floor(memberCount / 50) * 50;
@@ -15,7 +15,7 @@ function getNextGoal(memberCount: number): number {
 }
 
 export async function registerTemplateChannels(client: dsc.Client) {
-    const populationTemplateChannel = await getChannel("1235591547437973557", client) as dsc.GuildChannel;
+    const populationTemplateChannel = await getChannel('1235591547437973557', client) as dsc.GuildChannel;
     addTemplateChannel({
         channel: populationTemplateChannel,
         updateOnEvents: [
@@ -23,10 +23,10 @@ export async function registerTemplateChannels(client: dsc.Client) {
             PredefinedActionEventTypes.OnUserQuit,
             OnForceReloadTemplates,
         ],
-        format: (_ctx) => makeChannelName({ emoji: "👥", name: `Populacja: ${populationTemplateChannel.guild.memberCount} osób`, leaveSpaces: true }),
+        format: (_ctx) => makeChannelName({ emoji: '👥', name: `Populacja: ${populationTemplateChannel.guild.memberCount} osób`, leaveSpaces: true }),
     });
 
-    const templateChannelTarget = await getChannel("1276862197099794514", client) as dsc.GuildChannel;
+    const templateChannelTarget = await getChannel('1276862197099794514', client) as dsc.GuildChannel;
     addTemplateChannel({
         channel: templateChannelTarget,
         updateOnEvents: [
@@ -34,10 +34,10 @@ export async function registerTemplateChannels(client: dsc.Client) {
             PredefinedActionEventTypes.OnUserQuit,
             OnForceReloadTemplates,
         ],
-        format: (_ctx) => makeChannelName({ emoji: "🎯", name: `Cel: ${getNextGoal(templateChannelTarget.guild.memberCount)} pieczywa`, leaveSpaces: true }),
+        format: (_ctx) => makeChannelName({ emoji: '🎯', name: `Cel: ${getNextGoal(templateChannelTarget.guild.memberCount)} pieczywa`, leaveSpaces: true }),
     });
 
-    const bansTemplateChannel = await getChannel("1235591871020011540", client) as dsc.GuildChannel;
+    const bansTemplateChannel = await getChannel('1235591871020011540', client) as dsc.GuildChannel;
     addTemplateChannel({
         channel: bansTemplateChannel,
         updateOnEvents: [
@@ -48,7 +48,7 @@ export async function registerTemplateChannels(client: dsc.Client) {
         format: async (_ctx) => {
             const guild = bansTemplateChannel.guild;
             const bans = await guild.bans.fetch();
-            return makeChannelName({ emoji: "🚫", name: `Bany: ${bans.size} ludzi`, leaveSpaces: true });
+            return makeChannelName({ emoji: '🚫', name: `Bany: ${bans.size} ludzi`, leaveSpaces: true });
         },
     });
 }

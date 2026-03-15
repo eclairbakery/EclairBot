@@ -1,13 +1,13 @@
-import { Command, CommandAPI } from "@/bot/command.ts";
-import { output } from "@/bot/logging.ts";
-import { CommandFlags } from "../../bot/apis/commands/misc.ts";
+import { Command, CommandAPI } from '@/bot/command.ts';
+import { output } from '@/bot/logging.ts';
+import { CommandFlags } from '../../bot/apis/commands/misc.ts';
 
 export const depositCmd: Command = {
-    name: "deposit",
-    aliases: ["dep"],
+    name: 'deposit',
+    aliases: ['dep'],
     description: {
-        main: "Wpłać pieniądze z portfela do banku.",
-        short: "Wpłać do banku.",
+        main: 'Wpłać pieniądze z portfela do banku.',
+        short: 'Wpłać do banku.',
     },
     flags: CommandFlags.Economy,
     permissions: {
@@ -16,16 +16,16 @@ export const depositCmd: Command = {
     },
     expectedArgs: [
         {
-            type: { base: "money", source: "wallet" },
+            type: { base: 'money', source: 'wallet' },
             optional: false,
-            name: "amount",
+            name: 'amount',
             description: 'Kwota do wpłaty (liczba, "all" lub %).',
         },
     ],
     async execute(api: CommandAPI) {
-        const amount = api.getTypedArg("amount", "money").value;
+        const amount = api.getTypedArg('amount', 'money').value;
         if (amount.isZero() || amount.isNegative()) {
-            return api.log.replyError(api, "Namieszałeś z kwotą.", "Podaj poprawną kwotę!");
+            return api.log.replyError(api, 'Namieszałeś z kwotą.', 'Podaj poprawną kwotę!');
         }
 
         const user = api.executor;
@@ -33,7 +33,7 @@ export const depositCmd: Command = {
         try {
             const balanceBefore = await user.economy.getBalance();
             if (balanceBefore.wallet.lessThan(amount)) {
-                return api.log.replyError(api, "Nie masz wystarczającej ilości pieniędzy.", "Może nie zdążyłeś ich wypłacić?");
+                return api.log.replyError(api, 'Nie masz wystarczającej ilości pieniędzy.', 'Może nie zdążyłeś ich wypłacić?');
             }
 
             await user.economy.depositToBank(amount);
@@ -41,17 +41,17 @@ export const depositCmd: Command = {
 
             return api.log.replySuccess(
                 api,
-                "Udało się!",
+                'Udało się!',
                 [
                     `Wpłacono **${amount.format()}** do banku.`,
                     `Nowy stan konta:`,
                     `- **${balanceAfter.bank.format()}** w banku`,
                     `- **${balanceAfter.wallet.format()}** w portfelu.`,
-                ].join("\n"),
+                ].join('\n'),
             );
         } catch (err) {
             output.err(err);
-            api.log.replyError(api, "Błąd depozytu", "Coś poszło nie tak z bazą danych.");
+            api.log.replyError(api, 'Błąd depozytu', 'Coś poszło nie tak z bazą danych.');
         }
     },
 };

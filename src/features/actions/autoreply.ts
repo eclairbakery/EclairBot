@@ -1,13 +1,13 @@
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
-import { Action, ActionCallback, ConstraintCallback, MagicSkipAllActions, PredefinedActionEventTypes } from "./index.ts";
-import { MessageEventCtx } from "./index.ts";
-import { PredefinedActionConstraints } from "./index.ts";
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { Action, ActionCallback, ConstraintCallback, MagicSkipAllActions, PredefinedActionEventTypes } from './index.ts';
+import { MessageEventCtx } from './index.ts';
+import { PredefinedActionConstraints } from './index.ts';
 
-import * as log from "@/util/log.ts";
-import * as dsc from "discord.js";
+import * as log from '@/util/log.ts';
+import * as dsc from 'discord.js';
 
 export interface AutoReplyActivationOption {
-    type: "contains" | "is-equal-to" | "starts-with" | "ends-with" | "matches-regex";
+    type: 'contains' | 'is-equal-to' | 'starts-with' | 'ends-with' | 'matches-regex';
     keyword: string;
 }
 
@@ -33,19 +33,19 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
     const constraints: ConstraintCallback<MessageEventCtx>[] = [];
     for (const opt of activationOptions) {
         switch (opt.type) {
-            case "contains":
+            case 'contains':
                 constraints.push(PredefinedActionConstraints.msgContains(opt.keyword.toLowerCase()));
                 break;
-            case "is-equal-to":
+            case 'is-equal-to':
                 constraints.push(PredefinedActionConstraints.msgIsEqualTo(opt.keyword.toLowerCase()));
                 break;
-            case "starts-with":
+            case 'starts-with':
                 constraints.push(PredefinedActionConstraints.msgStartsWith(opt.keyword.toLowerCase()));
                 break;
-            case "ends-with":
+            case 'ends-with':
                 constraints.push(PredefinedActionConstraints.msgEndsWith(opt.keyword.toLowerCase()));
                 break;
-            case "matches-regex":
+            case 'matches-regex':
                 constraints.push(PredefinedActionConstraints.msgMatchesRegex(opt.keyword.toLowerCase()));
                 break;
             default:
@@ -62,17 +62,17 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
         callbacks: [
             (msg) => {
                 let replyValue: string | dsc.MessagePayload | dsc.MessageReplyOptions;
-                if (typeof reply == "function") {
+                if (typeof reply == 'function') {
                     replyValue = (reply as AutoReplyGetMessageCallback)(msg);
                 } else {
                     replyValue = reply as (string | dsc.MessagePayload | dsc.MessageReplyOptions);
                 }
-                if (typeof replyValue === "string") {
+                if (typeof replyValue === 'string') {
                     msg.reply({
                         content: replyValue,
                         allowedMentions: { repliedUser: false },
                     });
-                } else if ("content" in replyValue || "embeds" in replyValue || "components" in replyValue) {
+                } else if ('content' in replyValue || 'embeds' in replyValue || 'components' in replyValue) {
                     msg.reply({
                         ...replyValue,
                         allowedMentions: { repliedUser: false },

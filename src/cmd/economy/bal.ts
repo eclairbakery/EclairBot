@@ -1,19 +1,19 @@
-import User from "@/bot/apis/db/user.ts";
+import User from '@/bot/apis/db/user.ts';
 
-import * as dsc from "discord.js";
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { CommandAPI } from "@/bot/apis/commands/api.ts";
-import { PredefinedColors } from "@/util/color.ts";
-import { output } from "@/bot/logging.ts";
-import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
+import * as dsc from 'discord.js';
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { PredefinedColors } from '@/util/color.ts';
+import { output } from '@/bot/logging.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 export const balCmd: Command = {
-    name: "bal",
-    aliases: ["balance"],
+    name: 'bal',
+    aliases: ['balance'],
     description: {
-        main: "Wyświetl swój balans zadłużenia.",
-        short: "Wyświetl swój balans konta.",
+        main: 'Wyświetl swój balans zadłużenia.',
+        short: 'Wyświetl swój balans konta.',
     },
     flags: CommandFlags.Economy,
 
@@ -23,15 +23,15 @@ export const balCmd: Command = {
     },
     expectedArgs: [
         {
-            type: { base: "user-mention" },
+            type: { base: 'user-mention' },
             optional: true,
-            name: "user",
-            description: "Użytkownik, którego balans chcesz zobaczyć (domyślnie Ty).",
+            name: 'user',
+            description: 'Użytkownik, którego balans chcesz zobaczyć (domyślnie Ty).',
         },
     ],
 
     async execute(api: CommandAPI) {
-        const who = api.getTypedArg("user", "user-mention")?.value as dsc.GuildMember ?? api.invoker.member;
+        const who = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember ?? api.invoker.member;
 
         const user = new User(who.id);
 
@@ -45,17 +45,17 @@ export const balCmd: Command = {
                     new ReplyEmbed()
                         .setTitle(`📊 Pieniądze użytkownika ${who.displayName}`)
                         .setDescription([
-                            `Konto jest ${!isIndebted ? "warte" : "zadłużone o"} **${total.abs().format()}**.`,
-                            "",
+                            `Konto jest ${!isIndebted ? 'warte' : 'zadłużone o'} **${total.abs().format()}**.`,
+                            '',
                             `🏦 Pieniądze w banku: **${balance.bank.format()}**`,
                             `👛 Pieniądze w portfelu: **${balance.wallet.format()}**`,
-                        ].join("\n"))
+                        ].join('\n'))
                         .setColor(isIndebted ? PredefinedColors.Red : PredefinedColors.Gold),
                 ],
             });
         } catch (err) {
             output.err(err);
-            api.log.replyError(api, "Błąd pobierania balansu", "Coś poszło nie tak z bazą danych.");
+            api.log.replyError(api, 'Błąd pobierania balansu', 'Coś poszło nie tak z bazą danych.');
         }
     },
 };

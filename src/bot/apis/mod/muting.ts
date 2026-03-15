@@ -1,4 +1,4 @@
-import * as dsc from "discord.js";
+import * as dsc from 'discord.js';
 
 export default function mute(
     member: dsc.GuildMember,

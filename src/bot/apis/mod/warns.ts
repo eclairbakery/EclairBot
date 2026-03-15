@@ -1,9 +1,9 @@
-import * as dsc from "discord.js";
+import * as dsc from 'discord.js';
 
-import { db } from "@/bot/apis/db/bot-db.ts";
-import { scheduleWarnDeletion } from "@/features/deleteExpiredWarns.ts";
-import actionsManager from "@/features/actions/index.ts";
-import { OnWarnGiven, WarnEventCtx } from "@/events/actions/warnEvents.ts";
+import { db } from '@/bot/apis/db/bot-db.ts';
+import { scheduleWarnDeletion } from '@/features/deleteExpiredWarns.ts';
+import actionsManager from '@/features/actions/index.ts';
+import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.ts';
 
 export default async function warn(
     member: dsc.GuildMember,
@@ -12,7 +12,7 @@ export default async function warn(
     await db.ensureUserExists(member.id);
 
     const result = await db.runSql(
-        "INSERT INTO warns (user_id, moderator_id, reason_string, points, expires_at) VALUES (?, ?, ?, ?, ?)",
+        'INSERT INTO warns (user_id, moderator_id, reason_string, points, expires_at) VALUES (?, ?, ?, ?, ?)',
         [member.id, data.mod ?? null, data.reason, data.points, data.expiresAt],
     );
 

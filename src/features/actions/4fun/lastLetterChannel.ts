@@ -1,12 +1,12 @@
-import sleep from "@/util/sleep.ts";
+import sleep from '@/util/sleep.ts';
 
-import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes } from "../index.ts";
+import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes } from '../index.ts';
 export default actionsManager;
 
-import * as dsc from "discord.js";
+import * as dsc from 'discord.js';
 
-import { cfg } from "@/bot/cfg.ts";
-import fmtEmoji from "@/util/fmtEmoji.ts";
+import { cfg } from '@/bot/cfg.ts';
+import fmtEmoji from '@/util/fmtEmoji.ts';
 
 export const lastLetterChannelAction: Action<MessageEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
@@ -46,7 +46,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                     }
                 }
             }
-            if (msg.content.endsWith("ą")) {
+            if (msg.content.endsWith('ą')) {
                 const reply = await msg.reply(`no ej no przeczytałeś kanał opis? ${fmtEmoji(cfg.emojis.heartAttackEmoji)}`);
                 await sleep(1000);
                 await msg.delete();

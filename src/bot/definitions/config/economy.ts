@@ -1,14 +1,14 @@
-import { Color } from "@/util/color.ts";
-import * as dsc from "discord.js";
+import { Color } from '@/util/color.ts';
+import * as dsc from 'discord.js';
 
 export type ConfigEconomyMoney = number;
 
 export type ConfigEconomyCond =
-    | { op: "has-role"; roleId: string }
-    | { op: "has-item"; itemId: string }
-    | { op: "money-gte"; amount: ConfigEconomyMoney }
-    | { op: "money-lte"; amount: ConfigEconomyMoney }
-    | { op: "random-chance"; chance: number };
+    | { op: 'has-role'; roleId: string }
+    | { op: 'has-item'; itemId: string }
+    | { op: 'money-gte'; amount: ConfigEconomyMoney }
+    | { op: 'money-lte'; amount: ConfigEconomyMoney }
+    | { op: 'random-chance'; chance: number };
 
 export interface ConfigEconomyRandomVariant {
     weight?: number;
@@ -17,23 +17,23 @@ export interface ConfigEconomyRandomVariant {
 
 // roleId = config role id (ConfigEconomyRole.id), not discord id (!)
 export type ConfigEconomyAction =
-    | { op: "add-item"; itemId: string }
-    | { op: "rem-item"; itemId: string }
-    | { op: "add-role"; roleId: string }
-    | { op: "rem-role"; roleId: string }
-    | { op: "add-money"; amount: ConfigEconomyMoney }
-    | { op: "sub-money"; amount: ConfigEconomyMoney }
-    | { op: "random"; variants: ConfigEconomyRandomVariant[] }
-    | { op: "if"; cond: ConfigEconomyCond; then: ConfigEconomyAction[]; else?: ConfigEconomyAction[] }
+    | { op: 'add-item'; itemId: string }
+    | { op: 'rem-item'; itemId: string }
+    | { op: 'add-role'; roleId: string }
+    | { op: 'rem-role'; roleId: string }
+    | { op: 'add-money'; amount: ConfigEconomyMoney }
+    | { op: 'sub-money'; amount: ConfigEconomyMoney }
+    | { op: 'random'; variants: ConfigEconomyRandomVariant[] }
+    | { op: 'if'; cond: ConfigEconomyCond; then: ConfigEconomyAction[]; else?: ConfigEconomyAction[] }
     | {
-        op: "while";
+        op: 'while';
         cond: ConfigEconomyCond;
         do: ConfigEconomyAction[];
         maxIterations?: number; // by default: 100
     };
 
-export type ConfigEconomyMultiplierKind = "work" | "slut" | "crime";
-export type ConfigEconomyMultiplierFilter = ConfigEconomyMultiplierKind[] | "*";
+export type ConfigEconomyMultiplierKind = 'work' | 'slut' | 'crime';
+export type ConfigEconomyMultiplierFilter = ConfigEconomyMultiplierKind[] | '*';
 
 export interface ConfigEconomyMultiplier {
     filter: ConfigEconomyMultiplierFilter;
@@ -80,7 +80,7 @@ export interface ConfigEconomyShopCategory {
 // ----- config ----- //
 export default interface EconomyConfig {
     currencySign: string;
-    currencySignPlacement: "left" | "right";
+    currencySignPlacement: 'left' | 'right';
 
     roles: ConfigEconomyRole[];
     items: ConfigEconomyItem[];

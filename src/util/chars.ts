@@ -5,7 +5,7 @@ export function isValid(ch: char): boolean {
 }
 
 export function isDigit(ch: char): boolean {
-    return ch >= "0" && ch <= "9";
+    return ch >= '0' && ch <= '9';
 }
 
 export function isAlpha(ch: char): boolean {
@@ -17,5 +17,5 @@ export function isAlnum(ch: string): boolean {
 }
 
 export function isIdentch(ch: string): boolean {
-    return isAlnum(ch) || ch == "_";
+    return isAlnum(ch) || ch == '_';
 }

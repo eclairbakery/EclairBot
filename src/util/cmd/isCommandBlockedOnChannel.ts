@@ -1,14 +1,14 @@
-import * as dsc from "discord.js";
+import * as dsc from 'discord.js';
 
-import { Command } from "@/bot/command.ts";
-import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { BlockCommandsRules } from "@/bot/definitions/config/subtypes.ts";
-import { cfg } from "@/bot/cfg.ts";
+import { Command } from '@/bot/command.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { BlockCommandsRules } from '@/bot/definitions/config/subtypes.ts';
+import { cfg } from '@/bot/cfg.ts';
 
 function isBlockedByRules(id: dsc.Snowflake, rules: BlockCommandsRules): boolean {
-    if (rules.default == "allow") {
+    if (rules.default == 'allow') {
         return rules.deny?.includes(id) ?? false;
-    } else if (rules.default == "block") {
+    } else if (rules.default == 'block') {
         return !(rules.allow?.includes(id) ?? false);
     }
     // this should not happen

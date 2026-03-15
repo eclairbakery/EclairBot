@@ -1,17 +1,17 @@
-import { db } from "@/bot/apis/db/bot-db.ts";
+import { db } from '@/bot/apis/db/bot-db.ts';
 
-import { Balance, Rep, RepRaw, Warn, WarnRaw } from "./db-defs.ts";
-import { Cooldowns } from "./db-defs.ts";
-import { repFromRaw, warnFromRaw } from "./db-defs.ts";
-import Money from "@/util/money.ts";
+import { Balance, Rep, RepRaw, Warn, WarnRaw } from './db-defs.ts';
+import { Cooldowns } from './db-defs.ts';
+import { repFromRaw, warnFromRaw } from './db-defs.ts';
+import Money from '@/util/money.ts';
 
 const CooldownMap = {
-    work: { col: "last_worked", prop: "lastWorked" },
-    rob: { col: "last_robbed", prop: "lastRobbed" },
-    slut: { col: "last_slutted", prop: "lastSlutted" },
-    crime: { col: "last_crimed", prop: "lastCrimed" },
-    "collect-income": { col: "last_collect_income", prop: "lastCollectIncome" },
-    email: { col: "last_email_sent", prop: "lastEmailSent" },
+    'work': { col: 'last_worked', prop: 'lastWorked' },
+    'rob': { col: 'last_robbed', prop: 'lastRobbed' },
+    'slut': { col: 'last_slutted', prop: 'lastSlutted' },
+    'crime': { col: 'last_crimed', prop: 'lastCrimed' },
+    'collect-income': { col: 'last_collect_income', prop: 'lastCollectIncome' },
+    'email': { col: 'last_email_sent', prop: 'lastEmailSent' },
 } as const;
 
 export interface CooldownReady {
@@ -37,7 +37,7 @@ export default class User {
         this.id = userId;
     }
 
-    async ensureExists(): Promise<void> {
+    async ensureExists() {
         await db.ensureUserExists(this.id);
     }
 
@@ -83,20 +83,20 @@ export default class User {
                 `SELECT user_id, signature FROM users WHERE user_id = ?`,
                 [this.id],
             );
-            if (row?.signature == "") {
+            if (row?.signature == '') {
                 return undefined;
             }
             return row?.signature;
         },
 
-        setSignature: async (userId: string, signature: string): Promise<void> => {
+        setSignature: async (userId: string, signature: string) => {
             await db.runSql(
                 `UPDATE users SET signature = ? WHERE user_id = ?`,
                 [signature, userId],
             );
         },
 
-        deleteSignature: async (userId: string): Promise<void> => {
+        deleteSignature: async (userId: string) => {
             await db.runSql(
                 `UPDATE users SET signature = NULL WHERE user_id = ?`,
                 [userId],
@@ -109,20 +109,20 @@ export default class User {
                 `SELECT user_id, default_email_title FROM users WHERE user_id = ?`,
                 [this.id],
             );
-            if (row?.default_email_title == "") {
+            if (row?.default_email_title == '') {
                 return undefined;
             }
             return row?.default_email_title;
         },
 
-        setDefaultTitle: async (userId: string, signature: string): Promise<void> => {
+        setDefaultTitle: async (userId: string, signature: string) => {
             await db.runSql(
                 `UPDATE users SET default_email_title = ? WHERE user_id = ?`,
                 [signature, userId],
             );
         },
 
-        deleteDefaultTitle: async (userId: string): Promise<void> => {
+        deleteDefaultTitle: async (userId: string) => {
             await db.runSql(
                 `UPDATE users SET default_email_title = NULL WHERE user_id = ?`,
                 [userId],
@@ -225,6 +225,52 @@ export default class User {
         },
     };
 
+    /** -------- GAMES -------- */
+    readonly games = {
+        getActive: async (): Promise<string[]> => {
+            const rows = await db.selectMany<{ game_id: string }>(
+                `SELECT game_id FROM user_active_games WHERE user_id = ?`,
+                [this.id],
+            );
+            return rows.map((r) => r.game_id);
+        },
+
+        anyActive: async () => {
+            const active = await this.games.getActive();
+            return active.length != 0;
+        },
+
+        isPlaying: async (gameId: string): Promise<boolean> => {
+            const row = await db.selectOne(
+                `SELECT game_id FROM user_active_games WHERE user_id = ? AND game_id = ?`,
+                [this.id, gameId],
+            );
+            return !!row;
+        },
+
+        add: async (gameId: string) => {
+            await this.ensureExists();
+            await db.runSql(
+                `INSERT OR IGNORE INTO user_active_games (user_id, game_id) VALUES (?, ?)`,
+                [this.id, gameId],
+            );
+        },
+
+        remove: async (gameId: string) => {
+            await db.runSql(
+                `DELETE FROM user_active_games WHERE user_id = ? AND game_id = ?`,
+                [this.id, gameId],
+            );
+        },
+
+        clearAll: async () => {
+            await db.runSql(
+                `DELETE FROM user_active_games WHERE user_id = ?`,
+                [this.id],
+            );
+        },
+    };
+
     /** -------- INVENTORY -------- */
     readonly inventory = {
         getItems: async (): Promise<{ item_id: string; amount: number }[]> => {
@@ -300,7 +346,7 @@ export default class User {
 
         get: async (): Promise<Cooldowns> => {
             await this.ensureExists();
-            const cols = Object.values(CooldownMap).map((v) => v.col).join(", ");
+            const cols = Object.values(CooldownMap).map((v) => v.col).join(', ');
             const row = await db.selectOne<any>(
                 `SELECT ${cols} FROM users WHERE user_id = ?`,
                 [this.id],
@@ -341,7 +387,7 @@ export default class User {
 
     /** -------- REPUTATION -------- */
     readonly reputation = {
-        give: async (targetId: string, type: "+rep" | "-rep", comment?: string) => {
+        give: async (targetId: string, type: '+rep' | '-rep', comment?: string) => {
             return db.runSql(
                 `INSERT INTO reputation (author_id, target_user_id, type, comment)
                  VALUES (?, ?, ?, ?)`,

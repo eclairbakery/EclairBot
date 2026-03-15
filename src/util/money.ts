@@ -1,6 +1,6 @@
-import { cfg } from "@/bot/cfg.ts";
-import { formatBigint } from "./math/format.ts";
-import { parseBigint } from "./math/parse.ts";
+import { cfg } from '@/bot/cfg.ts';
+import { formatBigint } from './math/format.ts';
+import { parseBigint } from './math/parse.ts';
 
 export default class Money {
     static readonly SCALE = 100n;
@@ -37,9 +37,9 @@ export default class Money {
         const sign = cfg.features.economy.currencySign;
         const placement = cfg.features.economy.currencySignPlacement;
 
-        if (placement == "left" && cleaned.startsWith(sign)) {
+        if (placement == 'left' && cleaned.startsWith(sign)) {
             cleaned = cleaned.slice(sign.length).trim();
-        } else if (placement == "right" && cleaned.endsWith(sign)) {
+        } else if (placement == 'right' && cleaned.endsWith(sign)) {
             cleaned = cleaned.slice(0, -sign.length).trim();
         }
 
@@ -120,9 +120,9 @@ export default class Money {
     format(): string {
         const formatted = formatBigint(this.value, Money.DECIMALS);
         switch (cfg.features.economy.currencySignPlacement) {
-            case "left":
+            case 'left':
                 return cfg.features.economy.currencySign + formatted;
-            case "right":
+            case 'right':
                 return formatted + cfg.features.economy.currencySign;
         }
     }

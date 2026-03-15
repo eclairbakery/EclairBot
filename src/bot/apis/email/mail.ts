@@ -1,13 +1,13 @@
-import nm from "nodemailer";
-import im from "imapflow";
-import mp from "mailparser";
+import nm from 'nodemailer';
+import im from 'imapflow';
+import mp from 'mailparser';
 
 let transporter: nm.Transporter | null = null;
 let imapClient: im.ImapFlow | null = null;
 
 export async function init() {
     transporter = nm.createTransport({
-        service: "gmail",
+        service: 'gmail',
         auth: {
             user: process.env.EB_EMAIL_USER,
             pass: process.env.EB_EMAIL_PASS,
@@ -15,7 +15,7 @@ export async function init() {
     });
 
     imapClient = new im.ImapFlow({
-        host: "imap.gmail.com",
+        host: 'imap.gmail.com',
         port: 993,
         secure: true,
         auth: {
@@ -36,7 +36,7 @@ export type ReceivedEmail = mp.ParsedMail;
 
 export async function sendMessage({ receiver, subject, content }: SendEmail) {
     if (transporter == null) {
-        throw new Error("Email not initialized");
+        throw new Error('Email not initialized');
     }
 
     return transporter.sendMail({
@@ -51,14 +51,14 @@ export type NewMailCallback = (mail: ReceivedEmail) => void;
 
 export async function listenForNewEmails(onNewMail: NewMailCallback) {
     if (imapClient == null) {
-        throw new Error("IMAP not initialized");
+        throw new Error('IMAP not initialized');
     }
 
     await imapClient.connect();
 
-    const lock = await imapClient.getMailboxLock("INBOX");
+    const lock = await imapClient.getMailboxLock('INBOX');
     try {
-        imapClient.on("exists", async (data) => {
+        imapClient.on('exists', async (data) => {
             const message = await imapClient!.fetchOne(data.count.toString(), {
                 source: true,
             });
