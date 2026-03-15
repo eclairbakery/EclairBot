@@ -16,7 +16,7 @@ export function formatArgType(argType: CommandArgType | CommandArgType[]): strin
     switch (argType.base) {
         case "string":
             return "tekstem";
-        case "enum":
+        case "enum": {
             const names = [...new Set(argType.options.map((t) => `**${t}**`))];
             const last = names.pop();
             if (names.length > 1) {
@@ -26,6 +26,7 @@ export function formatArgType(argType: CommandArgType | CommandArgType[]): strin
             } else {
                 return undefined;
             }
+        }
 
         case "int":
         case "float":

@@ -23,7 +23,7 @@ export async function registerTemplateChannels(client: dsc.Client) {
             PredefinedActionEventTypes.OnUserQuit,
             OnForceReloadTemplates,
         ],
-        format: (ctx) => makeChannelName({ emoji: "👥", name: `Populacja: ${populationTemplateChannel.guild.memberCount} osób`, leaveSpaces: true }),
+        format: (_ctx) => makeChannelName({ emoji: "👥", name: `Populacja: ${populationTemplateChannel.guild.memberCount} osób`, leaveSpaces: true }),
     });
 
     const templateChannelTarget = await getChannel("1276862197099794514", client) as dsc.GuildChannel;
@@ -34,7 +34,7 @@ export async function registerTemplateChannels(client: dsc.Client) {
             PredefinedActionEventTypes.OnUserQuit,
             OnForceReloadTemplates,
         ],
-        format: (ctx) => makeChannelName({ emoji: "🎯", name: `Cel: ${getNextGoal(templateChannelTarget.guild.memberCount)} pieczywa`, leaveSpaces: true }),
+        format: (_ctx) => makeChannelName({ emoji: "🎯", name: `Cel: ${getNextGoal(templateChannelTarget.guild.memberCount)} pieczywa`, leaveSpaces: true }),
     });
 
     const bansTemplateChannel = await getChannel("1235591871020011540", client) as dsc.GuildChannel;
@@ -45,7 +45,7 @@ export async function registerTemplateChannels(client: dsc.Client) {
             PredefinedActionEventTypes.OnUserUnban,
             OnForceReloadTemplates,
         ],
-        format: async (ctx) => {
+        format: async (_ctx) => {
             const guild = bansTemplateChannel.guild;
             const bans = await guild.bans.fetch();
             return makeChannelName({ emoji: "🚫", name: `Bany: ${bans.size} ludzi`, leaveSpaces: true });

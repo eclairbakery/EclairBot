@@ -1,4 +1,3 @@
-import { cfg } from "@/bot/cfg.ts";
 import { Action, MessageEventCtx, PredefinedActionEventTypes } from "@/features/actions/index.ts";
 import capitalizeFirst from "@/util/capitalizeFirst.ts";
 

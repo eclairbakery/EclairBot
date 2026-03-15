@@ -1,7 +1,6 @@
 import { Command } from "@/bot/command.ts";
 import { CommandFlags } from "@/bot/apis/commands/misc.ts";
 import { CommandPermissions } from "@/bot/apis/commands/permissions.ts";
-import { CommandAPI } from "@/bot/apis/commands/api.ts";
 
 export const emailDefaultTitleCmd: Command = {
     name: "email-set-default-title",

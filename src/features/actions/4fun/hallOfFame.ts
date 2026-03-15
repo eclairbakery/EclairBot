@@ -5,7 +5,7 @@ import * as dsc from "discord.js";
 import { Action, PredefinedActionEventTypes, ReactionEventCtx } from "../index.ts";
 import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
 
-let alreadyInHallOfFame: dsc.Snowflake[] = [];
+const alreadyInHallOfFame: dsc.Snowflake[] = [];
 
 export const hallOfFameAction: Action<ReactionEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnMessageReactionAdd,

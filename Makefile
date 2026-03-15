@@ -1,4 +1,4 @@
-all: check run
+all: check lint run
 
 # please note that -A is unsafe
 # it was added here for easy and quick shipment

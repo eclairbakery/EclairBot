@@ -1,4 +1,3 @@
-import assert from "node:assert";
 import fmtEmoji from "./fmtEmoji.ts";
 import { cfg } from "@/bot/cfg.ts";
 

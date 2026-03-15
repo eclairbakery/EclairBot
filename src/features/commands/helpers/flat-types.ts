@@ -2,7 +2,7 @@ import { CommandArgType } from "@/bot/command.ts";
 
 export function flatTypesToUnion(type: CommandArgType): CommandArgType[] {
     if (type.base == "union") {
-        let result: CommandArgType[] = [];
+        const result: CommandArgType[] = [];
         for (const variant of type.variants) {
             result.push(...flatTypesToUnion(variant));
         }

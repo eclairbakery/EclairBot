@@ -1,4 +1,4 @@
-import { Color, PredefinedColors } from "@/util/color.ts";
+import { PredefinedColors } from "@/util/color.ts";
 import { SendableChannel } from "../defs.ts";
 
 import * as dsc from "discord.js";

@@ -30,7 +30,7 @@ export interface LogEmbedAutoReplyOptions {
 }
 
 export function mkAutoreplyAction({ activationOptions, reply, additionalCallbacks, additionalConstraints, shallEndActionsLoop }: AutoReplyOptions): Action<MessageEventCtx> {
-    let constraints: ConstraintCallback<MessageEventCtx>[] = [];
+    const constraints: ConstraintCallback<MessageEventCtx>[] = [];
     for (const opt of activationOptions) {
         switch (opt.type) {
             case "contains":

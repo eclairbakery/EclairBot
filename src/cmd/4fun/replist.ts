@@ -42,7 +42,7 @@ export const replistCmd: Command = {
 
         const userReps = await new User(user.id).reputation.getReceived();
 
-        let fields: dsc.APIEmbedField[] = [];
+        const fields: dsc.APIEmbedField[] = [];
         let i = 1;
 
         for (const rep of userReps) {

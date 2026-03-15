@@ -1,7 +1,6 @@
 import { cfg, overrideCfg, saveConfigurationChanges } from "@/bot/cfg.ts";
 import { Command } from "@/bot/command.ts";
 import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { findCmdConfCategory } from "@/util/cmd/findCmdConfigObj.ts";
 
 export const enableCommandCmd: Command = {
     name: "cmd-enable",

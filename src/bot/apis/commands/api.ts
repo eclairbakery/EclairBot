@@ -1,6 +1,6 @@
 import User, { CooldownCheckResult } from "../db/user.ts";
 import * as dsc from "discord.js";
-import { CommandArgBaseType, CommandArgType, CommandArgValueMap, CommandValuableArgument, PreciseValuableArgument } from "./arguments.ts";
+import { CommandArgBaseType, CommandArgType, CommandValuableArgument, PreciseValuableArgument } from "./arguments.ts";
 import { Category } from "@/bot/categories.ts";
 import { Command } from "./cmd.ts";
 import type * as log from "@/util/log.ts";

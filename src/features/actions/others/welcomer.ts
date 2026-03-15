@@ -1,11 +1,7 @@
 import { client } from "../../../client.ts";
 
-import sleep from "@/util/sleep.ts";
-
-import actionsManager, { Action, MagicSkipAllActions, Ok, PredefinedActionCallbacks, PredefinedActionConstraints, PredefinedActionEventTypes, Skip, UserEventCtx } from "../index.ts";
+import actionsManager, { Action, MagicSkipAllActions, Ok, PredefinedActionEventTypes, Skip, UserEventCtx } from "../index.ts";
 export default actionsManager;
-
-import * as dsc from "discord.js";
 
 import { cfg } from "@/bot/cfg.ts";
 import { watchNewMember } from "@/bot/watchdog.ts";

@@ -37,7 +37,7 @@ export const evalCmd: Command = {
         if (code.includes("bot.db") || code.includes("bot/eclair")) {
             return api.reply("wiem, ze jest do tego masa sposóbów by bypassnąć ten restriction ale plz nie pobieraj bazy danych bota; btw masz do tego db-backups");
         }
-        let warns: string[] = [];
+        const warns: string[] = [];
         if (code.includes("console.log") || code.includes("console.error")) {
             warns.push("`console.log` spowoduje iż na stdout przyjdzie wynik, ale może się on nie pojawić w wyniku komendy. evaluje sie funkcja wiec po prostu uzyj return by cos napisac. mozesz ten zrobic zmienna z buforem wyjscia i zwracac ja na koncu. z kolei `console.error` w ogóle nie da wyniku...");
         }

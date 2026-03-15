@@ -108,7 +108,7 @@ export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
                 });
             }
 
-            let spam = await isSpam(ctx.email.subject ?? "", ctx.email.text ?? "", sender ?? "");
+            const spam = await isSpam(ctx.email.subject ?? "", ctx.email.text ?? "", sender ?? "");
 
             sendLog({
                 where: spam ? undefined : cfg.channels.eclairbot.email,

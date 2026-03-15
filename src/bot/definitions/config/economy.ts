@@ -1,4 +1,4 @@
-import { Color, PredefinedColors } from "@/util/color.ts";
+import { Color } from "@/util/color.ts";
 import * as dsc from "discord.js";
 
 export type ConfigEconomyMoney = number;

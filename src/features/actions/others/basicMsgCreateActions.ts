@@ -4,7 +4,6 @@ import { PredefinedColors } from "@/util/color.ts";
 import { GuildTextBasedChannel, PermissionsBitField } from "discord.js";
 import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
 
-import { cfg } from "@/bot/cfg.ts";
 import * as log from "@/util/log.ts";
 
 export const basicMsgCreateActions: Action<MessageEventCtx> = {

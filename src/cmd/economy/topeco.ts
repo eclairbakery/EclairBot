@@ -7,7 +7,7 @@ import { db } from "@/bot/apis/db/bot-db.ts";
 import { output } from "@/bot/logging.ts";
 import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";
 
-let ecoRoles = [
+const ecoRoles = [
     "1235548306550161451",
 ];
 
@@ -34,7 +34,7 @@ export const topecoCmd: Command = {
                 return api.log.replyError(api, "Zero pieniędzy", "Nie ma żadnego w bazie usera z hajsem :sob:");
             }
 
-            let fields: dsc.APIEmbedField[] = [];
+            const fields: dsc.APIEmbedField[] = [];
             let i = 0;
 
             for (const user of topUsers) {

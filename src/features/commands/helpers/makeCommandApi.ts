@@ -34,7 +34,7 @@ function makeOptions(options: FirstArg<CommandAPI["reply"]>): any {
             const opts = options as ContentReply<typeof options>;
             result = (opts.content ? deepMerge(opts, { content: t(opts.content) }) : opts) as any;
             break;
-        } 
+        }
 
         default:
             result = options;

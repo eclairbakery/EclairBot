@@ -86,7 +86,7 @@ export const configurationCommand: Command = {
 
         try {
             saveConfigurationChanges();
-        } catch (e) {
+        } catch {
             return api.reply(`⚠️ ustawiono \`${property}\`, ale nie udało się zapisać zmian w stałej konfiguracji`);
         }
 

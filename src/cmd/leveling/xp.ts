@@ -4,7 +4,6 @@ import actionsManager from "@/features/actions/index.ts";
 import { cfg } from "@/bot/cfg.ts";
 import { Command } from "@/bot/command.ts";
 import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { CommandPermissions } from "@/bot/apis/commands/permissions.ts";
 import { CommandAPI } from "@/bot/apis/commands/api.ts";
 import { levelToXp, OnSetXpEvent } from "@/bot/level.ts";
 import { output } from "@/bot/logging.ts";
@@ -59,7 +58,7 @@ export const xpCmd: Command = {
             return api.log.replyError(api, "Niepoprawne argumenty", "Sprawdź składnię komendy i spróbuj ponownie.");
         }
 
-        let shouldLeveler = affect === "levels";
+        const shouldLeveler = affect === "levels";
         if (shouldLeveler) {
             amount = levelToXp(amount, cfg.features.leveling.levelDivider);
         }

@@ -42,7 +42,7 @@ export const toprepCmd: Command = {
 
         const top = await getTopRep(50);
 
-        let fields: dsc.APIEmbedField[] = [];
+        const fields: dsc.APIEmbedField[] = [];
         let i = 1;
 
         for (const [userID, repScale] of top) {

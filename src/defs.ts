@@ -5,3 +5,5 @@ export type SendableChannel = dsc.TextChannel | dsc.DMChannel | dsc.NewsChannel 
 export type RenameableChannel = dsc.GuildChannel & { setName(name: string, reason?: string): Promise<dsc.GuildChannel> };
 
 export type Ternary = false | undefined | true;
+
+export type EmptyObject = Record<PropertyKey, never>;

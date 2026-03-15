@@ -3,7 +3,6 @@ import { getRandomInt } from "@/util/math/rand.ts";
 import { PredefinedColors } from "@/util/color.ts";
 import { Command } from "@/bot/command.ts";
 import { CommandFlags } from "@/bot/apis/commands/misc.ts";
-import { CommandPermissions } from "@/bot/apis/commands/permissions.ts";
 import { CommandAPI } from "@/bot/apis/commands/api.ts";
 import { output } from "@/bot/logging.ts";
 import { ReplyEmbed } from "@/bot/apis/translations/reply-embed.ts";

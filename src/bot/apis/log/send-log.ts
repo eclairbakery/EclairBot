@@ -6,13 +6,13 @@ import { client } from "@/client.ts";
 import { ReplyEmbed } from "../translations/reply-embed.ts";
 
 export async function sendLog(logData: LogData, additionalChannels: dsc.Snowflake[] = []) {
-    let where = logData.where ?? cfg.channels.mod.logs;
-    let color = logData.color ?? PredefinedColors.Grey;
-    let header = logData.title;
-    let description = logData.description;
-    let fields = logData.fields ?? [];
+    const where = logData.where ?? cfg.channels.mod.logs;
+    const color = logData.color ?? PredefinedColors.Grey;
+    const header = logData.title;
+    const description = logData.description;
+    const fields = logData.fields ?? [];
 
-    let channels: dsc.Channel[] = [(await client.channels.fetch(where))!];
+    const channels: dsc.Channel[] = [(await client.channels.fetch(where))!];
     for (const chan of additionalChannels) {
         channels.push((await client.channels.fetch(chan))!);
     }
