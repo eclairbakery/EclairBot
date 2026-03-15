@@ -13,3 +13,6 @@ format:
 	@deno fmt src/**/*
 
 fmt: format
+
+lint:
+	@deno lint src/**/*
