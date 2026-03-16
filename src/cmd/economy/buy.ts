@@ -79,8 +79,8 @@ export const buyCmd: Command = {
             return await api.log.replySuccess(
                 api, 'Zakup udany!',
                 `Kupiłeś **${offer.name}** za **${price.format()}**.\n\n- **Opis:**${offer.desc}\n` +
-                `- **Pozostałe pieniądze:\n  - w portfelu: ${userBalance.wallet.sub(price).format()}\n  - w banku: ${userBalance.bank.format()}` +
-                `\n\n-# Użyj \`${cfg.commands.prefix} use\`, aby użyć to co kupiłeś...`
+                `- **Pozostałe pieniądze:**\n  - w portfelu: ${userBalance.wallet.sub(price).format()}\n  - w banku: ${userBalance.bank.format()}` +
+                `\n\n-# Użyj \`${cfg.commands.prefix}use\`, aby użyć to co kupiłeś...`
             )
         } catch (err) {
             output.err(err);
