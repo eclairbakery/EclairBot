@@ -1,10 +1,9 @@
+HOME ?= ~
+
 all: check lint run
 
-# please note that -A is unsafe
-# it was added here for easy and quick shipment
-# and will have to be removed as quickly as possible
 run: 
-	@deno run -A src/main.ts
+	@deno run --no-prompt --allow-read=bot/config.js,bot.db,.env,bot.db-journal,$(HOME)/.cache/eclairbot --allow-write=bot/config.js,bot.db,bot.db-journal,$(HOME)/.cache/eclairbot --allow-net --allow-sys=hostname --allow-env src/main.ts src/main.ts
 
 check:
 	@deno check src/main.ts
