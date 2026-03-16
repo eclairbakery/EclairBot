@@ -1,9 +1,8 @@
 import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
-import { PredefinedColors } from '@/util/color.ts';
 import { output } from '@/bot/logging.ts';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import Money from '@/util/money.ts';
+import { cfg } from '../../bot/cfg.ts';
 
 export const buyCmd: Command = {
     name: 'buy',
@@ -36,7 +35,7 @@ export const buyCmd: Command = {
             return api.log.replyError(
                 api,
                 'Coś takiego w ogóle istnieje?',
-                `Nie udało się znaleźć oferty o nazwie **${offerName}**.`,
+                `Nie udało mi się znaleźć oferty o nazwie **${offerName}**. Albo jestem ślepy, w co `,
             );
         }
 
@@ -77,12 +76,12 @@ export const buyCmd: Command = {
 
             await user.purchases.add(offer.id);
 
-            const embed = new ReplyEmbed()
-                .setColor(PredefinedColors.Green)
-                .setTitle('Zakup udany!')
-                .setDescription(`Kupiłeś **${offer.name}** za **${price.format()}**.\n${offer.desc}`);
-
-            return api.reply({ embeds: [embed] });
+            return await api.log.replySuccess(
+                api, 'Zakup udany!',
+                `Kupiłeś **${offer.name}** za **${price.format()}**.\n\n- **Opis:**${offer.desc}\n` +
+                `- **Pozostałe pieniądze:\n  - w portfelu: ${userBalance.wallet.sub(price).format()}\n  - w banku: ${userBalance.bank.format()}` +
+                `\n\n-# Użyj \`${cfg.commands.prefix} use\`, aby użyć to co kupiłeś...`
+            )
         } catch (err) {
             output.err(err);
 
