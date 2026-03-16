@@ -7,13 +7,15 @@ import { output } from '@/bot/logging.ts';
 
 import { ConfigEconomyAction } from '@/bot/definitions/config/economy.ts';
 import Money from '@/util/money.ts';
+import { formatEmoji } from 'discord.js';
+import { cfg } from '../../bot/cfg.ts';
 
 export function formatAction(api: CommandAPI, action: ConfigEconomyAction): ReplyEmbed | null {
     const SuccessColor = PredefinedColors.Green;
     const LossColor = PredefinedColors.Red;
 
-    const SuccessEmoji = '👍';
-    const LossEmoji = '👎';
+    const SuccessEmoji = formatEmoji(cfg.emojis.wowEmoji);
+    const LossEmoji = formatEmoji(cfg.emojis.heartAttackEmoji);
 
     switch (action.op) {
         case 'add-item': {
@@ -21,7 +23,7 @@ export function formatAction(api: CommandAPI, action: ConfigEconomyAction): Repl
             if (!item) return null;
             return new ReplyEmbed()
                 .setTitle(`${SuccessEmoji} Dodano przedmiot`)
-                .setDescription(`Otrzymałeś przedmiot **${item.name}**!\n${item.desc}`)
+                .setDescription(`Otrzymałeś przedmiot **${item.name}**!\n\n**Opis:** ${item.desc}`)
                 .setColor(SuccessColor);
         }
         case 'rem-item': {
@@ -29,7 +31,7 @@ export function formatAction(api: CommandAPI, action: ConfigEconomyAction): Repl
             if (!item) return null;
             return new ReplyEmbed()
                 .setTitle(`${LossEmoji} Zabrano przedmiot`)
-                .setDescription(`Straciłeś przedmiot **${item.name}**!\n${item.desc}`)
+                .setDescription(`Straciłeś przedmiot **${item.name}**!\n\n**Opis:** ${item.desc}`)
                 .setColor(LossColor);
         }
 
@@ -38,7 +40,7 @@ export function formatAction(api: CommandAPI, action: ConfigEconomyAction): Repl
             if (!role) return null;
             return new ReplyEmbed()
                 .setTitle(`${SuccessEmoji} Dodano rolę`)
-                .setDescription(`Otrzymałeś rolę <@&${role.discordRoleId}>!\n${role.desc}`)
+                .setDescription(`Otrzymałeś rolę <@&${role.discordRoleId}>!\n\n**Opis:** ${role.desc}`)
                 .setColor(SuccessColor);
         }
         case 'rem-role': {
@@ -46,7 +48,7 @@ export function formatAction(api: CommandAPI, action: ConfigEconomyAction): Repl
             if (!role) return null;
             return new ReplyEmbed()
                 .setTitle(`${LossEmoji} Usunięto rolę`)
-                .setDescription(`Straciłeś rolę <@&${role.discordRoleId}>!\n${role.desc}`)
+                .setDescription(`Straciłeś rolę <@&${role.discordRoleId}>!\n\n**Opis:** ${role.desc}`)
                 .setColor(LossColor);
         }
 
@@ -137,7 +139,9 @@ export const useCmd: Command = {
 
             if (embeds.length > 10) embeds = embeds.slice(0, 10);
 
-            return api.reply({ embeds });
+            return api.reply({ 
+                embeds: embeds.length > 0 ? embeds : [ api.log.getTipEmbed('Masz szczęście...', 'Chyba nic sie nie stało czy coś.') ]
+            });
         } catch (err) {
             output.err(err);
 

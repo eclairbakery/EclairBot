@@ -56,7 +56,7 @@ export const buyCmd: Command = {
             if (userBalance.wallet.lessThan(price)) {
                 const msg = await api.log.replyError(
                     api,
-                    'Nie stać Cię!',
+                    'Jesteś biedny...',
                     `Nie stać Cię na **${offer.name}**. Brakuje Ci **${price.sub(userBalance.wallet).format()}**.`,
                 );
 
@@ -82,7 +82,7 @@ export const buyCmd: Command = {
 
             return await api.log.replySuccess(
                 api, 'Zakup udany!',
-                `Kupiłeś **${offer.name}** za **${price.format()}**.\n\n- **Opis:**${offer.desc}\n` +
+                `Kupiłeś **${offer.name}** za **${price.format()}**.\n\n- **Opis:** ${offer.desc}\n` +
                 `- **Pozostałe pieniądze:**\n  - w portfelu: ${userBalance.wallet.sub(price).format()}\n  - w banku: ${userBalance.bank.format()}` +
                 `\n\n-# Użyj \`${cfg.commands.prefix}use\`, aby użyć to co kupiłeś...`
             )
