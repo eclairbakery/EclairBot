@@ -54,7 +54,7 @@ export const buyCmd: Command = {
             const price = Money.fromDollars(offer.price);
 
             if (userBalance.wallet.lessThan(price)) {
-                api.log.replyError(
+                const msg = await api.log.replyError(
                     api,
                     'Nie stać Cię!',
                     `Nie stać Cię na **${offer.name}**. Brakuje Ci **${price.sub(userBalance.wallet).format()}**.`,
@@ -62,11 +62,15 @@ export const buyCmd: Command = {
 
                 const totalBalance = userBalance.wallet.add(userBalance.bank);
                 if (totalBalance.greaterThanOrEqual(price)) {
-                    return api.log.replyTip(
-                        api,
-                        'Wskazówka',
-                        'Za przedmioty możesz płacić tylko pieniędzmi z portfela, jednak w banku masz wystarczającą ilość pieniędzy by kupić ten przedmiot.\n**Spróbuj troche wypłacić!**',
-                    );
+                    msg.edit({
+                        embeds: [
+                            ...msg.embeds,
+                            api.log.getTipEmbed(
+                                'Wskazówka',
+                                'Za przedmioty możesz płacić tylko pieniędzmi z portfela, jednak w banku masz wystarczającą ilość pieniędzy by kupić ten przedmiot.\n**Spróbuj troche wypłacić!**',
+                            )
+                        ]
+                    }); 
                 }
                 return;
             }
