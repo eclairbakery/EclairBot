@@ -63,9 +63,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     const cmdName = (argsRaw.shift() ?? '').toLowerCase();
 
     const result = findCommand(cmdName, commands);
-    if (!result) {
-        return log.replyError(msg, 'Nie znam takiej komendy', 'Komenda \`<cmd>\` nie istnieje'.replace('<cmd>', cmdName.replaceAll('`', '')));
-    }
+    if (!result) return;
 
     const { command, config } = result;
 
