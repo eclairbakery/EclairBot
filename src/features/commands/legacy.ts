@@ -14,7 +14,7 @@ import actionsManager, { PredefinedActionEventTypes } from '../actions/index.ts'
 
 import { PredefinedColors } from '@/util/color.ts';
 
-import { handleError } from './helpers/errorHandler.ts';
+import { handleError } from './helpers/error-handler.ts';
 import { makeCommandApi } from './helpers/makeCommandApi.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { CommandTokenizer } from './helpers/tokenizer.ts';

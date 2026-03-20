@@ -1,7 +1,7 @@
 import * as log from '@/util/log.ts';
 import { ArgMustBeSomeTypeError, ArgParseError, ArgViolatesRules, MissingRequiredArgError } from '../defs/errors.ts';
 import { output } from '@/bot/logging.ts';
-import { formatArgType } from './argTypeFormat.ts';
+import { formatArgType } from './fmt-arg-type.ts';
 import { DiscordAPIError } from 'discord.js';
 import { CommandViolatedRule } from '@/bot/command.ts';
 

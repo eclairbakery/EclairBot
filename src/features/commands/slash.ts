@@ -8,7 +8,7 @@ import { cfg } from '@/bot/cfg.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { client } from '../../client.ts';
 import { commands } from '../../cmd/list.ts';
-import { handleError } from './helpers/errorHandler.ts';
+import { handleError } from './helpers/error-handler.ts';
 import { makeCommandApi } from './helpers/makeCommandApi.ts';
 import { makeSlashCommandDesc, makeSlashCommandOptionDesc } from './helpers/makeSlashCommandDescs.ts';
 import { ParsedRawArgument } from './helpers/argumentParser.ts';
@@ -145,7 +145,8 @@ client.on('interactionCreate', async (int: Interaction) => {
     try {
         const argsRaw: ParsedRawArgument[] = command.expectedArgs.map((arg) => ({
             type: 'text',
-            value: int.options.get(arg.name)?.value?.toString() ?? ''
+            precedingWhitespace: '',
+            value: int.options.get(arg.name)?.value?.toString() ?? '',
         }));
         const api = await makeCommandApi(command, argsRaw, {
             interaction: int,
@@ -155,7 +156,8 @@ client.on('interactionCreate', async (int: Interaction) => {
         });
         await command.execute(api);
     } catch (err) {
-        handleError(err, { reply: (options) => int.editReply(options) });
+        // deno-lint-ignore no-explicit-any
+        handleError(err, { reply: (options: any) => int.editReply(options as any) });
     }
 });
 
