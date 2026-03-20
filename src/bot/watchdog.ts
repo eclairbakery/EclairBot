@@ -160,7 +160,7 @@ function addAction(userId: string, type: 'create' | 'delete' | 'warn' | 'mute') 
     return counter.creates > cfg.features.watchdog.limitsConfiguration.maxChannelCreations || counter.deletes > cfg.features.watchdog.limitsConfiguration.maxChannelDeletions || counter.warns > cfg.features.watchdog.limitsConfiguration.maxWarns || counter.mutes > cfg.features.watchdog.limitsConfiguration.maxMutes;
 }
 
-const channelAddWatcher: Action<{guild: dsc.Guild}> = {
+const channelAddWatcher: Action<{ guild: dsc.Guild }> = {
     activationEventType: PredefinedActionEventTypes.OnChannelCreate,
     constraints: [
         () => {
@@ -185,7 +185,7 @@ const channelAddWatcher: Action<{guild: dsc.Guild}> = {
     ],
 };
 
-const channelDeleteWatcher: Action<{guild: dsc.Guild}> = {
+const channelDeleteWatcher: Action<{ guild: dsc.Guild }> = {
     activationEventType: PredefinedActionEventTypes.OnChannelDelete,
     constraints: [
         () => {

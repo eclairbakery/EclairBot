@@ -28,7 +28,7 @@ async function readBox(boxpath: string): Promise<Record<string, unknown>> {
         const content = await fs.readFile(boxpath, 'utf8');
         return JSON.parse(content);
     } catch (err: unknown) {
-        if ((err as Error & {code: string})?.code === 'ENOENT') {
+        if ((err as Error & { code: string })?.code === 'ENOENT') {
             return {};
         }
         throw err;

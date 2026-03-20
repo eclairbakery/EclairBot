@@ -55,7 +55,7 @@ function translateObj<T extends TranslateableObject>(what: T): T {
     if (Array.isArray(what)) {
         return what.map((v) => translate(v)) as T;
     }
-    
+
     // deno-lint-ignore no-explicit-any
     const output: Record<string, any> = { ...what };
 

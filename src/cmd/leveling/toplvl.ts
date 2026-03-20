@@ -66,16 +66,32 @@ export const toplvlCmd: Command = {
 
         await api.reply({
             components: [
-                new dsc.MediaGalleryBuilder()
-                    .addItems(
-                        (mgi) => mgi.setDescription('toplvl image').setURL('https://cdn.discordapp.com/attachments/1404396223934369844/1404397238578577491/toplvl_image.png?ex=689b0a5a&is=6899b8da&hm=eac2a0db46bfad2dd34fa1ef8dbf9b918e46913229f7b1a9c470d952982787e8&'),
+                new dsc.ContainerBuilder()
+                    .setAccentColor(0x5865F2)
+                    .addMediaGalleryComponents(
+                        new dsc.MediaGalleryBuilder().addItems(
+                            (mgi) =>
+                                mgi
+                                    .setDescription('toplvl image')
+                                    .setURL('https://cdn.discordapp.com/attachments/1404396223934369844/1404397238578577491/toplvl_image.png'),
+                        ),
+                    )
+                    .addSeparatorComponents(
+                        new dsc.SeparatorBuilder().setSpacing(dsc.SeparatorSpacingSize.Large),
+                    )
+                    .addTextDisplayComponents(
+                        new dsc.TextDisplayBuilder().setContent(
+                            '- ' + fields.map((f) => `**${f.name}**: ${f.value}`).join('\n- '),
+                        ),
+                    )
+                    .addSeparatorComponents(
+                        new dsc.SeparatorBuilder().setSpacing(dsc.SeparatorSpacingSize.Large),
+                    )
+                    .addTextDisplayComponents(
+                        new dsc.TextDisplayBuilder().setContent(
+                            `Poziom serwera: ${calculateLevel(serverXP, cfg.features.leveling.levelDivider)} (${serverXP} XP)`,
+                        ),
                     ),
-                new dsc.SeparatorBuilder().setSpacing(dsc.SeparatorSpacingSize.Large),
-                new dsc.TextDisplayBuilder()
-                    .setContent('- ' + fields.map((f) => `**${f.name}**: ${f.value}`).join('\n- ')),
-                new dsc.SeparatorBuilder().setSpacing(dsc.SeparatorSpacingSize.Large),
-                new dsc.TextDisplayBuilder()
-                    .setContent(`Poziom serwera: ${calculateLevel(serverXP, cfg.features.leveling.levelDivider)} (${serverXP} XP)`),
             ],
             flags: dsc.MessageFlags.IsComponentsV2,
             allowedMentions: {

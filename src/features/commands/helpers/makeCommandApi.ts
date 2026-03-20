@@ -13,17 +13,11 @@ import { commands } from '@/cmd/list.ts';
 import { EconomyExecutor } from '@/bot/apis/economy/action.ts';
 import { flatTypesToUnion } from './flat-types.ts';
 
-type FirstArg<T> =
-    T extends { (...args: infer A): unknown }
-        ? A extends [infer F, ...unknown[]] ? F : never
-    : T extends { call(this: unknown, ...args: infer A): unknown }
-        ? A extends [unknown, infer F, ...unknown[]] ? F : never
-    : T extends { apply(this: unknown, args: infer A): unknown }
-        ? A extends [infer Arr]
-            ? Arr extends [infer F, ...unknown[]] ? F : never
-            : never
-    : T extends abstract new (...args: infer A) => unknown
-        ? A extends [infer F, ...unknown[]] ? F : never
+type FirstArg<T> = T extends { (...args: infer A): unknown } ? A extends [infer F, ...unknown[]] ? F : never
+    : T extends { call(this: unknown, ...args: infer A): unknown } ? A extends [unknown, infer F, ...unknown[]] ? F : never
+    : T extends { apply(this: unknown, args: infer A): unknown } ? A extends [infer Arr] ? Arr extends [infer F, ...unknown[]] ? F : never
+        : never
+    : T extends abstract new (...args: infer A) => unknown ? A extends [infer F, ...unknown[]] ? F : never
     : never;
 
 type ContentReply<T> = T & { content: string };
@@ -97,7 +91,7 @@ export async function makeCommandApi(commandObj: Command, argsRaw: string[], con
                 }
             }
 
-            return await user.cooldowns.check(field as "work", cooldownMs);
+            return await user.cooldowns.check(field as 'work', cooldownMs);
         },
 
         raw: {

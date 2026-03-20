@@ -25,7 +25,7 @@ process.stdout.write = function (chunk: string | Uint8Array, encoding?: NodeJS.B
 } as typeof process.stdout.write;
 
 const origErrWrite = process.stderr.write.bind(process.stderr);
-process.stderr.write = function (chunk: string | Uint8Array, encoding?: NodeJS.BufferEncoding, callback?:() => unknown): boolean {
+process.stderr.write = function (chunk: string | Uint8Array, encoding?: NodeJS.BufferEncoding, callback?: () => unknown): boolean {
     let data: string | Uint8Array;
     if (typeof chunk === 'string') {
         output.forward(chunk.trimEnd());

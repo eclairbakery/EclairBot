@@ -73,7 +73,7 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
                     })
                     .setDescription(quotedMsg.content || '*brak treści*')
                     .setTimestamp(quotedMsg.createdAt)
-                    .setFooter({ text: `Wysłano w ${(channel as {name: string})?.name ?? 'piekarnii'}` })
+                    .setFooter({ text: `Wysłano w ${(channel as { name: string })?.name ?? 'piekarnii'}` })
                     .setColor(PredefinedColors.Fuchsia);
 
                 if (quotedMsg.attachments.size > 0) {

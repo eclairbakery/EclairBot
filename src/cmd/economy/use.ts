@@ -139,8 +139,8 @@ export const useCmd: Command = {
 
             if (embeds.length > 10) embeds = embeds.slice(0, 10);
 
-            return api.reply({ 
-                embeds: embeds.length > 0 ? embeds : [ api.log.getTipEmbed('Masz szczęście...', 'Chyba nic sie nie stało czy coś.') ]
+            return api.reply({
+                embeds: embeds.length > 0 ? embeds : [api.log.getTipEmbed('Masz szczęście...', 'Chyba nic sie nie stało czy coś.')],
             });
         } catch (err) {
             output.err(err);

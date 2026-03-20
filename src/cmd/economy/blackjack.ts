@@ -77,7 +77,7 @@ export const blackjackCmd: Command = {
 
         const activeGames = await player.games.getActive();
         if (activeGames.length > 0) {
-            return api.log.replyError(api, 'Już grasz w jakąś grę!', `Musisz najpierw skończyć gre w ${activeGames.map(s => `**${s}**`).join(', ')}`);
+            return api.log.replyError(api, 'Już grasz w jakąś grę!', `Musisz najpierw skończyć gre w ${activeGames.map((s) => `**${s}**`).join(', ')}`);
         }
 
         const playerBalance = await player.economy.getBalance();
@@ -115,7 +115,7 @@ export const blackjackCmd: Command = {
 
         const collector = gameMsg.createMessageComponentCollector({
             time: 30000,
-            filter: ((i) => i.user.id == userId),
+            filter: (i) => i.user.id == userId,
         });
 
         collector.on('collect', async (button: dsc.ButtonInteraction) => {

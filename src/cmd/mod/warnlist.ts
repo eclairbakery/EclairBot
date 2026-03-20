@@ -49,7 +49,7 @@ export const warnlistCmd: Command = {
             query += ' ORDER BY id DESC LIMIT ? OFFSET ?';
             params.push(limit, (page - 1) * limit);
 
-            return await db.selectMany<WarnRaw & {user_id: string}>(query, params);
+            return await db.selectMany<WarnRaw & { user_id: string }>(query, params);
         }
 
         async function renderPage(page: number) {

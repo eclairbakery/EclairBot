@@ -19,7 +19,7 @@ export type AnyEventCtx =
     | ThreadEventCtx
     | ChannelEventCtx
     | ReactionEventCtx
-    | BanEventCtx 
+    | BanEventCtx
     // deno-lint-ignore no-explicit-any
     | any /* for custom events */;
 

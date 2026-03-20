@@ -23,7 +23,7 @@ export function saveConfigurationChanges() {
 
 export function getCommandOverride(commandName: string): AnyCommandConfig {
     if (!overrideCfg.commands) {
-        (overrideCfg as Partial<{commands: Record<PropertyKey, never>}>).commands = {};
+        (overrideCfg as Partial<{ commands: Record<PropertyKey, never> }>).commands = {};
     }
 
     if (!overrideCfg.commands!.configuration) {

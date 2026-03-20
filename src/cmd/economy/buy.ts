@@ -68,9 +68,9 @@ export const buyCmd: Command = {
                             api.log.getTipEmbed(
                                 'Wskazówka',
                                 'Za przedmioty możesz płacić tylko pieniędzmi z portfela, jednak w banku masz wystarczającą ilość pieniędzy by kupić ten przedmiot.\n**Spróbuj troche wypłacić!**',
-                            )
-                        ]
-                    }); 
+                            ),
+                        ],
+                    });
                 }
                 return;
             }
@@ -81,11 +81,12 @@ export const buyCmd: Command = {
             await user.purchases.add(offer.id);
 
             return await api.log.replySuccess(
-                api, 'Zakup udany!',
+                api,
+                'Zakup udany!',
                 `Kupiłeś **${offer.name}** za **${price.format()}**.\n\n- **Opis:** ${offer.desc}\n` +
-                `- **Pozostałe pieniądze:**\n  - w portfelu: ${userBalance.wallet.sub(price).format()}\n  - w banku: ${userBalance.bank.format()}` +
-                `\n\n-# Użyj \`${cfg.commands.prefix}use\`, aby użyć to co kupiłeś...`
-            )
+                    `- **Pozostałe pieniądze:**\n  - w portfelu: ${userBalance.wallet.sub(price).format()}\n  - w banku: ${userBalance.bank.format()}` +
+                    `\n\n-# Użyj \`${cfg.commands.prefix}use\`, aby użyć to co kupiłeś...`,
+            );
         } catch (err) {
             output.err(err);
 
