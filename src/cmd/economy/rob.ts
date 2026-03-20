@@ -103,7 +103,7 @@ export const robCmd: Command = {
                 const embed = new ReplyEmbed()
                     .setColor(PredefinedColors.Yellow)
                     .setTitle('Chwila przerwy!')
-                    .setDescription(`Musisz poczekać **<seconds> sekund** zanim spróbujesz znowu okraść kogoś.`.replaceAll('<seconds>', cooldownResult.discordTime));
+                    .setDescription(`Będziesz mógł znowu kraść dopiero **${cooldownResult.discordTime}**.`);
                 return api.reply({ embeds: [embed] });
             }
 
