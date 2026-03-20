@@ -11,6 +11,14 @@ import { NumberParseError } from '@/util/math/parse.ts';
 import { ArgMustBeSomeTypeError, MissingRequiredArgError } from '../defs/errors.ts';
 import { flatTypesToUnion } from './flat-types.ts';
 
+export type ParsedRawArgument =
+    | { type: 'text'; precedingWhitespace: string; value: string; }
+    | { type: 'code'; precedingWhitespace: string; value: string; lang?: string };
+
+function getTrailingValue(args: ParsedRawArgument[]): string {
+    return args.map(arg => arg.precedingWhitespace + arg.value).join('').trimStart();
+}
+
 async function parseUser(raw: string, name: string, context?: ParserContext): Promise<dsc.GuildMember | null> {
     try {
         if (context?.interaction) {
@@ -57,21 +65,30 @@ export interface ParserContext {
 
 async function tryParseArg(
     type: CommandArgType,
-    raw: string,
+    raw: ParsedRawArgument,
     argIndex: number,
-    rawArgs: string[],
+    rawArgs: ParsedRawArgument[],
     decl: CommandArgument,
     context?: ParserContext,
 ): Promise<CommandValuableArgument | null> {
     if (type.base == 'union') return null;
 
+    if (raw.type == 'code') {
+        const isCodeType = type.base == 'code';
+        const isAllowedString = type.base == 'string' && type.allowCodeBlock;
+        
+        if (!isCodeType && !isAllowedString) {
+            return null;
+        }
+    }
+
     switch (type.base) {
         case 'string': {
-            const val = type.trailing ? rawArgs.slice(argIndex).join(' ') : raw;
+            const val = type.trailing ? getTrailingValue(rawArgs.slice(argIndex)) : raw.value;
             return { ...decl, type, value: val } as CommandValuableArgument;
         }
         case 'enum': {
-            const val = type.trailing ? rawArgs.slice(argIndex).join(' ') : raw;
+            const val = type.trailing ? getTrailingValue(rawArgs.slice(argIndex)) : raw.value;
             const found = type.options.find((o) => o.toLowerCase() == val.toLowerCase());
             if (!found) {
                 return null;
@@ -79,21 +96,27 @@ async function tryParseArg(
             return { ...decl, type, value: found } as CommandValuableArgument;
         }
 
+        case 'code': {
+            const lang = raw.type == 'code' ? raw.lang : undefined;
+            const src = type.trailing ? getTrailingValue(rawArgs.slice(argIndex)) : raw.value;
+            return { ...decl, type, value: { lang, src } } as CommandValuableArgument;
+        }
+
         case 'int': {
-            const isInt = /^-?\d+$/.test(raw);
+            const isInt = /^-?\d+$/.test(raw.value);
             if (!isInt) return null;
 
-            return { ...decl, type, value: BigInt(raw) } as CommandValuableArgument;
+            return { ...decl, type, value: BigInt(raw.value) } as CommandValuableArgument;
         }
         case 'float': {
-            const isFloat = /^-?\d+(\.\d+)?$/.test(raw);
+            const isFloat = /^-?\d+(\.\d+)?$/.test(raw.value);
             if (!isFloat) return null;
 
-            return { ...decl, type, value: Number(raw) } as CommandValuableArgument;
+            return { ...decl, type, value: Number(raw.value) } as CommandValuableArgument;
         }
 
         case 'money': {
-            const input = raw.trim().toLowerCase();
+            const input = raw.value.trim().toLowerCase();
             const invokerId = context?.interaction?.user.id ?? context?.msg?.author.id;
 
             if (type.source && (input == 'all' || input.endsWith('%')) && invokerId) {
@@ -113,7 +136,7 @@ async function tryParseArg(
             }
 
             try {
-                const parsed = Money.parse(raw);
+                const parsed = Money.parse(raw.value);
                 return { ...decl, type, value: parsed } as CommandValuableArgument;
             } catch (e) {
                 if (e instanceof NumberParseError) return null;
@@ -122,19 +145,19 @@ async function tryParseArg(
         }
 
         case 'timestamp': {
-            const ts = parseTimestamp(raw);
+            const ts = parseTimestamp(raw.value);
             if (!ts) return null;
             return { ...decl, type, value: ts } as CommandValuableArgument;
         }
 
         case 'user-mention': {
-            const user = await parseUser(raw, decl.name, context);
+            const user = await parseUser(raw.value, decl.name, context);
             if (!user) return null;
             return { ...decl, type, value: user } as CommandValuableArgument;
         }
 
         case 'role-mention': {
-            const match = raw.match(/^<@&(\d+)>$/);
+            const match = raw.value.match(/^<@&(\d+)>$/);
             const roleId = match?.[1];
             let role: dsc.Role | null = null;
 
@@ -147,7 +170,7 @@ async function tryParseArg(
         }
 
         case 'channel-mention': {
-            const match = raw.match(/^<#(\d+)>$/);
+            const match = raw.value.match(/^<#(\d+)>$/);
             const channelID = match?.[1];
             let channel: dsc.GuildChannel | null = null;
 
@@ -164,7 +187,7 @@ async function tryParseArg(
 
         case 'command-ref': {
             if (!context?.commands) return null;
-            const res = findCommand(raw, context.commands);
+            const res = findCommand(raw.value, context.commands);
             if (!res) return null;
             return { ...decl, type, value: res.command } as CommandValuableArgument;
         }
@@ -175,7 +198,7 @@ async function tryParseArg(
 }
 
 export async function parseArgs(
-    rawArgs: string[],
+    rawArgs: ParsedRawArgument[],
     declaredArgs: CommandArgument[],
     context?: ParserContext,
 ): Promise<CommandValuableArgument[]> {
@@ -185,7 +208,7 @@ export async function parseArgs(
 
     for (let declIndex = 0; declIndex < declaredArgs.length; ++declIndex) {
         const decl: CommandArgument = declaredArgs[declIndex];
-        const raw: string | undefined = rawArgs[argIndex];
+        const raw: ParsedRawArgument | undefined = rawArgs[argIndex];
 
         const types = flatTypesToUnion(decl.type);
         let success = false;
@@ -195,7 +218,7 @@ export async function parseArgs(
             if (typeObj.base == 'user-mention' && typeObj.includeRefMessageAuthor) {
                 let user: dsc.GuildMember | null = null;
                 if (raw) {
-                    user = await parseUser(raw, decl.name, context);
+                    user = await parseUser(raw.value, decl.name, context);
                 }
 
                 if (user) {

@@ -19,84 +19,63 @@ export const compileCmd: Command = {
         {
             name: 'compiler',
             description: 'Daj file extension albo nazwę języka idk.',
-            optional: false,
+            optional: true,
             type: { base: 'string' },
         },
         {
             name: 'code',
             description: 'No kod.',
             optional: false,
-            type: { base: 'string', trailing: true },
+            type: { base: 'code' },
+        },
+        {
+            name: 'stdin',
+            description: 'Opcjonalne stdin przekazane do twojego programu',
+            optional: true,
+            type: { base: 'code' },
         },
     ],
 
     async execute(api) {
         const msg = await api.log.replyInfo(
-            api,
-            'Kompiluje twój kod...',
+            api, 'Kompiluje twój kod...',
             'Proszę uzbroić się w cierpliwość bo kompilacja jest zasobożerna.',
         );
 
-        let code = api.getTypedArg('code', 'string').value!;
-        let lang = api.getTypedArg('compiler', 'string').value!;
+        const langArg = api.getTypedArg('compiler', 'string')?.value;
+        const code = api.getTypedArg('code', 'code').value;
+        const stdin = api.getTypedArg('stdin', 'code')?.value;
 
-        const trimmed = code.trim();
-        const is_codeblock = trimmed.startsWith('```') && trimmed.endsWith('```');
-
-        if (is_codeblock) {
-            const inner = trimmed.slice(3, -3);
-            const lines = inner.split('\n');
-            const first = lines.shift() ?? '';
-
-            if (lang === 'auto') {
-                if (!first.trim()) {
-                    return msg.edit({
-                        embeds: [
-                            api.log.getErrorEmbed('Błąd!', 'Codeblock musi zawierać język gdy używasz auto.'),
-                        ],
-                    });
-                }
-                lang = first.trim();
-            }
-
-            if (first.trim() && lang !== 'auto') {
-                code = lines.join('\n').trim();
-            } else {
-                code = inner.trim();
-            }
-        } else if (lang === 'auto') {
+        const lang = langArg ?? code.lang ?? undefined;
+        if (!lang) {
             return msg.edit({
                 embeds: [
-                    api.log.getErrorEmbed('Błąd!', 'Nie możesz używać auto jako lang, kiedy nie dajesz codeblocka.'),
+                    api.log.getErrorEmbed('Błąd!', 'Codeblock musi zawierać język gdy używasz auto.'),
                 ],
             });
         }
 
         const compiler = cfg.features.compilation.replaceCompilerMap[lang] ?? lang;
+        const apiUrl = 'https://wandbox.org/api/compile.ndjson';
 
-        const api_url = 'https://wandbox.org/api/compile.ndjson';
-
-        const request_data = {
+        const requestData = {
             compiler,
             title: '',
             description: '',
-            code,
-            // there are now things i don't understand, but
-            // i probably have to pass to make a valid
-            // request to the API
+            code: code.src,
             codes: [],
             options: '',
-            stdin: '',
+            stdin: stdin?.src ?? '',
             'compiler-option-raw': '',
             'runtime-option-raw': '',
         };
 
-        const reply = await (await fetch(api_url, {
+        const reply = await (await fetch(apiUrl, {
             method: 'post',
-            body: JSON.stringify(request_data),
+            body: JSON.stringify(requestData),
         })).text();
 
-        if (reply.trim().toLowerCase() == 'error: compiler not found') {
+        if (reply.trim().toLowerCase().includes('error: compiler not found')) {
             return await msg.edit({
                 embeds: [
                     api.log.getWarnEmbed(
@@ -132,26 +111,26 @@ export const compileCmd: Command = {
             }
 
             switch (message.type.toLowerCase()) {
-                case 'stdout':
-                    output += ':white_large_square: ';
-                    break;
-                case 'stderr':
-                    output += ':red_square: ';
-                    break;
-                case 'signal':
-                    output += ':green_circle: received signal: ';
-                    break;
-                case 'error':
-                    output += ':wilted_rose: error: ';
-                    break;
-                case 'exitcode':
-                    output += ':black_large_square: exited with code: ';
-                    break;
-                case 'compilermessages':
-                case 'compilermessagee':
-                default:
-                    output += ':diamond_shape_with_a_dot_inside: ';
-                    break;
+            case 'stdout':
+                output += ':white_large_square: ';
+                break;
+            case 'stderr':
+                output += ':red_square: ';
+                break;
+            case 'signal':
+                output += ':green_circle: received signal: ';
+                break;
+            case 'error':
+                output += ':wilted_rose: error: ';
+                break;
+            case 'exitcode':
+                output += ':black_large_square: exited with code: ';
+                break;
+            case 'compilermessages':
+            case 'compilermessagee':
+            default:
+                output += ':diamond_shape_with_a_dot_inside: ';
+                break;
             }
 
             output += `\`${message.data.replaceAll('\n', ' ').replaceAll('\`', '').trim()}\`\n`;

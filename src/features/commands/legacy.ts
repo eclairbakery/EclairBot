@@ -17,12 +17,13 @@ import { PredefinedColors } from '@/util/color.ts';
 import { handleError } from './helpers/errorHandler.ts';
 import { makeCommandApi } from './helpers/makeCommandApi.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { CommandTokenizer } from './helpers/tokenizer.ts';
 
 function waitForButton(interaction: dsc.Message, buttonId: string, time = 15000) {
     return new Promise((resolve, reject) => {
         const collector = interaction.channel.createMessageComponentCollector({
             filter: function (i) {
-                return i.customId === buttonId && i.user.id === interaction.author.id;
+                return i.customId == buttonId && i.user.id == interaction.author.id;
             },
             time,
         });
@@ -34,7 +35,7 @@ function waitForButton(interaction: dsc.Message, buttonId: string, time = 15000)
         });
 
         collector.on('end', (_, reason) => {
-            if (reason !== 'clicked') {
+            if (reason != 'clicked') {
                 reject(new Error('Button not clicked in time'));
             }
         });
@@ -55,12 +56,12 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 
     if (!prefix) return;
 
-    const argsRaw = content
-        .slice(prefix.length)
-        .trim()
-        .split(' ');
+    const tokenizer = new CommandTokenizer(content.slice(prefix.length));
+    const argsRaw = tokenizer.tokenize();
 
-    const cmdName = (argsRaw.shift() ?? '').toLowerCase();
+    const cmdArg = argsRaw.shift();
+    if (!cmdArg) return;
+    const cmdName = cmdArg.value.toLowerCase();
 
     const result = findCommand(cmdName, commands);
     if (!result) return;
@@ -95,7 +96,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         (cfg.commands.confirmUnsafeCommands && (command.flags & CommandFlags.Unsafe)) ||
         (cfg.commands.confirmDeprecatedCommands && (command.flags & CommandFlags.Deprecated))
     ) {
-        const row = new dsc.ActionRowBuilder()
+        const row = new dsc.ActionRowBuilder<dsc.ButtonBuilder>()
             .addComponents(
                 new dsc.ButtonBuilder()
                     .setCustomId('confirm')
@@ -110,7 +111,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
                     .setTitle('Czy na pewno chcesz uruchomić tą komendę?')
                     .setDescription(`Została ona oznaczona jako ${((command.flags & CommandFlags.Unsafe) && (command.flags & CommandFlags.Deprecated)) ? 'potencjalnie niebezpieczna i przestarzała' : (command.flags & CommandFlags.Deprecated) ? 'przestarzała' : 'potencjalnie niebezpieczna'}.`),
             ],
-            components: [row.toJSON()],
+            components: [row],
         });
 
         try {

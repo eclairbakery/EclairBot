@@ -11,6 +11,7 @@ import { commands } from '../../cmd/list.ts';
 import { handleError } from './helpers/errorHandler.ts';
 import { makeCommandApi } from './helpers/makeCommandApi.ts';
 import { makeSlashCommandDesc, makeSlashCommandOptionDesc } from './helpers/makeSlashCommandDescs.ts';
+import { ParsedRawArgument } from './helpers/argumentParser.ts';
 
 import findCommand from '@/util/cmd/findCommand.ts';
 import canExecuteCmd from '@/util/cmd/canExecuteCmd.ts';
@@ -142,7 +143,10 @@ client.on('interactionCreate', async (int: Interaction) => {
     }
 
     try {
-        const argsRaw = command.expectedArgs.map((arg) => int.options.get(arg.name)?.value?.toString() ?? '');
+        const argsRaw: ParsedRawArgument[] = command.expectedArgs.map((arg) => ({
+            type: 'text',
+            value: int.options.get(arg.name)?.value?.toString() ?? ''
+        }));
         const api = await makeCommandApi(command, argsRaw, {
             interaction: int,
             cmd: command,

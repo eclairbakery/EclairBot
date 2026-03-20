@@ -4,7 +4,7 @@ import * as log from '@/util/log.ts';
 import User from '@/bot/apis/db/user.ts';
 
 import { Command, CommandAPI, CommandArgType } from '@/bot/command.ts';
-import { parseArgs } from './argumentParser.ts';
+import { parseArgs, ParsedRawArgument } from './argumentParser.ts';
 import { t } from '@/bot/apis/translations/translate.ts';
 import { deepMerge } from '@/util/objects/objects.ts';
 import { cfg } from '@/bot/cfg.ts';
@@ -26,25 +26,25 @@ function makeOptions(options: FirstArg<CommandAPI['reply']>): object {
     let result: dsc.MessageReplyOptions;
 
     switch (typeof options) {
-        case 'string':
-            result = { content: t(options) };
-            break;
+    case 'string':
+        result = { content: t(options) };
+        break;
 
-        case 'object': {
-            const opts = options as ContentReply<typeof options>;
-            // deno-lint-ignore no-explicit-any
-            result = (opts.content ? deepMerge(opts, { content: t(opts.content) }) : opts) as any;
-            break;
-        }
+    case 'object': {
+        const opts = options as ContentReply<typeof options>;
+        // deno-lint-ignore no-explicit-any
+        result = (opts.content ? deepMerge(opts, { content: t(opts.content) }) : opts) as any;
+        break;
+    }
 
-        default:
-            result = options;
+    default:
+        result = options;
     }
 
     return result;
 }
 
-export async function makeCommandApi(commandObj: Command, argsRaw: string[], context: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction; cmd?: Command; invokedviaalias: string }): Promise<CommandAPI> {
+export async function makeCommandApi(commandObj: Command, argsRaw: ParsedRawArgument[], context: { msg?: dsc.Message; guild?: dsc.Guild; interaction?: dsc.CommandInteraction; cmd?: Command; invokedviaalias: string }): Promise<CommandAPI> {
     const parsedArgs = await parseArgs(argsRaw, commandObj.expectedArgs, { ...context, commands });
     const rawMember = context.msg?.member ??
         (context.interaction?.member as dsc.GuildMember) ??
