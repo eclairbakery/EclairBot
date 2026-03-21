@@ -1,5 +1,11 @@
 import * as gemini from 'gemini';
 
+class ModelNotInitializedError extends Error {
+    constructor(modelId: string) {
+        super(`Model ${modelId} not initialized`);
+    }
+}
+
 let genai: gemini.GoogleGenerativeAI | null = null;
 let models: Record<string, gemini.GenerativeModel> = {};
 
@@ -23,5 +29,9 @@ export function initModel(id: string, params: gemini.ModelParams): gemini.Genera
 type PromptResolvable = string | gemini.GenerateContentRequest | (string | gemini.Part)[];
 
 export async function askModel(id: string, prompt: PromptResolvable): Promise<gemini.GenerateContentStreamResult> {
-    return models[id].generateContentStream(prompt);
+    const model = models[id];
+    if (!model) {
+        throw new ModelNotInitializedError(id);
+    }
+    return model.generateContentStream(prompt);
 }
