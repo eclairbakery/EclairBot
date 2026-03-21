@@ -44,6 +44,7 @@ import { registerMsgDeleteDscEvents } from './events/client/messageDelete.ts';
 import * as slashCommands from '@/features/commands/slash.ts';
 import * as legacyCommands from '@/features/commands/legacy.ts';
 
+import * as gemini from '@/bot/apis/gemini/model.ts';
 import * as email from '@/bot/apis/email/mail.ts';
 import * as cache from '@/bot/apis/cache/cache.ts';
 
@@ -66,12 +67,23 @@ client.once('clientReady', async () => {
     await db.init();
     output.log(`Database initialized.`);
 
-    await email.init();
     if (!process.env.EB_EMAIL_USER || !process.env.EB_EMAIL_PASS) {
         output.warn('You should set EB_EMAIL_USER and EB_EMAIL_PASS enviorment variables to a GMail login and temporary password\nOtherwise, the e-mail based commands will not work');
+    } else {
+        await email.init();
+        await initEmailActionsIntegration();
+        output.log(`Email initialized.`);
     }
-    await initEmailActionsIntegration();
-    output.log(`Email initialized.`);
+
+    await gemini.init();
+    if (!gemini.isInitialized()) {
+        output.warn('You should set EB_GEMINI_API_KEY enviroment variable to your gemini api key\nOtherwise, the gemini integration based commands will not work');
+    } else {
+        gemini.initModel('ask-cmd', {
+            model: 'gemini-3-flash-preview',
+        })
+        output.log(`Gemini initialized.`);
+    }
 
     await cache.init();
     output.log(`Cache initialized.`);

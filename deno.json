@@ -34,6 +34,7 @@
         "json5": "npm:json5@^2.2.3",
         "mailparser": "npm:mailparser@^3.9.4",
         "nodemailer": "npm:nodemailer@^8.0.2",
+        "gemini": "npm:@google/generative-ai@^0.21.0",
         "sqlite": "https://deno.land/x/sqlite@v3.9.1/mod.ts",
         "@/": "./src/"
     }
