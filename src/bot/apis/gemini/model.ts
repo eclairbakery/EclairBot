@@ -1,5 +1,7 @@
 import * as gemini from 'gemini';
 
+export * from 'gemini';
+
 class ModelNotInitializedError extends Error {
     constructor(modelId: string) {
         super(`Model ${modelId} not initialized`);
@@ -24,6 +26,10 @@ export function initModel(id: string, params: gemini.ModelParams): gemini.Genera
     const model = genai?.getGenerativeModel(params) ?? null;
     if (model) models[id] = model;
     return model;
+}
+
+export function getModel(id: string): gemini.GenerativeModel | null {
+    return models[id] ?? null;
 }
 
 type PromptResolvable = string | gemini.GenerateContentRequest | (string | gemini.Part)[];

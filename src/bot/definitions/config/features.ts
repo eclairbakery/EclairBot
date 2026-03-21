@@ -74,6 +74,7 @@ export interface ConfigFeatures {
     };
 
     ai: {
-        politicsAndPhilosophyEnabled: boolean 
-    }
+        allowPolitics: boolean;
+        allowPhilosophy: boolean;
+    };
 }
