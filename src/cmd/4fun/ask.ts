@@ -102,17 +102,15 @@ export const askCmd: Command = {
             return api.log.replyError(api, 'Błąd', 'Model nie został zainicjowany.');
         }
 
-        const formatUser = (u: dsc.User) => `${u?.username ?? u?.displayName ?? 'Nieznany'} (${u?.id})`
-
         const channel = api.channel as dsc.TextBasedChannel;
         const messages = await channel.messages.fetch({ limit: 10, before: api.raw.msg?.id });
-        const chatHistory = messages.reverse().map((m) => `${formatUser(m.author)}: ${m.content}`).join('\n');
+        const chatHistory = messages.reverse().map((m) => `${m.author.username}: ${m.content}`).join('\n');
 
         let referencedContext = '';
         if (api.raw.msg && api.raw.msg.reference?.messageId) {
             try {
                 const refMsg = await api.raw.msg.fetchReference();
-                referencedContext = `\n\nUżytkownik odpowiada na wiadomość od ${formatUser(refMsg.author)}: "${refMsg.content}"`;
+                referencedContext = `\n\nUżytkownik odpowiada na wiadomość od ${refMsg.author.username}: "${refMsg.content}"`;
             } catch (err) {
                 output.err(err);
             }
@@ -131,7 +129,7 @@ export const askCmd: Command = {
             },
             list_commands: (args: { category: string }) => {
                 const category = args.category;
-                const cat = Array.from(api.commands.keys()).find((c) => c.stringId() == category || c.name.toLowerCase() == category.toLowerCase());
+                const cat = Array.from(api.commands.keys()).find((c) => c.stringId() === category || c.name.toLowerCase() === category.toLowerCase());
                 if (!cat) return { error: `Nie znaleziono kategorii: ${category}` };
                 const cmds = api.commands.get(cat) || [];
                 return {
@@ -142,9 +140,9 @@ export const askCmd: Command = {
                 };
             },
             get_command_help: (args: { command_name: string }) => {
-                const commandName = args.command_name;
+                const command_name = args.command_name;
                 for (const [_, cmds] of api.commands.entries()) {
-                    const cmd = cmds.find((c) => c.name == commandName || c.aliases.includes(commandName));
+                    const cmd = cmds.find((c) => c.name === command_name || c.aliases.includes(command_name));
                     if (cmd) {
                         return {
                             name: cmd.name,
@@ -159,17 +157,12 @@ export const askCmd: Command = {
                         };
                     }
                 }
-                return { error: `Nie znaleziono komendy: ${commandName}` };
+                return { error: `Nie znaleziono komendy: ${command_name}` };
             },
             search_command: (args: { query: string }) => {
                 const query = args.query.toLowerCase();
-
-                interface ResultDef {
-                    name: string;
-                    category: string;
-                    description: string;
-                };
-                const results: ResultDef[] = [];
+                // deno-lint-ignore no-explicit-any
+                const results: any[] = [];
                 for (const [cat, cmds] of api.commands.entries()) {
                     for (const cmd of cmds) {
                         if (cmd.name.toLowerCase().includes(query) || cmd.description.main.toLowerCase().includes(query) || cmd.description.short.toLowerCase().includes(query)) {
@@ -185,9 +178,8 @@ export const askCmd: Command = {
             },
         };
 
-        const question = api.getTypedArg('question', 'string').value!;
         const finalSystemInstruction = [
-            ...SystemPrompt,
+            SystemPrompt,
             '',
             '### KONTEKST OSTATNICH WIADOMOŚCI Z KANAŁU',
             chatHistory,
@@ -195,11 +187,18 @@ export const askCmd: Command = {
             'WAŻNE: Używaj narzędzi do sprawdzania dokumentacji komend bota. Nie używaj żadnych prefiksów w nazwach narzędzi.',
         ].join('\n');
 
+        const question = api.getTypedArg('question', 'string').value!;
         const contents: gemini.Content[] = [
             { role: 'user', parts: [{ text: question }] }
         ];
 
-        let responseStream = await model.generateContentStream({
+        let msg: dsc.Message | null = null;
+        let content: string = '';
+        let prefixChecked = false;
+        const allPrefixes = [cfg.commands.prefix, ...cfg.commands.alternativePrefixes];
+
+        // Use generateContent (non-stream) for tool loops to ensure signature integrity
+        let result = await model.generateContent({
             contents,
             systemInstruction: {
                 role: 'system',
@@ -208,8 +207,7 @@ export const askCmd: Command = {
             tools: toolDeclarations,
         });
 
-        let result = await responseStream.response;
-        let candidate = result.candidates?.[0];
+        let candidate = result.response.candidates?.[0];
 
         while (candidate?.content.parts.some(p => p.functionCall)) {
             contents.push(candidate.content);
@@ -233,9 +231,10 @@ export const askCmd: Command = {
                 }
             }
 
-            contents.push({ role: 'user', parts: functionResponses });
+            // Role MUST be 'function' for tool responses
+            contents.push({ role: 'function', parts: functionResponses });
 
-            responseStream = await model.generateContentStream({
+            result = await model.generateContent({
                 contents,
                 systemInstruction: {
                     role: 'system',
@@ -244,22 +243,14 @@ export const askCmd: Command = {
                 tools: toolDeclarations,
             });
 
-            result = await responseStream.response;
-            candidate = result.candidates?.[0];
+            candidate = result.response.candidates?.[0];
         }
 
-        let msg: dsc.Message | null = null;
-        let content: string = '';
-        let prefixChecked = false;
-        const allPrefixes = [cfg.commands.prefix, ...cfg.commands.alternativePrefixes];
+        // Final response handling
+        const text = result.response.text();
+        content = text;
 
-        for await (const part of responseStream.stream) {
-            const text = part.text();
-            if (!text) continue;
-            content += text;
-
-            if (content.trim().length == 0) continue;
-
+        if (content.trim().length > 0) {
             if (!prefixChecked) {
                 if (allPrefixes.some((p) => content.startsWith(p))) {
                     content = '... ' + content;
