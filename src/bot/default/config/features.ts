@@ -109,4 +109,7 @@ export const featuresConfig: Config['features'] = {
         },
         approveDangerousPermissions: false,
     },
+    ai: {
+        politicsAndPhilosophyEnabled: false
+    }
 };

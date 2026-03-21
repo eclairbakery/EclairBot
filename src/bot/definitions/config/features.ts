@@ -72,4 +72,8 @@ export interface ConfigFeatures {
             maxChannelDeletions: number;
         };
     };
+
+    ai: {
+        politicsAndPhilosophyEnabled: boolean 
+    }
 }

@@ -77,10 +77,10 @@ client.once('clientReady', async () => {
 
     await gemini.init();
     if (!gemini.isInitialized()) {
-        output.warn('You should set EB_GEMINI_API_KEY enviroment variable to your gemini api key\nOtherwise, the gemini integration based commands will not work');
+        output.warn('You should set EB_GEMINI_API_KEY enviroment variable to your gemini api key\nOtherwise, the Gemini integration based commands will not work');
     } else {
         gemini.initModel('ask-cmd', {
-            model: 'gemini-3-flash-preview',
+            model: 'gemini-3.1-flash-lite-preview',
         })
         output.log(`Gemini initialized.`);
     }
