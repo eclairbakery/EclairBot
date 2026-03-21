@@ -102,15 +102,17 @@ export const askCmd: Command = {
             return api.log.replyError(api, 'Błąd', 'Model nie został zainicjowany.');
         }
 
+        const formatUser = (u: dsc.User) => `${u?.username ?? u?.displayName ?? 'Nieznany'} (${u?.id})`
+
         const channel = api.channel as dsc.TextBasedChannel;
         const messages = await channel.messages.fetch({ limit: 10, before: api.raw.msg?.id });
-        const chatHistory = messages.reverse().map((m) => `${m.author?.username ?? 'Nieznany'}: ${m.content}`).join('\n');
+        const chatHistory = messages.reverse().map((m) => `${formatUser(m.author)}: ${m.content}`).join('\n');
 
         let referencedContext = '';
         if (api.raw.msg && api.raw.msg.reference?.messageId) {
             try {
                 const refMsg = await api.raw.msg.fetchReference();
-                referencedContext = `\n\nUżytkownik odpowiada na wiadomość od ${refMsg.author?.username ?? 'Nieznany'}: "${refMsg.content}"`;
+                referencedContext = `\n\nUżytkownik odpowiada na wiadomość od ${formatUser(refMsg.author)}: "${refMsg.content}"`;
             } catch (err) {
                 output.err(err);
             }
@@ -129,7 +131,7 @@ export const askCmd: Command = {
             },
             list_commands: (args: { category: string }) => {
                 const category = args.category;
-                const cat = Array.from(api.commands.keys()).find((c) => c.stringId() === category || c.name.toLowerCase() === category.toLowerCase());
+                const cat = Array.from(api.commands.keys()).find((c) => c.stringId() == category || c.name.toLowerCase() == category.toLowerCase());
                 if (!cat) return { error: `Nie znaleziono kategorii: ${category}` };
                 const cmds = api.commands.get(cat) || [];
                 return {
@@ -140,9 +142,9 @@ export const askCmd: Command = {
                 };
             },
             get_command_help: (args: { command_name: string }) => {
-                const command_name = args.command_name;
+                const commandName = args.command_name;
                 for (const [_, cmds] of api.commands.entries()) {
-                    const cmd = cmds.find((c) => c.name === command_name || c.aliases.includes(command_name));
+                    const cmd = cmds.find((c) => c.name == commandName || c.aliases.includes(commandName));
                     if (cmd) {
                         return {
                             name: cmd.name,
@@ -157,7 +159,7 @@ export const askCmd: Command = {
                         };
                     }
                 }
-                return { error: `Nie znaleziono komendy: ${command_name}` };
+                return { error: `Nie znaleziono komendy: ${commandName}` };
             },
             search_command: (args: { query: string }) => {
                 const query = args.query.toLowerCase();
@@ -184,7 +186,14 @@ export const askCmd: Command = {
         };
 
         const question = api.getTypedArg('question', 'string').value!;
-        const finalSystemInstruction = `${SystemPrompt}\n\n### KONTEKST OSTATNICH WIADOMOŚCI Z KANAŁU\n${chatHistory}${referencedContext}\n\nWAŻNE: Używaj narzędzi do sprawdzania dokumentacji komend bota. Nie używaj żadnych prefiksów w nazwach narzędzi.`;
+        const finalSystemInstruction = [
+            ...SystemPrompt,
+            '',
+            '### KONTEKST OSTATNICH WIADOMOŚCI Z KANAŁU',
+            chatHistory,
+            referencedContext,
+            'WAŻNE: Używaj narzędzi do sprawdzania dokumentacji komend bota. Nie używaj żadnych prefiksów w nazwach narzędzi.',
+        ].join('\n');
 
         const contents: gemini.Content[] = [
             { role: 'user', parts: [{ text: question }] }
@@ -249,7 +258,7 @@ export const askCmd: Command = {
             if (!text) continue;
             content += text;
 
-            if (content.trim().length === 0) continue;
+            if (content.trim().length == 0) continue;
 
             if (!prefixChecked) {
                 if (allPrefixes.some((p) => content.startsWith(p))) {
