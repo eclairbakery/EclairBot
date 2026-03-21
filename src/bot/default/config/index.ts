@@ -75,19 +75,19 @@ export const defaultCfg: Config = {
 
         blocking: {
             full: {
-                default: 'allow',
+default: 'allow',
                 deny: [],
             },
             fullExceptImportant: {
-                default: 'allow',
+default: 'allow',
                 deny: [...Object.values(channelsCfg.forfun), channelsCfg.general.media],
             },
             spammy: {
-                default: 'block',
+default: 'block',
                 allow: [channelsCfg.general.commands, channelsCfg.mod.modCommands, channelsCfg.mod.modGeneral, channelsCfg.forfun.unfiltred],
             },
             economy: {
-                default: 'block',
+default: 'block',
                 allow: [channelsCfg.other.economy, channelsCfg.mod.modCommands],
             },
             preferShortenedEmbeds: [channelsCfg.general.general],

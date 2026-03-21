@@ -1,5 +1,6 @@
 import * as log from '@/util/log.ts';
 import * as dsc from 'discord.js';
+import { output } from '../../bot/logging.ts';
 
 // deno-lint-ignore-file
 
@@ -220,12 +221,19 @@ class ActionManager {
                 }
 
                 for (const callback of action.callbacks) {
-                    const result = callback(ctx);
-                    const awaited = result instanceof Promise ? await result : result;
+                    try {
+                        const result = callback(ctx);
+                        const awaited = result instanceof Promise ? await result : result;
 
-                    if (awaited === MagicSkipAllActions) {
-                        skipAll = true;
-                        break;
+                        if (awaited === MagicSkipAllActions) {
+                            skipAll = true;
+                            break;
+                        }
+                    } catch (err) {
+                        if (err instanceof Error)
+                            output.warn(`While executing action:\n\nName: ${err.name}\nMessage: ${err.message}\nStack: ${err.stack ?? 'not defined'}\nCause: ${err.cause ?? 'not defined'}`);
+                        else 
+                            output.warn(`While executing action\n\n${err}`);
                     }
                 }
             }

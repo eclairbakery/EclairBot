@@ -46,8 +46,6 @@ export function handleError(err: Error | unknown, msg: log.Replyable) {
         }
     } else {
         if (err instanceof Error) {
-            output.warn(err.stack ?? err.message);
-
             if (err instanceof DiscordAPIError) {
                 if (
                     err.message.includes('BASE_TYPE_MAX_LENGTH') ||

@@ -138,9 +138,7 @@ class BlackjackGame {
         const playerInfo = this.calculateHandValue(this.playerHand);
         const dealerInfo = this.calculateHandValue(this.dealerHand);
 
-        const dealerShown = hideDealer
-            ? `${this.handToString([this.dealerHand[0]])} \`[❓]\``
-            : this.handToString(this.dealerHand);
+        const dealerShown = hideDealer ? `${this.handToString([this.dealerHand[0]])} \`[❓]\`` : this.handToString(this.dealerHand);
 
         const embed = new ReplyEmbed()
             .setTitle('♠️ Blackjack ♠️')
@@ -151,7 +149,7 @@ class BlackjackGame {
                     name: 'Twoje karty',
                     value: [
                         `${this.handToString(this.playerHand)}`,
-                        `**Suma: **${playerInfo.value}${playerInfo.soft ? ' (Soft)' : ''}`
+                        `**Suma: **${playerInfo.value}${playerInfo.soft ? ' (Soft)' : ''}`,
                     ].join('\n'),
                 },
                 {
@@ -159,7 +157,7 @@ class BlackjackGame {
                     name: 'Karty dealera',
                     value: [
                         `${dealerShown}`,
-                        `**Suma: **${hideDealer ? '?' : dealerInfo.value}${!hideDealer && dealerInfo.soft ? ' (Soft)' : ''}`
+                        `**Suma: **${hideDealer ? '?' : dealerInfo.value}${!hideDealer && dealerInfo.soft ? ' (Soft)' : ''}`,
                     ].join('\n'),
                 },
             )
@@ -260,9 +258,7 @@ class BlackjackGame {
                 if (this.gameMsg) {
                     await this.gameMsg.edit({
                         embeds: [
-                            this.getEmbed(false,
-                                '⏳ **Czas minął!** Wszystkie twoje ciężko zarobione pieniądze które włożyłeś w ten zakład właśnie przepadły hahaha',
-                                PredefinedColors.Red),
+                            this.getEmbed(false, '⏳ **Czas minął!** Wszystkie twoje ciężko zarobione pieniądze które włożyłeś w ten zakład właśnie przepadły hahaha', PredefinedColors.Red),
                         ],
                         components: [],
                     }).catch(() => {});

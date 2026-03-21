@@ -68,13 +68,13 @@ export namespace output {
     async function send(where: 'stdout' | 'stderr' | 'stdwarn', msg: string) {
         let target: GuildTextBasedChannel | undefined;
         switch (where) {
-            case 'stdout':
+case 'stdout':
                 target = stdoutChannel;
                 break;
-            case 'stderr':
+case 'stderr':
                 target = stderrChannel;
                 break;
-            case 'stdwarn':
+case 'stdwarn':
                 target = stdwarnChannel;
                 break;
         }

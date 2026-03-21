@@ -9,7 +9,6 @@ export const channelsCfg: Config['channels'] = {
         emojiPlacement: 'before-name',
         spaceReplacement: null,
     },
-
     mod: {
         modGeneral: '1235552454838456433',
         logs: '1235641912241819669',
@@ -51,7 +50,7 @@ export const channelsCfg: Config['channels'] = {
     eclairbot: {
         stdout: '1419323394440167555',
         stderr: '1419323609419092019',
-        stdwarn: '1435307953660887101',
+        stdwarn: '1448385153364656189',
         email: '1479194690233438341',
         dbBackups: '1429118062816137318',
     },

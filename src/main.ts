@@ -2,7 +2,7 @@ console.log('Welcome to EclairBOT!');
 
 // preparation & basic imports
 import { client } from '@/client.ts';
-import { output, ft } from '@/bot/logging.ts';
+import { ft, output } from '@/bot/logging.ts';
 import * as dotenv from 'dotenv';
 process.on('uncaughtException', (e) => {
     output.err(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
@@ -22,7 +22,7 @@ import { cfg } from './bot/cfg.ts';
 // actions
 import AutoModRules from '@/features/actions/mod/automod.ts';
 import { initExpiredWarnsDeleter } from '@/features/deleteExpiredWarns.ts';
-import { welcomeNewUserAction, sayGoodbyeAction } from '@/features/actions/others/welcomer.ts';
+import { sayGoodbyeAction, welcomeNewUserAction } from '@/features/actions/others/welcomer.ts';
 import { countingChannelAction } from '@/features/actions/4fun/countingChannel.ts';
 import { lastLetterChannelAction } from '@/features/actions/4fun/lastLetterChannel.ts';
 import { mediaChannelAction } from '@/features/actions/4fun/mediaChannelAction.ts';
@@ -62,25 +62,22 @@ import { setUpStatusGenerator } from '@/util/generateStatusQuote.ts';
 client.once('clientReady', async () => {
     await output.init();
     output.log(`${ft.CYAN}Logged in.`);
+
     await db.init();
     output.log(`Database initialized.`);
+
     await email.init();
-    output.log(`Email initialized.`);
-    await cache.init();
-    output.log(`Cache initialized.`);
-
-    await initEmailActionsIntegration();
-
-    if (!process.env.TENOR_API) {
-        output.warn('You should set the TENOR_API enviorment variable to a Tenor API key.\nOtherwise, the Tenor API-based commands will not work.');
-    }
-
     if (!process.env.EB_EMAIL_USER || !process.env.EB_EMAIL_PASS) {
         output.warn('You should set EB_EMAIL_USER and EB_EMAIL_PASS enviorment variables to a GMail login and temporary password\nOtherwise, the e-mail based commands will not work');
     }
+    await initEmailActionsIntegration();
+    output.log(`Email initialized.`);
+
+    await cache.init();
+    output.log(`Cache initialized.`);
 
     await main();
-}); 
+});
 
 // --------------- SETUP ---------------
 
@@ -108,7 +105,6 @@ function setUpActions() {
         actionPing,
         warnGivenLogAction,
         onReceivedEmailAction,
-        
     );
     registerTemplateChannels(client);
     slashCommands.init();
@@ -185,7 +181,7 @@ async function main() {
 
                 await dbBackUpsChannel.send({
                     content: `${cfg.database.backups.msg} (${new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' })})`,
-                    files: [{ attachment: dbPath, name: backupName }]
+                    files: [{ attachment: dbPath, name: backupName }],
                 });
             } catch (e) {
                 output.err('while sending db at bot.db: ' + e);
@@ -195,5 +191,5 @@ async function main() {
 }
 
 (async function () {
-    await client.login(process.env.TOKEN); 
+    await client.login(process.env.TOKEN);
 })();

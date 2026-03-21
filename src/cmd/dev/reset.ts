@@ -80,22 +80,22 @@ export const resetCmd: Command = {
             if (interaction.customId == 'reset-confirm') {
                 try {
                     switch (table) {
-                        case 'economy':
+case 'economy':
                             await db.reset.economy(userId);
                             break;
-                        case 'leveling':
+case 'leveling':
                             await db.reset.leveling(userId);
                             break;
-                        case 'cooldowns':
+case 'cooldowns':
                             await db.reset.cooldowns(userId);
                             break;
-                        case 'warns':
+case 'warns':
                             await db.reset.warns(userId);
                             break;
-                        case 'reputation':
+case 'reputation':
                             await db.reset.reputation(userId);
                             break;
-                        case 'all':
+case 'all':
                             await db.reset.all(userId);
                             break;
                     }

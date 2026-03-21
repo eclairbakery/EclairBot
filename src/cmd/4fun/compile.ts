@@ -38,7 +38,8 @@ export const compileCmd: Command = {
 
     async execute(api) {
         const msg = await api.log.replyInfo(
-            api, 'Kompiluje twój kod...',
+            api,
+            'Kompiluje twój kod...',
             'Proszę uzbroić się w cierpliwość bo kompilacja jest zasobożerna.',
         );
 
@@ -111,26 +112,26 @@ export const compileCmd: Command = {
             }
 
             switch (message.type.toLowerCase()) {
-            case 'stdout':
-                output += ':white_large_square: ';
-                break;
-            case 'stderr':
-                output += ':red_square: ';
-                break;
-            case 'signal':
-                output += ':green_circle: received signal: ';
-                break;
-            case 'error':
-                output += ':wilted_rose: error: ';
-                break;
-            case 'exitcode':
-                output += ':black_large_square: exited with code: ';
-                break;
-            case 'compilermessages':
-            case 'compilermessagee':
-            default:
-                output += ':diamond_shape_with_a_dot_inside: ';
-                break;
+case 'stdout':
+                    output += ':white_large_square: ';
+                    break;
+case 'stderr':
+                    output += ':red_square: ';
+                    break;
+case 'signal':
+                    output += ':green_circle: received signal: ';
+                    break;
+case 'error':
+                    output += ':wilted_rose: error: ';
+                    break;
+case 'exitcode':
+                    output += ':black_large_square: exited with code: ';
+                    break;
+case 'compilermessages':
+case 'compilermessagee':
+default:
+                    output += ':diamond_shape_with_a_dot_inside: ';
+                    break;
             }
 
             output += `\`${message.data.replaceAll('\n', ' ').replaceAll('\`', '').trim()}\`\n`;

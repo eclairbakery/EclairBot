@@ -120,9 +120,9 @@ export default class Money {
     format(): string {
         const formatted = formatBigint(this.value, Money.DECIMALS);
         switch (cfg.features.economy.currencySignPlacement) {
-            case 'left':
+case 'left':
                 return cfg.features.economy.currencySign + formatted;
-            case 'right':
+case 'right':
                 return formatted + cfg.features.economy.currencySign;
         }
     }

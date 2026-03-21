@@ -27,14 +27,14 @@ export type CommandArgType =
     | { base: 'float' }
     | { base: 'money'; source?: 'wallet' | 'bank' }
     | { base: 'command-ref' }
-    | { base: 'code', trailing?: boolean }
+    | { base: 'code'; trailing?: boolean }
     | { base: 'enum'; trailing?: boolean; options: readonly string[] }
     | { base: 'union'; variants: readonly CommandArgType[] };
 
 export interface CodeBlock {
     lang?: string;
     src: string;
-};
+}
 
 export interface CommandArgument {
     name: string;
@@ -57,13 +57,9 @@ export type CommandArgValueMap = {
     'enum': string;
 };
 
-export type ResolveArgValue<T extends CommandArgType> =
-    T extends { base: 'enum'; options: infer O }
-        ? (O extends readonly string[] ? O[number] : string)
-    : T extends { base: 'union'; variants: infer V }
-        ? (V extends readonly CommandArgType[] ? ResolveArgValue<V[number]> : never)
-    : T extends { base: infer B }
-        ? (B extends keyof CommandArgValueMap ? CommandArgValueMap[B] : never)
+export type ResolveArgValue<T extends CommandArgType> = T extends { base: 'enum'; options: infer O } ? (O extends readonly string[] ? O[number] : string)
+    : T extends { base: 'union'; variants: infer V } ? (V extends readonly CommandArgType[] ? ResolveArgValue<V[number]> : never)
+    : T extends { base: infer B } ? (B extends keyof CommandArgValueMap ? CommandArgValueMap[B] : never)
     : never;
 
 export type CommandValuableArgument = {

@@ -37,68 +37,68 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
 
     private formatCondition(cond: ConfigEconomyCond): string | null {
         switch (cond.op) {
-            case 'has-role': {
+case 'has-role': {
                 const role = this.ctx.getRoleById(cond.roleId);
                 if (!role) return null;
                 return `masz rolę <@&${role.discordRoleId}>`;
             }
 
-            case 'has-item': {
+case 'has-item': {
                 const item = this.ctx.getItemById(cond.itemId);
                 if (!item) return null;
                 return `masz item **${item.name}**`;
             }
 
-            case 'money-gte': {
+case 'money-gte': {
                 const min = Money.fromDollarsFloat(cond.amount);
                 return `masz przynajmniej ${min.format()}`;
             }
 
-            case 'money-lte': {
+case 'money-lte': {
                 const max = Money.fromDollarsFloat(cond.amount);
                 return `masz poniżej ${max.format()}`;
             }
 
-            case 'random-chance':
+case 'random-chance':
                 return `tak się wylosuje **(${cond.chance}%)**`;
         }
     }
 
     private isGood(action: ConfigEconomyAction): Ternary {
         switch (action.op) {
-            case 'add-role':
-            case 'add-item':
-            case 'add-money':
+case 'add-role':
+case 'add-item':
+case 'add-money':
                 return true;
 
-            case 'rem-role':
-            case 'rem-item':
-            case 'sub-money':
+case 'rem-role':
+case 'rem-item':
+case 'sub-money':
                 return false;
 
-            default:
+default:
                 return undefined;
         }
     }
 
     private formatActionSubject(action: ConfigEconomyAction): string | null {
         switch (action.op) {
-            case 'add-role':
-            case 'rem-role': {
+case 'add-role':
+case 'rem-role': {
                 const role = this.ctx.getRoleById(action.roleId);
                 if (!role) break;
                 return `${this.isGood(action) ? 'rolę' : '**usunięcie** roli'} <@&${role.discordRoleId}>`;
             }
 
-            case 'add-item':
-            case 'rem-item': {
+case 'add-item':
+case 'rem-item': {
                 const item = this.ctx.getItemById(action.itemId);
                 if (!item) break;
                 return `${this.isGood(action) ? 'item' : '**usunięcie** itemu'} *${item.name}*`;
             }
 
-            case 'add-money':
-            case 'sub-money':
+case 'add-money':
+case 'sub-money':
                 return `${this.isGood(action) ? '' : '**zabranie** '}` + Money.fromDollarsFloat(action.amount).format();
         }
 
@@ -167,9 +167,9 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
             const linePrefix = indent ? this.config.zeroWidthSpace + indent : '';
 
             switch (action.op) {
-                case 'add-role':
-                case 'add-item':
-                case 'add-money': {
+case 'add-role':
+case 'add-item':
+case 'add-money': {
                     const subject = this.formatActionSubject(action);
                     if (!subject) break;
 
@@ -189,16 +189,16 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
                     break;
                 }
 
-                case 'rem-role':
-                case 'rem-item':
-                case 'sub-money': {
+case 'rem-role':
+case 'rem-item':
+case 'sub-money': {
                     const subject = this.formatActionSubject(action);
                     if (!subject) break;
                     result.push(`${linePrefix}${this.config.badEmoji} Zabiera ${subject}`);
                     break;
                 }
 
-                case 'if':
+case 'if':
                     result.push(`${linePrefix}**Jeżeli ${this.formatCondition(action.cond)} to:**`);
                     result.push(...this.formatActionsList(action.then, indent + this.config.indentStep, allowExpansion));
                     if (action.else) {
@@ -206,17 +206,17 @@ export class MinimalActionsFormatter implements EconomyActionsFormatter {
                         result.push(...this.formatActionsList(action.else, indent + this.config.indentStep, allowExpansion));
                     }
                     break;
-                case 'while':
+case 'while':
                     result.push(`${linePrefix}**Dopóki ${this.formatCondition(action.cond)} wykonuje:**`);
                     result.push(...this.formatActionsList(action.do, indent + this.config.indentStep, allowExpansion));
                     break;
 
-                case 'random': {
+case 'random': {
                     result.push(...this.formatRandom(action, indent, `${linePrefix}Daje losowo:`, allowExpansion));
                     break;
                 }
 
-                default:
+default:
                     break;
             }
         }
