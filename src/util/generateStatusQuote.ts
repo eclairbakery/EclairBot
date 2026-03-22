@@ -8,7 +8,7 @@ type DiscordStatus = {
     desc: string;
 };
 
-function changeStatusToRandomOne(prev: string): string {
+function changeStatusToRandomOne(prev?: number): number {
     while (true) {
         const statuses: DiscordStatus[] = [
             {
@@ -58,24 +58,22 @@ function changeStatusToRandomOne(prev: string): string {
             },
         ];
 
-        const status = statuses[getRandomInt(0, statuses.length - 1)];
+        const idx = getRandomInt(0, statuses.length - 1);
+        if (prev != undefined && idx == prev) continue;
 
-        if ((status.name + '' + status.desc) == prev) {
-            continue;
-        }
+        const status = statuses[idx];
 
-        client.user!.setActivity({ type: ActivityType.Watching, name: status.name, state: status.desc });
-
-        return status.name + '' + status.desc;
+        client.user!.setActivity({ type: status.type, name: status.name, state: status.desc });
+        return idx;
     }
 }
 
-export function setUpStatusGenerator() {
-    let prev = '';
+export function initStatusGenerator() {
+    let prev: number | undefined;
 
     setInterval(() => {
         prev = changeStatusToRandomOne(prev);
     }, 2 * 60 * 1000);
 
-    prev = changeStatusToRandomOne(prev);
+    prev = changeStatusToRandomOne();
 }

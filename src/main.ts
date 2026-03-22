@@ -44,6 +44,8 @@ import { registerMsgDeleteDscEvents } from './events/client/messageDelete.ts';
 import * as slashCommands from '@/features/commands/slash.ts';
 import * as legacyCommands from '@/features/commands/legacy.ts';
 
+import * as github from '@/bot/apis/github/github.ts';
+import * as gemini from '@/bot/apis/gemini/model.ts';
 import * as email from '@/bot/apis/email/mail.ts';
 import * as cache from '@/bot/apis/cache/cache.ts';
 
@@ -56,7 +58,9 @@ import { db } from '@/bot/apis/db/bot-db.ts';
 import { initEmailActionsIntegration } from '@/bot/apis/email/actions.ts';
 import { getChannel } from '@/features/actions/channels/templateChannels.ts';
 import { warnGivenLogAction } from '@/features/actions/mod/warn-given.ts';
-import { setUpStatusGenerator } from '@/util/generateStatusQuote.ts';
+import { initStatusGenerator } from '@/util/generateStatusQuote.ts';
+
+import { initAskCmdModel } from './features/init-ai-models.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -66,12 +70,24 @@ client.once('clientReady', async () => {
     await db.init();
     output.log(`Database initialized.`);
 
-    await email.init();
     if (!process.env.EB_EMAIL_USER || !process.env.EB_EMAIL_PASS) {
         output.warn('You should set EB_EMAIL_USER and EB_EMAIL_PASS enviorment variables to a GMail login and temporary password\nOtherwise, the e-mail based commands will not work');
+    } else {
+        await email.init();
+        await initEmailActionsIntegration();
+        output.log(`Email initialized.`);
     }
-    await initEmailActionsIntegration();
-    output.log(`Email initialized.`);
+
+    await gemini.init();
+    if (!gemini.isInitialized()) {
+        output.warn('You should set EB_GEMINI_API_KEY enviroment variable to your gemini api key\nOtherwise, the Gemini integration based commands will not work');
+    } else {
+        initAskCmdModel();
+        output.log(`Gemini initialized.`);
+    }
+
+    await github.init();
+    output.log(`Github integration initialized`);
 
     await cache.init();
     output.log(`Cache initialized.`);
@@ -122,7 +138,7 @@ function setUpEvents() {
 
 // --------------- MAIN ---------------
 async function main() {
-    setUpStatusGenerator();
+    initStatusGenerator();
     initExpiredWarnsDeleter();
     setUpActions();
     setUpEvents();
