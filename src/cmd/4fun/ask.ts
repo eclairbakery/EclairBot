@@ -8,6 +8,7 @@ import { SystemPrompt } from '@/features/init-ai-models.ts';
 import { output } from '@/bot/logging.ts';
 import { cfg } from '../../bot/cfg.ts';
 import { fetchPost } from '@/bot/apis/reddit/reddit.ts';
+import { client } from '../../client.ts';
 
 const toolDeclarations: gemini.Tool[] = [
     {
@@ -125,15 +126,20 @@ export const askCmd: Command = {
             return api.log.replyError(api, 'Błąd', 'Model nie został zainicjowany.');
         }
 
+        const formatUser = (u: dsc.User) =>
+            u.id == client.user?.id
+                ? `EclairBot (Ty)`
+                : `${u.username} (${u.id}${u.id == api.invoker.id ? ', To osoba która której odpowiadasz!' : ''})`;
+
         const channel = api.channel as dsc.TextBasedChannel;
         const messages = await channel.messages.fetch({ limit: 10, before: api.raw.msg?.id });
-        const chatHistory = messages.reverse().map((m) => `${m.author.username}: ${m.content}`).join('\n');
+        const chatHistory = messages.reverse().map((m) => `${formatUser(m.author)}: ${m.content}`).join('\n');
 
         let referencedContext = '';
         if (api.raw.msg && api.raw.msg.reference?.messageId) {
             try {
                 const refMsg = await api.raw.msg.fetchReference();
-                referencedContext = `\n\nUżytkownik odpowiada na wiadomość od ${refMsg.author.username}: "${refMsg.content}"`;
+                referencedContext = `\n\nUżytkownik odpowiada na wiadomość od ${formatUser(refMsg.author)}: "${refMsg.content}"`;
             } catch (err) {
                 output.err(err);
             }
