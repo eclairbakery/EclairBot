@@ -6,7 +6,8 @@
         "moduleResolution": "nodenext",
         "lib": [
             "es2024",
-            "deno.ns", "deno.window"
+            "deno.ns", "deno.window",
+            "dom"
         ]
     },
     "fmt": {
