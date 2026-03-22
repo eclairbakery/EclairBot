@@ -181,7 +181,7 @@ export const askAction: Action<MessageEventCtx> = {
             SystemPrompt,
             '',
             '### KONTEKST OSTATNICH WIADOMOŚCI Z KANAŁU',
-            chatHistoryFormated,
+            chatHistoryFormatted,
             referencedContext,
             'WAŻNE: Używaj narzędzi do sprawdzania dokumentacji komend bota oraz integracji z GitHubem. Nie używaj żadnych prefiksów w nazwach narzędzi.',
         ].join('\n');
