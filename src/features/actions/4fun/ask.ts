@@ -36,11 +36,22 @@ export const askAction: Action<MessageEventCtx> = {
             return log.replyError(msg, 'Błąd', 'Model nie został zainicjowany.');
         }
 
-        const formatUser = (u: dsc.User) => u.id == client.user?.id ? `EclairBot (Ty)` : `${u.username} (${u.id}${u.id == msg.author.id ? ', To osoba która której odpowiadasz!' : ''})`;
+        const formatUser = (u: dsc.User) => u.id == client.user?.id 
+            ? `EclairBot (Ty)`
+            : `${u.username} (${u.id}${u.id == msg.author.id ? ', To osoba która której odpowiadasz!' : ''})`;
 
         const channel = msg.channel as dsc.TextBasedChannel;
         const messages = await channel.messages.fetch({ limit: 10, before: msg?.id });
-        const chatHistory = messages.reverse().map((m) => `${formatUser(m.author)}: ${m.content}`).join('\n');
+        const chatHistory = messages.reverse();
+        let chatHistoryFormatted: string = '';
+        for (const m of chatHistory.values()) {
+            let refString: string = '';
+            if (m.reference) {
+                const ref = await m.fetchReference();
+                refString = `(Odpowiedź na wiadomość od ${formatUser(ref.author)}: "${ref.content.replace('"', '\\"')}") `;
+            }
+            chatHistoryFormatted += `${refString}${formatUser(m.author)}: ${m.content}`;
+        }
 
         let referencedContext = '';
         if (msg.reference?.messageId) {
@@ -170,7 +181,7 @@ export const askAction: Action<MessageEventCtx> = {
             SystemPrompt,
             '',
             '### KONTEKST OSTATNICH WIADOMOŚCI Z KANAŁU',
-            chatHistory,
+            chatHistoryFormated,
             referencedContext,
             'WAŻNE: Używaj narzędzi do sprawdzania dokumentacji komend bota oraz integracji z GitHubem. Nie używaj żadnych prefiksów w nazwach narzędzi.',
         ].join('\n');
