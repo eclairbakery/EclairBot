@@ -11,6 +11,9 @@ import { commands } from '@/cmd/list.ts';
 import { output } from '@/bot/logging.ts';
 import { cfg } from '@/bot/cfg.ts';
 import { client } from '@/client.ts';
+import { sendLog } from '../../bot/apis/log/send-log.ts';
+import { PredefinedColors } from '../../util/color.ts';
+import { Buffer } from 'node:buffer';
 
 export async function executeAsk(msg: dsc.Message, question: string, contextMsgs: number) {
     if (!gemini.isInitialized()) {
@@ -41,7 +44,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
             const ref = await m.fetchReference();
             refString = `(Odpowiedź na wiadomość od ${formatUser(ref.author)}: ${formatMsg(ref)}) `;
         }
-        chatHistoryFormatted += `${refString}${formatUser(m.author)}: ${formatMsg(m)}`;
+        chatHistoryFormatted += `${refString}${formatUser(m.author)}: ${formatMsg(m)}\n`;
     }
 
     let referencedContext = '';
@@ -198,6 +201,8 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
 
     let candidate = result.response.candidates?.[0];
 
+    const toolExecutionHistory: { name: string; args: unknown; result: unknown }[] = [];
+
     while (candidate?.content.parts.some((p) => p.functionCall)) {
         contents.push(candidate.content);
 
@@ -210,6 +215,12 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
                 // deno-lint-ignore no-explicit-any
                 const handler = (toolHandlers as any)[cleanName];
                 const toolResult = handler ? await handler(part.functionCall.args) : { error: `Narzędzie '${cleanName}' nie zostało znalezione.` };
+
+                toolExecutionHistory.push({
+                    name: originalName,
+                    args: part.functionCall.args,
+                    result: toolResult,
+                });
 
                 functionResponses.push({
                     functionResponse: {
@@ -252,4 +263,23 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
 
         await msg.reply(payload as dsc.MessageReplyOptions);
     }
+
+    const toolExecutionHistoryFormatted =
+        JSON.stringify(toolExecutionHistory, null, 4);
+    
+    await sendLog({
+        color: PredefinedColors.Blurple,
+        title: 'Zapytanie EI',
+        description: 'Dane pomocne w debugowaniu EI tak w skrócie',
+        attachments: [
+            new dsc.AttachmentBuilder(
+                Buffer.from(finalSystemInstruction, 'utf8'),
+                { name: 'ei-final-system-prompt.dat' },
+            ),
+            new dsc.AttachmentBuilder(
+                Buffer.from(toolExecutionHistoryFormatted, 'utf8'),
+                { name: 'ei-tool-calls.json' },
+            )
+        ]
+    });
 } 

@@ -30,6 +30,7 @@ export async function sendLog(logData: LogData, additionalChannels: dsc.Snowflak
                         name: 'EclairBOT',
                     }),
             ],
+            files: logData.attachments,
         });
     }
 }

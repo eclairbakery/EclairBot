@@ -1,10 +1,12 @@
+import * as dsc from 'discord.js';
+
 import { PredefinedColors, RarelyUsedColors } from '@/util/color.ts';
-import { APIEmbedField, Snowflake } from 'discord.js';
 
 export interface LogData {
     title: string;
     description: string;
-    fields?: APIEmbedField[];
+    attachments?: (dsc.Attachment | dsc.AttachmentBuilder)[];
+    fields?: dsc.APIEmbedField[];
     color?: PredefinedColors | RarelyUsedColors;
-    where?: Snowflake;
+    where?: dsc.Snowflake;
 }
