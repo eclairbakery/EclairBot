@@ -8,6 +8,7 @@ import { SystemPrompt } from '@/features/init-ai-models.ts';
 import { output } from '@/bot/logging.ts';
 import { cfg } from '../../bot/cfg.ts';
 import { fetchPost } from '@/bot/apis/reddit/reddit.ts';
+import * as github from '@/bot/apis/github/github.ts';
 import { client } from '../../client.ts';
 
 const toolDeclarations: gemini.Tool[] = [
@@ -83,6 +84,59 @@ const toolDeclarations: gemini.Tool[] = [
                         },
                     },
                     required: ['url'],
+                },
+            },
+            {
+                name: 'github_get_repo_tree',
+                description: 'Pobiera listę plików w repozytorium GitHub.',
+                parameters: {
+                    type: gemini.SchemaType.OBJECT,
+                    properties: {
+                        owner: { type: gemini.SchemaType.STRING, description: 'Właściciel repozytorium.' },
+                        repo: { type: gemini.SchemaType.STRING, description: 'Nazwa repozytorium.' },
+                        branch: { type: gemini.SchemaType.STRING, description: 'Branch (opcjonalnie, domyślnie main).' },
+                    },
+                    required: ['owner', 'repo'],
+                },
+            },
+            {
+                name: 'github_get_file_content',
+                description: 'Pobiera zawartość konkretnego pliku z repozytorium GitHub.',
+                parameters: {
+                    type: gemini.SchemaType.OBJECT,
+                    properties: {
+                        owner: { type: gemini.SchemaType.STRING, description: 'Właściciel repozytorium.' },
+                        repo: { type: gemini.SchemaType.STRING, description: 'Nazwa repozytorium.' },
+                        path: { type: gemini.SchemaType.STRING, description: 'Ścieżka do pliku.' },
+                        branch: { type: gemini.SchemaType.STRING, description: 'Branch (opcjonalnie, domyślnie main).' },
+                    },
+                    required: ['owner', 'repo', 'path'],
+                },
+            },
+            {
+                name: 'github_search_code',
+                description: 'Przeszukuje kod wewnątrz repozytorium GitHub.',
+                parameters: {
+                    type: gemini.SchemaType.OBJECT,
+                    properties: {
+                        owner: { type: gemini.SchemaType.STRING, description: 'Właściciel repozytorium.' },
+                        repo: { type: gemini.SchemaType.STRING, description: 'Nazwa repozytorium.' },
+                        query: { type: gemini.SchemaType.STRING, description: 'Zapytanie wyszukiwania.' },
+                    },
+                    required: ['owner', 'repo', 'query'],
+                },
+            },
+            {
+                name: 'github_get_readme',
+                description: 'Pobiera zawartość pliku README z repozytorium GitHub.',
+                parameters: {
+                    type: gemini.SchemaType.OBJECT,
+                    properties: {
+                        owner: { type: gemini.SchemaType.STRING, description: 'Właściciel repozytorium.' },
+                        repo: { type: gemini.SchemaType.STRING, description: 'Nazwa repozytorium.' },
+                        branch: { type: gemini.SchemaType.STRING, description: 'Branch (opcjonalnie, domyślnie main).' },
+                    },
+                    required: ['owner', 'repo'],
                 },
             },
         ],
@@ -225,6 +279,38 @@ export const askCmd: Command = {
                 if (!post) return { error: 'Nie udało się pobrać posta z Reddita. Sprawdź czy link jest poprawny.' };
                 return post;
             },
+            github_get_repo_tree: async (args: { owner: string; repo: string; branch?: string }) => {
+                try {
+                    const tree = await github.getRepoTree({ owner: args.owner, repo: args.repo, branch: args.branch });
+                    return { tree };
+                } catch (err: unknown) {
+                    return { error: (err as Error).message };
+                }
+            },
+            github_get_file_content: async (args: { owner: string; repo: string; path: string; branch?: string }) => {
+                try {
+                    const content = await github.getFileContent({ owner: args.owner, repo: args.repo, branch: args.branch }, args.path);
+                    return { content };
+                } catch (err: unknown) {
+                    return { error: (err as Error).message };
+                }
+            },
+            github_search_code: async (args: { owner: string; repo: string; query: string }) => {
+                try {
+                    const results = await github.search({ owner: args.owner, repo: args.repo }, args.query);
+                    return { results };
+                } catch (err: unknown) {
+                    return { error: (err as Error).message };
+                }
+            },
+            github_get_readme: async (args: { owner: string; repo: string; branch?: string }) => {
+                try {
+                    const content = await github.getReadme({ owner: args.owner, repo: args.repo, branch: args.branch });
+                    return { content };
+                } catch (err: unknown) {
+                    return { error: (err as Error).message };
+                }
+            },
         };
 
         const finalSystemInstruction = [
@@ -233,7 +319,7 @@ export const askCmd: Command = {
             '### KONTEKST OSTATNICH WIADOMOŚCI Z KANAŁU',
             chatHistory,
             referencedContext,
-            'WAŻNE: Używaj narzędzi do sprawdzania dokumentacji komend bota. Nie używaj żadnych prefiksów w nazwach narzędzi.',
+            'WAŻNE: Używaj narzędzi do sprawdzania dokumentacji komend bota oraz integracji z GitHubem. Nie używaj żadnych prefiksów w nazwach narzędzi.',
         ].join('\n');
 
         const question = api.getTypedArg('question', 'string').value!;
