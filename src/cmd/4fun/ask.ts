@@ -7,6 +7,7 @@ import * as dsc from 'discord.js';
 import { SystemPrompt } from '@/features/init-ai-models.ts';
 import { output } from '@/bot/logging.ts';
 import { cfg } from '../../bot/cfg.ts';
+import { fetchPost } from '@/bot/apis/reddit/reddit.ts';
 
 const toolDeclarations: gemini.Tool[] = [
     {
@@ -59,6 +60,28 @@ const toolDeclarations: gemini.Tool[] = [
                         },
                     },
                     required: ['query'],
+                },
+            },
+            {
+                name: 'get_server_stats',
+                description: 'Zwraca statystyki serwera, takie jak całkowita liczba użytkowników i liczba aktywnych osób.',
+                parameters: {
+                    type: gemini.SchemaType.OBJECT,
+                    properties: {},
+                },
+            },
+            {
+                name: 'fetch_reddit_post',
+                description: 'Pobiera treść posta z Reddita na podstawie podanego linku.',
+                parameters: {
+                    type: gemini.SchemaType.OBJECT,
+                    properties: {
+                        url: {
+                            type: gemini.SchemaType.STRING,
+                            description: 'Link do posta na Reddicie.',
+                        },
+                    },
+                    required: ['url'],
                 },
             },
         ],
@@ -161,6 +184,7 @@ export const askCmd: Command = {
             },
             search_command: (args: { query: string }) => {
                 const query = args.query.toLowerCase();
+
                 // deno-lint-ignore no-explicit-any
                 const results: any[] = [];
                 for (const [cat, cmds] of api.commands.entries()) {
@@ -174,7 +198,26 @@ export const askCmd: Command = {
                         }
                     }
                 }
+
                 return { results: results.slice(0, 10) };
+            },
+            get_server_stats: () => {
+                const guild = api.guild;
+                if (!guild) return { error: 'Nie można pobrać statystyk serwera (brak gildii).' };
+
+                const totalMembers = guild.memberCount;
+                const activeMembers = guild.members.cache.filter((m) => m.presence?.status && m.presence.status !== 'offline').size;
+
+                return {
+                    totalMembers,
+                    activeMembers,
+                    serverName: guild.name,
+                };
+            },
+            fetch_reddit_post: async (args: { url: string }) => {
+                const post = await fetchPost(args.url);
+                if (!post) return { error: 'Nie udało się pobrać posta z Reddita. Sprawdź czy link jest poprawny.' };
+                return post;
             },
         };
 
@@ -192,12 +235,9 @@ export const askCmd: Command = {
             { role: 'user', parts: [{ text: question }] }
         ];
 
-        let msg: dsc.Message | null = null;
-        let content: string = '';
         let prefixChecked = false;
         const allPrefixes = [cfg.commands.prefix, ...cfg.commands.alternativePrefixes];
 
-        // Use generateContent (non-stream) for tool loops to ensure signature integrity
         let result = await model.generateContent({
             contents,
             systemInstruction: {
@@ -220,7 +260,7 @@ export const askCmd: Command = {
 
                     // deno-lint-ignore no-explicit-any
                     const handler = (toolHandlers as any)[cleanName];
-                    const toolResult = handler ? handler(part.functionCall.args) : { error: `Narzędzie '${cleanName}' nie zostało znalezione.` };
+                    const toolResult = handler ? await handler(part.functionCall.args) : { error: `Narzędzie '${cleanName}' nie zostało znalezione.` };
 
                     functionResponses.push({
                         functionResponse: {
@@ -231,7 +271,6 @@ export const askCmd: Command = {
                 }
             }
 
-            // Role MUST be 'function' for tool responses
             contents.push({ role: 'function', parts: functionResponses });
 
             result = await model.generateContent({
@@ -246,10 +285,7 @@ export const askCmd: Command = {
             candidate = result.response.candidates?.[0];
         }
 
-        // Final response handling
-        const text = result.response.text();
-        content = text;
-
+        let content = result.response.text();
         if (content.trim().length > 0) {
             if (!prefixChecked) {
                 if (allPrefixes.some((p) => content.startsWith(p))) {
@@ -265,13 +301,8 @@ export const askCmd: Command = {
                 },
             };
 
-            if (!msg) {
-                msg = await api.reply(payload as dsc.MessageReplyOptions);
-            } else {
-                try {
-                    await msg.edit(payload as dsc.MessageEditOptions);
-                } catch {}
-            }
+            await api.reply(payload as dsc.MessageReplyOptions);
         }
     },
 };
+
