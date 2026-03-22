@@ -43,7 +43,6 @@ import { wikiCmd } from '@/cmd/general/wiki.ts';
 import { toprepCmd } from '@/cmd/4fun/toprep.ts';
 import { replistCmd } from '@/cmd/4fun/replist.ts';
 import { figletCmd } from '@/cmd/4fun/figlet.ts';
-import { askCmd } from '@/cmd/4fun/ask.ts';
 
 import { restartCmd } from '@/cmd/dev/restart.ts';
 import { evalCmd } from '@/cmd/dev/eval.ts';
@@ -148,7 +147,6 @@ export const commands: Map<Category, Command[]> = new Map([
             replistCmd,
             figletCmd,
             compileCmd,
-            askCmd,
         ],
     ],
 ]);

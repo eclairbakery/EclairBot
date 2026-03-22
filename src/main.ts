@@ -61,6 +61,7 @@ import { warnGivenLogAction } from '@/features/actions/mod/warn-given.ts';
 import { initStatusGenerator } from '@/util/generateStatusQuote.ts';
 
 import { initAskCmdModel } from './features/init-ai-models.ts';
+import { askAction } from './features/actions/4fun/ask.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -115,6 +116,7 @@ function setUpActions() {
         mediaChannelAction,
         countingChannelAction,
         lastLetterChannelAction,
+        askAction,
         // hall of fame
         hallOfFameAction,
         // additional features

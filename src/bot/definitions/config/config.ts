@@ -79,6 +79,7 @@ export interface Config {
             offtopic: dsc.Snowflake;
             commands: dsc.Snowflake;
             media: dsc.Snowflake;
+            ei: dsc.Snowflake;
         };
         dev: {
             programming: dsc.Snowflake;
