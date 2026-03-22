@@ -57,7 +57,7 @@ import { db } from '@/bot/apis/db/bot-db.ts';
 import { initEmailActionsIntegration } from '@/bot/apis/email/actions.ts';
 import { getChannel } from '@/features/actions/channels/templateChannels.ts';
 import { warnGivenLogAction } from '@/features/actions/mod/warn-given.ts';
-import { setUpStatusGenerator } from '@/util/generateStatusQuote.ts';
+import { initStatusGenerator } from '@/util/generateStatusQuote.ts';
 
 import { initAskCmdModel } from './features/init-ai-models.ts';
 
@@ -134,7 +134,7 @@ function setUpEvents() {
 
 // --------------- MAIN ---------------
 async function main() {
-    setUpStatusGenerator();
+    initStatusGenerator();
     initExpiredWarnsDeleter();
     setUpActions();
     setUpEvents();
