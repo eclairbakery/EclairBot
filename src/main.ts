@@ -44,6 +44,7 @@ import { registerMsgDeleteDscEvents } from './events/client/messageDelete.ts';
 import * as slashCommands from '@/features/commands/slash.ts';
 import * as legacyCommands from '@/features/commands/legacy.ts';
 
+import * as github from '@/bot/apis/github/github.ts';
 import * as gemini from '@/bot/apis/gemini/model.ts';
 import * as email from '@/bot/apis/email/mail.ts';
 import * as cache from '@/bot/apis/cache/cache.ts';
@@ -84,6 +85,9 @@ client.once('clientReady', async () => {
         initAskCmdModel();
         output.log(`Gemini initialized.`);
     }
+
+    await github.init();
+    output.log(`Github integration initialized`);
 
     await cache.init();
     output.log(`Cache initialized.`);
