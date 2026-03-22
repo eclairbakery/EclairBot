@@ -112,5 +112,7 @@ export const featuresConfig: Config['features'] = {
     ai: {
         allowPolitics: false,
         allowPhilosophy: true,
+        contextDefaultMessages: 15,
+        contextMaxMessages: 30,
     }
 };

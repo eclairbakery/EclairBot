@@ -76,5 +76,7 @@ export interface ConfigFeatures {
     ai: {
         allowPolitics: boolean;
         allowPhilosophy: boolean;
+        contextDefaultMessages: number;
+        contextMaxMessages: number;
     };
 }
