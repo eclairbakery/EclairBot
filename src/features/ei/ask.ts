@@ -31,7 +31,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
 
     const formatUser = (u: dsc.User) => u.id == client.user?.id 
         ? `EclairBot (Ty)`
-        : `${u.username} (${u.id}${u.id == msg.author.id ? ', To osoba która której odpowiadasz!' : ''})`;
+        : `${u.username} ${u.displayName} (${u.id}${u.id == msg.author.id ? ', To osoba która której odpowiadasz!' : ''})`;
     const formatMsg = (m: dsc.Message) => `"${m.content.replace('"', '\\"').replace('\n', '\\n')}"`;
 
     const channel = msg.channel as dsc.TextBasedChannel;
