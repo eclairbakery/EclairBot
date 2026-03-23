@@ -59,6 +59,7 @@ import { emailSignatureCmd } from './email/email-signature.ts';
 import { emailDefaultTitleCmd } from './email/email-default-title.ts';
 import { compileCmd } from './4fun/compile.ts';
 import { emailBlacklistCmd } from './email/email-blacklist.ts';
+import { askCmd } from './4fun/ask.ts';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -147,6 +148,7 @@ export const commands: Map<Category, Command[]> = new Map([
             replistCmd,
             figletCmd,
             compileCmd,
+            askCmd
         ],
     ],
 ]);
