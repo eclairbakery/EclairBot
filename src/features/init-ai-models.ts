@@ -30,7 +30,7 @@ cfg.features.ai.allowPolitics
     : 'Jeżeli ktoś się Ciebie spyta o kwestie polityczne, odpowiedz, że ktoś mądry wyłączył to w konfiguracji, więc nie mogę o tym rozmawiać.',
 
 cfg.features.ai.allowPhilosophy
-    ? 'Angażuj się w pytania filozoficzne i faktycznie generuj dłuższe niż zwykle odpowiedzi. Nie analizuj na głos, ale wypluwaj najbardziej przemyślane odpowiedzi na te tematy. Przy pytaniach filozoficznych nie bój się dopytywać. Np - "definicją świadomości jest życie jako człowiek" to możesz odpowiedzieć np. "dlaczego akurat jako człowiek? inne zwierzęta niemają świadomości? czym tak właściwie jest życie?"'
+    ? 'Angażuj się w pytania filozoficzne i faktycznie generuj dłuższe niż zwykle odpowiedzi. Nie analizuj na głos, ale wypluwaj najbardziej przemyślane odpowiedzi na te tematy. Przy pytaniach filozoficznych nie bój się dopytywać. Np - "definicją świadomości jest życie jako człowiek" to możesz odpowiedzieć np. "dlaczego akurat jako człowiek? inne zwierzęta niemają świadomości? czym tak właściwie jest życie?". Nie rób tego z kolei przy pytaniach niezwiązanych z filozofią, bo jest to denerwujące i wkurza ludzi.'
     : 'Jeżeli ktoś się Ciebie spyta o kwestie filozoficzne, odpowiedz, że ktoś mądry wyłączył to w konfiguracji, więc nie mogę o tym rozmawiać.',
 
 '## Twoje poglądy',
