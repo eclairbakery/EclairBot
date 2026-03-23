@@ -26,19 +26,19 @@ function makeOptions(options: FirstArg<CommandAPI['reply']>): object {
     let result: dsc.MessageReplyOptions;
 
     switch (typeof options) {
-    case 'string':
-        result = { content: t(options) };
-        break;
+        case 'string':
+            result = { content: t(options) };
+            break;
 
-    case 'object': {
-        const opts = options as ContentReply<typeof options>;
-        // deno-lint-ignore no-explicit-any
-        result = (opts.content ? deepMerge(opts, { content: t(opts.content) }) : opts) as any;
-        break;
-    }
+        case 'object': {
+            const opts = options as ContentReply<typeof options>;
+            // deno-lint-ignore no-explicit-any
+            result = (opts.content ? deepMerge(opts, { content: t(opts.content) }) : opts) as any;
+            break;
+        }
 
-    default:
-        result = options;
+        default:
+            result = options;
     }
 
     return result;

@@ -18,7 +18,8 @@ import { Buffer } from 'node:buffer';
 export async function executeAsk(msg: dsc.Message, question: string, contextMsgs: number) {
     if (!gemini.isInitialized()) {
         return log.replyError(
-            msg, 'Błąd',
+            msg,
+            'Błąd',
             'Moduł integracji z gemini nie został załadowany przez eclairbota.' +
                 'A tak po ludzku to poprostu ktoś nie dał api key do .env',
         );
@@ -29,9 +30,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
         return log.replyError(msg, 'Błąd', 'Model nie został zainicjowany.');
     }
 
-    const formatUser = (u: dsc.User) => u.id == client.user?.id 
-        ? `EclairBot (Ty)`
-        : `${u.username} (${u.id}${u.id == msg.author.id ? ', To osoba która której odpowiadasz!' : ''})`;
+    const formatUser = (u: dsc.User) => u.id == client.user?.id ? `EclairBot (Ty)` : `${u.username} (${u.id}${u.id == msg.author.id ? ', To osoba która której odpowiadasz!' : ''})`;
     const formatMsg = (m: dsc.Message) => `"${m.content.replace('"', '\\"').replace('\n', '\\n')}"`;
 
     const channel = msg.channel as dsc.TextBasedChannel;
@@ -181,7 +180,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
     ].join('\n');
 
     const contents: gemini.Content[] = [
-        ...chatHistoryFormatted.map((str) => ({role: 'user', parts: [ { text: str } ]})),
+        ...chatHistoryFormatted.map((str) => ({ role: 'user', parts: [{ text: str }] })),
         { role: 'user', parts: [{ text: question }] },
     ];
 
@@ -262,9 +261,8 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
         await msg.reply(payload as dsc.MessageReplyOptions);
     }
 
-    const toolExecutionHistoryFormatted =
-        JSON.stringify(toolExecutionHistory, null, 4);
-    
+    const toolExecutionHistoryFormatted = JSON.stringify(toolExecutionHistory, null, 4);
+
     await sendLog({
         color: PredefinedColors.Blurple,
         title: 'Zapytanie EI',
@@ -277,7 +275,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
             new dsc.AttachmentBuilder(
                 Buffer.from(toolExecutionHistoryFormatted, 'utf8'),
                 { name: 'ei-tool-calls.json' },
-            )
-        ]
+            ),
+        ],
     });
-} 
+}

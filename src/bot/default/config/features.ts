@@ -114,5 +114,5 @@ export const featuresConfig: Config['features'] = {
         allowPhilosophy: true,
         contextDefaultMessages: 15,
         contextMaxMessages: 30,
-    }
+    },
 };

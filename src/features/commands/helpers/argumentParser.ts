@@ -12,11 +12,11 @@ import { ArgMustBeSomeTypeError, MissingRequiredArgError } from '../defs/errors.
 import { flatTypesToUnion } from './flat-types.ts';
 
 export type ParsedRawArgument =
-    | { type: 'text'; precedingWhitespace: string; value: string; }
+    | { type: 'text'; precedingWhitespace: string; value: string }
     | { type: 'code'; precedingWhitespace: string; value: string; lang?: string };
 
 function getTrailingValue(args: ParsedRawArgument[]): string {
-    return args.map(arg => arg.precedingWhitespace + arg.value).join('').trimStart();
+    return args.map((arg) => arg.precedingWhitespace + arg.value).join('').trimStart();
 }
 
 async function parseUser(raw: string, name: string, context?: ParserContext): Promise<dsc.GuildMember | null> {
@@ -76,7 +76,7 @@ async function tryParseArg(
     if (raw.type == 'code') {
         const isCodeType = type.base == 'code';
         const isAllowedString = type.base == 'string' && type.allowCodeBlock;
-        
+
         if (!isCodeType && !isAllowedString) {
             return null;
         }

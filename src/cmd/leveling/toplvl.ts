@@ -3,14 +3,14 @@ import * as dsc from 'discord.js';
 import { cfg } from '@/bot/cfg.ts';
 import { lvlRoles } from '@/bot/level.ts';
 
-import { Command} from "@/bot/command.ts";
+import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { output } from '@/bot/logging.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 function calculateLevel(xp: number, levelDivider: number): number {
     return Math.floor(
-        (1 + Math.sqrt(1 + 8 * xp / levelDivider)) / 2
+        (1 + Math.sqrt(1 + 8 * xp / levelDivider)) / 2,
     );
 }
 
@@ -45,13 +45,16 @@ export const toplvlCmd: Command = {
 
                 try {
                     const member = await api.guild?.members.fetch(row.user_id);
-                    if (!member) { i--; continue; }
+                    if (!member) {
+                        i--;
+                        continue;
+                    }
 
-                    const userLvlRole = lvlRoles.filter(id => member.roles.cache.has(id)).at(-1);
+                    const userLvlRole = lvlRoles.filter((id) => member.roles.cache.has(id)).at(-1);
                     fields.push({
                         name: `${i} » ${member.user.username}`,
                         value: `${userLvlRole ? `<@&${userLvlRole}>` : 'Nowicjusz...'}\n**Lvl**: ${calculateLevel(row.xp, cfg.features.leveling.levelDivider)}\n**XP**: ${row.xp}${i % 2 === 1 ? '‎' : ''}`,
-                        inline: true
+                        inline: true,
                     });
                 } catch (e) {
                     output.warn(e);
@@ -65,15 +68,15 @@ export const toplvlCmd: Command = {
             await api.reply({
                 embeds: [
                     new ReplyEmbed()
-                        .setColor("#1ebfd5")
-                        .setImage("https://cdn.discordapp.com/attachments/1404396223934369844/1404397238578577491/toplvl_image.png?ex=689b0a5a&is=6899b8da&hm=eac2a0db46bfad2dd34fa1ef8dbf9b918e46913229f7b1a9c470d952982787e8&"),
+                        .setColor('#1ebfd5')
+                        .setImage('https://cdn.discordapp.com/attachments/1404396223934369844/1404397238578577491/toplvl_image.png?ex=689b0a5a&is=6899b8da&hm=eac2a0db46bfad2dd34fa1ef8dbf9b918e46913229f7b1a9c470d952982787e8&'),
                     new ReplyEmbed()
                         .setFields(fields)
-                        .setColor("#1ebfd5")
+                        .setColor('#1ebfd5')
                         .setFooter({
-                            text: `Poziom serwera: ${calculateLevel(serverXP, cfg.features.leveling.levelDivider)} LVL (XP: ${serverXP})`
-                        })
-                ]
+                            text: `Poziom serwera: ${calculateLevel(serverXP, cfg.features.leveling.levelDivider)} LVL (XP: ${serverXP})`,
+                        }),
+                ],
             });
         } catch (err) {
             output.err(err);

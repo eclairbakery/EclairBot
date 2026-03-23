@@ -18,7 +18,7 @@ export function formatAction(api: CommandAPI, action: ConfigEconomyAction): Repl
     const LossEmoji = formatEmoji(cfg.emojis.heartAttackEmoji);
 
     switch (action.op) {
-case 'add-item': {
+        case 'add-item': {
             const item = api.economy.getItemById(action.itemId);
             if (!item) return null;
             return new ReplyEmbed()
@@ -26,7 +26,7 @@ case 'add-item': {
                 .setDescription(`Otrzymałeś przedmiot **${item.name}**!\n\n**Opis:** ${item.desc}`)
                 .setColor(SuccessColor);
         }
-case 'rem-item': {
+        case 'rem-item': {
             const item = api.economy.getItemById(action.itemId);
             if (!item) return null;
             return new ReplyEmbed()
@@ -35,7 +35,7 @@ case 'rem-item': {
                 .setColor(LossColor);
         }
 
-case 'add-role': {
+        case 'add-role': {
             const role = api.economy.getRoleById(action.roleId);
             if (!role) return null;
             return new ReplyEmbed()
@@ -43,7 +43,7 @@ case 'add-role': {
                 .setDescription(`Otrzymałeś rolę <@&${role.discordRoleId}>!\n\n**Opis:** ${role.desc}`)
                 .setColor(SuccessColor);
         }
-case 'rem-role': {
+        case 'rem-role': {
             const role = api.economy.getRoleById(action.roleId);
             if (!role) return null;
             return new ReplyEmbed()
@@ -52,14 +52,14 @@ case 'rem-role': {
                 .setColor(LossColor);
         }
 
-case 'add-money': {
+        case 'add-money': {
             const money = Money.fromDollarsFloat(action.amount);
             return new ReplyEmbed()
                 .setTitle(`${SuccessEmoji} Dodano pieniądze`)
                 .setDescription(`Otrzymałeś ${money.format()}!`)
                 .setColor(SuccessColor);
         }
-case 'sub-money': {
+        case 'sub-money': {
             const money = Money.fromDollarsFloat(action.amount);
             return new ReplyEmbed()
                 .setTitle(`${LossEmoji} Odjęto pieniądze`)

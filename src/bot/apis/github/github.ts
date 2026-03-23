@@ -1,6 +1,6 @@
 const BaseUrl = 'https://api.github.com';
 
-export class GithubError extends Error {};
+export class GithubError extends Error {}
 
 export type Repo = {
     owner: string;
@@ -19,9 +19,9 @@ async function request(url: string) {
         headers: {
             Accept: 'application/vnd.github+json',
             ...(token && {
-                Authorization: `Bearer ${token}`
-            })
-        }
+                Authorization: `Bearer ${token}`,
+            }),
+        },
     });
 
     if (!res.ok) {
@@ -42,7 +42,7 @@ function shouldIgnore(path: string): boolean {
         'coverage/',
         'package-lock.json',
         'yarn.lock',
-        'pnpm-lock.yaml'
+        'pnpm-lock.yaml',
     ];
 
     return ignored.some((i) => path.includes(i));
@@ -56,7 +56,7 @@ export async function getRepoTree(ref: Repo): Promise<string[]> {
     const branch = getBranch(ref);
 
     const data = await request(
-        `${BaseUrl}/repos/${ref.owner}/${ref.repo}/git/trees/${branch}?recursive=1`
+        `${BaseUrl}/repos/${ref.owner}/${ref.repo}/git/trees/${branch}?recursive=1`,
     );
 
     return data.tree
@@ -80,12 +80,12 @@ export async function getFileContent(ref: Repo, path: string): Promise<string> {
 export async function search(ref: Repo, query: string) {
     const q = encodeURIComponent(`${query} repo:${ref.owner}/${ref.repo}`);
     const data = await request(
-        `${BaseUrl}/search/code?q=${q}`
+        `${BaseUrl}/search/code?q=${q}`,
     );
 
-    return data.items.map((item: { path: string, html_url: string }) => ({
+    return data.items.map((item: { path: string; html_url: string }) => ({
         path: item.path,
-        url: item.html_url
+        url: item.html_url,
     }));
 }
 
@@ -100,4 +100,3 @@ export async function getReadme(ref: Repo): Promise<string> {
 
     throw new GithubError('README not found');
 }
-

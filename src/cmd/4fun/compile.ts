@@ -112,24 +112,24 @@ export const compileCmd: Command = {
             }
 
             switch (message.type.toLowerCase()) {
-case 'stdout':
+                case 'stdout':
                     output += ':white_large_square: ';
                     break;
-case 'stderr':
+                case 'stderr':
                     output += ':red_square: ';
                     break;
-case 'signal':
+                case 'signal':
                     output += ':green_circle: received signal: ';
                     break;
-case 'error':
+                case 'error':
                     output += ':wilted_rose: error: ';
                     break;
-case 'exitcode':
+                case 'exitcode':
                     output += ':black_large_square: exited with code: ';
                     break;
-case 'compilermessages':
-case 'compilermessagee':
-default:
+                case 'compilermessages':
+                case 'compilermessagee':
+                default:
                     output += ':diamond_shape_with_a_dot_inside: ';
                     break;
             }

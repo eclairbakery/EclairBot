@@ -230,10 +230,11 @@ class ActionManager {
                             break;
                         }
                     } catch (err) {
-                        if (err instanceof Error)
+                        if (err instanceof Error) {
                             output.warn(`While executing action:\n\nName: ${err.name}\nMessage: ${err.message}\nStack: ${err.stack ?? 'not defined'}\nCause: ${err.cause ?? 'not defined'}`);
-                        else 
+                        } else {
                             output.warn(`While executing action\n\n${err}`);
+                        }
                     }
                 }
             }

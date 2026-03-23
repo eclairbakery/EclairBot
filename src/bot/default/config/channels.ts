@@ -30,7 +30,7 @@ export const channelsCfg: Config['channels'] = {
         offtopic: '1392567715407073402',
         commands: '1235604839078035537',
         media: '1235567551753486407',
-        ei: '1485240944373792918'
+        ei: '1485240944373792918',
     },
     other: {
         communityPolls: '1320035545543606282',

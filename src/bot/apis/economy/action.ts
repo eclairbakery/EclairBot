@@ -80,7 +80,7 @@ export class EconomyExecutor {
         const res: ConfigEconomyAction[] = [];
         for (const action of actions) {
             switch (action.op) {
-case 'if': {
+                case 'if': {
                     if (await this.checkCondition(action.cond)) {
                         res.push(...await this.expandActions(action.then));
                     } else if (action.else) {
@@ -88,11 +88,11 @@ case 'if': {
                     }
                     break;
                 }
-case 'random': {
+                case 'random': {
                     res.push(...await this.expandRandom(action.variants));
                     break;
                 }
-case 'while': {
+                case 'while': {
                     let iterations = 0;
                     const max = action.maxIterations ?? 100;
                     while (await this.checkCondition(action.cond) && iterations < max) {
@@ -102,7 +102,7 @@ case 'while': {
                     break;
                 }
 
-case 'add-role': {
+                case 'add-role': {
                     const role = this.getRoleById(action.roleId);
                     if (!role) break;
                     if (this.hasRole(role.id)) {
@@ -112,7 +112,7 @@ case 'add-role': {
                     res.push(action);
                     break;
                 }
-case 'rem-role': {
+                case 'rem-role': {
                     const role = this.getRoleById(action.roleId);
                     if (!this.hasRole(role!.id)) {
                         res.push({ op: 'sub-money', amount: role!.refund });
@@ -122,7 +122,7 @@ case 'rem-role': {
                     break;
                 }
 
-default:
+                default:
                     res.push(action);
                     break;
             }
@@ -132,22 +132,22 @@ default:
 
     private async executeLeafAction(action: ConfigEconomyAction) {
         switch (action.op) {
-case 'add-item':
+            case 'add-item':
                 await this.ctx.user.inventory.addItem(action.itemId);
                 break;
-case 'rem-item':
+            case 'rem-item':
                 await this.ctx.user.inventory.removeItem(action.itemId);
                 break;
-case 'add-role':
+            case 'add-role':
                 await this.addRole(action.roleId);
                 break;
-case 'rem-role':
+            case 'rem-role':
                 await this.remRole(action.roleId);
                 break;
-case 'add-money':
+            case 'add-money':
                 await this.ctx.user.economy.addWalletMoney(Money.fromDollarsFloat(action.amount));
                 break;
-case 'sub-money':
+            case 'sub-money':
                 await this.ctx.user.economy.deductWalletMoney(Money.fromDollarsFloat(action.amount));
                 break;
         }
@@ -155,19 +155,19 @@ case 'sub-money':
 
     private async checkCondition(cond: ConfigEconomyCond): Promise<boolean> {
         switch (cond.op) {
-case 'has-role':
+            case 'has-role':
                 return this.hasRole(cond.roleId);
-case 'has-item':
+            case 'has-item':
                 return await this.ctx.user.inventory.hasItem(cond.itemId);
-case 'money-gte': {
+            case 'money-gte': {
                 const balGte = await this.ctx.user.economy.getBalance();
                 return balGte.wallet.greaterThanOrEqual(Money.fromDollarsFloat(cond.amount));
             }
-case 'money-lte': {
+            case 'money-lte': {
                 const balLte = await this.ctx.user.economy.getBalance();
                 return balLte.wallet.lessThanOrEqual(Money.fromDollarsFloat(cond.amount));
             }
-case 'random-chance':
+            case 'random-chance':
                 return Math.random() * 100 <= cond.chance;
         }
     }

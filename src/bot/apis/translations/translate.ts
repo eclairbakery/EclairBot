@@ -71,15 +71,15 @@ function translate(what: number): number;
 function translate<T extends TranslateableObject>(what: T): T;
 function translate(what: Translateable): Translateable {
     switch (typeof what) {
-case 'object':
+        case 'object':
             return translateObj(what);
 
-case 'string':
+        case 'string':
             return translateString(what);
 
-case 'number':
-case 'bigint':
-default:
+        case 'number':
+        case 'bigint':
+        default:
             return what;
     }
 }

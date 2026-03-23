@@ -11,7 +11,7 @@ export class CommandTokenizer {
 
     public tokenize(): ParsedRawArgument[] {
         const args: ParsedRawArgument[] = [];
-        
+
         while (this.pos < this.content.length) {
             const wsStart = this.pos;
             this.skipWhitespace();
@@ -43,16 +43,16 @@ export class CommandTokenizer {
         this.pos += '```'.length;
         const contentStart = this.pos;
         let end = this.content.indexOf('```', this.pos);
-        
+
         if (end == -1) end = this.content.length;
-        
+
         let block = this.content.slice(contentStart, end);
         this.pos = end + (end < this.content.length ? 3 : 0);
 
         let lang: string | undefined = undefined;
         const firstLineEnd = block.indexOf('\n');
         const firstSpace = block.search(/\s/);
-        
+
         let breakPoint = -1;
         if (firstLineEnd != -1 && (firstSpace == -1 || firstLineEnd < firstSpace)) {
             breakPoint = firstLineEnd;
@@ -75,7 +75,7 @@ export class CommandTokenizer {
         this.pos++;
         const contentStart = this.pos;
         const end = this.content.indexOf('`', this.pos);
-        
+
         if (end == -1) {
             const val = this.content.slice(contentStart);
             this.pos = this.content.length;
@@ -91,7 +91,7 @@ export class CommandTokenizer {
         this.pos++;
         const contentStart = this.pos;
         const end = this.content.indexOf('"', this.pos);
-        
+
         if (end == -1) {
             const val = this.content.slice(contentStart);
             this.pos = this.content.length;

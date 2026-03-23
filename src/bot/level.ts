@@ -131,13 +131,13 @@ const updateXpAction: Action<XpEventCtx> = {
 
             let newXp: number;
             switch (ctx.action) {
-case 'set':
+                case 'set':
                     newXp = ctx.amount;
                     break;
-case 'add':
+                case 'add':
                     newXp = prevXp + ctx.amount;
                     break;
-case 'delete':
+                case 'delete':
                     newXp = Math.max(0, prevXp - ctx.amount);
                     break;
             }

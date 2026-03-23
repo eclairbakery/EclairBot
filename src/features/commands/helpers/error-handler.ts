@@ -7,10 +7,10 @@ import { CommandViolatedRule } from '@/bot/command.ts';
 
 function handleViolatedRule(v: CommandViolatedRule) {
     switch (v) {
-    case 'used-infinity':
-        return 'podał nieskończonność jako argument';
-    case 'non-int-passed':
-        return 'podał coś co nie jest intem (a miało być) jako argument';
+        case 'used-infinity':
+            return 'podał nieskończonność jako argument';
+        case 'non-int-passed':
+            return 'podał coś co nie jest intem (a miało być) jako argument';
     }
 }
 
