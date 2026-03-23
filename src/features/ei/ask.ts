@@ -285,4 +285,4 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
             )
         ]
     });
-} 
+}
