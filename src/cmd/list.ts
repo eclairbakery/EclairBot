@@ -14,7 +14,7 @@ import { muteCmd } from '@/cmd/mod/mute.ts';
 import { unmuteCmd } from '@/cmd/mod/unmute.ts';
 import { clearCmd } from '@/cmd/mod/clear.ts';
 import { warnClearCmd } from '@/cmd/mod/warn-clear.ts';
-import { toggleCooldownBypassCmd } from '@/cmd/mod/toggle-cooldown-bypass.ts';
+import { cooldownBypassCmd } from '@/cmd/mod/cooldown-bypass.ts';
 import { cmdBlockCmd } from '@/cmd/mod/cmd-block.ts';
 import { resetCmd } from './dev/reset.ts';
 
@@ -93,7 +93,7 @@ export const commands: Map<Category, Command[]> = new Map([
             banCmd,
             kickCmd,
             refreshCmd,
-            toggleCooldownBypassCmd,
+            cooldownBypassCmd,
             cmdBlockCmd,
         ],
     ],
