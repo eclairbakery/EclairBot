@@ -14,9 +14,9 @@ export const askAction: Action<MessageEventCtx> = {
         (ctx) =>
             ctx.channelId == cfg.channels.general.ei ||
             ctx.content.trim().startsWith(`<@${client.user?.id}>`),
-        (ctx) => 
+        (ctx) =>
             !ctx.content.trim().startsWith('\\') &&
-            !ctx.content.trim().startsWith('eb-ignore')
+            !ctx.content.trim().startsWith('eb-ignore'),
     ],
 
     callbacks: [

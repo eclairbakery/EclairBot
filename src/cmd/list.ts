@@ -148,7 +148,7 @@ export const commands: Map<Category, Command[]> = new Map([
             replistCmd,
             figletCmd,
             compileCmd,
-            askCmd
+            askCmd,
         ],
     ],
 ]);

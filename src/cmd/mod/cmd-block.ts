@@ -73,57 +73,57 @@ export const cmdBlockCmd: Command = {
             const userId = target.value.id;
             const currentList = currentMerged.disallowedUsers ?? [];
             switch (op) {
-            case 'add':
-                if (currentList.includes(userId)) {
-                    return api.log.replyError(api, 'Błąd', 'Ta komenda jest już zablokowana dla tego użytkownika');
-                }
-                cmdOverride.disallowedUsers = [...currentList, userId];
-                opText = 'Zablokowano';
-                break;
-            case 'rem':
-                if (!currentList.includes(userId)) {
-                    return api.log.replyError(api, 'Błąd', 'Ta komenda nie jest nawet zablokowana dla tego użytkownika');
-                }
-                cmdOverride.disallowedUsers = removeElement(currentList, userId);
-                opText = 'Odblokowano';
-                break;
-            case 'toggle':
-                if (currentList.includes(userId)) {
-                    cmdOverride.disallowedUsers = removeElement(currentList, userId);
-                    opText = 'Odblokowano';
-                } else {
+                case 'add':
+                    if (currentList.includes(userId)) {
+                        return api.log.replyError(api, 'Błąd', 'Ta komenda jest już zablokowana dla tego użytkownika');
+                    }
                     cmdOverride.disallowedUsers = [...currentList, userId];
                     opText = 'Zablokowano';
-                }
-                break;
+                    break;
+                case 'rem':
+                    if (!currentList.includes(userId)) {
+                        return api.log.replyError(api, 'Błąd', 'Ta komenda nie jest nawet zablokowana dla tego użytkownika');
+                    }
+                    cmdOverride.disallowedUsers = removeElement(currentList, userId);
+                    opText = 'Odblokowano';
+                    break;
+                case 'toggle':
+                    if (currentList.includes(userId)) {
+                        cmdOverride.disallowedUsers = removeElement(currentList, userId);
+                        opText = 'Odblokowano';
+                    } else {
+                        cmdOverride.disallowedUsers = [...currentList, userId];
+                        opText = 'Zablokowano';
+                    }
+                    break;
             }
         } else if (target.type.base == 'role-mention') {
             const roleId = target.value.id;
             const currentList = currentMerged.disallowedRoles ?? [];
             switch (op) {
-            case 'add':
-                if (currentList.includes(roleId)) {
-                    return api.log.replyError(api, 'Błąd', 'Ta komenda jest już zablokowana dla tej roli');
-                }
-                cmdOverride.disallowedRoles = [...currentList, roleId];
-                opText = 'Zablokowano';
-                break;
-            case 'rem':
-                if (!currentList.includes(roleId)) {
-                    return api.log.replyError(api, 'Błąd', 'Ta komenda nie jest nawet zablokowana dla tej roli');
-                }
-                cmdOverride.disallowedRoles = removeElement(currentList, roleId);
-                opText = 'Odblokowano';
-                break;
-            case 'toggle':
-                if (currentList.includes(roleId)) {
-                    cmdOverride.disallowedRoles = removeElement(currentList, roleId);
-                    opText = 'Odblokowano';
-                } else {
+                case 'add':
+                    if (currentList.includes(roleId)) {
+                        return api.log.replyError(api, 'Błąd', 'Ta komenda jest już zablokowana dla tej roli');
+                    }
                     cmdOverride.disallowedRoles = [...currentList, roleId];
                     opText = 'Zablokowano';
-                }
-                break;
+                    break;
+                case 'rem':
+                    if (!currentList.includes(roleId)) {
+                        return api.log.replyError(api, 'Błąd', 'Ta komenda nie jest nawet zablokowana dla tej roli');
+                    }
+                    cmdOverride.disallowedRoles = removeElement(currentList, roleId);
+                    opText = 'Odblokowano';
+                    break;
+                case 'toggle':
+                    if (currentList.includes(roleId)) {
+                        cmdOverride.disallowedRoles = removeElement(currentList, roleId);
+                        opText = 'Odblokowano';
+                    } else {
+                        cmdOverride.disallowedRoles = [...currentList, roleId];
+                        opText = 'Zablokowano';
+                    }
+                    break;
             }
         }
 

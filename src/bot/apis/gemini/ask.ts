@@ -128,6 +128,20 @@ export const toolDeclarations: gemini.Tool[] = [
                     required: ['owner', 'repo'],
                 },
             },
+            {
+                name: 'ocr_image',
+                description: 'Rozpoznaje tekst z obrazu (PNG, JPG, WEBP) przy użyciu OCR.space i zwraca sam tekst.',
+                parameters: {
+                    type: gemini.SchemaType.OBJECT,
+                    properties: {
+                        file_url: {
+                            type: gemini.SchemaType.STRING,
+                            description: 'URL do obrazu lub base64 pliku',
+                        },
+                    },
+                    required: ['file_url'],
+                },
+            },
         ],
     },
 ];

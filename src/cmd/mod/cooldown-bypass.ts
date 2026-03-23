@@ -74,58 +74,58 @@ export const cooldownBypassCmd: Command = {
             const currentList = currentMerged.cooldownBypassUsers ?? [];
 
             switch (op) {
-            case 'add':
-                if (currentList.includes(userId)) {
-                    return api.log.replyError(api, 'Błąd', 'Ten użytkownik ma już bypass cooldownu dla tej komendy');
-                }
-                cmdOverride.cooldownBypassUsers = [...currentList, userId];
-                opText = 'Dodano';
-                break;
-            case 'rem':
-                if (!currentList.includes(userId)) {
-                    return api.log.replyError(api, 'Błąd', 'Ten użytkownik nie ma nawet bypassa cooldownu dla tej komendy');
-                }
-                cmdOverride.cooldownBypassUsers = removeElement(currentList, userId);
-                opText = 'Usunięto';
-                break;
-            case 'toggle':
-                if (currentList.includes(userId)) {
-                    cmdOverride.cooldownBypassUsers = removeElement(currentList, userId);
-                    opText = 'Usunięto';
-                } else {
+                case 'add':
+                    if (currentList.includes(userId)) {
+                        return api.log.replyError(api, 'Błąd', 'Ten użytkownik ma już bypass cooldownu dla tej komendy');
+                    }
                     cmdOverride.cooldownBypassUsers = [...currentList, userId];
                     opText = 'Dodano';
-                }
-                break;
+                    break;
+                case 'rem':
+                    if (!currentList.includes(userId)) {
+                        return api.log.replyError(api, 'Błąd', 'Ten użytkownik nie ma nawet bypassa cooldownu dla tej komendy');
+                    }
+                    cmdOverride.cooldownBypassUsers = removeElement(currentList, userId);
+                    opText = 'Usunięto';
+                    break;
+                case 'toggle':
+                    if (currentList.includes(userId)) {
+                        cmdOverride.cooldownBypassUsers = removeElement(currentList, userId);
+                        opText = 'Usunięto';
+                    } else {
+                        cmdOverride.cooldownBypassUsers = [...currentList, userId];
+                        opText = 'Dodano';
+                    }
+                    break;
             }
         } else if (target.type.base == 'role-mention') {
             const roleId = target.value.id;
             const currentList = currentMerged.cooldownBypassRoles ?? [];
 
             switch (op) {
-            case 'add':
-                if (currentList.includes(roleId)) {
-                    return api.log.replyError(api, 'Błąd', 'Ta rola ma już bypass cooldownu dla tej komendy');
-                }
-                cmdOverride.cooldownBypassRoles = [...currentList, roleId];
-                opText = 'Dodano';
-                break;
-            case 'rem':
-                if (!currentList.includes(roleId)) {
-                    return api.log.replyError(api, 'Błąd', 'Ta rola nie ma nawet bypassa cooldownu dla tej komendy');
-                }
-                cmdOverride.cooldownBypassRoles = removeElement(currentList, roleId);
-                opText = 'Usunięto';
-                break;
-            case 'toggle':
-                if (currentList.includes(roleId)) {
-                    cmdOverride.cooldownBypassRoles = removeElement(currentList, roleId);
-                    opText = 'Usunięto';
-                } else {
+                case 'add':
+                    if (currentList.includes(roleId)) {
+                        return api.log.replyError(api, 'Błąd', 'Ta rola ma już bypass cooldownu dla tej komendy');
+                    }
                     cmdOverride.cooldownBypassRoles = [...currentList, roleId];
                     opText = 'Dodano';
-                }
-                break;
+                    break;
+                case 'rem':
+                    if (!currentList.includes(roleId)) {
+                        return api.log.replyError(api, 'Błąd', 'Ta rola nie ma nawet bypassa cooldownu dla tej komendy');
+                    }
+                    cmdOverride.cooldownBypassRoles = removeElement(currentList, roleId);
+                    opText = 'Usunięto';
+                    break;
+                case 'toggle':
+                    if (currentList.includes(roleId)) {
+                        cmdOverride.cooldownBypassRoles = removeElement(currentList, roleId);
+                        opText = 'Usunięto';
+                    } else {
+                        cmdOverride.cooldownBypassRoles = [...currentList, roleId];
+                        opText = 'Dodano';
+                    }
+                    break;
             }
         }
 
@@ -134,7 +134,8 @@ export const cooldownBypassCmd: Command = {
 
         saveConfigurationChanges();
         return api.log.replySuccess(
-            api, 'Udało się!',
+            api,
+            'Udało się!',
             `${opText} bypass cooldownu **${cmdName}** dla podanego celu!`,
         );
     },

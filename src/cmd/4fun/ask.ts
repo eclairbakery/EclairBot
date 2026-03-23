@@ -9,7 +9,7 @@ export const askCmd: Command = {
     aliases: ['zapytaj'],
     description: {
         main: "Poproś EclairBOT'a o to, by zrobił to co chcesz lub po prostu pogadaj z tym samotnym botem",
-        short: "Zapytaj EclairBOTa"
+        short: 'Zapytaj EclairBOTa',
     },
 
     permissions: CommandPermissions.everyone(),
@@ -18,18 +18,19 @@ export const askCmd: Command = {
     expectedArgs: [
         {
             name: 'question',
-            description: "O co chcesz spytać się EclairBOTa",
+            description: 'O co chcesz spytać się EclairBOTa',
             optional: false,
-            type: { base: 'string', trailing: true }
-        }
+            type: { base: 'string', trailing: true },
+        },
     ],
 
     execute(api) {
         const question = api.getTypedArg('question', 'string');
 
-        if (!api.raw.msg) 
-            return api.log.replyError(api, 'Błąd', 'Nie możesz używać tej super komendy w slash commands jeszcze.')
+        if (!api.raw.msg) {
+            return api.log.replyError(api, 'Błąd', 'Nie możesz używać tej super komendy w slash commands jeszcze.');
+        }
 
-        executeAsk(api.raw.msg, question.value, cfg.features.ai.contextDefaultMessages)
+        executeAsk(api.raw.msg, question.value, cfg.features.ai.contextDefaultMessages);
     },
 };
