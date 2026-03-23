@@ -14,8 +14,8 @@ import { muteCmd } from '@/cmd/mod/mute.ts';
 import { unmuteCmd } from '@/cmd/mod/unmute.ts';
 import { clearCmd } from '@/cmd/mod/clear.ts';
 import { warnClearCmd } from '@/cmd/mod/warn-clear.ts';
-import { toggleCooldownBypassCmd } from './mod/toggle-cooldown-bypass.ts';
-import { toggleCmdBlockCmd } from './mod/toggle-cmd-block.ts';
+import { toggleCooldownBypassCmd } from '@/cmd/mod/toggle-cooldown-bypass.ts';
+import { cmdBlockCmd } from '@/cmd/mod/cmd-block.ts';
 import { resetCmd } from './dev/reset.ts';
 
 import { workCmd } from '@/cmd/economy/work.ts';
@@ -54,7 +54,7 @@ import { echoCmd } from './dev/echo.ts';
 import { sendEmailCmd } from './email/email.ts';
 import { buyCmd } from './economy/buy.ts';
 import { collectIncomeCmd } from './economy/collect-income.ts';
-import { refreshCmd } from './mod/refresh.ts';
+import { refreshCmd } from '@/cmd/mod/refresh.ts';
 import { emailSignatureCmd } from './email/email-signature.ts';
 import { emailDefaultTitleCmd } from './email/email-default-title.ts';
 import { compileCmd } from './4fun/compile.ts';
@@ -94,7 +94,7 @@ export const commands: Map<Category, Command[]> = new Map([
             kickCmd,
             refreshCmd,
             toggleCooldownBypassCmd,
-            toggleCmdBlockCmd,
+            cmdBlockCmd,
         ],
     ],
     [

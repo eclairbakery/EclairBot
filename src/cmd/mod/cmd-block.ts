@@ -16,14 +16,20 @@ function removeElement(arr: dsc.Snowflake[], target: dsc.Snowflake): dsc.Snowfla
     return result;
 }
 
-export const toggleCmdBlockCmd: Command = {
-    name: 'toggle-cmd-block',
+export const cmdBlockCmd: Command = {
+    name: 'cmd-block',
     description: {
         main: 'Zablokuj komuś możliwość używania danej komendy.',
         short: 'Zablokuj komendę dla kogoś',
     },
-    aliases: ['block-cmd-for-user'],
+    aliases: ['toggle-cmd-block'],
     expectedArgs: [
+        {
+            name: 'op',
+            description: 'Operacja którą chcesz wykonać (add/rem/toggle)',
+            type: { base: 'enum', options: ['add', 'rem', 'toggle'] as const },
+            optional: true,
+        },
         {
             name: 'cmd',
             description: 'komenda którą chcesz zablokować',
@@ -50,6 +56,7 @@ export const toggleCmdBlockCmd: Command = {
     },
 
     async execute(api) {
+        const op = api.getEnumArg('op', ['add', 'rem', 'toggle'])?.value ?? 'toggle';
         const cmd = api.getTypedArg('cmd', 'command-ref')?.value;
         const target = api.getTypedArg('target', ['user-mention', 'role-mention']);
 
@@ -65,22 +72,58 @@ export const toggleCmdBlockCmd: Command = {
         if (target.type.base == 'user-mention') {
             const userId = target.value.id;
             const currentList = currentMerged.disallowedUsers ?? [];
-            if (currentList.includes(userId)) {
-                cmdOverride.disallowedUsers = removeElement(currentList, userId);
-                opText = 'Odblokowano';
-            } else {
+            switch (op) {
+            case 'add':
+                if (currentList.includes(userId)) {
+                    return api.log.replyError(api, 'Błąd', 'Ta komenda jest już zablokowana dla tego użytkownika');
+                }
                 cmdOverride.disallowedUsers = [...currentList, userId];
                 opText = 'Zablokowano';
+                break;
+            case 'rem':
+                if (!currentList.includes(userId)) {
+                    return api.log.replyError(api, 'Błąd', 'Ta komenda nie jest nawet zablokowana dla tego użytkownika');
+                }
+                cmdOverride.disallowedUsers = removeElement(currentList, userId);
+                opText = 'Odblokowano';
+                break;
+            case 'toggle':
+                if (currentList.includes(userId)) {
+                    cmdOverride.disallowedUsers = removeElement(currentList, userId);
+                    opText = 'Odblokowano';
+                } else {
+                    cmdOverride.disallowedUsers = [...currentList, userId];
+                    opText = 'Zablokowano';
+                }
+                break;
             }
         } else if (target.type.base == 'role-mention') {
             const roleId = target.value.id;
             const currentList = currentMerged.disallowedRoles ?? [];
-            if (currentList.includes(roleId)) {
-                cmdOverride.disallowedRoles = removeElement(currentList, roleId);
-                opText = 'Odblokowano';
-            } else {
+            switch (op) {
+            case 'add':
+                if (currentList.includes(roleId)) {
+                    return api.log.replyError(api, 'Błąd', 'Ta komenda jest już zablokowana dla tej roli');
+                }
                 cmdOverride.disallowedRoles = [...currentList, roleId];
                 opText = 'Zablokowano';
+                break;
+            case 'rem':
+                if (!currentList.includes(roleId)) {
+                    return api.log.replyError(api, 'Błąd', 'Ta komenda nie jest nawet zablokowana dla tej roli');
+                }
+                cmdOverride.disallowedRoles = removeElement(currentList, roleId);
+                opText = 'Odblokowano';
+                break;
+            case 'toggle':
+                if (currentList.includes(roleId)) {
+                    cmdOverride.disallowedRoles = removeElement(currentList, roleId);
+                    opText = 'Odblokowano';
+                } else {
+                    cmdOverride.disallowedRoles = [...currentList, roleId];
+                    opText = 'Zablokowano';
+                }
+                break;
             }
         }
 
