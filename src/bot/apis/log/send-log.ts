@@ -31,7 +31,7 @@ export async function sendLog(logData: LogData, additionalChannels: dsc.Snowflak
                     }),
             ],
         });
-        await channel.send({
+        if ((logData.attachments ?? []).length != 0) await channel.send({
             files: logData.attachments,
         })
     }
