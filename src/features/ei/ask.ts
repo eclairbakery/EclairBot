@@ -229,7 +229,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
             const ct = att.contentType?.trim().toLowerCase();
             
             if (ct === 'image/png' || ct === 'image/jpeg' || ct === 'image/webp') {
-                contents.push({role: 'user', parts: [ { text: `zdjęcie, użyj swojego narzędzia ocr_image by z tego linku wyodrębnić tekst: ${att.proxyURL}` } ]});
+                contents.push({role: 'user', parts: [ { text: `zdjęcie, użyj swojego narzędzia ocr_image by z tego linku wyodrębnić tekst: ${att.url}` } ]});
             }
         }
     }
