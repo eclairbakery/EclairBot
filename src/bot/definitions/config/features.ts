@@ -4,7 +4,7 @@ import EconomyConfig from './economy.ts';
 
 export interface ConfigFeatures {
     compilation: {
-        replaceCompilerMap: Record<string, string>;
+        replaceCompilerMap: Record<string, string[]>;
     };
     automod: {
         antiFloodEnabled: boolean;

@@ -3,11 +3,21 @@ import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 
+function findCompiler(lang: string): string {
+    const replaceMap = Object.entries(cfg.features.compilation.replaceCompilerMap);
+    const langNormalized = lang.trim().toLowerCase();
+    for (const [compiler, aliases] of replaceMap) {
+        const compilerNormalized = compiler.toLowerCase();
+        if (aliases.includes(langNormalized) || compilerNormalized == langNormalized) {
+            return compiler;
+        }
+    }
+    return lang;
+}
+
 export const compileCmd: Command = {
     name: 'compile',
-    aliases: [
-        'exec-code',
-    ],
+    aliases: ['exec-code'],
     flags: CommandFlags.None,
     description: {
         main: 'Tak! Teraz możesz kompilować kod w Javie, Bashu, Julii, C++ czy nawet Go!',
@@ -56,7 +66,7 @@ export const compileCmd: Command = {
             });
         }
 
-        const compiler = cfg.features.compilation.replaceCompilerMap[lang] ?? lang;
+        const compiler = findCompiler(lang);
         const apiUrl = 'https://wandbox.org/api/compile.ndjson';
 
         const requestData = {
