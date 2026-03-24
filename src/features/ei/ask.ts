@@ -18,8 +18,7 @@ import { Buffer } from 'node:buffer';
 export async function executeAsk(msg: dsc.Message, question: string, contextMsgs: number) {
     if (!gemini.isInitialized()) {
         return log.replyError(
-            msg,
-            'Błąd',
+            msg, 'Błąd',
             'Moduł integracji z gemini nie został załadowany przez eclairbota.' +
                 'A tak po ludzku to poprostu ktoś nie dał api key do .env',
         );
@@ -183,9 +182,6 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
                 });
 
                 const data = await res.json();
-
-                console.log(data);
-
                 if (data.IsErroredOnProcessing) {
                     return {
                         error: data.ErrorMessage || 'OCR error',
@@ -193,9 +189,6 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
                 }
 
                 const parsedText = data?.ParsedResults?.[0]?.ParsedText || '';
-
-                console.log(parsedText);
-
                 return {
                     text: parsedText.trim(),
                 };
@@ -237,14 +230,22 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
     let prefixChecked = false;
     const allPrefixes = [cfg.commands.prefix, ...cfg.commands.alternativePrefixes];
 
-    let result = await model.generateContent({
-        contents,
-        systemInstruction: {
-            role: 'system',
-            parts: [{ text: finalSystemInstruction }],
-        },
-        tools: toolDeclarations,
-    });
+    let result: gemini.GenerateContentResult; 
+    try {
+        result = await model.generateContent({
+            contents,
+            systemInstruction: {
+                role: 'system',
+                parts: [{ text: finalSystemInstruction }],
+            },
+            tools: toolDeclarations,
+        });
+    } catch (err) {
+        output.err(err);
+        return msg.reply(
+            'Coś się zjebało z EI. Najprawdopodobniej high demand albo jakieś inne rate limity.\n'
+              + `Jeśli jesteś adminem to sprawdź <#${cfg.channels.eclairbot.stderr}>`);
+    }
 
     let candidate = result.response.candidates?.[0];
 
