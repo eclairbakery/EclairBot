@@ -93,13 +93,13 @@ export const compileCmd: Command = {
                 embeds: [
                     api.log.getWarnEmbed(
                         'Kompiler zły dałeś...',
-                        "Sorki. Naprawimy potem czy cuś. Powiadom o tym administracje serwera.\n**Jeżeli używasz multi-line kodu, upewnij się, że pierwsza jego linia lub start codeblock'u jest w tej samej linijce co język**, bo inaczej coś się sypie.",
+                        `Kompilator \`${langArg}\` nie jest poprawnym kompilatorem na liście.`,
                     ),
                 ],
             });
         }
 
-        const messages = reply
+        const base_messages = reply
             .split('\n')
             .map((v) => v.trim())
             .filter(Boolean)
@@ -116,7 +116,19 @@ export const compileCmd: Command = {
                 }
             }) as { type: string; data: string }[];
 
-        let cmdOutput = 'Masz tu wynik, paniczu, ciesz się pan:\n\n';
+        const messages: { type: string; data: string }[] = [];
+        
+        for (const msg of base_messages) {
+            const lines = msg.data.split("\n");
+            
+            for (const line of lines) {
+                if (!line.trim()) continue;
+
+                messages.push({ ...msg, data: line });
+            }
+        }
+
+        let cmdOutput = '';
 
         for (const message of messages) {
             if (message.type == 'Control') {
@@ -159,7 +171,7 @@ export const compileCmd: Command = {
 
         return await msg.edit({
             embeds: [
-                api.log.getSuccessEmbed('Proszę bardzo', cmdOutput),
+                api.log.getSuccessEmbed('Masz ten result czy coś', cmdOutput),
             ],
         });
     },
