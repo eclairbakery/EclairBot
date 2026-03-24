@@ -2,6 +2,7 @@ import { cfg } from '@/bot/cfg.ts';
 import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { output } from '../../bot/logging.ts';
 
 function findCompiler(lang: string): string {
     const replaceMap = Object.entries(cfg.features.compilation.replaceCompilerMap);
@@ -67,6 +68,7 @@ export const compileCmd: Command = {
         }
 
         const compiler = findCompiler(lang);
+        output.log('compiler: ', compiler);
         const apiUrl = 'https://wandbox.org/api/compile.ndjson';
 
         const requestData = {
@@ -114,7 +116,7 @@ export const compileCmd: Command = {
                 }
             }) as { type: string; data: string }[];
 
-        let output = 'Masz tu wynik, paniczu, ciesz się pan:\n\n';
+        let cmdOutput = 'Masz tu wynik, paniczu, ciesz się pan:\n\n';
 
         for (const message of messages) {
             if (message.type == 'Control') {
@@ -123,31 +125,31 @@ export const compileCmd: Command = {
 
             switch (message.type.toLowerCase()) {
                 case 'stdout':
-                    output += ':white_large_square: ';
+                    cmdOutput += ':white_large_square: ';
                     break;
                 case 'stderr':
-                    output += ':red_square: ';
+                    cmdOutput += ':red_square: ';
                     break;
                 case 'signal':
-                    output += ':green_circle: received signal: ';
+                    cmdOutput += ':green_circle: received signal: ';
                     break;
                 case 'error':
-                    output += ':wilted_rose: error: ';
+                    cmdOutput += ':wilted_rose: error: ';
                     break;
                 case 'exitcode':
-                    output += ':black_large_square: exited with code: ';
+                    cmdOutput += ':black_large_square: exited with code: ';
                     break;
                 case 'compilermessages':
                 case 'compilermessagee':
                 default:
-                    output += ':diamond_shape_with_a_dot_inside: ';
+                    cmdOutput += ':diamond_shape_with_a_dot_inside: ';
                     break;
             }
 
-            output += `\`${message.data.replaceAll('\n', ' ').replaceAll('\`', '').trim()}\`\n`;
+            cmdOutput += `\`${message.data.replaceAll('\n', ' ').replaceAll('\`', '').trim()}\`\n`;
         }
 
-        if (output.length > 1500) {
+        if (cmdOutput.length > 1500) {
             return await msg.edit({
                 embeds: [
                     api.log.getWarnEmbed('Za długie', 'Result twojego programu jest za długi. Spróbuj podzielić swój kod.'),
@@ -157,7 +159,7 @@ export const compileCmd: Command = {
 
         return await msg.edit({
             embeds: [
-                api.log.getSuccessEmbed('Proszę bardzo', output),
+                api.log.getSuccessEmbed('Proszę bardzo', cmdOutput),
             ],
         });
     },
