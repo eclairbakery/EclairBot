@@ -170,9 +170,12 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
         },
         ocr_image: async (args: { file_url: string }) => {
             try {
+                console.log(args);
+
                 const formData = new FormData();
 
-                formData.append('url', await (await fetch(args.file_url)).blob());
+                formData.append('file', await (await fetch(args.file_url)).blob(), 'image.png');
+                formData.append('apikey', process.env.EB_OCR_API ?? '')
 
                 const res = await fetch('https://api8.ocr.space/parse/image', {
                     method: 'POST',
@@ -181,6 +184,8 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
 
                 const data = await res.json();
 
+                console.log(data);
+
                 if (data.IsErroredOnProcessing) {
                     return {
                         error: data.ErrorMessage || 'OCR error',
@@ -188,6 +193,8 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
                 }
 
                 const parsedText = data?.ParsedResults?.[0]?.ParsedText || '';
+
+                console.log(parsedText);
 
                 return {
                     text: parsedText.trim(),
