@@ -17,20 +17,27 @@ export const askCmd: Command = {
 
     expectedArgs: [
         {
+            name: 'context-msgs',
+            description: 'Wielkość kontekstu którą dostanie bot w wiadomościach',
+            optional: true,
+            type: { base: 'int' }
+        },
+        {
             name: 'question',
             description: 'O co chcesz spytać się EclairBOTa',
             optional: false,
-            type: { base: 'string', trailing: true },
+            type: { base: 'string', trailing: true, allowCodeBlock: true },
         },
     ],
 
     execute(api) {
-        const question = api.getTypedArg('question', 'string');
+        const ctxMsgs = api.getTypedArg('context-msgs', 'int')?.value ?? cfg.features.ai.contextDefaultMessages;
+        const question = api.getTypedArg('question', 'string')!.value;
 
         if (!api.raw.msg) {
             return api.log.replyError(api, 'Błąd', 'Nie możesz używać tej super komendy w slash commands jeszcze.');
         }
 
-        executeAsk(api.raw.msg, question.value, cfg.features.ai.contextDefaultMessages);
+        executeAsk(api.raw.msg, question, Number(ctxMsgs));
     },
 };
