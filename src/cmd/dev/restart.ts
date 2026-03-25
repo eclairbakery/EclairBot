@@ -17,8 +17,8 @@ export const restartCmd: Command = {
     permissions: CommandPermissions.devOnly(),
 
     async execute(api) {
-        output.log('Issued restart. This will work due to the behaviour of Pterodactyl Daemon.');
-        const msg = await api.reply('jusz siem restartujem plis łejt plis plis plis łejt');
+        output.log('Shutting down...');
+        const msg = await api.log.replyInfo(api, 'Zaczekaj chwilę...', 'EclairBOT powinien być za chwilę gotowy. Gdy się zrestartuje, ta wiadomość zmieni się na wiadomość sukcesu.');
 
         if (api.raw.msg) {
             await cache.store('session', 'last-restart-command-message-id', msg.id);
