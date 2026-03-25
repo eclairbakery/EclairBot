@@ -266,11 +266,11 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
         output.err(err);
         const str = (err instanceof Error) ? err.message : `${err}`;
         if (str.includes('high demand')) {
-            return msg.reply('W skrócie to model którego używamy do EI jest on high demand,'
+            return msg.reply('❌ W skrócie to model którego używamy do EI jest on high demand,'
                               + 'więc teraz raczej ci nie odpowie, na twoje bardzo ważne pytanie.');
         }
         return msg.reply(
-            'Coś się zjebało z EI. Najprawdopodobniej high demand albo jakieś inne rate limity.\n'
+            '❌ Coś się zjebało z EI. Najprawdopodobniej high demand albo jakieś inne rate limity.\n'
               + `Jeśli jesteś adminem to sprawdź <#${cfg.channels.eclairbot.stderr}>`);
     }
 
