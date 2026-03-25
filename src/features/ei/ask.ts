@@ -124,6 +124,12 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
             if (!guild) return { error: 'Nie można pobrać statystyk serwera (brak gildii).' };
 
             const totalMembers = guild.memberCount;
+            output.log(
+                guild.members.cache.map(m => ({
+                    user: m.user.tag,
+                    status: m.presence?.status
+                }))
+            );
             const activeMembers = guild.members.cache.filter((m) => m.presence?.status && m.presence.status !== 'offline').size;
 
             return {
