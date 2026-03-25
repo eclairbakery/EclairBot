@@ -61,7 +61,7 @@ export const evalCmd: Command = {
             const func = new AsyncFunction('api', 'db', 'client', 'debug', 'cfg', code.src);
             const result = await func(api, db, client, output, cfg);
             const sanitized = JSON5.stringify(result, null, 4).replace('```', '\`\`\`');
-            return api.reply(`wynik twojej super komendy:\n\`\`\`${sanitized}\`\`\``);
+            return api.reply(`wynik twojej super komendy:\n\`\`\`js\n${sanitized}\`\`\``);
         } catch (err) {
             return api.reply(`❌ niepowodzenie:\n\`\`\`${err}\`\`\``);
         }
