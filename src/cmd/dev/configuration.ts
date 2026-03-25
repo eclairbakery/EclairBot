@@ -19,7 +19,7 @@ export const configurationCommand: Command = {
         {
             name: 'value',
             description: 'Wartość. Ostrzeżenie: Pod spodem uruchamia eval, więc jest unsafe. Możesz skipnąć i wtedy masz wartość ;)',
-            type: { base: 'string', trailing: true },
+            type: { base: 'code', trailing: true },
             optional: true,
         },
     ],
@@ -30,8 +30,8 @@ export const configurationCommand: Command = {
     },
 
     async execute(api) {
-        const property = api.getTypedArg('arg', 'string')?.value as string;
-        const value = api.getTypedArg('value', 'string')?.value as string | undefined;
+        const property = api.getTypedArg('arg', 'string')?.value;
+        const value = api.getTypedArg('value', 'string')?.value;
 
         const keys = property.split('.');
         let target: { [k: string]: unknown } = cfg as unknown as { [k: string]: unknown };
@@ -40,7 +40,7 @@ export const configurationCommand: Command = {
         for (let i = 0; i < keys.length - 1; i++) {
             const key = keys[i];
             if (!(key in target)) {
-                return api.reply(`❌ klucz "${key}" nie istnieje w konfiguracji (nie, nie możesz robić nowych).`);
+                return api.log.replyError(api, 'Zły ten key', `Klucz "${key}" nie istnieje w konfiguracji (nie, nie możesz robić nowych).`);
             }
             target = target[key] as { [k: string]: unknown };
 
@@ -53,7 +53,7 @@ export const configurationCommand: Command = {
         const lastKey = keys[keys.length - 1];
 
         if (!(lastKey in target)) {
-            return api.reply(`❌ klucz "${lastKey}" nie istnieje w konfiguracji (nie, nie możesz robić nowych).`);
+            return api.log.replyError(api, 'Zły ten klucz', `Klucz "${lastKey}" nie istnieje w konfiguracji (nie, nie możesz robić nowych).`);
         }
 
         if (!value) {
@@ -61,24 +61,19 @@ export const configurationCommand: Command = {
             const text = `🔍 wartość \`${property}\` = \`\`\`${JSON.stringify(currentValue, null, 4)}\`\`\``;
             if (text.length > 1900) {
                 if (typeof currentValue === 'object') {
-                    return api.reply(`⚠️ \`${property}\` jest trochę za długie by je tu wyświetlić, ale jest obiektem, więc mogę Ci podać klucze, pod którymi może znajdziesz swoją wymarzoną wartość: \`[${Object.keys(currentValue as object).join(', ')}]\``);
+                    return api.log.replyWarn(api, "Coś długi ten objekt", `\`${property}\` jest trochę za długie by je tu wyświetlić, ale jest obiektem, więc mogę Ci podać klucze, pod którymi może znajdziesz swoją wymarzoną wartość: \`[${Object.keys(currentValue as object).join(', ')}]\``);
                 }
-                return api.reply(`❌ \`${property}\` jest trochę za długie by je tu wyświetlić i nie jest obiektem, więc niestety nic nie mogę zrobić, by ci pomóc`);
+                return api.log.replyError(api, "Coś długi ten property", `\`${property}\` jest trochę za długie by je tu wyświetlić i nie jest obiektem, więc niestety nic nie mogę zrobić, by ci pomóc`);
             } else {
-                return api.reply(text);
+                return api.log.replySuccess(api, 'Proszę bardzo', text);
             }
-        }
-
-        let sanitizedValue = value.trim();
-        if (sanitizedValue.startsWith('```') && sanitizedValue.endsWith('```')) {
-            sanitizedValue = sanitizedValue.slice(3, -3).trim();
         }
 
         let evaluatedValue: unknown;
         try {
-            evaluatedValue = (0, eval)('(' + sanitizedValue + ')');
+            evaluatedValue = (0, eval)('(' + value + ')');
         } catch (e) {
-            return api.reply(`❌ nie udało się sparsować wartości: ${e}`);
+            return api.log.replyError(api, 'Masz problem', `Nie udało się sparsować wartości: ${e}`);
         }
 
         target[lastKey] = evaluatedValue;
@@ -90,8 +85,9 @@ export const configurationCommand: Command = {
             return api.reply(`⚠️ ustawiono \`${property}\`, ale nie udało się zapisać zmian w stałej konfiguracji`);
         }
 
-        return api.reply(
-            `✅ ustawiono \`${property}\` na \`${sanitizedValue}\`; polecam jeszcze odpalić \`${cfg.commands.prefix}restart\`.`,
+        return api.log.replySuccess(
+            api, 'Yay!',
+            `Ustawiono \`${property}\` na \`${value}\`; polecam jeszcze odpalić \`${cfg.commands.prefix}restart\`.`,
         );
     },
 };
