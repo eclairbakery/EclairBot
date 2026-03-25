@@ -252,6 +252,10 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
     let prefixChecked = false;
     const allPrefixes = [cfg.commands.prefix, ...cfg.commands.alternativePrefixes];
 
+    if (msg.channel.isSendable()) {
+        msg.channel.sendTyping();
+    }
+
     let result: gemini.GenerateContentResult; 
     try {
         result = await model.generateContent({
