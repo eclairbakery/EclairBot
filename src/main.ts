@@ -176,7 +176,11 @@ async function main() {
             const channel = await client.channels.fetch(channelId) as dsc.TextChannel;
             const message = await channel.messages.fetch(messageId);
 
-            log.replySuccess(message, 'Restart zakończony', 'Istota wyższa pomyślnie i wreszcie się zrestartowała i powinna już działać poprawnie!');
+            message.edit({
+                embeds: [
+                    log.getSuccessEmbed('Restart zakończony', 'Istota wyższa pomyślnie i wreszcie się zrestartowała i powinna już działać poprawnie!')
+                ]
+            }); 
         }
     } catch {}
 

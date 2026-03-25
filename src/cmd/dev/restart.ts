@@ -18,10 +18,10 @@ export const restartCmd: Command = {
 
     async execute(api) {
         output.log('Issued restart. This will work due to the behaviour of Pterodactyl Daemon.');
-        await api.reply('jusz siem restartujem plis łejt plis plis plis łejt');
+        const msg = await api.reply('jusz siem restartujem plis łejt plis plis plis łejt');
 
         if (api.raw.msg) {
-            await cache.store('session', 'last-restart-command-message-id', api.raw.msg?.id);
+            await cache.store('session', 'last-restart-command-message-id', msg.id);
             await cache.store('session', 'last-restart-command-channel-id', api.channel?.id);
         }
         process.exit(1);
