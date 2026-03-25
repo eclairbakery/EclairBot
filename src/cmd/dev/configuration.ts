@@ -31,7 +31,7 @@ export const configurationCommand: Command = {
 
     async execute(api) {
         const property = api.getTypedArg('arg', 'string')?.value;
-        const value = api.getTypedArg('value', 'string')?.value;
+        const value = api.getTypedArg('value', 'code')?.value;
 
         const keys = property.split('.');
         let target: { [k: string]: unknown } = cfg as unknown as { [k: string]: unknown };
@@ -58,7 +58,7 @@ export const configurationCommand: Command = {
 
         if (!value) {
             const currentValue = target[lastKey];
-            const text = `🔍 wartość \`${property}\` = \`\`\`${JSON.stringify(currentValue, null, 4)}\`\`\``;
+            const text = `Wartość \`${property}\` = \`\`\`${JSON.stringify(currentValue, null, 4)}\`\`\``;
             if (text.length > 1900) {
                 if (typeof currentValue === 'object') {
                     return api.log.replyWarn(api, "Coś długi ten objekt", `\`${property}\` jest trochę za długie by je tu wyświetlić, ale jest obiektem, więc mogę Ci podać klucze, pod którymi może znajdziesz swoją wymarzoną wartość: \`[${Object.keys(currentValue as object).join(', ')}]\``);
