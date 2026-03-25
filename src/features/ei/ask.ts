@@ -31,8 +31,22 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
 
     const formatUser = (u: dsc.User) => u.id == client.user?.id 
         ? `EclairBot (Ty)`
-        : `${u.username} ${u.displayName} (${u.id}${u.id == msg.author.id ? ', To osoba która której odpowiadasz!' : ''})`;
-    const formatMsg = (m: dsc.Message) => `"${m.content.replace('"', '\\"').replace('\n', '\\n')}"`;
+        : `${u.username} ${u.displayName} (${u.id}${u.id == msg.author.id ? ', To osoba której odpowiadasz!' : ''})`;
+
+    function formatAttachments(atts: Iterable<dsc.Attachment>): string {
+        let result: string = '';
+        for (const att of atts) {
+            const ct = att.contentType?.trim().toLowerCase();
+            if (ct?.includes('image')) {
+                result += `\n${att.url} (obrazek, użyj narzędzia do ocr by wyodrębnić tekst)`;
+            }
+        }
+        return result;
+    }
+    function formatMsg(m: dsc.Message): string {
+        const sanitized = m.content.replace('"', '\\"').replace('\n', '\\n');
+        return `"${sanitized}"` + formatAttachments(m.attachments.values());
+    }
 
     const channel = msg.channel as dsc.TextBasedChannel;
     const messages = await channel.messages.fetch({ limit: contextMsgs, before: msg?.id });
@@ -229,7 +243,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
         for (const att of msg.attachments.values()) {
             const ct = att.contentType?.trim().toLowerCase();
             
-            if (ct === 'image/png' || ct === 'image/jpeg' || ct === 'image/webp') {
+            if (ct?.includes('image')) {
                 contents.push({role: 'user', parts: [ { text: `zdjęcie, użyj swojego narzędzia ocr_image by z tego linku wyodrębnić tekst: ${att.url}` } ]});
             }
         }
@@ -250,6 +264,11 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
         });
     } catch (err) {
         output.err(err);
+        const str = (err instanceof Error) ? err.message : `${err}`;
+        if (str.includes('high demand')) {
+            return msg.reply('W skrócie to model którego używamy do EI jest on high demand,'
+                              + 'więc teraz raczej ci nie odpowie, na twoje bardzo ważne pytanie.');
+        }
         return msg.reply(
             'Coś się zjebało z EI. Najprawdopodobniej high demand albo jakieś inne rate limity.\n'
               + `Jeśli jesteś adminem to sprawdź <#${cfg.channels.eclairbot.stderr}>`);
