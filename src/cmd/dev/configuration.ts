@@ -31,7 +31,7 @@ export const configurationCommand: Command = {
 
     async execute(api) {
         const property = api.getTypedArg('arg', 'string')?.value;
-        const value = api.getTypedArg('value', 'code')?.value;
+        const value = api.getTypedArg('value', 'code')?.value.src;
 
         const keys = property.split('.');
         let target: { [k: string]: unknown } = cfg as unknown as { [k: string]: unknown };
