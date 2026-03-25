@@ -6,6 +6,8 @@ import { client } from '@/client.ts';
 import { output } from '@/bot/logging.ts';
 import { db } from '@/bot/apis/db/bot-db.ts';
 
+import JSON5 from 'json5';
+
 type AsynchronicFunction = () => PromiseLike<unknown>;
 
 export const evalCmd: Command = {
@@ -58,7 +60,8 @@ export const evalCmd: Command = {
         try {
             const func = new AsyncFunction('api', 'db', 'client', 'debug', 'cfg', code.src);
             const result = await func(api, db, client, output, cfg);
-            return api.reply(`wynik twojej super komendy:\n\`\`\`${String(result).replace('`', '\`')}\`\`\``);
+            const sanitized = JSON5.stringify(result).replace('```', '\`\`\`');
+            return api.reply(`wynik twojej super komendy:\n\`\`\`${sanitized}\`\`\``);
         } catch (err) {
             return api.reply(`❌ niepowodzenie:\n\`\`\`${err}\`\`\``);
         }
