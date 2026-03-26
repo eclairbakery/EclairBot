@@ -64,7 +64,12 @@ async function prefixCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     const cmdName = cmdArg.value.toLowerCase();
 
     const result = findCommand(cmdName, commands);
-    if (!result) return await msg.react('❌');
+    if (!result) {
+        if (content.replaceAll(prefix, '').trim() == '')
+            return;
+
+        return await msg.react('❌');
+    }
 
     const { command, config } = result;
 
