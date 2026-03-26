@@ -42,7 +42,7 @@ function waitForButton(interaction: dsc.Message, buttonId: string, time = 15000)
     });
 }
 
-async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
+async function prefixCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {
     if (!(msg instanceof dsc.Message)) return;
 
     const content = msg.content.trimStart();
@@ -64,7 +64,7 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     const cmdName = cmdArg.value.toLowerCase();
 
     const result = findCommand(cmdName, commands);
-    if (!result) return;
+    if (!result) return await msg.react('❌');
 
     const { command, config } = result;
 
@@ -86,8 +86,8 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     if (!msg.inGuild() && !(command.flags & CommandFlags.WorksInDM)) {
         log.replyError(
             msg,
-            'Ta komenda nie jest przeznaczona do tego trybu gadania!',
-            'Taka komenda jak \`<cmd>\` może być wykonana tylko na serwerach no sorki no!'.replace('<cmd>', cmdName.replaceAll('`', '')),
+            'Nie tutaj panie...',
+            'Taka komenda jak \`<cmd>\` może być wykonana tylko na serwerach. Zazwyczaj jest ku temu jakiś głębszy powód niż tak, więc zaufaj mi i odpal to na serwerze.'.replace('<cmd>', cmdName.replaceAll('`', '')),
         );
         return;
     }
@@ -164,11 +164,11 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 
 export function init() {
     actionsManager.addAction({
-        callbacks: [legacyCommandsMessageHandler],
+        callbacks: [prefixCommandsMessageHandler],
         constraints: [
             (msg) => [cfg.commands.prefix, ...cfg.commands.alternativePrefixes].some((val) => msg.content.toLowerCase().startsWith(val.toLowerCase())),
         ],
         activationEventType: PredefinedActionEventTypes.OnMessageCreate,
     });
-    output.log('Legacy commands event registered');
+    output.log('Prefix commands event registered');
 }

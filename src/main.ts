@@ -42,7 +42,7 @@ import { registerMsgDeleteDscEvents } from './events/client/messageDelete.ts';
 
 // commands
 import * as slashCommands from '@/features/commands/slash.ts';
-import * as legacyCommands from '@/features/commands/legacy.ts';
+import * as prefixCommands from '@/features/commands/prefix.ts';
 
 import * as github from '@/bot/apis/github/github.ts';
 import * as gemini from '@/bot/apis/gemini/model.ts';
@@ -126,7 +126,7 @@ function setUpActions() {
     );
     registerTemplateChannels(client);
     slashCommands.init();
-    legacyCommands.init();
+    prefixCommands.init();
     actionsManager.registerEvents(client);
 }
 
