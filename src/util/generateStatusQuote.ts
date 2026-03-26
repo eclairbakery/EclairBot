@@ -18,22 +18,17 @@ function changeStatusToRandomOne(prev?: number): number {
             },
             {
                 type: ActivityType.Playing,
-                name: 'kasyno pana eklera',
+                name: 'nielegalnekasynko.pl',
                 desc: 'pamiętaj, że tylko 0.9% osób odnosi sukces. ja jestem wśród nich.',
             },
             {
-                type: ActivityType.Competing,
-                name: 'wojna z hashcatem o hajs',
-                desc: 'ja też chcę NaN hajsu w kasynie',
-            },
-            {
                 type: ActivityType.Watching,
-                name: 'Influencer wojna 2137 skibidi sigma',
-                desc: 'GENZIE - YouTube',
+                name: 'Announcing new Intel Core Ultra Plus CPU',
+                desc: 'Intel - YouTube',
             },
             {
                 type: ActivityType.Listening,
-                name: 'Powietrze - Billy Eilish',
+                name: 'Nudzi mi sie - PowietrzeMusic',
                 desc: 'moja muzyka jest jak powietrze, to jest nic przez 3 minuty.',
             },
             {
