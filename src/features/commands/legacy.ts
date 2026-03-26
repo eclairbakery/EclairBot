@@ -163,20 +163,6 @@ async function legacyCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 }
 
 export function init() {
-    for (const cat of commands.values()) {
-        for (const command of cat) {
-            let hadOptional = false;
-
-            for (const arg of command.expectedArgs) {
-                if (hadOptional && !arg.optional) {
-                    output.warn(`Command ${command.name} has an required argument \`${arg.name}\` after an optional one.`);
-                }
-
-                hadOptional ||= arg.optional;
-            }
-        }
-    }
-
     actionsManager.addAction({
         callbacks: [legacyCommandsMessageHandler],
         constraints: [

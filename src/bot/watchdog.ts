@@ -121,7 +121,7 @@ const roleHierarchy: dsc.Snowflake[] = [cfg.hierarchy.administration.headAdmin, 
 const userCounters = new Map<string, { creates: number; deletes: number; warns: number; mutes: number; timeout?: number }>();
 
 async function downgradeRole(member: dsc.GuildMember) {
-    output.log(`watchdog: about to degrade role for ${member.user.username} (user id: ${member.id}); remove all adm roles for user: ${cfg.features.watchdog.notForgiveAdministration}`);
+    output.log(`Watchdog: About to degrade role for ${member.user.username} (user id: ${member.id}); remove all adm roles for user: ${cfg.features.watchdog.notForgiveAdministration}`);
     if (cfg.features.watchdog.notForgiveAdministration) {
         for (const admRoleId of roleHierarchy) {
             if (member.roles.cache.has(admRoleId)) {
@@ -130,7 +130,7 @@ async function downgradeRole(member: dsc.GuildMember) {
                 } catch {}
             }
         }
-        output.log(`watchdog: kicked ${member.user.username} from the administration`);
+        output.log(`Watchdog: Kicked ${member.user.username} from the administration`);
     } else {
         const memberRoles = member.roles.cache;
         const highestRoleId = roleHierarchy.find((rid) => memberRoles.has(rid));
@@ -140,7 +140,7 @@ async function downgradeRole(member: dsc.GuildMember) {
         const newRoleId = roleHierarchy[currentIndex + 1];
         await member.roles.remove(highestRoleId, 'watchdog');
         await member.roles.add(newRoleId, 'watchdog');
-        output.log(`watchdog: degraded ${member.user.username} from ${highestRoleId} to ${newRoleId}`);
+        output.log(`Watchdog: Degraded ${member.user.username} from ${highestRoleId} to ${newRoleId}`);
     }
 }
 
@@ -169,7 +169,7 @@ const channelAddWatcher: Action<{ guild: dsc.Guild }> = {
     ],
     callbacks: [
         async (ctx) => {
-            output.log(`watchdog: channel created`);
+            output.log(`Watchdog: Channel created`);
 
             const logs = await ctx.guild!.fetchAuditLogs({ type: dsc.AuditLogEvent.ChannelCreate, limit: 1 });
             const entry = logs.entries.first();
@@ -177,7 +177,7 @@ const channelAddWatcher: Action<{ guild: dsc.Guild }> = {
 
             const member = await ctx.guild!.members.fetch(entry.executor.id);
             if (addAction(member.id, 'create')) {
-                output.log(`watchdog: about to downgrade role for ${member.user.username} [adding too many channels per minute]`);
+                output.log(`Watchdog: About to downgrade role for ${member.user.username} [adding too many channels per minute]`);
                 await downgradeRole(member);
             }
             return;
@@ -194,7 +194,7 @@ const channelDeleteWatcher: Action<{ guild: dsc.Guild }> = {
     ],
     callbacks: [
         async (ctx) => {
-            output.log(`watchdog: channel deleted`);
+            output.log(`Watchdog: Channel deleted`);
 
             const logs = await ctx.guild!.fetchAuditLogs({ type: dsc.AuditLogEvent.ChannelDelete, limit: 1 });
             const entry = logs.entries.first();
@@ -202,7 +202,7 @@ const channelDeleteWatcher: Action<{ guild: dsc.Guild }> = {
 
             const member = await ctx.guild!.members.fetch(entry.executor.id);
             if (addAction(member.id, 'delete')) {
-                output.log(`watchdog: about to downgrade role for ${member.user.username} [deleting too many channels per minute]`);
+                output.log(`Watchdog: About to downgrade role for ${member.user.username} [deleting too many channels per minute]`);
                 await downgradeRole(member);
             }
             return;
@@ -219,14 +219,14 @@ const onWarnGivenWatcher: Action<WarnEventCtx> = {
     ],
     callbacks: [
         async (ctx) => {
-            output.log('watchdog: warn given');
+            output.log('Watchdog: Warn given');
             if (!ctx.moderator) {
                 return;
             }
             const member = await client.guilds.cache.first()?.members.fetch(ctx.moderator);
             if (!member) return;
             if (addAction(ctx.moderator, 'warn')) {
-                output.log(`watchdog: about to downgrade role for ${member.user.username} [warning too many times per minute]`);
+                output.log(`Watchdog: About to downgrade role for ${member.user.username} [warning too many times per minute]`);
                 await downgradeRole(member);
             }
         },
@@ -242,13 +242,13 @@ const onMuteGivenWatcher: Action<UserEventCtx> = {
     ],
     callbacks: [
         async (ctx) => {
-            output.log('watchdog: mute given');
+            output.log('Watchdog: Mute given');
             if (ctx.user.id == ctx.client.user.id) {
-                output.log('watchdog: ignoring mute, given by eclairbot');
+                output.log('Watchdog: Ignoring mute, given by eclairbot');
                 return;
             }
             if (addAction(ctx.id, 'mute')) {
-                output.log(`watchdog: about to downgrade role for ${ctx.user.username} [muting too many times per minute]`);
+                output.log(`Watchdog: About to downgrade role for ${ctx.user.username} [muting too many times per minute]`);
                 await downgradeRole(ctx);
             }
         },
@@ -257,9 +257,9 @@ const onMuteGivenWatcher: Action<UserEventCtx> = {
 
 export async function watchMute(executor: dsc.GuildMember) {
     if (!cfg.features.watchdog.shallAutoDegrade) return;
-    output.log('watchdog: mute given by commmand');
+    output.log('Watchdog: Mute given by commmand');
     if (addAction(executor.id, 'mute')) {
-        output.log(`watchdog: about to downgrade role for ${executor.user.username} [muting too many times per minute]`);
+        output.log(`Watchdog: About to downgrade role for ${executor.user.username} [muting too many times per minute]`);
         await downgradeRole(executor);
     }
 }
@@ -274,7 +274,7 @@ export async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.Per
 
     if (cfg.features.watchdog.approveDangerousPermissions) {
         for (const p of dangerous) {
-            output.log(`watchdog: role ${role.id} contains dangerous permission '${p}'; removing it is disabled`);
+            output.log(`Watchdog: Role ${role.id} contains dangerous permission '${p}'; removing it is disabled`);
         }
         return;
     }
@@ -284,7 +284,7 @@ export async function watchRoleChanges(role: dsc.Role, permissionsAdded: dsc.Per
     await role.setPermissions(cleaned);
 
     for (const p of dangerous) {
-        output.log(`watchdog: modified role ${role.id}; removed permission '${p}'`);
+        output.log(`Watchdog: Modified role ${role.id}; removed permission '${p}'`);
     }
 }
 

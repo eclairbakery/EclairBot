@@ -4,7 +4,6 @@ import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
 import figlet from 'figlet';
-import debugLog from '@/util/debugLog.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 function tokenize(input: string): string[] {
@@ -88,7 +87,6 @@ function renderFigletWrapped(words: string[], font: string, maxWidth: number = 4
 
     for (const word of words) {
         if (!word) continue;
-        debugLog(word);
         const renderedWord = renderWord(word, font);
         if (asciiWidth(currentLine.concat(renderedWord)) > maxWidth) {
             if (asciiWidth(renderedWord) <= maxWidth) {
@@ -98,7 +96,6 @@ function renderFigletWrapped(words: string[], font: string, maxWidth: number = 4
             }
 
             const letters = word.split('');
-            debugLog(letters);
             for (const letter of letters) {
                 const renderedLetter = renderWord(letter, font);
                 addToLine(renderedLetter);

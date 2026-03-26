@@ -231,9 +231,9 @@ class ActionManager {
                         }
                     } catch (err) {
                         if (err instanceof Error) {
-                            output.warn(`While executing action:\n\nName: ${err.name}\nMessage: ${err.message}\nStack: ${err.stack ?? 'not defined'}\nCause: ${err.cause ?? 'not defined'}`);
+                            output.err(`While executing action:\n\nName: ${err.name}\nMessage: ${err.message}\nStack: ${err.stack ?? 'not defined'}\nCause: ${err.cause ?? 'not defined'}`);
                         } else {
-                            output.warn(`While executing action\n\n${err}`);
+                            output.err(`While executing action\n\n${err}`);
                         }
                     }
                 }
