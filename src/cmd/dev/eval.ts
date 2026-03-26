@@ -40,30 +40,27 @@ export const evalCmd: Command = {
             return api.log.replyError(api, 'Błąd', 'Eval przyjmuje kod w JS tak w skrócie.');
         }
 
-        if (code.src.includes('process.exit')) {
-            return api.reply('unsafe, użyj do tego komendy `restart`');
-        }
-        if (code.src.includes('bot.db') || code.src.includes('bot/eclair')) {
-            return api.reply('wiem, ze jest do tego masa sposóbów by bypassnąć ten restriction ale plz nie pobieraj bazy danych bota; btw masz do tego db-backups');
-        }
-
         const warns: string[] = [];
         if (code.src.includes('console.log') || code.src.includes('console.error')) {
-            warns.push('`console.log` spowoduje iż na stdout przyjdzie wynik, ale może się on nie pojawić w wyniku komendy. evaluje sie funkcja wiec po prostu uzyj return by cos napisac. mozesz ten zrobic zmienna z buforem wyjscia i zwracac ja na koncu. z kolei `console.error` w ogóle nie da wyniku...');
+            warns.push('Weź nie używaj tego deprecated czegoś, używaj namespace debug lub output.');
+        }
+        if (code.src.includes('await import') && !code.src.includes('SRC_ROOT')) {
+            warns.push('Proszę, używaj constantu SRC_ROOT jak coś importujesz.');
         }
         if (!code.src.includes('return')) {
-            warns.push('nie używasz return a masz używać...');
+            warns.push('Nie używasz return. Tu sie ewaluuje funkcja a nie.');
         }
         for (const warn of warns) {
-            await api.log.replyTip(api, 'Ten kod może nie zadziałać!', warn);
+            await api.log.replyTip(api, 'Są ostrzeżenia dotyczące Twojego kodu!', warn);
         }
+
         try {
-            const func = new AsyncFunction('api', 'db', 'client', 'debug', 'cfg', code.src);
-            const result = await func(api, db, client, output, cfg);
+            const func = new AsyncFunction('api', 'db', 'client', 'debug', 'output', 'cfg', 'SRC_ROOT', code.src);
+            const result = await func(api, db, client, output, output, cfg, '../..');
             const sanitized = JSON5.stringify(result, null, 4)?.replace('```', '\`\`\`') ?? String(result);
-            return api.reply(`wynik twojej super komendy:\n\`\`\`js\n${sanitized}\`\`\``);
+            return api.log.replySuccess(api, 'Wynik twojej super komendy!', `\n\`\`\`js\n${sanitized}\`\`\``);
         } catch (err) {
-            return api.reply(`❌ niepowodzenie:\n\`\`\`${err}\`\`\``);
+            return api.log.replyError(api, 'Masz problem', `\n\`\`\`${err}\`\`\``);
         }
     },
 };
