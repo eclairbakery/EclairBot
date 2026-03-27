@@ -20,6 +20,6 @@ Ensure you have Deno installed. If not, install it from a shell command from [de
 
 Next, start the bot using this command:
 
-`make`
+`make run`
 
 It's that simple!
