@@ -1,6 +1,7 @@
-import { PredefinedColors } from '@/util/color.ts';
 import { APIEmbed, APIEmbedField, APIEmbedFooter, EmbedAuthorOptions, EmbedBuilder, RestOrArray } from 'discord.js';
 import { t } from './translate.ts';
+
+import * as dsc from 'discord.js';
 
 export class ReplyEmbed {
     private embedBuilder: EmbedBuilder = new EmbedBuilder();
@@ -10,7 +11,7 @@ export class ReplyEmbed {
         return this;
     }
 
-    setColor(color: PredefinedColors | `#${number | string}`) {
+    setColor(color: dsc.ColorResolvable) {
         this.embedBuilder.setColor(color);
         return this;
     }
