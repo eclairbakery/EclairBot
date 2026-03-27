@@ -68,6 +68,11 @@ client.once('clientReady', async () => {
     await output.init();
     output.log(`${ft.CYAN}Logged in.`);
 
+    if (!process.env.EB_DEVELOPMENT) {
+        output.warn("Assuming config for the EclairBakery Discord server.");
+        output.warn("Set EB_DEVELOPMENT to true to use testing server config, or to false to explicitely use production config.");
+    }
+
     await db.init();
     output.log(`Database initialized.`);
 

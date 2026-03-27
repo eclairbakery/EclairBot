@@ -3,7 +3,8 @@ import JSON5 from 'json5';
 import { deepMerge } from '@/util/objects/objects.ts';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { Config } from './definitions/config/config.ts';
-import { defaultCfg } from './default/config/index.ts';
+import { defaultCfg } from './default/config/eclairbakery/index.ts';
+import { testingCfg } from './default/config/testing/index.ts';
 import { AnyCommandConfig } from './definitions/config/subtypes.ts';
 
 export let overrideCfg: Partial<Config> = {};
@@ -38,7 +39,8 @@ export function getCommandOverride(commandName: string): AnyCommandConfig {
 
 function makeConfig(): Config {
     overrideCfg = readConfigurationChanges();
-    return deepMerge(defaultCfg, overrideCfg);
+    const chosenCfg = (process.env.EB_DEVELOPMENT == 'true') ? testingCfg : defaultCfg;
+    return deepMerge(chosenCfg, overrideCfg);
 }
 
 export const cfg = makeConfig();

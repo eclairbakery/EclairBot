@@ -4,6 +4,7 @@ import { PredefinedActionEventTypes } from '../index.ts';
 import { OnForceReloadTemplates } from '../../../events/actions/templatesEvents.ts';
 import { addTemplateChannel, getChannel } from './templateChannels.ts';
 import { makeChannelName } from '@/util/makeChannelName.ts';
+import { cfg } from '../../../bot/cfg.ts';
 
 function getNextGoal(memberCount: number): number {
     const base = Math.floor(memberCount / 50) * 50;
@@ -15,7 +16,7 @@ function getNextGoal(memberCount: number): number {
 }
 
 export async function registerTemplateChannels(client: dsc.Client) {
-    const populationTemplateChannel = await getChannel('1235591547437973557', client) as dsc.GuildChannel;
+    const populationTemplateChannel = await getChannel(cfg.channels.stats.people, client) as dsc.GuildChannel;
     addTemplateChannel({
         channel: populationTemplateChannel,
         updateOnEvents: [
@@ -26,7 +27,7 @@ export async function registerTemplateChannels(client: dsc.Client) {
         format: (_ctx) => makeChannelName({ emoji: '👥', name: `Populacja: ${populationTemplateChannel.guild.memberCount} osób`, leaveSpaces: true }),
     });
 
-    const templateChannelTarget = await getChannel('1276862197099794514', client) as dsc.GuildChannel;
+    const templateChannelTarget = await getChannel(cfg.channels.stats.goal, client) as dsc.GuildChannel;
     addTemplateChannel({
         channel: templateChannelTarget,
         updateOnEvents: [
@@ -37,7 +38,7 @@ export async function registerTemplateChannels(client: dsc.Client) {
         format: (_ctx) => makeChannelName({ emoji: '🎯', name: `Cel: ${getNextGoal(templateChannelTarget.guild.memberCount)} pieczywa`, leaveSpaces: true }),
     });
 
-    const bansTemplateChannel = await getChannel('1235591871020011540', client) as dsc.GuildChannel;
+    const bansTemplateChannel = await getChannel(cfg.channels.stats.bans, client) as dsc.GuildChannel;
     addTemplateChannel({
         channel: bansTemplateChannel,
         updateOnEvents: [

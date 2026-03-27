@@ -58,4 +58,9 @@ export const channelsCfg: Config['channels'] = {
     dev: {
         programming: '1426217543617740950',
     },
+    stats: {
+        bans: '1426336151245164616',
+        goal: '1403639419025752189',
+        people: '1426336149726822430'
+    }
 };
