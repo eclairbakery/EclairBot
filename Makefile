@@ -12,7 +12,8 @@ DENO_IO_PERMS_FLAGS   = --allow-read=$(CONFIG_FILE),bot.db,.env,bot.db-journal,$
 DENO_PERMISSION_FLAGS = $(DENO_IO_PERMS_FLAGS) --allow-net --allow-sys=hostname,systemMemoryInfo --allow-env 
 DENO_FLAGS            = --no-prompt $(DENO_PERMISSION_FLAGS)
 
-all: run
+all: 
+	@deno compile $(DENO_FLAGS) --output eclairbot src/main.ts
 
 run: check lint 
 	@deno run $(DENO_FLAGS) src/main.ts

@@ -16,3 +16,4 @@ bot/config*
 Dockerfile
 .dockerignore
 deno.lock
+eclairbot
