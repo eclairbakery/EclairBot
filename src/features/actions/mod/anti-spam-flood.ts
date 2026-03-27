@@ -7,7 +7,7 @@ import parseTimestamp from '@/util/parseTimestamp.ts';
 import { scheduleWarnDeletion } from '../../deleteExpiredWarns.ts';
 import warn from '@/bot/apis/mod/warns.ts';
 import { sendLog } from '@/bot/apis/log/send-log.ts';
-import { RarelyUsedColors } from '@/util/color.ts';
+import { PredefinedColors } from '@/util/color.ts';
 
 const userMessagesAntiSpamMap: Map<Snowflake, number[]> = new Map();
 const userRecentlyInTheList: Record<Snowflake, boolean> = {};
@@ -16,7 +16,7 @@ async function filterLog(msg: dsc.Message, system: string) {
     sendLog({
         title: 'Wiadomość została usunięta przez filtry anti-spam/anti-flood',
         description: `Tu masz autora co nie: <@${msg.author.id}>\nA tu masz link co nie: https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`,
-        color: RarelyUsedColors.Red,
+        color: PredefinedColors.RawRed,
         fields: [
             {
                 name: 'Wiadomość',

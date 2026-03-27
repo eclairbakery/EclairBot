@@ -1,4 +1,4 @@
-import { PredefinedColors, RarelyUsedColors } from '@/util/color.ts';
+import { PredefinedColors } from '@/util/color.ts';
 import { APIEmbed, APIEmbedField, APIEmbedFooter, EmbedAuthorOptions, EmbedBuilder, RestOrArray } from 'discord.js';
 import { t } from './translate.ts';
 
@@ -10,7 +10,7 @@ export class ReplyEmbed {
         return this;
     }
 
-    setColor(color: PredefinedColors | RarelyUsedColors | `#${number | string}`) {
+    setColor(color: PredefinedColors | `#${number | string}`) {
         this.embedBuilder.setColor(color);
         return this;
     }

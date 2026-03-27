@@ -1,5 +1,6 @@
 export enum PredefinedColors {
     Default = 0x000000,
+    RawRed = 0xFF0000,
     White = 0xFFFFFF,
     Aqua = 0x1ABC9C,
     Green = 0x2ECC40,
@@ -37,8 +38,4 @@ export enum PredefinedColors {
     Pink = 0xFFC0CB,
 }
 
-export enum RarelyUsedColors {
-    Red = 0xff0000,
-}
-
-export type Color = PredefinedColors | RarelyUsedColors | number;
+export type Color = PredefinedColors | number;
