@@ -1,9 +1,8 @@
 import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
-import * as dsc from 'discord.js';
-
-import { Buffer } from 'node:buffer';
+import { ReplyEmbed } from '../../bot/apis/translations/reply-embed.ts';
+import { PredefinedColors } from '../../util/color.ts';
 
 export const bannerCmd: Command = {
     name: 'banner',
@@ -42,19 +41,26 @@ export const bannerCmd: Command = {
 
         if (bannerURL != null) {
             api.reply({
-                content: 'Proszę, oto baner:',
-                files: [bannerURL],
+                embeds: [
+                    new ReplyEmbed()
+                        .setTitle('Oto baner')
+                        .setDescription(`Ten użytkownik ma chyba Nitro i obrazek customowy.`)
+                        .setImage(bannerURL)
+                        .setColor(PredefinedColors.Pink)
+                ]
             });
         } else if (accentColor != null) {
             const colorHex = accentColor.toString(16).padStart(6, '0');
             const imageUrl = `https://singlecolorimage.com/get/${colorHex}/700x150.png`;
-            const response = await fetch(imageUrl);
-            const buffer = Buffer.from(await response.arrayBuffer());
-            const attachment = new dsc.AttachmentBuilder(buffer, { name: 'color.png' });
 
             api.reply({
-                content: `Proszę, oto baner: (stały kolor, #${colorHex})`,
-                files: [attachment],
+                embeds: [
+                    new ReplyEmbed()
+                        .setTitle('Oto baner')
+                        .setDescription(`Stały kolor #${colorHex}`)
+                        .setImage(imageUrl)
+                        .setColor(PredefinedColors.Pink)
+                ]
             });
         }
     },

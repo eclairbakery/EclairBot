@@ -1,12 +1,14 @@
 import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { ReplyEmbed } from '../../bot/apis/translations/reply-embed.ts';
+import { PredefinedColors } from '../../util/color.ts';
 
 export const pfpCmd: Command = {
     name: 'pfp',
     aliases: ['profilowe', 'avatar', 'awatar'],
     description: {
-        main: "Któżby się spodziewał że komenda 'pfp' wyświetli czyjeś pfp?",
-        short: 'Wyświetla czyjeś pfp',
+        main: "Któżby się spodziewał że komenda 'pfp' wyświetli czyjeś amazing profilowe?",
+        short: 'Wyświetla czyjeś profilowe',
     },
     flags: CommandFlags.None,
 
@@ -25,6 +27,12 @@ export const pfpCmd: Command = {
 
     execute(api) {
         const user = api.getTypedArg('user', 'user-mention').value?.user ?? api.invoker.user;
-        api.reply({ content: 'Tu masz profilowe i nie marudź:', files: [user.displayAvatarURL()] });
+        api.reply({ embeds: [
+            new ReplyEmbed()
+                .setImage(user.displayAvatarURL())
+                .setTitle("Proszę bardzo!")
+                .setDescription("Tutaj jest amazing profilowe użytkownika " + user.displayName)
+                .setColor(PredefinedColors.Cyan)
+        ] });
     },
 };

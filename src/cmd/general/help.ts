@@ -195,7 +195,7 @@ export const helpCmd: Command = {
         const introEmbed = new ReplyEmbed()
             .setTitle('📢 Moje komendy, władzco!')
             .setDescription(
-                'O to lista komend podzielona na kategorie!' +
+                'O to lista komend podzielona na kategorie! ' +
                     (isQuick
                         ? ('Plus, używasz uproszczonej wersji `help`. ' +
                             'Użyj `detail-help`/`man`, jak serio się chcesz komend nauczyć...')
