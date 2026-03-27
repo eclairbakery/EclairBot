@@ -19,6 +19,7 @@ jobs:
 
       - name: Setup Deno
         run: curl -fsSL https://deno.land/install.sh | sh
+             echo "$HOME/.deno/bin" >> $GITHUB_PATH
 
       - name: Run linter
         run: make lint
