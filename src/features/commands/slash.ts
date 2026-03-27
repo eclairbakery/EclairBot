@@ -18,6 +18,7 @@ import canExecuteCmd from '@/util/cmd/canExecuteCmd.ts';
 import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { PredefinedColors } from '@/util/color.ts';
+import process from "node:process";
 
 function waitForButton(int: dsc.ChatInputCommandInteraction, buttonId: string, time = 15000) {
     return new Promise((resolve, reject) => {

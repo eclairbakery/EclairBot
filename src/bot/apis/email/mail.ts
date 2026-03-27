@@ -1,6 +1,7 @@
 import nm from 'nodemailer';
 import im from 'imapflow';
 import mp from 'mailparser';
+import process from "node:process";
 
 let transporter: nm.Transporter | null = null;
 let imapClient: im.ImapFlow | null = null;

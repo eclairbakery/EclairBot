@@ -6,6 +6,7 @@ import { sendLog } from '@/bot/apis/log/send-log.ts';
 import { db } from '@/bot/apis/db/bot-db.ts';
 import { AddressObject } from 'mailparser';
 import { PredefinedColors } from '@/util/color.ts';
+import process from "node:process";
 
 async function isSpam(subject: string, text: string, sender: string) {
     // blacklist check

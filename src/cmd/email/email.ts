@@ -7,6 +7,7 @@ import * as email from '@/bot/apis/email/mail.ts';
 import { db } from '@/bot/apis/db/bot-db.ts';
 
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import process from "node:process";
 
 function parseEmailMessage(input: string): { subject: string; content: string } {
     let index = -1;

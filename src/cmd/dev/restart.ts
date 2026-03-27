@@ -4,6 +4,7 @@ import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 import { output } from '@/bot/logging.ts';
 
 import * as cache from '@/bot/apis/cache/cache.ts';
+import process from "node:process";
 
 export const restartCmd: Command = {
     name: 'restart',

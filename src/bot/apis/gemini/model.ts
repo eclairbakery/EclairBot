@@ -1,4 +1,5 @@
 import * as gemini from 'gemini';
+import process from "node:process";
 
 export * from 'gemini';
 

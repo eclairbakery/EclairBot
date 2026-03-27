@@ -14,6 +14,7 @@ import { client } from '@/client.ts';
 import { sendLog } from '../../bot/apis/log/send-log.ts';
 import { PredefinedColors } from '../../util/color.ts';
 import { Buffer } from 'node:buffer';
+import process from "node:process";
 
 export async function executeAsk(msg: dsc.Message, question: string, contextMsgs: number) {
     if (!gemini.isInitialized()) {

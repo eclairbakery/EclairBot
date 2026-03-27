@@ -1,3 +1,4 @@
+import process from "node:process";
 const BaseUrl = 'https://api.github.com';
 
 export class GithubError extends Error {}
