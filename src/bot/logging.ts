@@ -3,6 +3,7 @@ import { GuildTextBasedChannel } from 'discord.js';
 import { cfg } from './cfg.ts';
 import { client } from '@/client.ts';
 import { TextDecoder, TextEncoder } from 'node:util';
+import process from "node:process";
 
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();

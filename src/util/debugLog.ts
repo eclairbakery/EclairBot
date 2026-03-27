@@ -1,4 +1,5 @@
 import { prettyPrint } from '@/util/objects/objects.ts';
+import process from "node:process";
 
 // deno-lint-ignore no-explicit-any
 export default function debugLog(...values: any[]) {

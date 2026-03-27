@@ -20,7 +20,6 @@
     "lint": {
         "rules": {
             "exclude": [
-                "no-process-global",
                 "no-namespace",
                 "no-empty",
                 "require-await"

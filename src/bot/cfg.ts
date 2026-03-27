@@ -6,6 +6,7 @@ import { Config } from './definitions/config/config.ts';
 import { defaultCfg } from './default/config/eclairbakery/index.ts';
 import { testingCfg } from './default/config/testing/index.ts';
 import { AnyCommandConfig } from './definitions/config/subtypes.ts';
+import process from "node:process";
 
 export let overrideCfg: Partial<Config> = {};
 
