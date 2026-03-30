@@ -38,7 +38,12 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
                         name: quotedMsg.author.tag,
                         iconURL: quotedMsg.author.displayAvatarURL(),
                     })
-                    .setDescription(quotedMsg.content || '*brak treści*')
+                    .setDescription(
+                        quotedMsg.content 
+                            || (quotedMsg.poll 
+                                ? `## Ankieta: ${quotedMsg.poll.question.text}\n\n- ${quotedMsg.poll.answers.map((q) => q.text).join('\n- ')}`
+                                : '*brak treści*')
+                    )
                     .setTimestamp(quotedMsg.createdAt)
                     .setFooter({ text: `Wysłano w ${(channel as { name: string })?.name ?? 'piekarnii'}` })
                     .setColor(PredefinedColors.Fuchsia);
