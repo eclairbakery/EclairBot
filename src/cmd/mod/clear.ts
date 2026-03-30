@@ -50,7 +50,7 @@ export const clearCmd: Command = {
             });
         }
 
-        const channel = api.channel as dsc.TextChannel;
+        const channel = (api.raw.msg?.channel ?? api.raw.interaction?.channel!) as dsc.TextChannel;
 
         if (who) {
             const fetched = await channel.messages.fetch({ limit: 100 });
@@ -62,17 +62,6 @@ export const clearCmd: Command = {
         } else {
             const fetched = await channel.messages.fetch({ limit: amount + 1 });
             await channel.bulkDelete(fetched, true);
-        }
-
-        if (api.channel.isSendable()) {
-            await api.channel.send({
-                embeds: [
-                    new ReplyEmbed()
-                        .setTitle('Już!')
-                        .setDescription(`Usunąłem ${amount} wiadomości${who ? ` od ${who.user.tag}` : ''}.`)
-                        .setColor(PredefinedColors.YellowGreen),
-                ],
-            });
         }
     },
 };

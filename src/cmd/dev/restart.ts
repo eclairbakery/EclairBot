@@ -23,7 +23,7 @@ export const restartCmd: Command = {
 
         if (api.raw.msg) {
             await cache.store('session', 'last-restart-command-message-id', msg.id);
-            await cache.store('session', 'last-restart-command-channel-id', api.channel?.id);
+            await cache.store('session', 'last-restart-command-channel-id', (api.raw.msg?.channel ?? api.raw.interaction?.channel!).id);
         }
         process.exit(1);
     },

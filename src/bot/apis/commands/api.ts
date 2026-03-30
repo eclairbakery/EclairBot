@@ -43,5 +43,4 @@ export interface CommandAPI {
 
     // ---- EXEC LOCATION ----
     guild?: dsc.Guild;
-    channel: dsc.Channel | dsc.GuildChannel;
 }

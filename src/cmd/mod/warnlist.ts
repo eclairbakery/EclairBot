@@ -5,6 +5,7 @@ import { db, WarnRaw } from '@/bot/apis/db/bot-db.ts';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { client as cl } from '../../client.ts';
 
 export const warnlistCmd: Command = {
     name: 'warnlist',
@@ -30,7 +31,7 @@ export const warnlistCmd: Command = {
     },
 
     async execute(api) {
-        const client: dsc.Client = api.channel.client;
+        const client: dsc.Client = cl;
         const guild: dsc.Guild = api.guild!;
 
         const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | undefined;

@@ -78,7 +78,6 @@ export async function makeCommandApi(commandObj: Command, argsRaw: ParsedRawArgu
         commands: commands,
         log,
         executor: user,
-        channel: context.interaction?.channel ?? context.msg!.channel,
         guild: context.interaction?.guild ?? context.msg?.guild ?? undefined,
 
         checkCooldown: async (field, cooldownMs: number) => {
