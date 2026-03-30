@@ -1,10 +1,7 @@
 import { addExperiencePoints } from '@/bot/level.ts';
 import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.ts';
 import { PredefinedColors } from '@/util/color.ts';
-import { GuildTextBasedChannel, PermissionsBitField } from 'discord.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
-
-import * as log from '@/util/log.ts';
 
 export const basicMsgCreateActions: Action<MessageEventCtx> = {
     constraints: [() => true],
