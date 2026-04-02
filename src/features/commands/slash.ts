@@ -48,6 +48,37 @@ function waitForButton(int: dsc.ChatInputCommandInteraction, buttonId: string, t
 }
 
 client.on('interactionCreate', async (int: Interaction) => {
+    if (int.isAutocomplete()) {
+        const result = findCommand(int.commandName, commands);
+        if (!result) return;
+
+        const { command } = result;
+        const focusedOption = int.options.getFocused(true);
+        const arg = command.expectedArgs.find((a) => a.name === focusedOption.name);
+        if (!arg) return;
+
+        const type = fixType(arg.type);
+        if (type.base == 'command-ref') {
+            const allCommands = new Set<string>();
+            for (const [, cmds] of commands) {
+                for (const c of cmds) {
+                    allCommands.add(c.name);
+                    for (const a of c.aliases) allCommands.add(a);
+                }
+            }
+            const filtered = Array.from(allCommands)
+                .filter((c) => c.toLowerCase().includes(focusedOption.value.toLowerCase()))
+                .slice(0, 25);
+            await int.respond(filtered.map((c) => ({ name: c, value: c })));
+        } else if (type.base == 'enum' && type.options.length > 25) {
+            const filtered = type.options
+                .filter((o) => o.toLowerCase().includes(focusedOption.value.toLowerCase()))
+                .slice(0, 25);
+            await int.respond(filtered.map((o) => ({ name: o, value: o })));
+        }
+        return;
+    }
+
     if (!int.isChatInputCommand()) return;
 
     const result = findCommand(int.commandName, commands);
@@ -203,6 +234,7 @@ export async function init() {
                         option
                             .setName(arg.name)
                             .setDescription(makeSlashCommandOptionDesc(arg, defaultDesc))
+                            .setAutocomplete()
                             .setRequired(!arg.optional)
                     );
                     break;
@@ -244,6 +276,32 @@ export async function init() {
                             .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż kanał'))
                             .setRequired(!arg.optional)
                     );
+                    break;
+
+                case 'command-ref':
+                    scb.addStringOption((option) =>
+                        option
+                            .setName(arg.name)
+                            .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż komendę'))
+                            .setRequired(!arg.optional)
+                            .setAutocomplete(true)
+                    );
+                    break;
+
+                case 'enum':
+                    scb.addStringOption((option) => {
+                        option
+                            .setName(arg.name)
+                            .setDescription(makeSlashCommandOptionDesc(arg, 'Wybierz opcję'))
+                            .setRequired(!arg.optional);
+
+                        if (type.options.length <= 25) {
+                            option.addChoices(type.options.map((o) => ({ name: o, value: o })));
+                        } else {
+                            option.setAutocomplete(true);
+                        }
+                        return option;
+                    });
                     break;
                 }
             }
