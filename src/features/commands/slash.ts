@@ -290,7 +290,7 @@ export async function init() {
                     scb.addStringOption((option) => {
                         option
                             .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, 'Wybierz opcję'))
+                            .setDescription(makeSlashCommandOptionDesc(arg, 'Wybierz opcję, ' + formatArgType(type)))
                             .setRequired(!arg.optional);
 
                         if (type.options.length <= 25) {
