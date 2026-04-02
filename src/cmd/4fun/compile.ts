@@ -62,7 +62,10 @@ export const compileCmd: Command = {
         if (!lang) {
             return msg.edit({
                 embeds: [
-                    api.log.getErrorEmbed('Błąd!', 'Codeblock musi zawierać język gdy używasz auto.'),
+                    api.log.getErrorEmbed(
+                        'Błąd!',
+                        'Musisz podać w jakim języku jest twój kod, albo jako argument albo na górze codeblocka.',
+                    ),
                 ],
             });
         }
@@ -93,13 +96,13 @@ export const compileCmd: Command = {
                 embeds: [
                     api.log.getWarnEmbed(
                         'Kompiler zły dałeś...',
-                        `Kompilator \`${langArg}\` nie jest poprawnym kompilatorem na liście.`,
+                        `Kompilator \`${lang}\` nie jest poprawnym kompilatorem na liście.`,
                     ),
                 ],
             });
         }
 
-        const base_messages = reply
+        const baseMessages = reply
             .split('\n')
             .map((v) => v.trim())
             .filter(Boolean)
@@ -118,7 +121,7 @@ export const compileCmd: Command = {
 
         const messages: { type: string; data: string }[] = [];
         
-        for (const msg of base_messages) {
+        for (const msg of baseMessages) {
             const lines = msg.data.split("\n");
             
             for (const line of lines) {
