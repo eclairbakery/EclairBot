@@ -2,7 +2,18 @@ import { cfg } from '@/bot/cfg.ts';
 import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
-import { output } from '../../bot/logging.ts';
+
+interface WandboxCompiler {
+    name: string;
+    language: string;
+    version: string;
+    'display-name'?: string;
+
+    'compiler-option-raw'?: boolean;
+    'runtime-option-raw'?: boolean;
+
+    switches?: unknown[];
+};
 
 function findCompiler(lang: string): string {
     const replaceMap = Object.entries(cfg.features.compilation.replaceCompilerMap);
@@ -49,9 +60,8 @@ export const compileCmd: Command = {
 
     async execute(api) {
         const msg = await api.log.replyInfo(
-            api,
-            'Kompiluje twój kod...',
-            'Proszę uzbroić się w cierpliwość bo kompilacja jest zasobożerna.',
+            api, 'Chwila...',
+            'Przetwarzam dane',
         );
 
         const langArg = api.getTypedArg('compiler', 'string')?.value;
@@ -70,12 +80,40 @@ export const compileCmd: Command = {
             });
         }
 
-        const compiler = findCompiler(lang);
-        output.log('compiler: ', compiler);
+        const compilerNotFoundError = async () => {
+            return await msg.edit({
+                embeds: [
+                    api.log.getWarnEmbed(
+                        'Kompiler zły dałeś...',
+                        `Kompilator \`${lang}\` nie jest poprawnym kompilatorem na liście.`,
+                    ),
+                ],
+            });
+        };
+
+        const compilerName = findCompiler(lang);
         const apiUrl = 'https://wandbox.org/api/compile.ndjson';
 
+        const res = await fetch("https://wandbox.org/api/list.json");
+        const data: WandboxCompiler[] = await res.json();
+        
+        const compiler = data.find(c => c.name == compilerName);
+        if (!compiler) {
+            return compilerNotFoundError();
+        }
+
+        const footerText = `${compiler.language} | ${compiler['display-name']} ${compiler.version}`;
+        msg.edit({
+            embeds: [
+                api.log.getInfoEmbed(
+                    'Kompiluje twój kod...',
+                    'Proszę uzbroić się w cierpliwość bo kompilacja jest zasobożerna.',
+                ).setFooter({ text: footerText }),
+            ],
+        });
+
         const requestData = {
-            compiler,
+            compiler: compilerName,
             title: '',
             description: '',
             code: code.src,
@@ -86,20 +124,14 @@ export const compileCmd: Command = {
             'runtime-option-raw': '',
         };
 
-        const reply = await (await fetch(apiUrl, {
+        const response = await fetch(apiUrl, {
             method: 'post',
             body: JSON.stringify(requestData),
-        })).text();
+        });
+        const reply = await response.text();
 
         if (reply.trim().toLowerCase().includes('error: compiler not found')) {
-            return await msg.edit({
-                embeds: [
-                    api.log.getWarnEmbed(
-                        'Kompiler zły dałeś...',
-                        `Kompilator \`${lang}\` nie jest poprawnym kompilatorem na liście.`,
-                    ),
-                ],
-            });
+            return compilerNotFoundError();       
         }
 
         const baseMessages = reply
@@ -167,14 +199,16 @@ export const compileCmd: Command = {
         if (cmdOutput.length > 1500) {
             return await msg.edit({
                 embeds: [
-                    api.log.getWarnEmbed('Za długie', 'Result twojego programu jest za długi. Spróbuj podzielić swój kod.'),
+                    api.log.getWarnEmbed('Za długie', 'Result twojego programu jest za długi. Spróbuj podzielić swój kod.')
+                        .setFooter({ text: footerText }),
                 ],
             });
         }
 
         return await msg.edit({
             embeds: [
-                api.log.getSuccessEmbed('Masz ten result czy coś', cmdOutput),
+                api.log.getSuccessEmbed('Masz ten result czy coś', cmdOutput)
+                    .setFooter({ text: footerText }),
             ],
         });
     },
