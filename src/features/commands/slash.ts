@@ -234,7 +234,6 @@ export async function init() {
                         option
                             .setName(arg.name)
                             .setDescription(makeSlashCommandOptionDesc(arg, defaultDesc))
-                            .setAutocomplete()
                             .setRequired(!arg.optional)
                     );
                     break;
@@ -287,7 +286,6 @@ export async function init() {
                             .setAutocomplete(true)
                     );
                     break;
-
                 case 'enum':
                     scb.addStringOption((option) => {
                         option
