@@ -110,7 +110,7 @@ export const wikiCmd: Command = {
                 });
             }
             const ai_response = result.response.text();
-            if (ai_response.toLowerCase().trim().includes('#ignore'))
+            if (ai_response.toLowerCase().trim().includes('--ignore'))
             return msg.edit({
                 embeds: [{
                     author: { name: "EclairBOT" },
