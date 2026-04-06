@@ -110,6 +110,15 @@ export const wikiCmd: Command = {
                 });
             }
             const ai_response = result.response.text();
+            if (ai_response.toLowerCase().trim().includes('#ignore'))
+            return msg.edit({
+                embeds: [{
+                    author: { name: "EclairBOT" },
+                    title: 'Nie udało mi się znaleźć definicji',
+                    description: "Aktualnie model AI świadomie postanowił Cię zlać, a na Wikipedii nie ma o tym artykułu.",
+                    color: PredefinedColors.Red
+                }]
+            });
             const ai_fl = ai_response.split('\n')[0].trim();
             const ai_has_title = ai_fl.startsWith('# ');
             const ai_description = ai_has_title ? ai_response.slice(ai_fl.length).trim() : ai_response;
