@@ -60,7 +60,7 @@ import { getChannel } from '@/features/actions/channels/templateChannels.ts';
 import { warnGivenLogAction } from '@/features/actions/mod/warn-given.ts';
 import { initStatusGenerator } from '@/util/generateStatusQuote.ts';
 
-import { initAskCmdModel } from './features/init-ai-models.ts';
+import { initAskCmdModel, initWikiModel } from './features/init-ai-models.ts';
 import { askAction } from './features/actions/4fun/ask.ts';
 
 // --------------- INIT ---------------
@@ -89,6 +89,7 @@ client.once('clientReady', async () => {
         output.warn('You should set EB_GEMINI_API_KEY enviroment variable to your gemini api key\nOtherwise, the Gemini integration based commands will not work');
     } else {
         initAskCmdModel();
+        initWikiModel();
         output.log(`Gemini initialized.`);
     }
 
