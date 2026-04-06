@@ -56,8 +56,10 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
     for (const m of chatHistory.values()) {
         let refString: string = '';
         if (m.reference) {
-            const ref = await m.fetchReference();
-            refString = `(Odpowiedź na wiadomość od ${formatUser(ref.author)}: ${formatMsg(ref)}) `;
+            try {
+                const ref = await m.fetchReference();
+                refString = `(Odpowiedź na wiadomość od ${formatUser(ref.author)}: ${formatMsg(ref)}) `;
+            } catch {}
         }
         chatHistoryFormatted += `${refString}${formatUser(m.author)}: ${formatMsg(m)}\n`;
     }
