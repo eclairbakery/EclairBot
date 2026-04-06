@@ -70,21 +70,9 @@ export const wikiCmd: Command = {
     execute: async (api: CommandAPI) => {
         const rawQuery = api.getTypedArg('query', 'string')?.value as string;
 
-        const query = rawQuery == 'hubix' ? 'pedał' : rawQuery;
+        const query = rawQuery == 'hubix' ? 'Niepełnosprawność intelektualna w stopniu głębokim' : rawQuery;
 
         if (!query) return api.reply('Musisz podać, czego szukasz na Wikipedii!');
-
-        const lowerQuery = query.toLowerCase();
-        if (['auroros', 'eklerka', 'piekarnia eklerki', 'gorciu', 'maqix'].some((bad) => lowerQuery.includes(bad))) {
-            return api.reply({
-                embeds: [{
-                    author: { name: 'EclairBOT' },
-                    title: 'Ta komenda nie jest do tego!',
-                    description: 'Rzeczy takie jak `eklerka`, `aurorOS`, `piekarnia eklerki`, `gorciu`, `maqix`, itd. nie są na wikipedii... Po prostu nie spodziewaj się, że jest to wiki serwera.',
-                    color: PredefinedColors.Blurple,
-                }],
-            });
-        }
 
         const fetched = await downloadFromWikipedia(['pl', 'simple', 'en'], [query]);
         if (!fetched || !fetched.ok) {
@@ -100,7 +88,7 @@ export const wikiCmd: Command = {
 
         const json = await fetched.json() as WikiSummaryResponse;
 
-        if (json.description?.includes('strona ujednoznaczniająca') || json.description?.includes('may refer to')) {
+        if (json.extract?.includes('strona ujednoznaczniająca') || json.extract?.includes('may refer to')) {
             const titles = await getDisambiguationTitles(json.title);
             return api.reply({
                 embeds: [{
