@@ -36,14 +36,30 @@ async function getDisambiguationTitles(title: string): Promise<string[]> {
 }
 
 async function downloadFromWikipedia(languageVersions: string[], args: string[]) {
-    let fetched: Response;
+    const query = args.join(' ');
+
     for (const lang of languageVersions) {
-        const url = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(args.join('_'))}`;
-        fetched = await fetch(url);
-        if (!fetched.ok) continue;
-        break;
+        const searchUrl = `https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
+
+        const searchRes = await fetch(searchUrl);
+        if (!searchRes.ok) continue;
+
+        const searchData = await searchRes.json();
+
+        const firstResult = searchData?.query?.search?.[0];
+        if (!firstResult) continue;
+
+        const title = firstResult.title;
+
+        const summaryUrl = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+        const summaryRes = await fetch(summaryUrl);
+
+        if (!summaryRes.ok) continue;
+
+        return summaryRes;
     }
-    return fetched!;
+
+    return undefined;
 }
 
 export const wikiCmd: Command = {
@@ -71,16 +87,20 @@ export const wikiCmd: Command = {
         const rawQuery = api.getTypedArg('query', 'string')?.value as string;
 
         const query = rawQuery == 'hubix' ? 'Niepełnosprawność intelektualna w stopniu głębokim' : rawQuery;
+        if (!query) return api.log.replyError(api, 'Masz problem', 'Musisz podać, czego szukasz na Wikipedii!');
 
-        if (!query) return api.reply('Musisz podać, czego szukasz na Wikipedii!');
+        const msg = await api.log.replyTip(
+            api, 'Uzbroj się w cierpliwość',
+            'Z powodu na powolność Wikipedii to może to chwilę potrwać byś dostał odpowiedź.'
+        );
 
         const fetched = await downloadFromWikipedia(['pl', 'simple', 'en'], [query]);
         if (!fetched || !fetched.ok) {
-            return api.reply({
+            return msg.edit({
                 embeds: [{
                     author: { name: 'EclairBOT' },
-                    title: 'Tego artykułu nie ma na Wikipedii!',
-                    description: 'Wiem, to niemożliwe...',
+                    title: '😭 Tego artykułu nie ma na Wikipedii!',
+                    description: 'Wiem, to niemożliwe... Coś zaradzimy jednak. Ale to potem dodam.',
                     color: PredefinedColors.Orange,
                 }],
             });
@@ -88,23 +108,25 @@ export const wikiCmd: Command = {
 
         const json = await fetched.json() as WikiSummaryResponse;
 
-        if (json.extract?.includes('strona ujednoznaczniająca') || json.extract?.includes('may refer to')) {
+        const extrdesc = (json.extract ?? '') + (json.description ?? '');
+
+        if (extrdesc?.includes('strona ujednoznaczniająca') || extrdesc?.includes('may refer to')) {
             const titles = await getDisambiguationTitles(json.title);
-            return api.reply({
+            return msg.edit({
                 embeds: [{
                     author: { name: 'EclairBOT' },
-                    title: 'Doprecyzuj!',
-                    description: `Natrafiłeś na stronę ujednoznaczniającą. Ona wyświetla różne znaczenia wyrazu...\n${titles.join(', ')}`,
+                    title: '😕 Doprecyzuj!',
+                    description: `Natrafiłeś na stronę ujednoznaczniającą. W skrócie to Wikipedia nie jest pewna, czego ty szukasz, więc Ci to wyświetliła, by ci pomóc.\n\n**Tu masz hasła, które się mogą kryć pod Twoim zapytaniem**:\n- ${titles.join('\n- ')}`,
                     url: json.content_urls.desktop.page,
                     color: PredefinedColors.Cyan,
                 }],
             });
         }
 
-        return api.reply({
+        return msg.edit({
             embeds: [{
                 author: { name: 'EclairBOT' },
-                title: json.titles.normalized,
+                title: '‼️ ' + json.titles.normalized,
                 description: json.extract,
                 url: json.content_urls.desktop.page,
                 color: PredefinedColors.YellowGreen,
