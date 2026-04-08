@@ -51,7 +51,7 @@ function getBestReply(post: { fullPost: string; replies: any[] }) {
     return post.replies
         .map(r => ({
             ...r,
-            points: (r.upvotes) - (r.downvotes) + Math.floor(r.content.length / 150) * 5
+            points: (r.upvotes) - (r.downvotes) + Math.floor(r.content.length / 50) * 5
         }))
         .sort((a, b) => b.points - a.points)[0];
 }
@@ -69,6 +69,8 @@ export const zapytajOnetCmd: Command = {
     expectedArgs: [],
 
     async execute(api) {
+        const msg = await api.log.replyTip(api, 'Zaczekaj chwilkę', 'Generalnie to jest taki web-scraping i to mi chwilę zajmie, więc zaczekaj cierpliwie ładnie proszę.');
+
         const posts = await fetchPosts();
 
         let page = 0;
@@ -132,7 +134,7 @@ export const zapytajOnetCmd: Command = {
 
         const { embed, rows } = buildHome();
 
-        const msg = await api.reply({ embeds: [embed], components: rows });
+        await msg.edit({ embeds: [embed], components: rows });
 
         const collector = msg.createMessageComponentCollector({ time: 600000 });
 
