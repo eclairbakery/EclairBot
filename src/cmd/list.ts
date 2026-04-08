@@ -60,6 +60,7 @@ import { emailDefaultTitleCmd } from './email/email-default-title.ts';
 import { compileCmd } from './4fun/compile.ts';
 import { emailBlacklistCmd } from './email/email-blacklist.ts';
 import { askCmd } from './4fun/ask.ts';
+import { zapytajOnetCmd } from '@/cmd/4fun/zapytaj-onet.ts';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -149,6 +150,7 @@ export const commands: Map<Category, Command[]> = new Map([
             figletCmd,
             compileCmd,
             askCmd,
+            zapytajOnetCmd
         ],
     ],
 ]);
