@@ -181,3 +181,36 @@ const updateXpAction: Action<XpEventCtx> = {
 };
 
 actionsManager.addAction(updateXpAction);
+
+export async function addVoiceExperience() {
+    for (const voice_channel of client.channels.cache.filter((c) => c.isVoiceBased()).values()) {
+        const channel_members = voice_channel.members;
+        const channel_users: User[] = [];
+        let erm = 0;
+        
+        // get erm
+        for (const member of channel_members.values()) {
+            const user = new User(member.id);
+            const lvl = xpToLevel(await user.leveling.getXP());
+
+            if (lvl >= cfg.features.leveling.voice.estimatedRealMembers.requiredLevel) 
+                erm++;
+            channel_users.push(user);
+        }
+
+        if (erm < cfg.features.leveling.voice.estimatedRealMembers.requiredPeople) continue;
+
+        // add experience 
+        for (const user of channel_users) {
+            const xp = cfg.features.leveling.voice.xpPerMinute;
+
+            const member = channel_members.find((cm) => cm.id == user.id)!;
+            if (member.voice.selfMute || member.voice.selfDeaf)
+                continue;
+
+            await user.leveling.addXP(xp);
+        };
+    }
+
+    setTimeout(addVoiceExperience, 60 * 1000);
+};

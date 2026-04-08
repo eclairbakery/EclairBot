@@ -62,6 +62,7 @@ import { initStatusGenerator } from '@/util/generateStatusQuote.ts';
 
 import { initAskCmdModel, initWikiModel } from './features/init-ai-models.ts';
 import { askAction } from './features/actions/4fun/ask.ts';
+import { addVoiceExperience } from '@/bot/level.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -72,6 +73,8 @@ client.once('clientReady', async () => {
         output.warn("Assuming config for the EclairBakery Discord server.");
         output.warn("Set EB_DEVELOPMENT to true to use testing server config, or to false to explicitely use production config.");
     }
+
+    addVoiceExperience();
 
     await db.init();
     output.log(`Database initialized.`);

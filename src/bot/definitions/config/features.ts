@@ -40,6 +40,13 @@ export interface ConfigFeatures {
             channels: dsc.Snowflake[];
             multiplier: number;
         };
+        voice: {
+            xpPerMinute: number;
+            estimatedRealMembers: {
+                requiredLevel: number;
+                requiredPeople: number;
+            };
+        }
     };
     hallOfFame: {
         enabled: boolean;

@@ -93,6 +93,13 @@ export const featuresConfig: Config['features'] = {
             channels: [channelsCfg.dev.programming],
             multiplier: 2,
         },
+        voice: {
+            xpPerMinute: 16,
+            estimatedRealMembers: {
+                requiredLevel: 5,
+                requiredPeople: 3
+            }
+        }
     },
     hallOfFame: {
         channel: '1392128976574484592',

@@ -93,7 +93,14 @@ export const testingCfg: Config = {
             xpPerMessage: 4,
             milestoneRoles: {},
             excludedChannels: [],
-            shallPingWhenNewLevel: false
+            shallPingWhenNewLevel: false,
+            voice: {
+                xpPerMinute: 16,
+                estimatedRealMembers: {
+                    requiredLevel: 5,
+                    requiredPeople: 3
+                }
+            }
         },
         automod: {
             antiFloodEnabled: true,
