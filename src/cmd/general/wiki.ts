@@ -81,6 +81,16 @@ export const wikiCmd: Command = {
 
         const fetched = await downloadFromWikipedia(['pl', 'simple', 'en'], [query]);
         if (!fetched || !fetched.ok) {
+            if (!gemini.isInitialized()) {
+                return msg.edit({
+                    embeds: [{
+                        author: { name: "EclairBOT" },
+                        title: 'Nie udało mi się znaleźć definicji',
+                        description: "Aktualnie model AI jest niezainicjalizowany, a na Wikipedii nie ma o tym artykułu.",
+                        color: PredefinedColors.Red
+                    }]
+                });
+            }
             const model = gemini.getModel("wiki-cmd");
             if (!model) {
                 return msg.edit({

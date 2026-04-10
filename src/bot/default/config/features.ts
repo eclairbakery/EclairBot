@@ -130,6 +130,7 @@ export const featuresConfig: Config['features'] = {
         approveDangerousPermissions: false,
     },
     ai: {
+        enabled: true,
         allowPolitics: false,
         allowPhilosophy: true,
         contextDefaultMessages: 15,

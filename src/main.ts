@@ -4,6 +4,7 @@ console.log('Welcome to EclairBOT!');
 import { client } from '@/client.ts';
 import { ft, output } from '@/bot/logging.ts';
 import * as dotenv from 'dotenv';
+import process from 'node:process';
 process.on('uncaughtException', (e) => {
     output.err(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
     if (e.message.includes('An invalid token was provided.')) {
@@ -44,14 +45,15 @@ import { registerMsgDeleteDscEvents } from './events/client/messageDelete.ts';
 import * as slashCommands from '@/features/commands/slash.ts';
 import * as prefixCommands from '@/features/commands/prefix.ts';
 
+// integrations
 import * as github from '@/bot/apis/github/github.ts';
 import * as gemini from '@/bot/apis/gemini/model.ts';
 import * as email from '@/bot/apis/email/mail.ts';
 import * as cache from '@/bot/apis/cache/cache.ts';
 
+// misc
 import * as log from '@/util/log.ts';
 
-// misc
 import actionsManager from '@/features/actions/index.ts';
 import { db } from '@/bot/apis/db/bot-db.ts';
 
@@ -72,12 +74,12 @@ client.once('clientReady', async () => {
     if (!process.env.EB_DEVELOPMENT) {
         output.warn("Assuming config for the EclairBakery Discord server.");
         output.warn("Set EB_DEVELOPMENT to true to use testing server config, or to false to explicitely use production config.");
-    }
-
-    addVoiceExperience();
+    } 
 
     await db.init();
     output.log(`Database initialized.`);
+
+    addVoiceExperience();
 
     if (!process.env.EB_EMAIL_USER || !process.env.EB_EMAIL_PASS) {
         output.warn('You should set EB_EMAIL_USER and EB_EMAIL_PASS enviorment variables to a GMail login and temporary password\nOtherwise, the e-mail based commands will not work');
@@ -89,8 +91,8 @@ client.once('clientReady', async () => {
 
     await gemini.init();
     if (!gemini.isInitialized()) {
-        output.warn('You should set EB_GEMINI_API_KEY enviroment variable to your gemini api key\nOtherwise, the Gemini integration based commands will not work');
-    } else {
+        output.warn('You should set EB_GEMINI_API_KEY enviroment variable to your Gemini api key\nOtherwise, the Gemini integration based commands will not work');
+    } else if (cfg.features.ai.enabled) {
         initAskCmdModel();
         initWikiModel();
         output.log(`Gemini initialized.`);

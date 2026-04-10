@@ -81,6 +81,7 @@ export interface ConfigFeatures {
     };
 
     ai: {
+        enabled: boolean;
         allowPolitics: boolean;
         allowPhilosophy: boolean;
         contextDefaultMessages: number;
