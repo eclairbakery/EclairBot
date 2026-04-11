@@ -1,31 +1,8 @@
-import { cfg } from '@/bot/cfg.ts';
 import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
-
-interface WandboxCompiler {
-    name: string;
-    language: string;
-    version: string;
-    'display-name'?: string;
-
-    'compiler-option-raw'?: boolean;
-    'runtime-option-raw'?: boolean;
-
-    switches?: unknown[];
-};
-
-function findCompiler(lang: string): string {
-    const replaceMap = Object.entries(cfg.features.compilation.replaceCompilerMap);
-    const langNormalized = lang.trim().toLowerCase();
-    for (const [compiler, aliases] of replaceMap) {
-        const compilerNormalized = compiler.toLowerCase();
-        if (aliases.includes(langNormalized) || compilerNormalized == langNormalized) {
-            return compiler;
-        }
-    }
-    return lang;
-}
+import { getCompilerForLang } from '@/bot/apis/compile/auto.ts';
+import { CompilerErrorKind } from '@/bot/apis/compile/driver.ts';
 
 export const compileCmd: Command = {
     name: 'compile',
@@ -80,7 +57,10 @@ export const compileCmd: Command = {
             });
         }
 
-        const compilerNotFoundError = async () => {
+        const driver = getCompilerForLang(lang);
+        const info = await driver.info();
+
+        if (info.lang === 'unknown') {
             return await msg.edit({
                 embeds: [
                     api.log.getWarnEmbed(
@@ -89,20 +69,9 @@ export const compileCmd: Command = {
                     ),
                 ],
             });
-        };
-
-        const compilerName = findCompiler(lang);
-        const apiUrl = 'https://wandbox.org/api/compile.ndjson';
-
-        const res = await fetch("https://wandbox.org/api/list.json");
-        const data: WandboxCompiler[] = await res.json();
-        
-        const compiler = data.find(c => c.name == compilerName);
-        if (!compiler) {
-            return compilerNotFoundError();
         }
 
-        const footerText = `${compiler.language} | ${compiler['display-name']} ${compiler.version}`;
+        const footerText = `${info.lang} | ${info.displayName} ${info.version}`;
         msg.edit({
             embeds: [
                 api.log.getInfoEmbed(
@@ -112,89 +81,46 @@ export const compileCmd: Command = {
             ],
         });
 
-        const requestData = {
-            compiler: compilerName,
-            title: '',
-            description: '',
-            code: code.src,
-            codes: [],
-            options: '',
+        const result = await driver.compile({
+            source: code.src,
             stdin: stdin?.src ?? '',
-            'compiler-option-raw': '',
-            'runtime-option-raw': '',
-        };
-
-        const response = await fetch(apiUrl, {
-            method: 'post',
-            body: JSON.stringify(requestData),
         });
-        const reply = await response.text();
 
-        if (reply.trim().toLowerCase().includes('error: compiler not found')) {
-            return compilerNotFoundError();       
-        }
-
-        const baseMessages = reply
-            .split('\n')
-            .map((v) => v.trim())
-            .filter(Boolean)
-            .map((v) => {
-                if (v.startsWith('Error: ')) {
-                    v = v.replaceAll('Error: ', '');
-                    return { type: 'error', data: v };
-                }
-
-                try {
-                    return JSON.parse(v);
-                } catch {
-                    return { type: 'error', data: 'cannot parse as json: ' + v };
-                }
-            }) as { type: string; data: string }[];
-
-        const messages: { type: string; data: string }[] = [];
-        
-        for (const msg of baseMessages) {
-            const lines = msg.data.split("\n");
-            
-            for (const line of lines) {
-                if (!line.trim()) continue;
-
-                messages.push({ ...msg, data: line });
+        if (!result.ok) {
+            let title = 'Błąd!';
+            if (result.errKind === CompilerErrorKind.Compile) {
+                title = 'Błąd kompilacji!';
+            } else if (result.errKind === CompilerErrorKind.Timeout) {
+                title = 'Timeout!';
             }
+
+            return await msg.edit({
+                embeds: [
+                    api.log.getErrorEmbed(title, result.errMessage)
+                        .setFooter({ text: footerText }),
+                ],
+            });
         }
 
         let cmdOutput = '';
 
-        for (const message of messages) {
-            if (message.type == 'Control') {
-                continue;
+        if (result.stdout) {
+            const lines = result.stdout.trim().split('\n');
+            for (const line of lines) {
+                if (!line.trim()) continue;
+                cmdOutput += `:white_large_square: \`${line.replaceAll('\`', '').trim()}\`\n`;
             }
-
-            switch (message.type.toLowerCase()) {
-                case 'stdout':
-                    cmdOutput += ':white_large_square: ';
-                    break;
-                case 'stderr':
-                    cmdOutput += ':red_square: ';
-                    break;
-                case 'signal':
-                    cmdOutput += ':green_circle: received signal: ';
-                    break;
-                case 'error':
-                    cmdOutput += ':wilted_rose: error: ';
-                    break;
-                case 'exitcode':
-                    cmdOutput += ':black_large_square: exited with code: ';
-                    break;
-                case 'compilermessages':
-                case 'compilermessagee':
-                default:
-                    cmdOutput += ':diamond_shape_with_a_dot_inside: ';
-                    break;
-            }
-
-            cmdOutput += `\`${message.data.replaceAll('\n', ' ').replaceAll('\`', '').trim()}\`\n`;
         }
+
+        if (result.stderr) {
+            const lines = result.stderr.trim().split('\n');
+            for (const line of lines) {
+                if (!line.trim()) continue;
+                cmdOutput += `:red_square: \`${line.replaceAll('\`', '').trim()}\`\n`;
+            }
+        }
+
+        cmdOutput += `:black_large_square: exited with code: \`${result.exitcode}\``;
 
         if (cmdOutput.length > 1500) {
             return await msg.edit({
