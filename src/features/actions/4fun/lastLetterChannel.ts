@@ -44,8 +44,16 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                         await reply.delete();
                         return;
                     }
-                }
+                } 
             }
+            
+            if (!/^[a-ząćęłńóśźż]+$/i.test(msg.content)) {
+                const reply = await msg.reply(`co to za twór jest ${fmtEmoji(cfg.emojis.heartAttackEmoji)}`);
+                await sleep(1000);
+                await msg.delete();
+                await reply.delete();
+            }
+
             if (msg.content.endsWith('ą')) {
                 const reply = await msg.reply(`no ej no przeczytałeś kanał opis? ${fmtEmoji(cfg.emojis.heartAttackEmoji)}`);
                 await sleep(1000);
