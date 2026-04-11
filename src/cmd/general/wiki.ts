@@ -2,7 +2,8 @@ import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { CommandAPI } from '@/bot/apis/commands/api.ts';
 import { PredefinedColors } from '@/util/color.ts';
-import * as gemini from "@/bot/apis/gemini/model.ts"
+import * as gemini from "@/bot/apis/gemini/model.ts";
+import * as dsc from "discord.js";
 
 interface WikiSummaryResponse {
     type: string;
@@ -47,6 +48,17 @@ async function downloadFromWikipedia(languageVersions: string[], args: string[])
     return fetched!;
 }
 
+async function replyAIModelErr(err: string, msg: dsc.Message) {
+    return await msg.edit({
+         embeds: [{
+             author: { name: "EclairBOT" },
+             title: 'Nie udało mi się znaleźć definicji',
+             description: `Aktualnie model AI ${err}, a na Wikipedii nie ma o tym artykułu.`,
+             color: PredefinedColors.Red
+         }]
+     });
+}
+
 export const wikiCmd: Command = {
     name: 'wiki',
     aliases: [],
@@ -82,25 +94,11 @@ export const wikiCmd: Command = {
         const fetched = await downloadFromWikipedia(['pl', 'simple', 'en'], [query]);
         if (!fetched || !fetched.ok) {
             if (!gemini.isInitialized()) {
-                return msg.edit({
-                    embeds: [{
-                        author: { name: "EclairBOT" },
-                        title: 'Nie udało mi się znaleźć definicji',
-                        description: "Aktualnie model AI jest niezainicjalizowany, a na Wikipedii nie ma o tym artykułu.",
-                        color: PredefinedColors.Red
-                    }]
-                });
+                return replyAIModelErr('jest niezainicjalizowany', msg);
             }
             const model = gemini.getModel("wiki-cmd");
             if (!model) {
-                return msg.edit({
-                    embeds: [{
-                        author: { name: "EclairBOT" },
-                        title: 'Nie udało mi się znaleźć definicji',
-                        description: "Aktualnie model AI jest niezainicjalizowany, a na Wikipedii nie ma o tym artykułu.",
-                        color: PredefinedColors.Red
-                    }]
-                });
+                return replyAIModelErr('jest niezainicjalizowany', msg);
             }
             let result: gemini.GenerateContentResult; 
             try {
@@ -110,25 +108,11 @@ export const wikiCmd: Command = {
                     ]
                 });
             } catch {
-                return msg.edit({
-                    embeds: [{
-                        author: { name: "EclairBOT" },
-                        title: 'Nie udało mi się znaleźć definicji',
-                        description: "Aktualnie model AI nie chce Ci odpowiedzieć (jakiś rate-limit idk), a na Wikipedii nie ma o tym artykułu.",
-                        color: PredefinedColors.Red
-                    }]
-                });
+                return replyAIModelErr('nie chce ci odpowiedzieć (chyba jakiś rate-limit, nie wiem)', msg);
             }
             const ai_response = result.response.text();
             if (ai_response.toLowerCase().trim().includes('--ignore'))
-            return msg.edit({
-                embeds: [{
-                    author: { name: "EclairBOT" },
-                    title: 'Nie udało mi się znaleźć definicji',
-                    description: "Aktualnie model AI świadomie postanowił Cię zlać, a na Wikipedii nie ma o tym artykułu.",
-                    color: PredefinedColors.Red
-                }]
-            });
+            return replyAIModelErr('świadomie postanowił Cię zlać', msg);
             const ai_fl = ai_response.split('\n')[0].trim();
             const ai_has_title = ai_fl.startsWith('# ');
             const ai_description = ai_has_title ? ai_response.slice(ai_fl.length).trim() : ai_response;
