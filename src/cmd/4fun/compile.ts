@@ -88,15 +88,17 @@ export const compileCmd: Command = {
 
         if (!result.ok) {
             let title = 'Błąd!';
+            let errMsg = result.errMessage;
             if (result.errKind === CompilerErrorKind.Compile) {
                 title = 'Błąd kompilacji!';
+                errMsg = '```' + errMsg + '```';
             } else if (result.errKind === CompilerErrorKind.Timeout) {
                 title = 'Timeout!';
             }
 
             return await msg.edit({
                 embeds: [
-                    api.log.getErrorEmbed(title, result.errMessage)
+                    api.log.getErrorEmbed(title, errMsg)
                         .setFooter({ text: footerText }),
                 ],
             });
