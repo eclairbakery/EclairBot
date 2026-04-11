@@ -103,18 +103,26 @@ export class WandboxCompilerDriver implements CompilerDriver {
             }
 
             const exitcode = parseInt(data.status ?? '0', 10);
-            if (exitcode !== 0 && data.compiler_error && (!data.program_output && !data.program_error)) {
+            const compileLog: string =
+                data.compiler_message ?? `${data.compiler_output ?? ''}${data.compiler_error ?? ''}`;
+
+            if (
+                exitcode !== 0
+                && compileLog.trim()
+                && !(data.program_output ?? '').trim()
+                && !(data.program_error ?? '').trim()
+            ) {
                 return {
                     ok: false,
                     errKind: CompilerErrorKind.Compile,
-                    errMessage: data.compiler_error,
+                    errMessage: compileLog.trimEnd(),
                 };
             }
 
             return {
                 ok: true,
                 stdout: data.program_output ?? '',
-                stderr: (data.compiler_error ?? '') + (data.program_error ?? ''),
+                stderr: compileLog + (data.program_error ?? ''),
                 exitcode,
             };
         } catch (error: unknown) {
