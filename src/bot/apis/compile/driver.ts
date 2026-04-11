@@ -14,5 +14,5 @@ export type CompilerOutput =
     | { ok: false, errKind: CompilerErrorKind, errMessage: string };
 
 export interface CompilerDriver {
-    compile(input: CompilerInput): CompilerOutput;
+    compile(input: CompilerInput): Promise<CompilerOutput>;
 }
