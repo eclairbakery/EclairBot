@@ -60,6 +60,7 @@ import { emailDefaultTitleCmd } from './email/email-default-title.ts';
 import { compileCmd } from './4fun/compile.ts';
 import { emailBlacklistCmd } from './email/email-blacklist.ts';
 import { askCmd } from './4fun/ask.ts';
+import { searchCmd } from '@/cmd/general/search.ts';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -71,6 +72,7 @@ export const commands: Map<Category, Command[]> = new Map([
             bannerCmd,
             pfpCmd,
             wikiCmd,
+            searchCmd
         ],
     ],
     [
