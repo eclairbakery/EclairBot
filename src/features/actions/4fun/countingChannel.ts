@@ -28,8 +28,8 @@ export const countingChannelAction: Action<MessageEventCtx> = {
                 return;
             }
 
-            const messages = await msg.channel.messages.fetch({ limit: 2 });
-            const lastMsg = messages.filter((m) => m.id !== msg.id).first();
+            const messages = await msg.channel.messages.fetch({ limit: 50 });
+            const lastMsg = messages.filter((m) => m.id !== msg.id && !isNaN(parseInt(m.content))).first();
 
             let lastNumber = 0;
             if (lastMsg) {

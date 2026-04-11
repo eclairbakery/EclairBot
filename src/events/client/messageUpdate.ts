@@ -4,9 +4,8 @@ import * as dsc from 'discord.js';
 
 export function registerMsgEditDscEvents(client: dsc.Client) {
     client.on('messageUpdate', async (oldMsg, msg) => {
-        if (oldMsg.content?.trim() == msg.content?.trim()) {
-            return;
-        }
+        if (oldMsg.content?.trim() == msg.content?.trim()) return;
+        if (oldMsg.partial) return;
 
         sendLog({
             title: 'Edycja wiadomości',
