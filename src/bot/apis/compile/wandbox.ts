@@ -1,4 +1,4 @@
-import { CompilerDriver, CompilerInput, CompilerOutput, CompilerErrorKind } from './driver.ts';
+import { CompilerDriver, CompilerInput, CompilerOutput, CompilerErrorKind, CompilerInfo } from './driver.ts';
 
 export interface WandboxOptions {
     compiler: string;
@@ -7,7 +7,19 @@ export interface WandboxOptions {
     runtimeOptionRaw?: string;
 }
 
-export class WandboxCompiler implements CompilerDriver {
+interface WandboxCompiler {
+    name: string;
+    language: string;
+    version: string;
+    'display-name'?: string;
+
+    'compiler-option-raw'?: boolean;
+    'runtime-option-raw'?: boolean;
+
+    switches?: unknown[];
+};
+
+export class WandboxCompilerDriver implements CompilerDriver {
     private readonly compiler: string;
     private readonly options: string;
     private readonly compilerOptionRaw: string;
@@ -18,6 +30,30 @@ export class WandboxCompiler implements CompilerDriver {
         this.options = config.options ?? '';
         this.compilerOptionRaw = config.compilerOptionRaw ?? '';
         this.runtimeOptionRaw = config.runtimeOptionRaw ?? '';
+    }
+
+    async info(): Promise<CompilerInfo> {
+        const response = await fetch('https://wandbox.org/api/list.json');
+        if (!response.ok) {
+            throw new Error(`Failed to fetch compiler list: ${response.status} ${response.statusText}`);
+        }
+
+        const compilers = await response.json() as WandboxCompiler[];
+
+        const compiler = compilers.find((c) => c.name === this.compiler);
+        if (!compiler) {
+            return {
+                lang: 'unknown',
+                displayName: this.compiler,
+                version: 'unknown',
+            };
+        }
+
+        return {
+            lang: compiler.language,
+            displayName: compiler['display-name'] ?? compiler.name,
+            version: compiler.version,
+        };
     }
 
     async compile(input: CompilerInput): Promise<CompilerOutput> {
