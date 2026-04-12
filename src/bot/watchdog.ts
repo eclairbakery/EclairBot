@@ -243,13 +243,34 @@ const onMuteGivenWatcher: Action<UserEventCtx> = {
     callbacks: [
         async (ctx) => {
             output.log('Watchdog: Mute given');
-            if (ctx.user.id == ctx.client.user.id) {
+
+            const logs = await ctx.guild!.fetchAuditLogs({ 
+                type: dsc.AuditLogEvent.MemberUpdate, 
+                limit: 5 
+            });
+
+            const entry = logs.entries.find(e => {
+                if (!e.target) return false;
+
+                if (e.target.id !== ctx.user.id) return false;
+
+                return e.changes?.some(c => 
+                    c.key === 'communication_disabled_until' && c.new
+                );
+            });
+
+            if (!entry?.executor) return;
+
+            const executor = entry.executor;
+
+            if (executor.id === ctx.client.user.id) {
                 output.log('Watchdog: Ignoring mute, given by eclairbot');
                 return;
             }
-            if (addAction(ctx.id, 'mute')) {
-                output.log(`Watchdog: About to downgrade role for ${ctx.user.username} [muting too many times per minute]`);
-                await downgradeRole(ctx);
+
+            if (addAction(executor.id, 'mute')) {
+                output.log(`Watchdog: About to downgrade role for ${executor.username} [muting too many times per minute]`);
+                await downgradeRole(await ctx.client.guilds.cache.first()!.members.fetch(executor.id));
             }
         },
     ],
