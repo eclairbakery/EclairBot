@@ -28,7 +28,7 @@ export const randmusicCmd: Command = {
         }
 
         return api.reply({
-            content: `Od <@${music.authorId}>: ${music.musicUrl}`,
+            content: `polecam zasugerowane przez <@${music.authorId}> ${music.musicUrl}`,
             allowedMentions: {
                 parse: [],
             },

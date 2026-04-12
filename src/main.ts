@@ -65,6 +65,7 @@ import { initStatusGenerator } from '@/util/generateStatusQuote.ts';
 import { initAskCmdModel, initWikiModel } from './features/init-ai-models.ts';
 import { askAction } from './features/actions/4fun/ask.ts';
 import { addVoiceExperience } from '@/bot/level.ts';
+import { addMusicAction } from '@/features/actions/4fun/addMusic.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -134,6 +135,7 @@ function setUpActions() {
         actionPing,
         warnGivenLogAction,
         onReceivedEmailAction,
+        addMusicAction
     );
     registerTemplateChannels(client);
     slashCommands.init();
