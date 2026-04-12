@@ -33,6 +33,7 @@ export const channelsCfg: Config['channels'] = {
         ei: '1485240944373792918',
     },
     other: {
+        music: '1471233436810477610',
         communityPolls: '1320035545543606282',
         desktopPorn: '1279888407421648967',
         minecraft: '1342793182265741394',

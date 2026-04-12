@@ -90,6 +90,7 @@ export interface Config {
             programming: dsc.Snowflake;
         };
         other: {
+            music: dsc.Snowflake;
             communityPolls: dsc.Snowflake;
             desktopPorn: dsc.Snowflake;
             minecraft: dsc.Snowflake;
