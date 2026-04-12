@@ -54,7 +54,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                 await reply.delete();
             }
 
-            if (msg.content.endsWith('ą')) {
+            if (msg.content.endsWith('ą') || msg.content.endsWith('ę')) {
                 const reply = await msg.reply(`no ej no przeczytałeś kanał opis? ${fmtEmoji(cfg.emojis.heartAttackEmoji)}`);
                 await sleep(1000);
                 await msg.delete();

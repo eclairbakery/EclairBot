@@ -16,6 +16,7 @@ export function registerMsgDeleteDscEvents(client: dsc.Client) {
                     value: msg.content?.slice(0, 1020) ?? '*brak treści*',
                 },
             ],
+            attachments: [ ...msg.attachments.values() ]
         });
     });
 }
