@@ -92,6 +92,12 @@ export class BotDatabase {
                 amount INTEGER DEFAULT 0,
                 PRIMARY KEY (user_id, offer_id)
             );
+
+            CREATE TABLE IF NOT EXISTS alternative_accounts (
+                primary_account TEXT NOT NULL REFERENCES users(user_id),
+                alternative_account TEXT NOT NULL REFERENCES users(user_id),
+                PRIMARY KEY (primary_account, alternative_account)
+            );
         `);
     }
 
@@ -126,6 +132,12 @@ export class BotDatabase {
         const rows = [...this.raw.queryEntries(sql, this.processParams(params) as QueryParameterSet)];
         return Promise.resolve(rows[0] as T | undefined);
     }
+    
+    // deno-lint-ignore no-explicit-any
+    selectOneSync<T = any>(sql: string, params: unknown[] = []): T | undefined {
+        const rows = [...this.raw.queryEntries(sql, this.processParams(params) as QueryParameterSet)];
+        return rows[0] as T | undefined;
+    }
 
     // deno-lint-ignore no-explicit-any
     selectMany<T = any>(sql: string, params: unknown[] = []): Promise<T[]> {
@@ -148,6 +160,9 @@ export class BotDatabase {
     }
 
     async userExists(userId: string): Promise<boolean> {
+        const alt_entry = await this.selectOne(`SELECT * FROM alternative_accounts WHERE alternative_account = ?`, [userId]);
+        if (alt_entry) userId = alt_entry.primary_account;
+
         const row = await this.selectOne(
             `SELECT user_id FROM users WHERE user_id = ?`,
             [userId],
@@ -156,6 +171,9 @@ export class BotDatabase {
     }
 
     async ensureUserExists(userId: string) {
+        const alt_entry = await this.selectOne(`SELECT * FROM alternative_accounts WHERE alternative_account = ?`, [userId]);
+        if (alt_entry) userId = alt_entry.primary_account;
+
         await this.runSql(
             `INSERT INTO users (user_id)
             VALUES (?)

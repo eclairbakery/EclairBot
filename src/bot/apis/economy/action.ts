@@ -188,6 +188,26 @@ export class EconomyExecutor {
         return [];
     }
 
+    private async getAllMembers(): Promise<dsc.GuildMember[]> {
+        // dirty but works partially
+        // todo ngl
+
+        if (!this.ctx.member) return [];
+    
+        const user = new User(this.ctx.member.id);
+    
+        const altUsers = await user.fetchAlternativeAccounts();
+    
+        const members = [this.ctx.member];
+    
+        for (const alt of altUsers) {
+            const member = await this.ctx.member.guild?.members.fetch(alt).catch(() => null);
+            if (member) members.push(member);
+        }
+    
+        return members;
+    }
+
     private hasRole(roleConfigId: string): boolean {
         if (!this.ctx.member) return false;
         const roleConfig = this.getRoleById(roleConfigId);
@@ -196,16 +216,24 @@ export class EconomyExecutor {
     }
 
     private async addRole(roleConfigId: string) {
-        if (!this.ctx.member) return;
         const roleConfig = this.getRoleById(roleConfigId);
         if (!roleConfig) return;
-        await this.ctx.member.roles.add(roleConfig.discordRoleId).catch(() => {});
-    }
+    
+        const members = await this.getAllMembers();
+    
+        for (const member of members) {
+            await member.roles.add(roleConfig.discordRoleId).catch(() => {});
+        }
+    } 
 
     private async remRole(roleConfigId: string) {
-        if (!this.ctx.member) return;
         const roleConfig = this.getRoleById(roleConfigId);
         if (!roleConfig) return;
-        await this.ctx.member.roles.remove(roleConfig.discordRoleId).catch(() => {});
-    }
+    
+        const members = await this.getAllMembers();
+    
+        for (const member of members) {
+            await member.roles.add(roleConfig.discordRoleId).catch(() => {});
+        }
+    }  
 }

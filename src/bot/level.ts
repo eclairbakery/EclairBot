@@ -54,35 +54,42 @@ export async function addLvlRole(
     const milestoneRoleId = milestones[findLowerClosestKey(milestones, newLevel)];
     if (!milestoneRoleId) return false;
 
-    let member: dsc.GuildMember;
-    try {
-        member = await guild.members.fetch(user);
-    } catch (err) {
-        output.warn(err);
-        return false;
-    }
+    let roleGiven = false;
 
-    if (member.roles.cache.has(milestoneRoleId)) {
-        return false;
-    }
+    for (const member_id of [ user, ...(await (new User(user)).fetchAlternativeAccounts()) ]) {
+        let member: dsc.GuildMember;
+        try {
+            member = await guild.members.fetch(member_id);
+        } catch (err) {
+            output.warn(err);
+            continue;
+        }
 
-    for (const roleId of lvlRoles) {
-        if (roleId !== milestoneRoleId && member.roles.cache.has(roleId)) {
-            try {
-                await member.roles.remove(roleId);
-            } catch (err) {
-                output.log(`Failed to remove role ${roleId}:`, err);
+        if (member.roles.cache.has(milestoneRoleId)) {
+            continue;
+        }
+
+        for (const roleId of lvlRoles) {
+            if (roleId !== milestoneRoleId && member.roles.cache.has(roleId)) {
+                try {
+                    await member.roles.remove(roleId);
+                } catch (err) {
+                    output.log(`Failed to remove role ${roleId}:`, err);
+                }
             }
+        }
+
+        try {
+            await member.roles.add(milestoneRoleId);
+            roleGiven = true;
+            continue;
+        } catch (err) {
+            output.warn(err);
+            continue;
         }
     }
 
-    try {
-        await member.roles.add(milestoneRoleId);
-        return true;
-    } catch (err) {
-        output.warn(err);
-        return false;
-    }
+    return roleGiven;
 }
 
 export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc.Message<boolean>>) {

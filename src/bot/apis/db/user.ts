@@ -34,8 +34,16 @@ export default class User {
     readonly id: string;
 
     constructor(userId: string) {
+        const alt_entry = db.selectOneSync(`SELECT * FROM alternative_accounts WHERE alternative_account = ?`, [userId]);
+        if (alt_entry) 
+            userId = alt_entry.primary_account; 
+
         this.id = userId;
     }
+
+    async fetchAlternativeAccounts(): Promise<string[]> {
+        return await db.selectMany(`SELECT * FROM alternative_accounts WHERE primary_account = ?`, [this.id]);
+    } 
 
     async ensureExists() {
         await db.ensureUserExists(this.id);

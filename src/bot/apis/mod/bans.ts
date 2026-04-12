@@ -3,6 +3,7 @@ import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.ts';
 import { sendLog } from '../log/send-log.ts';
 import { ReplyEmbed } from '../translations/reply-embed.ts';
+import User from '@/bot/apis/db/user.ts';
 
 export default async function ban(
     member: dsc.GuildMember,
@@ -18,14 +19,30 @@ export default async function ban(
             ],
         });
     } catch {}
-    const bannedMember = await member.ban({ reason: data.reason });
-    await sendLog(
-        {
-            color: PredefinedColors.DarkGrey,
-            title: 'Zbanowano członka',
-            description: `Użytkownik <@${member.id}> (${member.user.username}) został zbanowany z serwera przez <@${data.mod}>!`,
-            fields: [{ name: 'Powód', value: data.reason }],
-        },
-    );
-    return bannedMember;
+    const us = new User(member.id);
+    const members = [ us.id, ...(await us.fetchAlternativeAccounts()) ];
+    
+    let firstBannerMember: dsc.GuildMember;
+
+    for (const mem_id of members) {
+        let smember: dsc.GuildMember;
+        try {
+            smember = await member.guild.members.fetch(mem_id);
+        } catch {
+            continue;
+        }
+
+        const bannedMember = await smember.ban({ reason: data.reason });
+        await sendLog(
+            {
+                color: PredefinedColors.DarkGrey,
+                title: 'Zbanowano członka',
+                description: `Użytkownik <@${smember.id}> (${smember.user.username}) został zbanowany z serwera przez <@${data.mod}>!`,
+                fields: [{ name: 'Powód', value: data.reason }],
+            },
+        );
+        firstBannerMember ??= bannedMember;
+    }
+
+    return firstBannerMember!;
 }
