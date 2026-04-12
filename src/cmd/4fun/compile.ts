@@ -71,7 +71,7 @@ export const compileCmd: Command = {
             });
         }
 
-        const footerText = `${info.lang} | ${info.displayName} ${info.version}`;
+        const footerText = `${info.lang} | ${info.displayName} ${info.version} | ${info.backend}`;
         msg.edit({
             embeds: [
                 api.log.getInfoEmbed(

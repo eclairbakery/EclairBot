@@ -46,6 +46,7 @@ export class WandboxCompilerDriver implements CompilerDriver {
                 lang: 'unknown',
                 displayName: this.compiler,
                 version: 'unknown',
+                backend: 'Wandbox',
             };
         }
 
@@ -53,6 +54,7 @@ export class WandboxCompilerDriver implements CompilerDriver {
             lang: compiler.language,
             displayName: compiler['display-name'] ?? compiler.name,
             version: compiler.version,
+            backend: 'Wandbox',
         };
     }
 

@@ -17,6 +17,7 @@ export interface CompilerInfo {
     lang: string;
     displayName: string;
     version: string;
+    backend: string;
 }
 
 export interface CompilerDriver {
