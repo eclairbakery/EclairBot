@@ -56,7 +56,7 @@ export class ZapCompilerDriver implements CompilerDriver {
         return {
             lang: 'zap',
             displayName: 'Zap',
-            version: 'Zap v0.1.1', // TODO: don't hard code version
+            version: 'v0.1.1', // TODO: don't hard code version
             backend: 'Zap Compiler Service',
         };
     }
