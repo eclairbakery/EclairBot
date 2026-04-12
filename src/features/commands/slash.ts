@@ -179,11 +179,18 @@ client.on('interactionCreate', async (int: Interaction) => {
     }
 
     try {
-        const argsRaw: ParsedRawArgument[] = command.expectedArgs.map((arg) => ({
-            type: 'text',
-            precedingWhitespace: '',
-            value: int.options.get(arg.name)?.value?.toString() ?? '',
-        }));
+        const argsRaw: ParsedRawArgument[] = [];
+        for (const arg of command.expectedArgs) {
+            const val = int.options.get(arg.name)?.value;
+            if (val) {
+                argsRaw.push({
+                    type: 'text',
+                    precedingWhitespace: '',
+                    value: val.toString(),
+                });
+            }
+        }
+
         const api = await makeCommandApi(command, argsRaw, {
             interaction: int,
             cmd: command,
@@ -219,7 +226,14 @@ export async function init() {
                 .setName(cmd.name)
                 .setDescription(makeSlashCommandDesc(cmd));
 
+            const sortedArgs = [];
             for (const arg of cmd.expectedArgs) {
+                if (!arg.optional) sortedArgs.push(arg);
+            }
+            for (const arg of cmd.expectedArgs)
+                if (arg.optional) sortedArgs.push(arg);
+
+            for (const arg of sortedArgs) {
                 const type = fixType(arg.type);
 
                 switch (type.base) {
