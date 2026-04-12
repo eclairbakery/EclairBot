@@ -1,12 +1,18 @@
 import { DB, QueryParameterSet } from 'sqlite';
 
-import type { Rep, RepRaw, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
-import type { Balance, Cooldown, Cooldowns } from './db-defs.ts';
-import { repFromRaw, warnFromRaw } from './db-defs.ts';
+import type {
+    UserDataRaw,
+    Rep, RepRaw,
+    Warn, WarnRaw,
+    MusicEntry, MusicEntryRaw,
+} from './db-defs.ts';
 
-export type { Rep, RepRaw, UserDataRaw, Warn, WarnRaw };
+import type { Balance, Cooldown, Cooldowns } from './db-defs.ts';
+import { musicFromRaw, repFromRaw, warnFromRaw } from './db-defs.ts';
+
+export type { MusicEntry, MusicEntryRaw, Rep, RepRaw, UserDataRaw, Warn, WarnRaw };
 export type { Balance, Cooldown, Cooldowns };
-export { repFromRaw, warnFromRaw };
+export { musicFromRaw, repFromRaw, warnFromRaw };
 
 import User from './user.ts';
 
@@ -97,6 +103,11 @@ export class BotDatabase {
                 primary_account TEXT NOT NULL REFERENCES users(user_id),
                 alternative_account TEXT NOT NULL REFERENCES users(user_id),
                 PRIMARY KEY (primary_account, alternative_account)
+            );
+
+            CREATE TABLE IF NOT EXISTS music_database (
+                author_id TEXT NOT NULL REFERENCES users(user_id),
+                music_url TEXT NOT NULL
             );
         `);
     }
@@ -252,7 +263,62 @@ export class BotDatabase {
         },
     };
 
+    readonly music = {
+        addEntry: async (authorId: string, musicUrl: string): Promise<void> => {
+            await this.ensureUserExists(authorId);
+            await this.runSql(
+                `INSERT INTO music_database (author_id, music_url) VALUES (?, ?)`,
+                [authorId, musicUrl],
+            );
+        },
+
+        getRandomEntry: async (): Promise<MusicEntry | undefined> => {
+            const row = await this.selectOne<MusicEntryRaw>(
+                `SELECT * FROM music_database ORDER BY RANDOM() LIMIT 1`,
+            );
+            return row ? musicFromRaw(row) : undefined;
+        },
+
+        getEntriesByUser: async (userId: string): Promise<MusicEntry[]> => {
+            const rows = await this.selectMany<MusicEntryRaw>(
+                `SELECT * FROM music_database WHERE author_id = ?`,
+                [userId],
+            );
+            return rows.map(musicFromRaw);
+        },
+
+        batchAddEntries: async (entries: MusicEntry[]): Promise<void> => {
+            if (entries.length === 0) return;
+
+            const userIds = [...new Set(entries.map((e) => e.authorId))];
+            for (const userId of userIds) {
+                await this.ensureUserExists(userId);
+            }
+
+            await this.transaction(async () => {
+                for (const entry of entries) {
+                    await this.runSql(
+                        `INSERT INTO music_database (author_id, music_url) VALUES (?, ?)`,
+                        [entry.authorId, entry.musicUrl],
+                    );
+                }
+                return Promise.resolve();
+            });
+        },
+        clear: async (userId?: string): Promise<void> => {
+            await this.reset.music(userId);
+        },
+    };
+
     readonly reset = {
+        music: async (userId?: string): Promise<void> => {
+            if (userId) {
+                await this.runSql(`DELETE FROM music_database WHERE author_id = ?`, [userId]);
+            } else {
+                await this.runSql(`DELETE FROM music_database`);
+            }
+        },
+
         economy: async (userId?: string): Promise<void> => {
             if (userId) {
                 await this.runSql(`UPDATE economy SET wallet_money = 0, bank_money = 0 WHERE user_id = ?`, [userId]);
@@ -313,6 +379,8 @@ export class BotDatabase {
             await this.reset.cooldowns(userId);
             await this.reset.reputation(userId);
             await this.reset.warns(userId);
+            // i think it's better not to do this for now
+            //await this.reset.music(userId);
         },
     };
 }

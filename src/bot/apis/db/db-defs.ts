@@ -72,6 +72,23 @@ export function repFromRaw(raw: RepRaw): Rep {
     };
 }
 
+export interface MusicEntryRaw {
+    author_id: string;
+    music_url: string;
+}
+
+export interface MusicEntry {
+    authorId: string;
+    musicUrl: string;
+}
+
+export function musicFromRaw(raw: MusicEntryRaw): MusicEntry {
+    return {
+        authorId: raw.author_id,
+        musicUrl: raw.music_url,
+    };
+}
+
 export interface Balance {
     wallet: Money;
     bank: Money;
