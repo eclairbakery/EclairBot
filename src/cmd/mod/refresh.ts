@@ -3,7 +3,10 @@ import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 import { addLvlRole, xpToLevel } from '@/bot/level.ts';
 import actionsManager, { OnForceReloadTemplates } from '@/events/actions/templatesEvents.ts';
-import { CommandAPI } from '../../bot/apis/commands/api.ts';
+import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { scanChannelForMusic } from '@/features/scan-for-music.ts';
+import { cfg } from '@/bot/cfg.ts';
+import { db } from '@/bot/apis/db/bot-db.ts';
 
 export const refreshCmd: Command = {
     name: 'refresh',
@@ -56,6 +59,22 @@ export const refreshCmd: Command = {
                 await addLvlRole(api.guild, xpToLevel(userLvlObj.xp), userLvlObj.user_id);
             }
             reloadedThings.push('- role poziomów');
+        }
+
+        if (!flags.includes('--no-music-db')) {
+            try {
+                const channel = await api.guild.channels.fetch(cfg.channels.other.music);
+                if (channel?.isTextBased()) {
+                    const scanResult = await scanChannelForMusic(channel);
+                    db.music.clear();
+                    db.music.batchAddEntries(scanResult);
+                    reloadedThings.push('- server music database');
+                } else {
+                    failedThingsToReload.push('- server music database');
+                }
+            } catch {
+                failedThingsToReload.push('- server music database');
+            }
         }
 
         // reply
