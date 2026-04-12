@@ -4,6 +4,7 @@ import * as dsc from 'discord.js';
 
 export function registerMsgDeleteDscEvents(client: dsc.Client) {
     client.on('messageDelete', async (msg) => {
+        if (msg.partial) return;
         if (!msg.author?.id) return;
 
         sendLog({
