@@ -1,5 +1,5 @@
 import { cfg } from '@/bot/cfg.ts';
-import { Command } from '@/bot/command.ts';
+import { Command, CommandAPI } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 import { client } from '@/client.ts';
@@ -8,7 +8,16 @@ import { db } from '@/bot/apis/db/bot-db.ts';
 
 import JSON5 from 'json5';
 
-type AsynchronicFunction = () => PromiseLike<unknown>;
+type AsyncFunction = () => PromiseLike<unknown>;
+const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor satisfies AsyncFunction;
+
+async function doEval(api: CommandAPI, src: string): Promise<unknown> {
+    const func = new AsyncFunction('api', 'db', 'client', 'debug', 'output', 'cfg', 'SRC_ROOT', 'i', src);
+    const doImport = async (path: string) => import('../../' + path);
+
+    const result = await func(api, db, client, output, output, cfg, '../..', doImport);
+    return result;
+}
 
 export const evalCmd: Command = {
     name: 'eval',
@@ -30,8 +39,6 @@ export const evalCmd: Command = {
     permissions: CommandPermissions.devOnly(),
 
     async execute(api) {
-        const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor satisfies AsynchronicFunction;
-
         const code = api.getTypedArg('code', 'code')?.value;
         if (code.lang && (code.lang != 'js' && code.lang != 'javascript')) {
             if (code.lang == 'ts' || code.lang == 'typescript') {
@@ -47,18 +54,25 @@ export const evalCmd: Command = {
         if (code.src.includes('await import') && !code.src.includes('SRC_ROOT')) {
             warns.push('Proszę, używaj constantu SRC_ROOT jak coś importujesz.');
         }
-        if (!code.src.includes('return')) {
-            warns.push('Nie używasz return. Tu sie ewaluuje funkcja a nie.');
-        }
-        for (const warn of warns) {
-            await api.log.replyTip(api, 'Są ostrzeżenia dotyczące Twojego kodu!', warn);
+        //if (!code.src.includes('return')) {
+        //    warns.push('Nie używasz return. Tu sie ewaluuje funkcja a nie.');
+        //}
+        
+        if (warns.length != 0) {
+            const warnsString = warns.map(w => `- ${w}`).join('\n');
+            await api.log.replyTip(api, 'Są ostrzeżenia dotyczące Twojego kodu!', warnsString);
         }
 
         try {
-            const func = new AsyncFunction('api', 'db', 'client', 'debug', 'output', 'cfg', 'SRC_ROOT', code.src);
-            const result = await func(api, db, client, output, output, cfg, '../..');
-            const sanitized = JSON5.stringify(result, null, 4)?.replace('```', '\`\`\`') ?? String(result);
-            return api.log.replySuccess(api, 'Wynik twojej super komendy!', `\n\`\`\`js\n${sanitized}\`\`\``);
+            const result = await doEval(api, code.src);
+            if (result) {
+                const sanitized = JSON5.stringify(result, null, 4)?.replace('```', '\`\`\`') ?? String(result);
+                if (sanitized.length >= 4096 - 10) {
+                    return api.log.replyWarn(api, 'Za długi output', 'Tak w skrócie, to twój kod wyprodukował za długi output jak na discorda.');
+                }
+                return api.log.replySuccess(api, 'Wynik twojej super komendy!', `\n\`\`\`js\n${sanitized}\`\`\``);
+            }
+            return api.log.replySuccess(api, 'Wykonano', 'W skrócie to twój kod się wykonał, ale nie zwrócił żadnego wyniku (użyj return)');
         } catch (err) {
             return api.log.replyError(api, 'Masz problem', `\n\`\`\`${err}\`\`\``);
         }
