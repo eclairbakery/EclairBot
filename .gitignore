@@ -17,3 +17,4 @@ Dockerfile
 .dockerignore
 deno.lock
 eclairbot
+*-player-script.js

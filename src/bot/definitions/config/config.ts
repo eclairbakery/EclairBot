@@ -95,6 +95,7 @@ export interface Config {
             desktopPorn: dsc.Snowflake;
             minecraft: dsc.Snowflake;
             economy: dsc.Snowflake;
+            radioChannel: dsc.Snowflake;
         };
         forfun: {
             counting: dsc.Snowflake;

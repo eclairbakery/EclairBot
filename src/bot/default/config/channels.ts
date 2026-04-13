@@ -38,6 +38,7 @@ export const channelsCfg: Config['channels'] = {
         desktopPorn: '1279888407421648967',
         minecraft: '1342793182265741394',
         economy: '1235561759448895590',
+        radioChannel: '1492922593878216897'
     },
     forfun: {
         counting: '1235566520310956184',

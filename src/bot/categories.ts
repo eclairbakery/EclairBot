@@ -31,6 +31,8 @@ export class Category {
                 return 'forfun';
             case Category.Email:
                 return 'email';
+            case Category.Music:
+                return 'music';
         }
     }
 
@@ -69,6 +71,11 @@ export class Category {
             case 'e-mail':
             case 'mail':
                 return Category.Email;
+
+            case 'music':
+            case 'muzyka':
+            case 'radio':
+                return Category.Music;
 
             default:
                 return null;
@@ -124,5 +131,12 @@ export class Category {
         'Możesz wysyłać e-maile.',
         "Kontaktuj się z innymi za pomocą przełomowej technologii XXI wieku - e-mail'i!",
         PredefinedColors.Aqua,
+    );
+    static readonly Music = new Category(
+        '🔊',
+        "Muzyczne",
+        'Steruj radiem tego serwera.',
+        "Wysyłaj do radia piekarnii zawaansowane komendy i nim steruj.",
+        PredefinedColors.Pink,
     );
 }
