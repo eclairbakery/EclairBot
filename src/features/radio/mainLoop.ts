@@ -41,6 +41,8 @@ export function getAudioUrl(url: string): Promise<string> {
         }
 
         const args = [
+            "--cookies",
+            "cookies.txt",
             "-f",
             "bestaudio",
             "-g",
