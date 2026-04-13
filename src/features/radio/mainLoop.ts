@@ -15,6 +15,7 @@ import { spawn } from "node:child_process";
 import { db } from '@/bot/apis/db/bot-db.ts';
 import { TextChannel } from 'discord.js';
 import { cfg } from '@/bot/cfg.ts';
+import { output } from '@/bot/logging.ts';
 
 let connection: VoiceConnection | null = null;
 let player: AudioPlayer | null = null;
@@ -143,7 +144,8 @@ export async function playNext() {
 
         isPlaying = true;
 
-    } catch {
+    } catch (e) {
+        output.err(e instanceof Error ? (e.stack ?? e.message) : String(e));
         isPlaying = false;
         setTimeout(playNext, 1500);
     }
@@ -162,5 +164,7 @@ export async function startRadio() {
 
         if (!isPlaying) playNext();
 
-    } catch {}
+    } catch (e) {
+        output.err(e instanceof Error ? (e.stack ?? e.message) : String(e));
+    }
 }
