@@ -137,7 +137,7 @@ export async function playNext() {
 
             player.on("error", () => {
                 isPlaying = false;
-                setTimeout(playNext, 1000);
+                setTimeout(playNext, 10000);
             });
         }
 
@@ -147,9 +147,11 @@ export async function playNext() {
         isPlaying = true;
 
     } catch (e) {
-        output.err(e instanceof Error ? (e.stack ?? e.message) : String(e));
+        const reason = e instanceof Error ? (e.stack ?? e.message) : String(e);
+        output.err(reason);
+        if (reason.includes('Sign in')) return;
         isPlaying = false;
-        setTimeout(playNext, 1500);
+        setTimeout(playNext, 10000);
     }
 }
 
