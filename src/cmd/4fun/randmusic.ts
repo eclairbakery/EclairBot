@@ -9,7 +9,7 @@ export const randmusicCmd: Command = {
         main: 'Odkryj losową muzykę z naszej serwerowej bazy danych!',
         short: 'Dostań losowy utwór muzyczny',
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.Spammy,
 
     expectedArgs: [],
 
