@@ -30,8 +30,8 @@ export function levelToXp(level: number, levelDivider: number = cfg.features.lev
 
 export const lvlRoles = Object.values(cfg.features.leveling.milestoneRoles);
 
-function getMention(user: dsc.GuildMember, ping: boolean = cfg.features.leveling.shallPingWhenNewLevel) {
-    return ping ? `<@${user.user.id}>` : `**${user.displayName.replace('**', '\*\*')}**`;
+function getMention(user: dsc.GuildMember) {
+    return `<@${user.user.id}>`;
 }
 
 export function mkLvlProgressBar(xp: number, levelDivider: number, totalLength: number = 10): string {
@@ -124,7 +124,7 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
 
         let content = `${getMention(msg.member!)} wbił poziom ${newLevel}! Wow co za osiągnięcie!`;
         if (gotNewRole) content += 'I btw nową rolę zdobyłeś!';
-        channelLvl.send(content);
+        channelLvl.send(cfg.features.leveling.shallPingWhenNewLevel ?  content : {content, allowedMentions: {parse: []}});
     }
 }
 
@@ -182,7 +182,9 @@ const updateXpAction: Action<XpEventCtx> = {
 
             const channelLvl = await client.channels.fetch(cfg.features.leveling.levelChannel);
             if (!channelLvl || !channelLvl.isSendable()) return;
-            return channelLvl.send(content);
+            return channelLvl.send(
+                cfg.features.leveling.shallPingWhenNewLevel ?  content : {content, allowedMentions: {parse: []}}
+            );
         },
     ],
 };
