@@ -61,7 +61,7 @@ export async function addLvlRole(
         try {
             member = await guild.members.fetch(member_id);
             if (member.partial)
-                member.fetch(true);
+                await member.fetch(true);
         } catch (err) {
             output.warn(err);
             continue;
