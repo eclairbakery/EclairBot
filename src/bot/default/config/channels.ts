@@ -16,8 +16,7 @@ export const channelsCfg: Config['channels'] = {
         hallOfShame: '1290327060970995812',
         modCommands: '1392787737962090596',
         info: '1390389554623549641',
-        assets: '1404396223934369844',
-        eclairBotAlerts: '1431322991022833785',
+        assets: '1404396223934369844'
     },
     important: {
         lobby: '1235560269871190056',

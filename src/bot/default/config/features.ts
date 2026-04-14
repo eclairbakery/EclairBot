@@ -112,12 +112,7 @@ export const featuresConfig: Config['features'] = {
     },
     translations: [],
     watchdog: {
-        trustNewMembers: false,
         kickNewMembers: false,
-        minimumAccountAge: 3,
-        massJoinWindow: 10 * 60 * 1000,
-        massJoinThreshold: 5,
-        similarityThreshold: 3,
         allowNewBots: false,
         shallAutoDegrade: true,
         notForgiveAdministration: false,

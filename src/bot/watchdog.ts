@@ -1,50 +1,18 @@
 import * as dsc from 'discord.js';
 
 import { cfg } from './cfg.ts';
-import { PredefinedColors } from '@/util/color.ts';
 import { client } from '@/client.ts';
 import { output } from '@/bot/logging.ts';
 import { Action, PredefinedActionEventTypes, UserEventCtx } from '@/features/actions/index.ts';
 import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.ts';
-import { ReplyEmbed } from './apis/translations/reply-embed.ts';
-import { levenshtein } from '@/util/math/levenshtein.ts';
 
-const recentJoins: { id: string; joinedAt: number; username: string }[] = [];
-
-async function logAlarming(description: string, fatal: boolean, mem: dsc.GuildMember, score: number) {
-    const channel = await client.channels.fetch(cfg.channels.mod.eclairBotAlerts);
-    if (!channel?.isSendable()) return;
-    channel.send({
-        embeds: [
-            new ReplyEmbed()
-                .setAuthor({
-                    name: 'EclairBOT',
-                })
-                .setColor(fatal ? PredefinedColors.Red : PredefinedColors.Yellow)
-                .setTitle(
-                    '❌ ' + (fatal ? 'Podejmij działania na temat użytkownika <user>!'.replaceAll('<user>', mem.user.username) : `<user> może być podejrzany.`.replaceAll('<user>', mem.user.username)),
-                )
-                .setDescription(
-                    `Nastąpiły te problemy z tym użytkownikiem:\n\n${description}${'\n\nWyliczyłem i ma <score> punktów reputacji.'.replaceAll('<score>', score.toString())} A! Co prawda nie spingowałem, ale sorki za mały flood.`,
-                ),
-        ],
-    });
-}
-
-export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'kicked'> {
-    const defaultTrustScore = 5;
-    let trustScore = defaultTrustScore;
-
-    let fatal = false;
-    const issues: string[] = [];
-
-    if (cfg.features.watchdog.trustNewMembers) return true;
+export async function watchNewMember(mem: dsc.GuildMember): Promise<'kicked' | void> {
     if (cfg.features.watchdog.kickNewMembers) {
         await mem.kick();
         return 'kicked';
     }
     if (!cfg.features.watchdog.allowNewBots && mem.user.bot) {
-        const notifyChan = await client.channels.fetch(cfg.channels.mod.eclairBotAlerts);
+        const notifyChan = await client.channels.fetch(cfg.channels.general.general);
         if (notifyChan && notifyChan.isSendable()) {
             await notifyChan.send('dodawanie botów jest wyłączone w konfiguracji');
             await notifyChan.send('aby dodać innego bota, włącz cfg.features.watchdog.allowNewBots');
@@ -55,66 +23,6 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<boolean | 'k
         await mem.kick('zasada cfg.features.watchdog.allowNewBots nie pozwala na dodawanie nowych botów');
         return 'kicked';
     }
-
-    const created = mem.user.createdAt;
-    const now = new Date();
-    const accountAge = (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
-    if (accountAge < 30) {
-        issues.push('Konto jest dziwnie młode (młodsze niż miesiąc).');
-        trustScore -= 2;
-    }
-    if (accountAge < 7) {
-        issues.push('Konto jest naprawdę świeże (młodsze niż tydzień).');
-        trustScore -= 5;
-    }
-
-    if (!mem.user.avatar) {
-        trustScore -= 1;
-        issues.push('Konto nie ma avatara (ciekawe).');
-    }
-
-    const susWords = ['free nitro', 'discord.gg', 'http://', 'https://', '.ru', '▒', '░'];
-    if (susWords.some((w) => (mem.user.username.toLowerCase().includes(w)) || mem.user.displayName.toLowerCase().includes(w))) {
-        trustScore -= 1;
-        issues.push('Ma jakiś nick z adresem url, losowymi znakami unicode, invite do serwera, reklamą na Discord Nitro i/lub ruską domeną.');
-    }
-
-    if (mem.user.id == '572906387382861835') {
-        trustScore -= 3;
-        issues.push('Nikt go tu nie chce, wywalać StartIT w tej chwili!');
-    }
-
-    recentJoins.push({ id: mem.id, joinedAt: Date.now(), username: mem.user.username });
-    const windowStart = Date.now() - cfg.features.watchdog.massJoinWindow;
-    const recent = recentJoins.filter((e) => e.joinedAt > windowStart);
-    if (recent.length >= cfg.features.watchdog.massJoinThreshold) {
-        issues.push(`Wykryto masowe dołączenia nowych członków - <count> w bliskim do siebie czasie.`.replaceAll('<count>', recent.length.toString()));
-        trustScore -= 3;
-    }
-
-    for (const prev of recent.filter((e) => e.id !== mem.id)) {
-        if (levenshtein(prev.username.toLowerCase(), mem.user.username.toLowerCase()) <= cfg.features.watchdog.similarityThreshold) {
-            issues.push(`Nick podobny do innego niedawnego użytkownika: <user>`.replaceAll('<user>', prev.username));
-            trustScore -= 2;
-        }
-    }
-
-    if (defaultTrustScore > trustScore) {
-        if (trustScore <= 0) {
-            fatal = true;
-        }
-        issues.push('Ma trust score mniejszy od domyślnego.');
-
-        let issuesString = '';
-        issues.forEach((issue) => {
-            issuesString += `- ${issue}\n`;
-        });
-        issuesString = issuesString.trim();
-        await logAlarming(issuesString, fatal, mem, trustScore);
-        return false;
-    }
-
-    return true;
 }
 
 const roleHierarchy: dsc.Snowflake[] = [cfg.hierarchy.administration.headAdmin, cfg.hierarchy.administration.admin, cfg.hierarchy.administration.headMod, cfg.hierarchy.administration.mod, cfg.hierarchy.administration.helper];

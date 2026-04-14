@@ -59,14 +59,8 @@ export interface ConfigFeatures {
     };
     translations: ConfigTranslation[];
     watchdog: {
-        trustNewMembers: boolean;
         kickNewMembers: boolean;
         allowNewBots: boolean;
-        minimumAccountAge: number;
-
-        massJoinWindow: number;
-        massJoinThreshold: number;
-        similarityThreshold: number;
 
         shallAutoDegrade: boolean;
         notForgiveAdministration: boolean;

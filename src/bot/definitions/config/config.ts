@@ -71,7 +71,6 @@ export interface Config {
             modCommands: dsc.Snowflake;
             info: dsc.Snowflake;
             assets: dsc.Snowflake;
-            eclairBotAlerts: dsc.Snowflake;
         };
         important: {
             lobby: dsc.Snowflake;
