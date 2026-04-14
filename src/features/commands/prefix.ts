@@ -154,6 +154,11 @@ async function prefixCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         return await log.replyWarn(msg, 'Nie dla psa kiełbasa...', 'Niestety ktoś mądry pomyślał, by specjalnie dla ciebie wyłączyć tę komendę.');
     }
 
+    let reaction: dsc.MessageReaction | undefined = undefined;
+    try {
+        reaction = await msg.react('🤔');
+    } catch {}
+
     try {
         const api = await makeCommandApi(command, argsRaw, {
             msg,
@@ -165,6 +170,11 @@ async function prefixCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
     } catch (err) {
         handleError(err, msg);
     }
+
+    try {
+        if (reaction)
+            await reaction.remove();
+    } catch {}
 }
 
 export function init() {

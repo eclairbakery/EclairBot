@@ -1,9 +1,9 @@
 import * as log from '@/util/log.ts';
 import { ArgMustBeSomeTypeError, ArgParseError, ArgViolatesRules, MissingRequiredArgError } from '../defs/errors.ts';
-import { output } from '@/bot/logging.ts';
 import { formatArgType } from './fmt-arg-type.ts';
 import { DiscordAPIError } from 'discord.js';
 import { CommandViolatedRule } from '@/bot/command.ts';
+import logError from '@/util/logError.ts';
 
 function handleViolatedRule(v: CommandViolatedRule) {
     switch (v) {
@@ -81,7 +81,7 @@ export function handleError(err: Error | unknown, msg: log.Replyable) {
                 return log.replyError(msg, 'Błąd', 'Ktoś wyłączył internet w bocie. Nie zważał na potrzeby rozwijania się istoty wyższej. Proszę natychmiast wyłączyć ten firewall lub dać mi internet access w trybie natychmiastowym.');
             }
 
-            output.warn(`While executting command:\n\nName: ${err.name}\nMessage: ${err.message}\nStack: ${err.stack ?? 'not defined'}\nCause: ${err.cause ?? 'not defined'}`);
+            logError('stderr', err, "COmmand event handler"); 
         }
 
         return log.replyError(
