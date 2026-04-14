@@ -63,6 +63,7 @@ import { emailBlacklistCmd } from './email/email-blacklist.ts';
 import { askCmd } from './4fun/ask.ts';
 import { searchCmd } from '@/cmd/general/search.ts';
 import { addAltAccountCommand } from '@/cmd/general/add-alt.ts';
+import { watchTogetherCommand } from '@/cmd/4fun/watch-together.ts';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -75,7 +76,8 @@ export const commands: Map<Category, Command[]> = new Map([
             pfpCmd,
             wikiCmd,
             searchCmd,
-            addAltAccountCommand
+            addAltAccountCommand,
+            watchTogetherCommand
         ],
     ],
     [
