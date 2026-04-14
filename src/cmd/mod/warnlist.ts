@@ -7,7 +7,7 @@ import { PredefinedColors } from '@/util/color.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { client as cl } from '../../client.ts';
 
-export const warnlistCmd: Command = {
+const warnlistCmd: Command = {
     name: 'warnlist',
     aliases: ['warn-list', 'warnlista'],
     description: {
@@ -132,3 +132,5 @@ export const warnlistCmd: Command = {
         });
     },
 };
+
+export default warnlistCmd;

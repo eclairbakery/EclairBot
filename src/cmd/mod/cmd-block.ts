@@ -16,7 +16,7 @@ function removeElement(arr: dsc.Snowflake[], target: dsc.Snowflake): dsc.Snowfla
     return result;
 }
 
-export const cmdBlockCmd: Command = {
+const cmdBlockCmd: Command = {
     name: 'cmd-block',
     description: {
         main: 'Zablokuj komuś możliwość używania danej komendy.',
@@ -134,3 +134,5 @@ export const cmdBlockCmd: Command = {
         api.log.replySuccess(api, 'Udało się!', `**${opText}** dostęp do komendy **${cmdName}** dla podanego celu!`);
     },
 };
+
+export default cmdBlockCmd;

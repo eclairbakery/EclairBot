@@ -10,7 +10,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 const cmdCfg = cfg.commands.configuration.kick;
 
-export const kickCmd: Command = {
+const kickCmd: Command = {
     name: 'kick',
     aliases: cmdCfg.aliases,
     description: {
@@ -85,3 +85,5 @@ export const kickCmd: Command = {
         }
     },
 };
+
+export default kickCmd;

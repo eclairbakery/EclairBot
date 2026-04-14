@@ -7,7 +7,7 @@ import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { getLastRepGivenByUser, getUserReputationProportion } from '@/bot/apis/rep/rep.ts';
 import { mkDualProgressBar } from '@/util/progressbar.ts';
 
-export const subRepCmd: Command = {
+const subRepCmd: Command = {
     name: 'dislike',
     aliases: ['-rep', 'subrep', 'sub-rep', 'repsub', 'rep-sub'],
     description: {
@@ -86,3 +86,5 @@ export const subRepCmd: Command = {
         }
     },
 };
+
+export default subRepCmd;

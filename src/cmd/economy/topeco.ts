@@ -11,7 +11,7 @@ const ecoRoles = [
     '1235548306550161451',
 ];
 
-export const topecoCmd: Command = {
+const topecoCmd: Command = {
     name: 'topeco',
     aliases: ['topmoney'],
     description: {
@@ -69,3 +69,5 @@ export const topecoCmd: Command = {
         }
     },
 };
+
+export default topecoCmd;

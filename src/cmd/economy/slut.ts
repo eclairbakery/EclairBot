@@ -69,7 +69,7 @@ const SlutFailMessages: MessageCallback[] = [
     (amount) => `Zgłosiłeś się do dorywczej roboty, ale musiałeś kupić narzędzia za **${amount.format()}** i pracy i tak nie było.`,
 ];
 
-export const slutCmd: Command = {
+const slutCmd: Command = {
     name: 'slut',
     aliases: [],
     description: {
@@ -137,3 +137,5 @@ export const slutCmd: Command = {
         }
     },
 };
+
+export default slutCmd;

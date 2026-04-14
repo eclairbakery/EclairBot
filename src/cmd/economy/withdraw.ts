@@ -2,7 +2,7 @@ import { Command, CommandAPI } from '@/bot/command.ts';
 import { output } from '@/bot/logging.ts';
 import { CommandFlags } from '../../bot/apis/commands/misc.ts';
 
-export const withdrawCmd: Command = {
+const withdrawCmd: Command = {
     name: 'withdraw',
     aliases: ['with', 'wd'],
     description: {
@@ -55,3 +55,5 @@ export const withdrawCmd: Command = {
         }
     },
 };
+
+export default withdrawCmd;

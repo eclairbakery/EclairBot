@@ -2,7 +2,7 @@ import { Command, CommandAPI } from '@/bot/command.ts';
 import { output } from '@/bot/logging.ts';
 import { CommandFlags } from '../../bot/apis/commands/misc.ts';
 
-export const depositCmd: Command = {
+const depositCmd: Command = {
     name: 'deposit',
     aliases: ['dep'],
     description: {
@@ -55,3 +55,5 @@ export const depositCmd: Command = {
         }
     },
 };
+
+export default depositCmd;

@@ -59,7 +59,7 @@ function buildCategoryEmbed(category: ConfigEconomyShopCategory, offers: ConfigE
     return embed;
 }
 
-export const shopCmd: Command = {
+const shopCmd: Command = {
     name: 'shop',
     aliases: [],
     description: {
@@ -176,3 +176,5 @@ export const shopCmd: Command = {
         await api.reply({ embeds: allEmbeds });
     },
 };
+
+export default shopCmd;

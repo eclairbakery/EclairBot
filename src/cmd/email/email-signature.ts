@@ -2,7 +2,7 @@ import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 
-export const emailSignatureCmd: Command = {
+const emailSignatureCmd: Command = {
     name: 'email-set-signature',
     aliases: [
         'email-signature',
@@ -36,3 +36,5 @@ export const emailSignatureCmd: Command = {
         return api.log.replySuccess(api, 'Gotowe!', 'Ustawiłem twój podpis w e-mailach.');
     },
 };
+
+export default emailSignatureCmd;

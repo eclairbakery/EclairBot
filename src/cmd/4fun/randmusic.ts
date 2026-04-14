@@ -2,7 +2,7 @@ import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { db } from '../../bot/apis/db/bot-db.ts';
 
-export const randmusicCmd: Command = {
+const randmusicCmd: Command = {
     name: 'randmusic',
     aliases: [],
     description: {
@@ -35,3 +35,5 @@ export const randmusicCmd: Command = {
         });
     }
 };
+
+export default randmusicCmd;

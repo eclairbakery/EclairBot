@@ -69,7 +69,7 @@ const WorkMessages: MessageCallback[] = [
     (amount) => `Przespałeś cały dzień za biurkiem ale szef i tak cię pochwalił i zarobiłeś **${amount.format()}**. Chyba nie możesz narzekać.`,
 ];
 
-export const workCmd: Command = {
+const workCmd: Command = {
     name: 'work',
     aliases: [],
     description: {
@@ -123,3 +123,5 @@ export const workCmd: Command = {
         }
     },
 };
+
+export default workCmd;

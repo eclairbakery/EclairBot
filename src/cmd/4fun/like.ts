@@ -7,7 +7,7 @@ import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { getLastRepGivenByUser, getUserReputationProportion } from '@/bot/apis/rep/rep.ts';
 import { mkDualProgressBar } from '@/util/progressbar.ts';
 
-export const plusRepCmd: Command = {
+const plusRepCmd: Command = {
     name: 'like',
     aliases: ['+rep', 'addrep', 'add-rep', 'repadd', 'rep-add'],
     description: {
@@ -86,3 +86,5 @@ export const plusRepCmd: Command = {
         }
     },
 };
+
+export default plusRepCmd;

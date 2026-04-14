@@ -13,7 +13,7 @@ import ban from '@/bot/apis/mod/bans.ts';
 
 const cmdCfg = cfg.commands.configuration.ban;
 
-export const banCmd: Command = {
+const banCmd: Command = {
     name: 'ban',
     aliases: cmdCfg.aliases,
     description: {
@@ -73,3 +73,5 @@ export const banCmd: Command = {
         }
     },
 };
+
+export default banCmd;

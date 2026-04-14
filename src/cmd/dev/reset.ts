@@ -10,7 +10,7 @@ import { getErrorEmbed, getSuccessEmbed, getWarnEmbed } from '@/util/log.ts';
 
 const cmdCfg = cfg.commands.configuration.reset;
 
-export const resetCmd: Command = {
+const resetCmd: Command = {
     name: 'reset',
     aliases: cmdCfg.aliases,
     description: {
@@ -131,3 +131,5 @@ export const resetCmd: Command = {
         });
     },
 };
+
+export default resetCmd;

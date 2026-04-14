@@ -8,7 +8,7 @@ import { scanChannelForMusic } from '@/features/scan-for-music.ts';
 import { cfg } from '@/bot/cfg.ts';
 import { db } from '@/bot/apis/db/bot-db.ts';
 
-export const refreshCmd: Command = {
+const refreshCmd: Command = {
     name: 'refresh',
     aliases: [],
     description: {
@@ -107,3 +107,5 @@ export const refreshCmd: Command = {
         }
     },
 };
+
+export default refreshCmd;

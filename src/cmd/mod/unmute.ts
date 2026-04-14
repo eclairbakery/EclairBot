@@ -9,7 +9,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 const cmdCfg = cfg.commands.configuration.mute;
 
-export const unmuteCmd: Command = {
+const unmuteCmd: Command = {
     name: 'unmute',
     aliases: cmdCfg.aliases,
     description: {
@@ -73,3 +73,5 @@ export const unmuteCmd: Command = {
         }
     },
 };
+
+export default unmuteCmd;

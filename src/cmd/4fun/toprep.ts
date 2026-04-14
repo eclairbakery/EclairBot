@@ -11,7 +11,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 const DefaultCount = 6;
 
-export const toprepCmd: Command = {
+const toprepCmd: Command = {
     name: 'toprep',
     aliases: ['reptop', 'reputationtop', 'reputation-top', 'topreputation', 'top-reputation'],
     description: {
@@ -75,3 +75,5 @@ export const toprepCmd: Command = {
         });
     },
 };
+
+export default toprepCmd;

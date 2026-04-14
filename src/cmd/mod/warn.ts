@@ -12,7 +12,7 @@ import parseTimestamp, { Timestamp } from '@/util/parseTimestamp.ts';
 import clamp from '@/util/math/clamp.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
-export const warnCmd: Command = {
+const warnCmd: Command = {
     name: 'warn',
     aliases: cfg.commands.configuration.warn.aliases,
     description: {
@@ -122,3 +122,5 @@ export const warnCmd: Command = {
         }
     },
 };
+
+export default warnCmd;

@@ -9,7 +9,7 @@ import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.ts';
 import fmtEmoji from '@/util/fmtEmoji.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
-export const manCmd: Command = {
+const manCmd: Command = {
     name: 'man',
     description: {
         main: 'Dokładniejsza dokumentacja, pokazująca użycie komend, czy możesz ich użyć oraz dokładny opis.',
@@ -122,3 +122,5 @@ export const manCmd: Command = {
         return api.reply({ embeds: [embed] });
     },
 };
+
+export default manCmd;

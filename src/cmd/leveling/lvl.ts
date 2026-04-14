@@ -12,7 +12,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 import User from '@/bot/apis/db/user.ts';
 
-export const lvlCmd: Command = {
+const lvlCmd: Command = {
     name: 'lvl',
     aliases: [],
     description: {
@@ -62,3 +62,5 @@ export const lvlCmd: Command = {
         }
     },
 };
+
+export default lvlCmd;

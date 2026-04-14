@@ -69,7 +69,7 @@ async function tryRob(attacker: User, target: User): Promise<{ ok: boolean; amou
     }
 }
 
-export const robCmd: Command = {
+const robCmd: Command = {
     name: 'rob',
     description: {
         main: 'Spróbuj okraść innego gracza. Kwota kradzieży bazuje na procencie pieniędzy celu.',
@@ -134,3 +134,5 @@ export const robCmd: Command = {
         }
     },
 };
+
+export default robCmd;

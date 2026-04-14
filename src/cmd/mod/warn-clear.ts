@@ -9,7 +9,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 const cmdCfg = cfg.commands.configuration.warn;
 
-export const warnClearCmd: Command = {
+const warnClearCmd: Command = {
     name: 'warn-clear',
     aliases: ['clearwarn', 'warnusun'],
     description: {
@@ -75,3 +75,5 @@ export const warnClearCmd: Command = {
         }
     },
 };
+
+export default warnClearCmd;

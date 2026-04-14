@@ -32,7 +32,7 @@ function parseEmailMessage(input: string): { subject: string; content: string } 
     return { subject, content };
 }
 
-export const sendEmailCmd: Command = {
+const sendEmailCmd: Command = {
     name: 'email',
     description: {
         main: 'Wysyła emaila do danego użytkownika z adresu eclairbota.',
@@ -191,3 +191,5 @@ export const sendEmailCmd: Command = {
         }
     },
 };
+
+export default sendEmailCmd;

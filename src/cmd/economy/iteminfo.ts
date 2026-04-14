@@ -5,7 +5,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { MinimalActionsFormatter } from '@/bot/apis/economy/format.ts';
 import { cfg } from '@/bot/cfg.ts';
 
-export const itemInfoCmd: Command = {
+const itemInfoCmd: Command = {
     name: 'iteminfo',
     aliases: ['info'],
     description: {
@@ -77,3 +77,5 @@ export const itemInfoCmd: Command = {
         await api.reply({ embeds: [embed] });
     },
 };
+
+export default itemInfoCmd;

@@ -14,7 +14,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 const cmdCfg = cfg.commands.configuration.mute;
 
-export const muteCmd: Command = {
+const muteCmd: Command = {
     name: 'mute',
     aliases: cmdCfg.aliases,
     description: {
@@ -95,3 +95,5 @@ export const muteCmd: Command = {
         }
     },
 };
+
+export default muteCmd;

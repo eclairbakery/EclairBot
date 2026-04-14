@@ -102,3 +102,5 @@ export const reputationCmd: Command = {
         return api.reply({ embeds: [embed] });
     },
 };
+
+export default reputationCmd;

@@ -3,7 +3,7 @@ import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { ReplyEmbed } from '../../bot/apis/translations/reply-embed.ts';
 import { PredefinedColors } from '../../util/color.ts';
 
-export const pfpCmd: Command = {
+const pfpCmd: Command = {
     name: 'pfp',
     aliases: ['profilowe', 'avatar', 'awatar'],
     description: {
@@ -36,3 +36,5 @@ export const pfpCmd: Command = {
         ] });
     },
 };
+
+export default pfpCmd;

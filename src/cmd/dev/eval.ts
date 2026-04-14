@@ -19,7 +19,7 @@ async function doEval(api: CommandAPI, src: string): Promise<unknown> {
     return result;
 }
 
-export const evalCmd: Command = {
+const evalCmd: Command = {
     name: 'eval',
     description: {
         main: 'Wykonuje kod JavaScript. Jest naprawdę potencjalnie unsafe, dlatego to jest locknięte do granic możliwości.',
@@ -78,3 +78,5 @@ export const evalCmd: Command = {
         }
     },
 };
+
+export default evalCmd;

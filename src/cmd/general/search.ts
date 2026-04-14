@@ -31,7 +31,7 @@ async function getSearchResults(query: string): Promise<SearchResults | undefine
     return undefined;
 }
 
-export const searchCmd: Command = {
+const searchCmd: Command = {
     name: 'search',
     aliases: ['szukaj', 'wyszukaj'],
     description: {
@@ -67,3 +67,5 @@ export const searchCmd: Command = {
         )
     },
 };
+
+export default searchCmd;

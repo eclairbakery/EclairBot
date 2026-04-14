@@ -16,7 +16,7 @@ function removeElement(arr: dsc.Snowflake[], target: dsc.Snowflake): dsc.Snowfla
     return result;
 }
 
-export const cooldownBypassCmd: Command = {
+const cooldownBypassCmd: Command = {
     name: 'cooldown-bypass',
     description: {
         main: 'Dodaj użytkownika lub rolę do listy bez cooldownu dla danej komendy.',
@@ -140,3 +140,5 @@ export const cooldownBypassCmd: Command = {
         );
     },
 };
+
+export default cooldownBypassCmd;

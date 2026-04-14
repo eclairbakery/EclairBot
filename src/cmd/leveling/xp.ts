@@ -8,7 +8,7 @@ import { CommandAPI } from '@/bot/apis/commands/api.ts';
 import { levelToXp, OnSetXpEvent } from '@/bot/level.ts';
 import { output } from '@/bot/logging.ts';
 
-export const xpCmd: Command = {
+const xpCmd: Command = {
     name: 'xp',
     aliases: [],
     description: {
@@ -84,3 +84,5 @@ export const xpCmd: Command = {
         }
     },
 };
+
+export default xpCmd;

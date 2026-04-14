@@ -3,7 +3,7 @@ import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 
-export const emailBlacklistCmd: Command = {
+const emailBlacklistCmd: Command = {
     name: 'email-blacklist',
     aliases: ['email-add-blacklisted-email'],
     description: {
@@ -56,3 +56,5 @@ export const emailBlacklistCmd: Command = {
         );
     },
 };
+
+export default emailBlacklistCmd;

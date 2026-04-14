@@ -6,7 +6,7 @@ import { output } from '@/bot/logging.ts';
 import * as cache from '@/bot/apis/cache/cache.ts';
 import process from "node:process";
 
-export const restartCmd: Command = {
+const restartCmd: Command = {
     name: 'restart',
     description: {
         main: 'Restartuje bota... Nie tykaj!',
@@ -28,3 +28,5 @@ export const restartCmd: Command = {
         process.exit(1);
     },
 };
+
+export default restartCmd;

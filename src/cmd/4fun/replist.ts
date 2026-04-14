@@ -8,7 +8,7 @@ import User from '@/bot/apis/db/user.ts';
 
 const DefaultLimit = 10;
 
-export const replistCmd: Command = {
+const replistCmd: Command = {
     name: 'replist',
     aliases: ['list-reps', 'repslist', 'rep-list'],
     description: {
@@ -78,3 +78,5 @@ export const replistCmd: Command = {
         });
     },
 };
+
+export default replistCmd;

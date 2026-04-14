@@ -9,7 +9,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import User from '@/bot/apis/db/user.ts';
 import Money from '@/util/money.ts';
 
-export const ecomodCmd: Command = {
+const ecomodCmd: Command = {
     name: 'ecomod',
     description: {
         main: 'Coś poszło nie tak? Naprawisz to ręcznie. Chyba...',
@@ -101,3 +101,5 @@ export const ecomodCmd: Command = {
         }
     },
 };
+
+export default ecomodCmd;

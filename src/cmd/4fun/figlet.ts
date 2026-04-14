@@ -114,7 +114,7 @@ function renderFigletWrappedString(words: string[], font: string = 'Standard', m
     return blocks.map((block) => block.join('\n')).join('\n\n');
 }
 
-export const figletCmd: Command = {
+const figletCmd: Command = {
     name: 'figlet',
     aliases: ['render-ascii-text'],
     description: {
@@ -165,3 +165,5 @@ export const figletCmd: Command = {
         });
     },
 };
+
+export default figletCmd;

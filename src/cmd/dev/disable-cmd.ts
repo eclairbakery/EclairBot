@@ -2,7 +2,7 @@ import { cfg, overrideCfg, saveConfigurationChanges } from '@/bot/cfg.ts';
 import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
-export const disableCommandCmd: Command = {
+const disableCommandCmd: Command = {
     name: 'cmd-disable',
     description: {
         main: 'Wyłącz komendę. Użyteczne czasami. Często nie.',
@@ -38,3 +38,5 @@ export const disableCommandCmd: Command = {
         api.log.replySuccess(api, 'Udało się!', `Wyłączono komendę **${name}**!`);
     },
 };
+
+export default disableCommandCmd;

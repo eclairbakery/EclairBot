@@ -60,7 +60,7 @@ const CrimeFailMessages: MessageCallback[] = [
     (amount) => `Próbowałeś zrobić napad, ale potknąłeś się uciekając. Kara **${amount.format()}**.`,
 ];
 
-export const crimeCmd: Command = {
+const crimeCmd: Command = {
     name: 'crime',
     description: {
         main: 'Ohohohoho! Mamy na serwerze przestępców. Możesz popełnić przestępstwo i wygrać albo przegrać kasę!',
@@ -135,3 +135,5 @@ export const crimeCmd: Command = {
         }
     },
 };
+
+export default crimeCmd;

@@ -8,7 +8,7 @@ import { PredefinedColors } from '@/util/color.ts';
 import { output } from '@/bot/logging.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
-export const balCmd: Command = {
+const balCmd: Command = {
     name: 'bal',
     aliases: ['balance'],
     description: {
@@ -59,3 +59,5 @@ export const balCmd: Command = {
         }
     },
 };
+
+export default balCmd;

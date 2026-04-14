@@ -14,7 +14,7 @@ function calculateLevel(xp: number, levelDivider: number): number {
     );
 }
 
-export const toplvlCmd: Command = {
+const toplvlCmd: Command = {
     name: 'toplvl',
     aliases: ['topka', 'toplevel'],
     description: {
@@ -84,3 +84,5 @@ export const toplvlCmd: Command = {
         }
     },
 };
+
+export default toplvlCmd;

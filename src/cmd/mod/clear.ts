@@ -10,7 +10,7 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 const cmdCfg = cfg.commands.configuration.warn;
 
-export const clearCmd: Command = {
+const clearCmd: Command = {
     name: 'clear',
     aliases: cmdCfg.aliases,
     description: {
@@ -65,3 +65,5 @@ export const clearCmd: Command = {
         }
     },
 };
+
+export default clearCmd;

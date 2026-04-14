@@ -9,7 +9,7 @@ import * as dsc from 'discord.js';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { CommandFlags } from '../../bot/apis/commands/misc.ts';
 
-export const commandsCmd: Command = {
+const commandsCmd: Command = {
     name: 'commands',
     description: {
         main: 'Pokazuje pełną listę dostępnych komend bota.',
@@ -111,3 +111,5 @@ export const commandsCmd: Command = {
         });
     },
 };
+
+export default commandsCmd;

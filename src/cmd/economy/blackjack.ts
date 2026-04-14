@@ -307,7 +307,7 @@ class BlackjackGame {
     }
 }
 
-export const blackjackCmd: Command = {
+const blackjackCmd: Command = {
     name: 'blackjack',
     aliases: ['bj'],
     description: {
@@ -336,3 +336,5 @@ export const blackjackCmd: Command = {
         await game.start();
     },
 };
+
+export default blackjackCmd;
