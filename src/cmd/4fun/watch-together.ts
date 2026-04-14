@@ -3,6 +3,7 @@ import { Command } from '@/bot/command.ts';
 import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import process from 'node:process';
 
 export const watchTogetherCommand: Command = {
     name: 'host-wt',
@@ -23,7 +24,21 @@ export const watchTogetherCommand: Command = {
         }
 
         const inv: { code: string } = await (await fetch(
-            `https://discord.com/api/v10/channels/${api.invoker.member!.voice.channel.id}/invites`
+            `https://discord.com/api/v10/channels/${api.invoker.member!.voice.channel.id}/invites`,
+            {
+                body: JSON.stringify({
+                    max_age: 10800,
+                    max_uses: 0,
+                    target_application_id: '880218394199220334',
+                    target_type: 2,
+                    temporary: false,
+                    validate: null
+                }),
+                headers: {
+                    'Authorization': `Bot ${process.env.TOKEN}`,
+                    'Content-Type': 'application/json'
+                }
+            }
         )).json();
 
         if (typeof inv !== "object" || !('code' in inv) || typeof inv.code !== 'string')
