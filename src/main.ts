@@ -67,11 +67,14 @@ import { initAskCmdModel, initWikiModel } from './features/init-ai-models.ts';
 import { askAction } from './features/actions/4fun/ask.ts';
 import { addVoiceExperience } from '@/bot/level.ts';
 import { addMusicAction } from '@/features/actions/4fun/addMusic.ts';
+import { registerCommands } from '@/cmd/list.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
     await output.init();
     output.log(`${ft.CYAN}Logged in.`);
+
+    await registerCommands();
 
     await db.init();
     output.log(`Database initialized.`);
