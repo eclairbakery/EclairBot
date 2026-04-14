@@ -63,8 +63,6 @@ import { emailBlacklistCmd } from './email/email-blacklist.ts';
 import { askCmd } from './4fun/ask.ts';
 import { searchCmd } from '@/cmd/general/search.ts';
 import { addAltAccountCommand } from '@/cmd/general/add-alt.ts';
-import { playCmd } from '@/cmd/music/play.ts';
-import { skipCmd } from '@/cmd/music/skip.ts';
 
 export const commands: Map<Category, Command[]> = new Map([
     [
@@ -77,8 +75,7 @@ export const commands: Map<Category, Command[]> = new Map([
             pfpCmd,
             wikiCmd,
             searchCmd,
-            addAltAccountCommand,
-            playCmd, skipCmd
+            addAltAccountCommand
         ],
     ],
     [

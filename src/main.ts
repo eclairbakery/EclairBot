@@ -66,7 +66,6 @@ import { initAskCmdModel, initWikiModel } from './features/init-ai-models.ts';
 import { askAction } from './features/actions/4fun/ask.ts';
 import { addVoiceExperience } from '@/bot/level.ts';
 import { addMusicAction } from '@/features/actions/4fun/addMusic.ts';
-import { startRadio } from '@/features/radio/mainLoop.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -224,8 +223,6 @@ async function main() {
             }
         }, cfg.database.backups.interval);
     }
-
-    startRadio();
 }
 
 (async function () {
