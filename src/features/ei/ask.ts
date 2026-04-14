@@ -15,6 +15,7 @@ import { sendLog } from '../../bot/apis/log/send-log.ts';
 import { PredefinedColors } from '../../util/color.ts';
 import { Buffer } from 'node:buffer';
 import process from "node:process";
+import logError from '@/util/logError.ts';
 
 export async function executeAsk(msg: dsc.Message, question: string, contextMsgs: number) {
     if (!gemini.isInitialized()) {
@@ -270,8 +271,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
             tools: toolDeclarations,
         });
     } catch (err) {
-        output.err(err);
-        const str = (err instanceof Error) ? err.message : `${err}`;
+        const str = logError('stdwarn', err, 'Generate EI Response'); 
         if (str.includes('high demand')) {
             return msg.reply('❌ W skrócie to model którego używamy do EI jest on high demand, '
                               + 'więc teraz raczej ci nie odpowie na twoje bardzo ważne pytanie.');

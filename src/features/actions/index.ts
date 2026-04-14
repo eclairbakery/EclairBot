@@ -1,6 +1,6 @@
 import * as log from '@/util/log.ts';
 import * as dsc from 'discord.js';
-import { output } from '../../bot/logging.ts';
+import logError from '@/util/logError.ts';
 
 // deno-lint-ignore-file
 
@@ -230,11 +230,7 @@ class ActionManager {
                             break;
                         }
                     } catch (err) {
-                        if (err instanceof Error) {
-                            output.err(`While executing action:\n\nName: ${err.name}\nMessage: ${err.message}\nStack: ${err.stack ?? 'not defined'}\nCause: ${err.cause ?? 'not defined'}`);
-                        } else {
-                            output.err(`While executing action\n\n${err}`);
-                        }
+                        logError('stderr', err, "Action system's event handler"); 
                     }
                 }
             }

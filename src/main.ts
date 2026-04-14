@@ -5,8 +5,9 @@ import { client } from '@/client.ts';
 import { ft, output } from '@/bot/logging.ts';
 import * as dotenv from 'dotenv';
 import process from 'node:process';
+import logError from '@/util/logError.ts';
 process.on('uncaughtException', (e) => {
-    output.err(`Uncaught exception/error:\n\nName: ${e.name}\nMessage: ${e.message}\nStack: ${e.stack ?? 'not defined'}\nCause: ${e.cause ?? 'not defined'}`);
+    logError('stderr', e);
     if (e.message.includes('An invalid token was provided.')) {
         output.err('Automatic shutdown. Token is invalid.');
         process.exit(2);
@@ -71,11 +72,6 @@ import { addMusicAction } from '@/features/actions/4fun/addMusic.ts';
 client.once('clientReady', async () => {
     await output.init();
     output.log(`${ft.CYAN}Logged in.`);
-
-    if (!process.env.EB_DEVELOPMENT) {
-        output.warn("Assuming config for the EclairBakery Discord server.");
-        output.warn("Set EB_DEVELOPMENT to true to use testing server config, or to false to explicitely use production config.");
-    } 
 
     await db.init();
     output.log(`Database initialized.`);
@@ -219,7 +215,7 @@ async function main() {
                     files: [{ attachment: dbPath, name: backupName }],
                 });
             } catch (e) {
-                output.err('while sending db at bot.db: ' + e);
+                logError('stdwarn', e, "Database backups"); 
             }
         }, cfg.database.backups.interval);
     }
