@@ -60,6 +60,8 @@ export async function addLvlRole(
         let member: dsc.GuildMember;
         try {
             member = await guild.members.fetch(member_id);
+            if (member.partial)
+                member.fetch(true);
         } catch (err) {
             output.warn(err);
             continue;
