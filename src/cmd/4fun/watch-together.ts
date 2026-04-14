@@ -26,6 +26,7 @@ export const watchTogetherCommand: Command = {
         const inv: { code: string } = await (await fetch(
             `https://discord.com/api/v10/channels/${api.invoker.member!.voice.channel.id}/invites`,
             {
+                method: "POST",
                 body: JSON.stringify({
                     max_age: 10800,
                     max_uses: 0,
