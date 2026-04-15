@@ -36,8 +36,6 @@ export async function registerCommands() {
                 const command: Command = module.default;
                 const cmd_cfg = findCmdConfResolvable(command.name);
 
-                if (command.name == 'search') console.log(cmd_cfg, command);
-
                 if (!cmd_cfg.enabled) {
                     if (deepEqual(command.permissions, CommandPermissions.devOnly()) || command.name == 'configuration')
                         output.warn("Dev-only command " + command.name + " should not be disabled. Leaving enabled.");
