@@ -34,7 +34,7 @@ export async function registerCommands() {
                 }
 
                 const command: Command = module.default;
-                const cmd_cfg = findCmdConfResolvable(cmd.name);
+                const cmd_cfg = findCmdConfResolvable(command.name);
 
                 if (!cmd_cfg.enabled) {
                     if (deepEqual(command.permissions, CommandPermissions.devOnly()) || command.name == 'configuration')
