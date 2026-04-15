@@ -16,6 +16,17 @@ export function findCmdConfCategory(commandName: string): string | undefined {
             return category.stringId();
         }
     }
+
+    for (const cat of Deno.readDirSync("./src/cmd")) {
+        if (cat.isFile) continue;
+        let found = false;
+    
+        for (const cmd of Deno.readDirSync(`./src/cmd/${cat.name}`)) {
+            if (cmd.name == commandName + ".ts") {found = true; break;}
+        }
+    
+        if (found == true) return cat.name ?? undefined;
+    }
 }
 
 export function findCmdConfigObj(command: Command): AnyCommandConfig | undefined {
