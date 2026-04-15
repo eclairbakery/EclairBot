@@ -1,6 +1,9 @@
 import { Category, Command } from '@/bot/command.ts';
 import { output } from '@/bot/logging.ts';
 import logError from '@/util/logError.ts';
+import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
+import { deepEqual } from '@/util/objects/objects.ts';
 
 export const commands: Map<Category, Command[]> = new Map();
 
@@ -10,7 +13,7 @@ export async function registerCommands() {
 
         const category = Category.fromString(cat.name);
         if (!category) {
-            output.warn(`Skiiping unknown category: ${cat.name}`);
+            output.warn(`Skipping unknown category: ${cat.name}`);
             continue;
         }
 
@@ -30,7 +33,17 @@ export async function registerCommands() {
                     continue;
                 }
 
-                cat_cmds.push(module.default);
+                const command: Command = module.default;
+                const cmd_cfg = findCmdConfResolvable(cmd.name);
+
+                if (cmd_cfg.enabled) {
+                    if (deepEqual(command.permissions, CommandPermissions.devOnly()) || command.name == 'configuration')
+                        output.warn("Dev-only command " + command.name + " should not be disabled. Leaving enabled.");
+                    else 
+                        continue;
+                }
+
+                cat_cmds.push(command);
             } catch (e) {
                 logError('stdwarn', e, "Command importer");
             }

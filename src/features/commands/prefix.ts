@@ -129,15 +129,6 @@ async function prefixCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
         }
     }
 
-    if (!config.enabled && command.name != 'configuration') {
-        log.replyWarn(
-            msg,
-            'Ta komenda jest wyłączona',
-            'Eklerka coś tam gadał, że go wkurza bloat, więc dodałem wyłączanie komend. Trzeba będzie wszystko dodać jako możliwe do wyłączenia w konfiguracji XD.',
-        );
-        return;
-    }
-
     let isDisallowed = false;
 
     if (config.disallowedRoles) {
