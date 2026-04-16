@@ -7,6 +7,7 @@ import { output } from '@/bot/logging.ts';
 import { db } from '@/bot/apis/db/bot-db.ts';
 
 import JSON5 from 'json5';
+import process from 'node:process';
 
 type AsyncFunction = () => PromiseLike<unknown>;
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor satisfies AsyncFunction;
@@ -54,9 +55,6 @@ const evalCmd: Command = {
         if (code.src.includes('await import') && !code.src.includes('SRC_ROOT')) {
             warns.push('Proszę, używaj constantu SRC_ROOT jak coś importujesz.');
         }
-        //if (!code.src.includes('return')) {
-        //    warns.push('Nie używasz return. Tu sie ewaluuje funkcja a nie.');
-        //}
         
         if (warns.length != 0) {
             const warnsString = warns.map(w => `- ${w}`).join('\n');
@@ -69,6 +67,9 @@ const evalCmd: Command = {
                 const sanitized = JSON5.stringify(result, null, 4)?.replace('```', '\`\`\`') ?? String(result);
                 if (sanitized.length >= 4096 - 10) {
                     return api.log.replyWarn(api, 'Za długi output', 'Tak w skrócie, to twój kod wyprodukował za długi output jak na discorda.');
+                }
+                if (sanitized.includes(process.env.TOKEN ?? 'ebtoken')) {
+                    return api.log.replyWarn(api, 'Błąd', 'Właśnie próbujesz zleakować token. Możesz sie bawić w obchodzenie tego ale błagam po prostu skopiuj z .env z hostingu.');
                 }
                 return api.log.replySuccess(api, 'Wynik twojej super komendy!', `\n\`\`\`js\n${sanitized}\`\`\``);
             }
