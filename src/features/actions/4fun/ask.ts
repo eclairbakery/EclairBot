@@ -14,9 +14,9 @@ export const askAction: Action<MessageEventCtx> = {
         async (ctx) =>
             ctx.channelId == cfg.channels.general.ei ||
             ctx.content.trim().startsWith(`<@${client.user?.id}>`) ||
-            typeof ctx.reference?.messageId == 'string'
+            (typeof ctx.reference?.messageId == 'string'
                 ? (await ctx.fetchReference()).author.id == client.user!.id
-                : false,
+                : false),
         (ctx) =>
             !ctx.content.trim().startsWith('\\') &&
             !ctx.content.trim().startsWith('eb-ignore '),
