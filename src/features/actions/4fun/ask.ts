@@ -14,7 +14,7 @@ export const askAction: Action<MessageEventCtx> = {
         async (ctx) =>
             ctx.channelId == cfg.channels.general.ei ||
             ctx.content.trim().startsWith(`<@${client.user?.id}>`) ||
-            ctx.reference 
+            ctx.reference?.messageId 
                 ? (await ctx.fetchReference()).author.id == client.user!.id
                 : false,
         (ctx) =>
