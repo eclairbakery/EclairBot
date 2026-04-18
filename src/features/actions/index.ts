@@ -29,8 +29,8 @@ export const MagicSkipAllActions = Symbol('MagicSkipAllActions');
 export type ActionCallback<CtxType> = (ctx: CtxType) => void | Promise<unknown> | symbol | Promise<symbol>;
 export type AnyActionCallback = (ctx: AnyEventCtx) => void;
 
-export type ConstraintCallback<CtxType> = (ctx: CtxType) => boolean;
-export type AnyConstraintCallback = (ctx: AnyEventCtx) => boolean;
+export type ConstraintCallback<CtxType> = (ctx: CtxType) => Promise<boolean> | boolean;
+export type AnyConstraintCallback = (ctx: AnyEventCtx) =>   Promise<boolean> | boolean;
 export const Skip = false;
 export const Ok = true;
 
@@ -215,7 +215,7 @@ class ActionManager {
                 if (actionFilter && !actionFilter(action, ...args)) continue;
 
                 for (const constraint of action.constraints) {
-                    if (constraint(ctx) == Skip) {
+                    if (await constraint(ctx) == Skip) {
                         continue actionsLoop;
                     }
                 }
@@ -379,7 +379,7 @@ class ActionManager {
         for (const action of actions) {
             // check constraints
             for (const constraint of action.constraints) {
-                if (constraint(ctx) == Skip) {
+                if (await constraint(ctx) == Skip) {
                     continue actionsLoop;
                 }
             }

@@ -11,17 +11,23 @@ export const askAction: Action<MessageEventCtx> = {
 
     constraints: [
         (ctx) => ctx.author.id != client.user?.id,
-        (ctx) =>
+        async (ctx) =>
             ctx.channelId == cfg.channels.general.ei ||
-            ctx.content.trim().startsWith(`<@${client.user?.id}>`),
+            ctx.content.trim().startsWith(`<@${client.user?.id}>`) ||
+            ctx.reference 
+                ? (await ctx.fetchReference()).author.id == client.user!.id
+                : false,
         (ctx) =>
             !ctx.content.trim().startsWith('\\') &&
-            !ctx.content.trim().startsWith('eb-ignore'),
+            !ctx.content.trim().startsWith('eb-ignore '),
     ],
 
     callbacks: [
         (msg) => {
-            const question = msg.content.trim().startsWith(`<@${client.user!.id}>`) ? msg.content.trim().replace(`<@${client.user!.id}>`, '') : msg.content;
+            const question =
+                msg.content.trim().startsWith(`<@${client.user!.id}>`) 
+                    ? msg.content.trim().replace(`<@${client.user!.id}>`, '') 
+                    : msg.content;
             return executeAsk(msg, question, cfg.features.ai.contextDefaultMessages);
         },
     ],
