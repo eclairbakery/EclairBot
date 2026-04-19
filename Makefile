@@ -9,7 +9,7 @@ CONFIG_FILE ?= bot/config.js
 DENO_IO_PERMS_FLAGS   = --allow-read=$(CONFIG_FILE),bot.db,.env,bot.db-journal,$(CACHE_DIR),$(PKG_DIR),. \
 						--allow-write=$(CONFIG_FILE),bot.db,bot.db-journal,$(CACHE_DIR),$(PKG_DIR),.
 
-DENO_PERMISSION_FLAGS = $(DENO_IO_PERMS_FLAGS) --allow-net --allow-sys --allow-ffi --allow-run=ffmpeg,yt-dlp --allow-env 
+DENO_PERMISSION_FLAGS = $(DENO_IO_PERMS_FLAGS) --allow-net --allow-sys --allow-ffi --allow-env 
 DENO_FLAGS            = --no-prompt $(DENO_PERMISSION_FLAGS)
 
 all: 

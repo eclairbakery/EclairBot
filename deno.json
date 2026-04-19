@@ -28,7 +28,6 @@
     },
     "imports": {
         "discord.js": "npm:discord.js@^14.25.1",
-        "discord.js-voice": "npm:@discordjs/voice@^0.19.2"
         "dotenv": "npm:dotenv@^17.3.1",
         "figlet": "npm:figlet@^1.11.0",
         "imapflow": "npm:imapflow@^1.2.13",
@@ -36,7 +35,6 @@
         "mailparser": "npm:mailparser@^3.9.4",
         "nodemailer": "npm:nodemailer@^8.0.2",
         "gemini": "npm:@google/generative-ai@^0.21.0",
-        "youtubei.js": "npm:youtubei.js@17.0.1"
         "sqlite": "https://deno.land/x/sqlite@v3.9.1/mod.ts",
         "@/": "./src/"
     }
