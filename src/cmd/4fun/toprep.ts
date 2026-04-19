@@ -66,7 +66,7 @@ const toprepCmd: Command = {
             embeds: [
                 new ReplyEmbed()
                     .setColor(PredefinedColors.Cyan)
-                    .setDescription('-# eklerka dalej nie zrobił obrazka na top reputacji'),
+                    .setImage('https://raw.githubusercontent.com/eclairbakery/EclairBot/refs/heads/main/assets/top-reputation.png'),
                 new ReplyEmbed()
                     .setColor(PredefinedColors.Cyan)
                     .setDescription('Najlepsi w grę reputacji')

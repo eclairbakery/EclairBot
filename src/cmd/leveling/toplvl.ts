@@ -69,7 +69,7 @@ const toplvlCmd: Command = {
                 embeds: [
                     new ReplyEmbed()
                         .setColor('#1ebfd5')
-                        .setImage('https://cdn.discordapp.com/attachments/1404396223934369844/1404397238578577491/toplvl_image.png?ex=689b0a5a&is=6899b8da&hm=eac2a0db46bfad2dd34fa1ef8dbf9b918e46913229f7b1a9c470d952982787e8&'),
+                        .setImage('https://raw.githubusercontent.com/eclairbakery/EclairBot/refs/heads/main/assets/top-lvl.png'),
                     new ReplyEmbed()
                         .setFields(fields)
                         .setColor('#1ebfd5')
