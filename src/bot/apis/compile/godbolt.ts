@@ -53,16 +53,21 @@ export class GodBoltCompilerDriver implements CompilerDriver {
     async getGodboltCompiler(): Promise<string> {
         const compilers = await GodBoltCompilerDriver.getResponse<GodBoltCompilerListEntry[]>('https://godbolt.org/api/compilers');
         const compiler =
-            compilers.find(c =>
-                c.lang === this.lang &&
-                (c.lang == 'c' ? (c.id.includes("gcc") || c.id.includes("clang")) : true) &&
-                !c.id.includes("risc") &&
-                !c.id.includes("arm") &&
-                !c.id.includes("avr") &&
-                !c.id.includes("mips")
-            )
-        if (!compiler?.id) return 'unknown';
-        return compiler.id;
+          compilers.find(c =>
+            c.lang === this.lang &&
+            c.id.includes("gcc") &&
+            !c.id.includes("risc") &&
+            !c.id.includes("arm") &&
+            !c.id.includes("avr") &&
+            !c.id.includes("mips")
+          ) ??
+          compilers.find(c =>
+            c.lang === this.lang &&
+            c.id.includes("clang")
+          ) ?? compilers.find(c =>
+            c.lang === this.lang
+          );       
+        return compiler!.id;
     }
 
     async info(): Promise<CompilerInfo> {
