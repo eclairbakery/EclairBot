@@ -57,7 +57,7 @@ const compileCmd: Command = {
             });
         }
 
-        const driver = getCompilerForLang(lang);
+        const driver = await getCompilerForLang(lang);
         const info = await driver.info();
 
         if (info.lang === 'unknown') {

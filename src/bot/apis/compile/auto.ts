@@ -1,10 +1,11 @@
 import { CompilerDriver } from './driver.ts';
+import { GodBoltCompilerDriver } from '@/bot/apis/compile/godbolt.ts';
 import { WandboxCompilerDriver } from './wandbox.ts';
 import { ZapCompilerDriver } from './zapc.ts';
 
 import { cfg } from '@/bot/cfg.ts';
 
-function findWandboxCompiler(lang: string): string {
+function findTrueCompilerName(lang: string): string {
     const replaceMap = Object.entries(cfg.features.compilation.replaceCompilerMap);
     const langNormalized = lang.trim().toLowerCase();
     for (const [compiler, aliases] of replaceMap) {
@@ -16,9 +17,12 @@ function findWandboxCompiler(lang: string): string {
     return lang;
 }
 
-export function getCompilerForLang(lang: string): CompilerDriver {
+export async function getCompilerForLang(lang: string): Promise<CompilerDriver> {
     if (['zap', 'zp', 'zapc'].includes(lang)) {
         return new ZapCompilerDriver({});
     }
-    return new WandboxCompilerDriver({ compiler: findWandboxCompiler(lang) });
+    if ((await GodBoltCompilerDriver.getSupportedLangList()).includes(lang)) {
+        return new GodBoltCompilerDriver(lang);
+    }
+    return new WandboxCompilerDriver({ compiler: findTrueCompilerName(lang) });
 }
