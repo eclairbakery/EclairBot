@@ -20,7 +20,7 @@ export async function mkMessageReferenceEmbed(channelId: Snowflake, messageId: S
                     : '*brak treści*')
         )
         .setTimestamp(quotedMsg.createdAt)
-        .setFields([ { name: "Link do wiadomości", value: `[Kliknij tutaj](https://canary.discord.com/${client.guilds.cache.first()!.id}/${channelId}/${messageId})`, inline: true } ])
+        .setFields([ { name: "Link do wiadomości", value: `[Kliknij tutaj](https://canary.discord.com/channels/${client.guilds.cache.first()!.id}/${channelId}/${messageId})`, inline: true } ])
         .setFooter({ text: `Wysłano w ${(channel as { name: string })?.name ?? 'piekarnii'}, id: ${quotedMsg.id}` })
         .setColor(color);
 
@@ -30,7 +30,7 @@ export async function mkMessageReferenceEmbed(channelId: Snowflake, messageId: S
             if (referenced)
                 embed.addFields({
                     name: 'Odpowiedź',
-                    inline: true, value: `[Kliknij tutaj](https://canary.discord.com/${referenced.guildId}/${referenced.channelId}/${referenced.id})` 
+                    inline: true, value: `[Kliknij tutaj](https://canary.discord.com/channels/${referenced.guildId}/${referenced.channelId}/${referenced.id})` 
                 });
         } catch {}
     }
