@@ -62,7 +62,11 @@ export const sayGoodbyeAction: Action<UserEventCtx> = {
                 return;
             }
 
-            await channel.send('<:emoji2:1410551857935290368>' + cfg.features.welcomer.goodbyeMsgs[Math.floor(Math.random() * cfg.features.welcomer.goodbyeMsgs.length)].replace('<mention>', cfg.features.welcomer.mentionNewPeopleInLobby ? `<@${member.user.id}>` : member.user.username));
+            await channel.send({
+                content: '<:emoji2:1410551857935290368>' 
+                    + cfg.features.welcomer.goodbyeMsgs[Math.floor(Math.random() * cfg.features.welcomer.goodbyeMsgs.length)].replace('<mention>', `<@${member.user.id}>`),
+                allowedMentions: (cfg.features.welcomer.mentionNewPeopleInLobby ? {} : { parse: [] })
+            });
         },
     ],
 };
