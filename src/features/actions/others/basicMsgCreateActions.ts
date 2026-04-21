@@ -1,7 +1,7 @@
 import { addExperiencePoints } from '@/bot/level.ts';
 import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.ts';
 import { PredefinedColors } from '@/util/color.ts';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
+import { mkMessageReferenceEmbed } from '@/bot/templates/messageReference.ts';
 
 export const basicMsgCreateActions: Action<MessageEventCtx> = {
     constraints: [() => true],
@@ -27,40 +27,7 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
                 if (!match) return;
                 const [, , channelId, messageId] = match;
 
-                const channel = await msg.client.channels.fetch(channelId);
-                if (!channel?.isTextBased()) return;
-                if (channel.isDMBased()) return;
- 
-                const quotedMsg = await channel.messages.fetch(messageId);
-
-                const embed = new ReplyEmbed()
-                    .setAuthor({
-                        name: quotedMsg.author.tag,
-                        iconURL: quotedMsg.author.displayAvatarURL(),
-                    })
-                    .setDescription(
-                        quotedMsg.content 
-                            || (quotedMsg.poll 
-                                ? `## Ankieta: ${quotedMsg.poll.question.text}\n\n- ${quotedMsg.poll.answers.map((q) => q.text).join('\n- ')}`
-                                : '*brak treści*')
-                    )
-                    .setTimestamp(quotedMsg.createdAt)
-                    .setFooter({ text: `Wysłano w ${(channel as { name: string })?.name ?? 'piekarnii'}` })
-                    .setColor(PredefinedColors.Fuchsia);
-
-                if (quotedMsg.attachments.size > 0) {
-                    const first = quotedMsg.attachments.first();
-                    if (first?.contentType?.startsWith('image/')) {
-                        embed.setImage(first.url);
-                    } else {
-                        embed.addFields({
-                            name: 'Załączniki',
-                            value: quotedMsg.attachments.map((a) => `[${a.name}](${a.url})`).join('\n'),
-                        });
-                    }
-                }
-
-                await msg.reply({ embeds: [embed] });
+                await msg.reply({ embeds: [ await mkMessageReferenceEmbed(channelId, messageId, PredefinedColors.Fuchsia) ] });
             })();
         },
     ],
