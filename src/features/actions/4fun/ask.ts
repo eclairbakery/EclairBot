@@ -22,7 +22,7 @@ export const askAction: Action<MessageEventCtx> = {
                     ctx.content.trim().startsWith(`<@${client.user?.id}>`) ||
                     (referenced ? (
                         referenced.author.id == client.user?.id &&
-                        referenced.type == MessageType.Reply &&
+                        ctx.type == MessageType.Reply &&
                         referenced.embeds.length <= 0
                     ) : false)
         },
