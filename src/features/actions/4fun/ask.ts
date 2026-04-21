@@ -6,17 +6,26 @@ import { Action } from '../index.ts';
 import { client } from '@/client.ts';
 import { cfg } from '@/bot/cfg.ts';
 
+import { MessageType } from 'discord.js';
+
 export const askAction: Action<MessageEventCtx> = {
     activationEventType: [PredefinedActionEventTypes.OnMessageCreate],
 
     constraints: [
         (ctx) => ctx.author.id != client.user?.id,
-        async (ctx) =>
-            ctx.channelId == cfg.channels.general.ei ||
-            ctx.content.trim().startsWith(`<@${client.user?.id}>`) ||
-            (typeof ctx.reference?.messageId == 'string'
-                ? (await ctx.fetchReference()).author.id == client.user!.id
-                : false),
+        async (ctx) => {
+            const referenced = (typeof ctx.reference?.messageId == 'string'
+                ? await ctx.fetchReference()
+                : false);
+
+            return ctx.channelId == cfg.channels.general.ei ||
+                    ctx.content.trim().startsWith(`<@${client.user?.id}>`) ||
+                    (referenced ? (
+                        referenced.author.id == client.user?.id &&
+                        referenced.type == MessageType.Reply &&
+                        referenced.embeds.length <= 0
+                    ) : false)
+        },
         (ctx) =>
             !ctx.content.trim().startsWith('\\') &&
             !ctx.content.trim().startsWith('eb-ignore '),
