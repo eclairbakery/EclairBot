@@ -8,14 +8,13 @@ export const filesContentModerator: Action<MessageEventCtx> = {
 
     constraints: [
         (ctx) => ctx.author.id != ctx.client.user.id,
-        (ctx) => ctx.channel.isThread() && ctx.channel.parent?.id == cfg.channels.other.files,
-        (ctx) => ctx.channelId !== cfg.channels.other.files // safeguard
+        (ctx) => ctx.channel.isThread() && ctx.channel.parentId == cfg.channels.other.files,
+        (ctx) => ctx.attachments.size == 0,
+        (ctx) => ctx.channelId == ctx.id
     ],
     callbacks: [
         async (msg) => {
-            if (msg.attachments.size <= 0) return;
-
-            const reply = await replyWarn(msg, 'Usunę ci tego posta', 'Musisz plik wysłać...');
+            const reply = await replyWarn(msg, 'Usunę ci tego posta', 'Musisz plik wysłać. Może się tego nie domyśliłeś, ale tu pliczki się wysyła.');
             await sleep(5000);
 
             await reply.delete();
