@@ -68,6 +68,7 @@ import { askAction } from './features/actions/4fun/ask.ts';
 import { addVoiceExperience } from '@/bot/level.ts';
 import { addMusicAction } from '@/features/actions/4fun/addMusic.ts';
 import { registerCommands } from '@/cmd/list.ts';
+import { filesContentModerator } from '@/features/actions/others/contentModerator.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -122,6 +123,7 @@ function setUpActions() {
         // automod & anti-spam with anti-flood
         ...AutoModRules.all(),
         antiSpamAndAntiFlood,
+        filesContentModerator,
         // msg-specific actions
         basicMsgCreateActions,
         mediaChannelAction,

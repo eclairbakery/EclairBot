@@ -36,7 +36,8 @@ export const channelsCfg: Config['channels'] = {
         communityPolls: '1320035545543606282',
         desktopPorn: '1279888407421648967',
         minecraft: '1342793182265741394',
-        economy: '1235561759448895590'
+        economy: '1235561759448895590',
+        files: '1408757368652566591'
     },
     forfun: {
         counting: '1235566520310956184',
