@@ -63,27 +63,23 @@ const subRepCmd: Command = {
         await api.executor.reputation.give(targetUser.id, '-rep', comment);
         const newRepProportion = await getUserReputationProportion(targetUser.id);
 
-        if (!api.preferShortenedEmbeds) {
-            const embed = log.getSuccessEmbed(
-                'Gotowe!',
-                'Dodałem wpis do bazy danych! Czy jest coś jeszcze co mogę dla ciebie zrobić? tak? to świetnie! i tak tego nie zrobie.',
-            );
+        const embed = log.getSuccessEmbed(
+            'Gotowe!',
+            'Dodałem wpis do bazy danych! Czy jest coś jeszcze co mogę dla ciebie zrobić? tak? to świetnie! i tak tego nie zrobie.',
+        );
 
-            if (newRepProportion.sub > oldRepProportion.sub) {
-                embed
-                    .addFields(
-                        {
-                            name: `Zmniejszyłeś poziom reputacji ${targetUser.displayName} o ${newRepProportion.sub - oldRepProportion.sub} 👎`,
-                            value: mkDualProgressBar(newRepProportion.sub, newRepProportion.plus),
-                            inline: false,
-                        },
-                    );
-            }
-
-            return api.reply({ embeds: [embed] });
-        } else {
-            log.replySuccess(api, 'Gotowe!', 'Użytkownik się prawdopodobnie na ciebie pogniewa za danie mu dislike.');
+        if (newRepProportion.sub > oldRepProportion.sub) {
+            embed
+                .addFields(
+                    {
+                        name: `Zmniejszyłeś poziom reputacji ${targetUser.displayName} o ${newRepProportion.sub - oldRepProportion.sub} 👎`,
+                        value: mkDualProgressBar(newRepProportion.sub, newRepProportion.plus),
+                        inline: false,
+                    },
+                );
         }
+
+        return api.reply({ embeds: [embed] });
     },
 };
 

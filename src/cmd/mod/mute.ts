@@ -1,5 +1,4 @@
 import * as dsc from 'discord.js';
-import { output } from '@/bot/logging.ts';
 
 import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
@@ -58,41 +57,44 @@ const muteCmd: Command = {
             return api.log.replyError(api, 'Nie podano celu', 'Kolego co ty myślisz że ja się sam domyślę, komu ty to chcesz zrobić? Zgadłeś - nie domyślę się. Więc bądź tak miły i podaj użytkownika, dla którego odpalasz tą komendę.');
         }
 
+        if ([api.executor.id, ...(await api.executor.fetchAlternativeAccounts())].includes(targetUser.id)) {
+            return api.log.replyError(
+                api,
+                'Bro co ty odpierdalasz?',
+                'Czemu ty chcesz sobie dać bana? Co jest z tobą nie tak... Zabrać cię do szpitala zdrowia psychicznego czy co ja mam zrobić...',
+            );
+        }
+
         if (!reason && cmdCfg.reasonRequired) {
             return api.log.replyError(api, 'Musisz podać powód!', "Bratku... dlaczego ty chcesz to zrobić? Możesz mi chociaż powiedzieć, a nie wysuwać pochopne wnioski i banować/warnować/mute'ować ludzi bez powodu?");
         } else if (!reason) {
             reason = 'Moderator nie poszczycił się znajomością komendy i nie podał powodu... Ale moze to i lepiej...';
         }
+ 
+        await mute(targetUser, { reason, duration: (duration ?? 1) * 1000 });
+        if (api.invoker.member) watchMute(api.invoker.member!);
 
-        try {
-            if (api.invoker.member) watchMute(api.invoker.member!);
-            await mute(targetUser, { reason, duration: (duration ?? 1) * 1000 });
+        sendLog({
+            color: PredefinedColors.Purple,
+            title: 'Nałożono kłódkę na buzię',
+            description: `Użytkownik <@${targetUser.id}> został wyciszony na 24 godziny przez <@${api.invoker.id}>.`,
+            fields: [{ name: 'Powód', value: reason }],
+        });
 
-            sendLog({
-                color: PredefinedColors.Purple,
-                title: 'Nałożono kłódkę na buzię',
-                description: `Użytkownik <@${targetUser.id}> został wyciszony na 24 godziny przez <@${api.invoker.id}>.`,
-                fields: [{ name: 'Powód', value: reason }],
-            });
-
-            return api.reply({
-                embeds: [
-                    new ReplyEmbed()
-                        .setTitle(`📢 Na ${targetUser.user.username} przymusowo nałożono kłódkę na buzię!`)
-                        .setDescription(`Ciekawe czy wyjdzie z serwera... A, racja! Mogłem tego nie mówić.`)
-                        .addFields(
-                            { name: 'Moderator', value: `<@${api.invoker.id}>`, inline: true },
-                            { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
-                            { name: 'Powód', value: reason, inline: false },
-                            { name: 'Czas', value: `<t:${expiresAt}:R>`, inline: true },
-                        )
-                        .setColor(PredefinedColors.Orange),
-                ],
-            });
-        } catch (err) {
-            output.err(err);
-            return api.log.replyError(api, 'Brak permisji', 'Coś Ty Eklerka znowu pozmieniał? No chyba że mutujesz admina...');
-        }
+        return api.reply({
+            embeds: [
+                new ReplyEmbed()
+                    .setTitle(`📢 Na ${targetUser.user.username} przymusowo nałożono kłódkę na buzię!`)
+                    .setDescription(`Ciekawe czy wyjdzie z serwera... A, racja! Mogłem tego nie mówić.`)
+                    .addFields(
+                        { name: 'Moderator', value: `<@${api.invoker.id}>`, inline: true },
+                        { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
+                        { name: 'Powód', value: reason, inline: false },
+                        { name: 'Czas', value: `<t:${expiresAt}:R>`, inline: true },
+                    )
+                    .setColor(PredefinedColors.Orange),
+            ],
+        });
     },
 };
 

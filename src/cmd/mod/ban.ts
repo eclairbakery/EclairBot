@@ -51,6 +51,14 @@ const banCmd: Command = {
             return api.log.replyError(api, 'Musisz podać powód!', "Bratku... dlaczego ty chcesz to zrobić? Możesz mi chociaż powiedzieć, a nie wysuwać pochopne wnioski i banować/warnować/mute'ować ludzi bez powodu?");
         }
 
+        if ([api.executor.id, ...(await api.executor.fetchAlternativeAccounts())].includes(targetUser.id)) {
+            return api.log.replyError(
+                api,
+                'Bro co ty odpierdalasz?',
+                'Czemu ty chcesz sobie dać bana? Co jest z tobą nie tak... Zabrać cię do szpitala zdrowia psychicznego czy co ja mam zrobić...',
+            );
+        }
+
         try {
             await ban(targetUser, { reason, mod: api.invoker.id });
 

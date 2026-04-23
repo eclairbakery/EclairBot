@@ -7,7 +7,6 @@ import { Command, CommandAPI, CommandArgType } from '@/bot/command.ts';
 import { parseArgs, ParsedRawArgument } from './argumentParser.ts';
 import { t } from '@/bot/apis/translations/translate.ts';
 import { deepMerge } from '@/util/objects/objects.ts';
-import { cfg } from '@/bot/cfg.ts';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.ts';
 import { commands } from '@/cmd/list.ts';
 import { EconomyExecutor } from '@/bot/apis/economy/action.ts';
@@ -98,7 +97,6 @@ export async function makeCommandApi(commandObj: Command, argsRaw: ParsedRawArgu
             interaction: context.interaction,
         },
 
-        preferShortenedEmbeds: cfg.commands.blocking.preferShortenedEmbeds.includes((context.interaction?.channel ?? context.msg!.channel!).id),
         invokedViaAlias: context.invokedviaalias,
     };
 

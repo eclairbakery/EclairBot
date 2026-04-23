@@ -63,27 +63,23 @@ const plusRepCmd: Command = {
         await api.executor.reputation.give(targetUser.id, '+rep', comment);
         const newRepProportion = await getUserReputationProportion(targetUser.id);
 
-        if (!api.preferShortenedEmbeds) {
-            const embed = log.getSuccessEmbed(
-                'Gotowe!',
-                'Dodałem wpis do bazy danych! Czy jest coś jeszcze co mogę dla ciebie zrobić? tak? to świetnie! i tak tego nie zrobie.',
-            );
+        const embed = log.getSuccessEmbed(
+            'Gotowe!',
+            'Dodałem wpis do bazy danych! Czy jest coś jeszcze co mogę dla ciebie zrobić? tak? to świetnie! i tak tego nie zrobie.',
+        );
 
-            if (newRepProportion.plus > oldRepProportion.plus) {
-                embed
-                    .addFields(
-                        {
-                            name: `Podwyższyłeś poziom reputacji ${targetUser.displayName} o ${newRepProportion.plus - oldRepProportion.plus} 👍`,
-                            value: mkDualProgressBar(newRepProportion.sub, newRepProportion.plus),
-                            inline: false,
-                        },
-                    );
-            }
-
-            return api.reply({ embeds: [embed] });
-        } else {
-            log.replySuccess(api, 'Polubiłeś tego uzytkownika!', 'To w sumie tyle. Chyba sprawisz mu radość (nie).');
+        if (newRepProportion.plus > oldRepProportion.plus) {
+            embed
+                .addFields(
+                    {
+                        name: `Podwyższyłeś poziom reputacji ${targetUser.displayName} o ${newRepProportion.plus - oldRepProportion.plus} 👍`,
+                        value: mkDualProgressBar(newRepProportion.sub, newRepProportion.plus),
+                        inline: false,
+                    },
+                );
         }
+
+        return api.reply({ embeds: [embed] });
     },
 };
 

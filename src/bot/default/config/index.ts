@@ -89,8 +89,7 @@ export const defaultCfg: Config = {
             economy: {
                 default: 'block',
                 allow: [channelsCfg.other.economy, channelsCfg.mod.modCommands],
-            },
-            preferShortenedEmbeds: [channelsCfg.general.general],
+            }
         },
 
         configuration: commandsCfg,

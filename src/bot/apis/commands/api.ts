@@ -13,7 +13,6 @@ export interface CommandAPI {
     getTypedArg<B extends CommandArgBaseType>(name: string, base: B): Extract<CommandValuableArgument, { type: { base: B } }>;
     getTypedArg<B extends readonly CommandArgBaseType[]>(name: string, bases: B): Extract<CommandValuableArgument, { type: { base: B[number] } }>;
     invokedViaAlias: string;
-    preferShortenedEmbeds: boolean;
 
     // ---- INVOKER -----
     invoker: {

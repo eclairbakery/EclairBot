@@ -5,7 +5,6 @@ import { PredefinedColors } from '@/util/color.ts';
 import { cfg } from '@/bot/cfg.ts';
 
 import * as dsc from 'discord.js';
-import { output } from '@/bot/logging.ts';
 
 import warn from '@/bot/apis/mod/warns.ts';
 import parseTimestamp, { Timestamp } from '@/util/parseTimestamp.ts';
@@ -57,8 +56,6 @@ const warnCmd: Command = {
         const duration = api.getTypedArg('duration', 'timestamp')?.value as Timestamp | null;
         const expiresAt = (duration != null ? Math.floor(Date.now() / 1000) + duration : null) ?? (Math.floor(Date.now() / 1000) + parseTimestamp('24h')!);
 
-        output.log('Warn command args:', { targetUser, points, reason });
-
         if (!targetUser) {
             return api.log.replyError(
                 api,
@@ -75,13 +72,13 @@ const warnCmd: Command = {
             }
         }
 
-        if (targetUser.id === api.invoker.id) {
+        if ([api.executor.id, ...(await api.executor.fetchAlternativeAccounts())].includes(targetUser.id)) {
             return api.log.replyError(
                 api,
                 'Bro co ty odpierdalasz?',
                 'Czemu ty chcesz sobie dać warna? Co jest z tobą nie tak... Zabrać cię do szpitala zdrowia psychicznego czy co ja mam zrobić...',
             );
-        }
+        } 
 
         points = clamp(cfg.commands.configuration.warn.minPoints, points, cfg.commands.configuration.warn.maxPoints);
 
@@ -91,35 +88,19 @@ const warnCmd: Command = {
             targetUser = api.invoker.member!;
         }
 
-        try {
-            await warn(targetUser, {
-                reason,
-                expiresAt: expiresAt ?? null,
-                points,
-                mod: api.invoker.id,
-            });
-        } catch (err) {
-            output.err(err);
-            return api.log.replyError(api, 'Błąd bazy danych', 'Nie udało się zapisać warna');
-        }
+        await warn(targetUser, {
+            reason,
+            expiresAt: expiresAt ?? null,
+            points,
+            mod: api.invoker.id,
+        });
 
-        if (!api.preferShortenedEmbeds) {
-            const embed = new ReplyEmbed()
-                .setTitle(`📢 ${'<mention> dostał warna od <mod>!'.replace('<mention>', targetUser.user.username).replace('<mod>', api.invoker.user.username)}`)
-                .setDescription('Warn w skrócie ma <points> punktów i skończy się <duration>.'.replace('<points>', `${points}`).replace('<duration>', `<t:${expiresAt}:R>`))
-                .setColor(PredefinedColors.Orange);
+        const embed = new ReplyEmbed()
+            .setTitle(`📢 ${targetUser.user.username} dostał warna od ${api.invoker.user.username}`)
+            .setDescription('Warn w skrócie ma <points> punktów i skończy się <duration>.'.replace('<points>', `${points}`).replace('<duration>', `<t:${expiresAt}:R>`))
+            .setColor(PredefinedColors.Orange);
 
-            await api.reply({ embeds: [embed] });
-        } else {
-            await api.reply({
-                embeds: [
-                    new ReplyEmbed()
-                        .setTitle('📢 Użytkownik dostał warna')
-                        .setColor(PredefinedColors.Orange)
-                        .setDescription(`Udało się. To tyle. Więcej na <#${cfg.channels.mod.warnings}>`),
-                ],
-            });
-        }
+        await api.reply({ embeds: [embed] });
     },
 };
 
