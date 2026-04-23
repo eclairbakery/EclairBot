@@ -11,6 +11,7 @@ export const client = new dsc.Client({
         dsc.GatewayIntentBits.GuildMembers,
         dsc.GatewayIntentBits.GuildVoiceStates,
         dsc.GatewayIntentBits.GuildMessageReactions,
+        dsc.GatewayIntentBits.GuildMessagePolls
     ],
     partials: [
         dsc.Partials.Message,
