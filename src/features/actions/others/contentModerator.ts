@@ -35,7 +35,11 @@ export const communityPollsContentModerator: Action<MessageEventCtx> = {
     callbacks: [
         async (msg) => {
             if (!msg.poll) {
-                return replyWarn(msg, 'To nie do tego kanał', 'W skrócie no to na kanale, który się nazywa "ankiety społeczności" wysyła się te Discordowe ankiety.');
+                const reply = await replyWarn(msg, 'To nie do tego kanał', 'W skrócie no to na kanale, który się nazywa "ankiety społeczności" wysyła się te Discordowe ankiety.');
+                await sleep(2500);
+                await reply.delete();
+                await msg.delete();
+                return;
             }
 
             await msg.reply('<@1320034068322324660>');
