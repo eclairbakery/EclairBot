@@ -42,7 +42,7 @@ export const communityPollsContentModerator: Action<MessageEventCtx> = {
                 return;
             }
 
-            await msg.reply('<@1320034068322324660>');
+            await msg.reply('<@&1320034068322324660>');
             
             const threadNames = ["Kanał commentary na YT", "Odpowiedzi", "Komentarze", "Merytoryczne dyskusje na temat ankiety"];
             const thread = await msg.startThread({
