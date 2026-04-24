@@ -22,7 +22,7 @@ const unmuteCmd: Command = {
         { name: 'user', type: { base: 'user-mention', includeRefMessageAuthor: true }, description: 'Komu unmute chcesz dać?', optional: false },
         {
             name: 'reason',
-            type: { base: 'string' },
+            type: { base: 'string', trailing: true },
             description: cmdCfg.reasonRequired ? 'Po prostu powód otworzenia mordy chłopa.' : 'Po prostu powód otworzenia mordy chłopa. Możesz pominąć, ale bądź tak dobry i tego nie rób...',
             optional: !cmdCfg.reasonRequired,
         },

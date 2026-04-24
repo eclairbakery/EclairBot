@@ -32,7 +32,7 @@ export default async function ban(
             continue;
         }
 
-        const bannedMember = await smember.ban({ reason: data.reason });
+        const bannedMember = await smember.ban({ reason: `${data.reason} ~ ${data.mod}` });
         await sendLog(
             {
                 color: PredefinedColors.DarkGrey,
