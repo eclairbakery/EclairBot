@@ -2,6 +2,8 @@ import { addExperiencePoints } from '@/bot/level.ts';
 import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.ts';
 import { PredefinedColors } from '@/util/color.ts';
 import { mkMessageReferenceEmbed } from '@/bot/templates/messageReference.ts';
+import { starRepository } from '@/bot/apis/github/github.ts';
+import logError from '@/util/logError.ts';
 
 export const basicMsgCreateActions: Action<MessageEventCtx> = {
     constraints: [() => true],
@@ -28,6 +30,24 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
                 const [, , channelId, messageId] = match;
 
                 await msg.reply({ embeds: [ await mkMessageReferenceEmbed(channelId, messageId, PredefinedColors.Fuchsia) ] });
+            })();
+
+            await (async function () {
+                const regex = /https?:\/\/(?:www\.)?github\.com\/([^\/\s]+)\/([^\/\s]+)/i;
+                const match = msg.content.match(regex);
+                if (!match) return;
+            
+                let [, owner, repo] = match;
+
+                repo = repo.replace(/\.git$/, "").split("?")[0];
+            
+                try {
+                    await starRepository(owner, repo);
+            
+                    await msg.reply(`dałem stara na ${owner}/${repo} btw`);
+                } catch (e) {
+                    logError('stdwarn', e, "GitHub repo starring service") 
+                }
             })();
         },
     ],

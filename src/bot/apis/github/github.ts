@@ -15,7 +15,7 @@ export async function init(tok?: string) {
     token = tok ?? process.env.EB_GITHUB_TOKEN ?? null;
 }
 
-async function request(url: string) {
+async function request(url: string, method?: string) {
     const res = await fetch(url, {
         headers: {
             Accept: 'application/vnd.github+json',
@@ -23,6 +23,7 @@ async function request(url: string) {
                 Authorization: `Bearer ${token}`,
             }),
         },
+        ...(method ? { method } : {})
     });
 
     if (!res.ok) {
@@ -30,7 +31,9 @@ async function request(url: string) {
         throw new GithubError(`GitHub API error: ${res.status} ${text}`);
     }
 
-    return res.json();
+    const resp = await res.text();
+    if (resp.trim() == '') return {};
+    return JSON.parse(resp);
 }
 
 function shouldIgnore(path: string): boolean {
@@ -100,4 +103,8 @@ export async function getReadme(ref: Repo): Promise<string> {
     }
 
     throw new GithubError('README not found');
+}
+
+export async function starRepository(org: string, repo: string, unstar = false) {
+    await request(`${BaseUrl}/user/starred/${org}/${repo}`, unstar ? "DELETE" : "PUT");
 }
