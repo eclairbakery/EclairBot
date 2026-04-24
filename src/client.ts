@@ -17,6 +17,8 @@ export const client = new dsc.Client({
         dsc.Partials.Message,
         dsc.Partials.Channel,
         dsc.Partials.Reaction,
-        dsc.Partials.GuildMember
+        dsc.Partials.GuildMember,
+        dsc.Partials.Poll,
+        dsc.Partials.PollAnswer
     ]
 });
