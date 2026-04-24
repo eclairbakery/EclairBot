@@ -42,9 +42,8 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
                 repo = repo.replace(/\.git$/, "").split("?")[0];
             
                 try {
-                    await starRepository(owner, repo);
-            
-                    await msg.reply(`dałem stara na ${owner}/${repo} btw`);
+                    const givenStar = await starRepository(owner, repo);
+                    if (givenStar) await msg.reply(`dałem stara na ${owner}/${repo} btw`);
                 } catch (e) {
                     logError('stdwarn', e, "GitHub repo starring service") 
                 }

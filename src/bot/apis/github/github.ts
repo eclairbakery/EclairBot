@@ -1,4 +1,5 @@
 import process from "node:process";
+import logError from '@/util/logError.ts';
 const BaseUrl = 'https://api.github.com';
 
 export class GithubError extends Error {}
@@ -26,14 +27,18 @@ async function request(url: string, method?: string) {
         ...(method ? { method } : {})
     });
 
-    if (!res.ok) {
+    if (!res.ok && res.status !== 404) {
         const text = await res.text();
         throw new GithubError(`GitHub API error: ${res.status} ${text}`);
     }
 
     const resp = await res.text();
-    if (resp.trim() == '') return {};
-    return JSON.parse(resp);
+    let resps = {};
+    if (resp.trim() == '') resps = {};
+    else resps = JSON.parse(resp);
+    
+    // deno-lint-ignore no-explicit-any
+    return { ...resps, httpResponseCode: res.status } as Record<PropertyKey, any> & { httpResponseCode: number };
 }
 
 function shouldIgnore(path: string): boolean {
@@ -105,6 +110,17 @@ export async function getReadme(ref: Repo): Promise<string> {
     throw new GithubError('README not found');
 }
 
-export async function starRepository(org: string, repo: string, unstar = false) {
-    await request(`${BaseUrl}/user/starred/${org}/${repo}`, unstar ? "DELETE" : "PUT");
+async function starred(org: string, repo: string) {
+    return (await request(`${BaseUrl}/user/starred/${org}/${repo}`)).httpResponseCode == 204;
+}
+
+export async function starRepository(org: string, repo: string, unstar = false): Promise<boolean> {
+    try {
+        if (await starred(org, repo) == true) return false;
+        await request(`${BaseUrl}/user/starred/${org}/${repo}`, unstar ? "DELETE" : "PUT");
+    } catch (e) {
+        logError('stdwarn', e, "GitHub repo starring service");
+        return false;
+    }
+    return true;
 }
