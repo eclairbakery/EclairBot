@@ -1,4 +1,4 @@
-import { Action, AnyAction, MessageEventCtx, Ok, PredefinedActionCallbacks, PredefinedActionConstraints, Skip } from '../index.ts';
+import { Action, AnyAction, MessageEventCtx, PredefinedActionCallbacks } from '../index.ts';
 
 import { mkAutoreplyAction } from '../autoreply.ts';
 
@@ -8,12 +8,10 @@ import { client } from '@/client.ts';
 export default class AutoModRules {
     static readonly msgAuthorIsNotImmuneToAutomod = (msg: MessageEventCtx) => {
         for (const role of [...cfg.hierarchy.automodBypassRoles, cfg.hierarchy.administration.eclair25, cfg.hierarchy.administration.headAdmin]) {
-            if (PredefinedActionConstraints.userHasRole(role)(msg.member!) == Ok) return Skip;
+            if (msg.member!.roles.cache.has(role)) return false;
         }
 
-        if (msg.author.id == client.user!.id) return Skip;
-
-        return Ok;
+        return msg.author.id !== client.user!.id;
     };
 
     static readonly EveryoneAutoreply: Action<MessageEventCtx> = mkAutoreplyAction({

@@ -1,7 +1,6 @@
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { Action, ActionCallback, ConstraintCallback, MagicSkipAllActions, PredefinedActionEventTypes } from './index.ts';
 import { MessageEventCtx } from './index.ts';
-import { PredefinedActionConstraints } from './index.ts';
 
 import * as log from '@/util/log.ts';
 import * as dsc from 'discord.js';
@@ -34,19 +33,19 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
     for (const opt of activationOptions) {
         switch (opt.type) {
             case 'contains':
-                constraints.push(PredefinedActionConstraints.msgContains(opt.keyword.toLowerCase()));
+                constraints.push((ctx) => ctx.content.toLowerCase().includes(opt.keyword.toLowerCase()));
                 break;
             case 'is-equal-to':
-                constraints.push(PredefinedActionConstraints.msgIsEqualTo(opt.keyword.toLowerCase()));
+                constraints.push((ctx) => ctx.content.toLowerCase() == opt.keyword.toLowerCase());
                 break;
             case 'starts-with':
-                constraints.push(PredefinedActionConstraints.msgStartsWith(opt.keyword.toLowerCase()));
+                constraints.push((ctx) => ctx.content.toLowerCase().startsWith(opt.keyword.toLowerCase()));
                 break;
             case 'ends-with':
-                constraints.push(PredefinedActionConstraints.msgEndsWith(opt.keyword.toLowerCase()));
+                constraints.push((ctx) => ctx.content.toLowerCase().endsWith(opt.keyword.toLowerCase()));
                 break;
             case 'matches-regex':
-                constraints.push(PredefinedActionConstraints.msgMatchesRegex(opt.keyword.toLowerCase()));
+                constraints.push((ctx) => new RegExp(opt.keyword.toLowerCase()).test(ctx.content));
                 break;
             default:
                 throw new Error(`Unknown activation option type: ${opt.type}`);
@@ -56,7 +55,12 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
     return {
         activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
         constraints: [
-            PredefinedActionConstraints.or(...constraints),
+            async (ctx) => {
+                for (const constraint of constraints) {
+                    if (await constraint(ctx)) return true;
+                }
+                return false;
+            },
             ...additionalConstraints || [],
         ],
         callbacks: [

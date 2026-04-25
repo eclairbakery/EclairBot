@@ -1,6 +1,6 @@
 import { client } from '../../../client.ts';
 
-import actionsManager, { Action, MagicSkipAllActions, Ok, PredefinedActionEventTypes, Skip, UserEventCtx } from '../index.ts';
+import actionsManager, { Action, MagicSkipAllActions, PredefinedActionEventTypes, UserEventCtx } from '../index.ts';
 export default actionsManager;
 
 import { cfg } from '@/bot/cfg.ts';
@@ -12,7 +12,7 @@ const StartItId = '572906387382861835';
 export const welcomeNewUserAction: Action<UserEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnUserJoin,
     constraints: [
-        () => cfg.features.welcomer.enabled ? Ok : Skip,
+        () => cfg.features.welcomer.enabled,
     ],
     callbacks: [
         async (member) => {
@@ -50,7 +50,7 @@ export const welcomeNewUserAction: Action<UserEventCtx> = {
 export const sayGoodbyeAction: Action<UserEventCtx> = {
     activationEventType: PredefinedActionEventTypes.OnUserQuit,
     constraints: [
-        () => cfg.features.welcomer.enabled ? Ok : Skip,
+        () => cfg.features.welcomer.enabled,
     ],
     callbacks: [
         async (member) => {

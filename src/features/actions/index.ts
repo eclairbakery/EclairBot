@@ -2,9 +2,6 @@ import * as log from '@/util/log.ts';
 import * as dsc from 'discord.js';
 import logError from '@/util/logError.ts';
 
-// deno-lint-ignore-file
-
-// import { MessageEventCtx, UserEventCtx, VoiceChannelsEventCtx, ThreadEventCtx, ChannelEventCtx }
 export type MessageEventCtx = dsc.Message;
 export type ReactionEventCtx = { reaction: dsc.MessageReaction; user: dsc.User };
 export type UserEventCtx = dsc.GuildMember;
@@ -31,8 +28,6 @@ export type AnyActionCallback = (ctx: AnyEventCtx) => void;
 
 export type ConstraintCallback<CtxType> = (ctx: CtxType) => Promise<boolean> | boolean;
 export type AnyConstraintCallback = (ctx: AnyEventCtx) =>   Promise<boolean> | boolean;
-export const Skip = false;
-export const Ok = true;
 
 export type ActionEventType = symbol;
 
@@ -119,72 +114,6 @@ export class PredefinedActionCallbacks {
     };
 }
 
-export class PredefinedActionConstraints {
-    static not<CtxType>(callback: ConstraintCallback<CtxType>): ConstraintCallback<CtxType> {
-        return (msg) => !callback(msg);
-    }
-
-    static or<CtxType>(...constraints: ConstraintCallback<CtxType>[]): ConstraintCallback<CtxType> {
-        return (msg) => {
-            for (const constraint of constraints) {
-                if (constraint(msg) == Ok) return Ok;
-            }
-            return Skip;
-        };
-    }
-
-    static and<CtxType>(...constraints: ConstraintCallback<CtxType>[]): ConstraintCallback<CtxType> {
-        return (msg) => {
-            for (const constraint of constraints) {
-                if (constraint(msg) == Skip) return Skip;
-            }
-            return Ok;
-        };
-    }
-
-    static msgContains(text: string): ConstraintCallback<MessageEventCtx> {
-        return (msg) => {
-            if (msg.content.toLowerCase().includes(text.toLowerCase())) return Ok;
-            return Skip;
-        };
-    }
-
-    static msgIsEqualTo(text: string): ConstraintCallback<MessageEventCtx> {
-        return (msg) => {
-            if (msg.content.toLowerCase() == text.toLowerCase()) return Ok;
-            return Skip;
-        };
-    }
-
-    static msgStartsWith(prefix: string): ConstraintCallback<MessageEventCtx> {
-        return (msg) => {
-            if (msg.content.toLowerCase().startsWith(prefix.toLowerCase())) return Ok;
-            return Skip;
-        };
-    }
-
-    static msgEndsWith(suffix: string): ConstraintCallback<MessageEventCtx> {
-        return (msg) => {
-            if (msg.content.toLowerCase().endsWith(suffix.toLowerCase())) return Ok;
-            return Skip;
-        };
-    }
-
-    static msgMatchesRegex(regex: string | RegExp): ConstraintCallback<MessageEventCtx> {
-        const re = typeof regex == 'string' ? new RegExp(regex) : regex;
-        return (msg) => {
-            if (re.test(msg.content)) return Ok;
-            return Skip;
-        };
-    }
-
-    static userHasRole(roleId: dsc.Snowflake): ConstraintCallback<UserEventCtx> {
-        return (userCtx) => {
-            if (userCtx.roles.cache.has(roleId)) return Ok;
-            return Skip;
-        };
-    }
-}
 
 class ActionManager {
     private actions: Map<ActionEventType, AnyAction[]> = new Map();
@@ -200,40 +129,7 @@ class ActionManager {
     ) {
         client.on(eventName, async (...args: unknown[]) => {
             const ctx = getCtx(...args);
-
-            if (eventName == 'messageCreate') {
-                if (!(ctx as MessageEventCtx).inGuild()) return;
-                if (!(ctx as MessageEventCtx).member) return;
-            }
-
-            let skipAll = false;
-
-            actionsLoop:
-            for (const action of this.actions.get(eventType) ?? []) {
-                if (skipAll) break;
-
-                if (actionFilter && !actionFilter(action, ...args)) continue;
-
-                for (const constraint of action.constraints) {
-                    if (await constraint(ctx) == Skip) {
-                        continue actionsLoop;
-                    }
-                }
-
-                for (const callback of action.callbacks) {
-                    try {
-                        const result = callback(ctx);
-                        const awaited = result instanceof Promise ? await result : result;
-
-                        if (awaited === MagicSkipAllActions) {
-                            skipAll = true;
-                            break;
-                        }
-                    } catch (err) {
-                        logError('stderr', err, "Action system's event handler"); 
-                    }
-                }
-            }
+            this.emit(eventType, ctx, args, actionFilter)
         });
     }
 
@@ -370,29 +266,36 @@ class ActionManager {
         this.handleEvent(client, 'guildBanAdd', PredefinedActionEventTypes.OnUserBan, (ban: dsc.GuildBan) => ban);
         this.handleEvent(client, 'guildBanRemove', PredefinedActionEventTypes.OnUserUnban, (ban: dsc.GuildBan) => ban);
     }
-
-    async emit<CtxType>(eventType: ActionEventType, ctx: CtxType) {
+    
+    // deno-lint-ignore no-explicit-any
+    async emit<CtxType>(eventType: ActionEventType, ctx: CtxType, args: any[] = [], actionFilter?: (action: AnyAction, ...args: any[]) => boolean) {
         const actions = this.actions.get(eventType);
         if (!actions) return;
 
         actionsLoop:
         for (const action of actions) {
-            // check constraints
-            for (const constraint of action.constraints) {
-                if (await constraint(ctx) == Skip) {
-                    continue actionsLoop;
-                }
-            }
+            if (actionFilter && !actionFilter(action, ...args)) continue;
 
-            // execute callbacks
-            for (const callback of action.callbacks) {
-                const result = callback(ctx as PromiseLike<unknown>);
-                if (result && typeof (result as PromiseLike<unknown>).then === 'function') {
-                    if (await result == MagicSkipAllActions) {
-                        break actionsLoop;
+            try {
+                // check constraints
+                for (const constraint of action.constraints) {
+                    if (await constraint(ctx) == false) {
+                        continue actionsLoop;
                     }
                 }
-            }
+
+                // execute callbacks
+                for (const callback of action.callbacks) {
+                    const result = callback(ctx as PromiseLike<unknown>);
+                    if (result && typeof (result as PromiseLike<unknown>).then === 'function') {
+                        if (await result == MagicSkipAllActions) {
+                            break actionsLoop;
+                        }
+                    }
+                }
+            } catch (e) {
+                logError('stdwarn', e, "Action system's event handler");
+            } 
         }
     }
 
