@@ -319,7 +319,7 @@ export async function init() {
             dsc.Routes.applicationCommands(client.application!.id),
             { body: commandsArray },
         );
-        debug.log('Slash commands registered');
+        debug.verbose('Slash commands registered');
     } catch (err) {
         debug.err('Slash commands error: ' + err);
     }

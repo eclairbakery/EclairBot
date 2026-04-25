@@ -47,6 +47,7 @@ export namespace output {
         export const RED = '\x1b[31m';
         export const YELLOW = '\x1b[33m';
         export const CYAN = '\x1b[36m';
+        export const GRAY = '\x1b[90m';
     }
 
     let stdoutChannel: GuildTextBasedChannel;
@@ -59,7 +60,7 @@ export namespace output {
         return text.trimEnd();
     }
 
-    function decorate(level: 'LOG' | 'WARN' | 'ERR', color: string, msg: string): string {
+    function decorate(level: 'LOG' | 'WARN' | 'ERR' | 'VERB', color: string, msg: string): string {
         return msg
             .split('\n')
             .map((line) => `${colors.RESET}[${color} ${level} ${colors.RESET}] ${line}${colors.RESET}`)
@@ -113,6 +114,14 @@ export namespace output {
         const prefixed = decorate('ERR', colors.RED, data);
         console.error(prefixed);
         send('stderr', data);
+    }
+
+    export function verbose(msg: string | object | unknown, ...args: unknown[]) {
+        if (process.env.EB_DEVELOPMENT !== 'true') return;
+        const data = format(msg, ...args);
+        const prefixed = decorate('VERB', colors.GRAY, data);
+        console.error(prefixed);
+        send('stdout', data);
     }
 
     export function forward(raw: string) {

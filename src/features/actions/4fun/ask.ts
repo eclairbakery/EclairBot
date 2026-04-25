@@ -9,7 +9,8 @@ import { cfg } from '@/bot/cfg.ts';
 import { MessageType } from 'discord.js';
 
 export const askAction: Action<MessageEventCtx> = {
-    activationEventType: [PredefinedActionEventTypes.OnMessageCreate],
+    name: '4fun/ask',
+    activatesOn: [PredefinedActionEventTypes.OnMessageCreate],
 
     constraints: [
         (ctx) => ctx.author.id != client.user?.id,

@@ -6,7 +6,8 @@ import { Action } from '@/features/actions/index.ts';
 import { PredefinedColors } from '@/util/color.ts';
 
 export const warnGivenLogAction: Action<WarnEventCtx> = {
-    activationEventType: OnWarnGiven,
+    name: 'mod/warn-given',
+    activatesOn: OnWarnGiven,
     constraints: [() => true],
     callbacks: [
         async (ctx) => {

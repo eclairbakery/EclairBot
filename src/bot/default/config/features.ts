@@ -131,4 +131,7 @@ export const featuresConfig: Config['features'] = {
         contextDefaultMessages: 15,
         contextMaxMessages: 30,
     },
+    actions: {
+        disabled: []
+    }
 };

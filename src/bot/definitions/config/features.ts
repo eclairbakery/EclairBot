@@ -81,4 +81,7 @@ export interface ConfigFeatures {
         contextDefaultMessages: number;
         contextMaxMessages: number;
     };
+    actions: {
+        disabled: string[]
+    }
 }

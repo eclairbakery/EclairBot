@@ -74,11 +74,22 @@ import { communityPollsContentModerator, filesContentModerator } from '@/feature
 client.once('clientReady', async () => {
     await output.init();
     output.log(`${ft.CYAN}Logged in.`);
+    if (process.env.EB_DEVELOPMENT == 'true') {
+        output.verbose(
+            '------------------------------------------------\n' + 
+            'Verbose logging enabled.\n' +
+            'EclairBOT will log more detailed output.\n' +
+            'To disable this behaviour, please set\n' +
+            'EB_DEVELOPMENT to false or unset this variable.\n' + 
+            '------------------------------------------------'
+        );
+    }
 
     await registerCommands();
+    output.verbose('Commands registered');
 
     await db.init();
-    output.log(`Database initialized.`);
+    output.verbose(`Database initialized.`);
 
     addVoiceExperience();
 
@@ -87,7 +98,7 @@ client.once('clientReady', async () => {
     } else {
         await email.init();
         await initEmailActionsIntegration();
-        output.log(`Email initialized.`);
+        output.verbose(`Email initialized.`);
     }
 
     await gemini.init();
@@ -96,14 +107,14 @@ client.once('clientReady', async () => {
     } else if (cfg.features.ai.enabled) {
         initAskCmdModel();
         initWikiModel();
-        output.log(`Gemini initialized.`);
+        output.verbose(`Gemini initialized.`);
     }
 
     await github.init();
-    output.log(`Github integration initialized`);
+    output.verbose(`Github integration initialized`);
 
     await cache.init();
-    output.log(`Cache initialized.`);
+    output.verbose(`Cache initialized.`); 
 
     await main();
 });

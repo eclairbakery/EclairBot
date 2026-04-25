@@ -9,7 +9,8 @@ import { cfg } from '@/bot/cfg.ts';
 import fmtEmoji from '@/util/fmtEmoji.ts';
 
 export const mediaChannelAction: Action<MessageEventCtx> = {
-    activationEventType: PredefinedActionEventTypes.OnMessageCreate,
+    name: '4fun/media-channel',
+    activatesOn: PredefinedActionEventTypes.OnMessageCreate,
     constraints: [
         (msg: dsc.Message) => {
             if (msg.author.bot) return false;

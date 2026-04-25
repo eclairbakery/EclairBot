@@ -10,7 +10,8 @@ import { output } from '@/bot/logging.ts';
 const StartItId = '572906387382861835';
 
 export const welcomeNewUserAction: Action<UserEventCtx> = {
-    activationEventType: PredefinedActionEventTypes.OnUserJoin,
+    name: 'others/welcomer/join',
+    activatesOn: PredefinedActionEventTypes.OnUserJoin,
     constraints: [
         () => cfg.features.welcomer.enabled,
     ],
@@ -48,7 +49,8 @@ export const welcomeNewUserAction: Action<UserEventCtx> = {
 };
 
 export const sayGoodbyeAction: Action<UserEventCtx> = {
-    activationEventType: PredefinedActionEventTypes.OnUserQuit,
+    name: 'others/welcomer/leave',
+    activatesOn: PredefinedActionEventTypes.OnUserQuit,
     constraints: [
         () => cfg.features.welcomer.enabled,
     ],

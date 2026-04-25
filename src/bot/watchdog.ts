@@ -69,7 +69,8 @@ function addAction(userId: string, type: 'create' | 'delete' | 'warn' | 'mute') 
 }
 
 const channelAddWatcher: Action<{ guild: dsc.Guild }> = {
-    activationEventType: PredefinedActionEventTypes.OnChannelCreate,
+    name: 'watchdog/watchers/channel-add',
+    activatesOn: PredefinedActionEventTypes.OnChannelCreate,
     constraints: [
         () => {
             return cfg.features.watchdog.shallAutoDegrade;
@@ -94,7 +95,8 @@ const channelAddWatcher: Action<{ guild: dsc.Guild }> = {
 };
 
 const channelDeleteWatcher: Action<{ guild: dsc.Guild }> = {
-    activationEventType: PredefinedActionEventTypes.OnChannelDelete,
+    name: 'watchdog/watchers/channel-delete',
+    activatesOn: PredefinedActionEventTypes.OnChannelDelete,
     constraints: [
         () => {
             return cfg.features.watchdog.shallAutoDegrade;
@@ -119,7 +121,8 @@ const channelDeleteWatcher: Action<{ guild: dsc.Guild }> = {
 };
 
 const onWarnGivenWatcher: Action<WarnEventCtx> = {
-    activationEventType: OnWarnGiven,
+    name: 'watchdog/watchers/user-warn',
+    activatesOn: OnWarnGiven,
     constraints: [
         () => {
             return cfg.features.watchdog.shallAutoDegrade;
@@ -142,7 +145,8 @@ const onWarnGivenWatcher: Action<WarnEventCtx> = {
 };
 
 const onMuteGivenWatcher: Action<UserEventCtx> = {
-    activationEventType: PredefinedActionEventTypes.OnUserMute,
+    name: 'watchdog/watchers/user-mute',
+    activatesOn: PredefinedActionEventTypes.OnUserMute,
     constraints: [
         () => {
             return cfg.features.watchdog.shallAutoDegrade;

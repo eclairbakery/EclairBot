@@ -164,11 +164,12 @@ async function prefixCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 
 export function init() {
     actionsManager.addAction({
+        name: 'commands/prefix',
         callbacks: [prefixCommandsMessageHandler],
         constraints: [
             (msg) => [cfg.commands.prefix, ...cfg.commands.alternativePrefixes].some((val) => msg.content.toLowerCase().startsWith(val.toLowerCase())),
         ],
-        activationEventType: PredefinedActionEventTypes.OnMessageCreate,
+        activatesOn: PredefinedActionEventTypes.OnMessageCreate,
     });
-    output.log('Prefix commands event registered');
+    output.verbose('Prefix commands event registered');
 }

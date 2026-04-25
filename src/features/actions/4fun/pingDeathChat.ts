@@ -57,7 +57,8 @@ export const pings: Record<string, PingAPI> = {
 };
 
 export const actionPing: Action<MessageEventCtx> = {
-    activationEventType: PredefinedActionEventTypes.OnMessageCreate,
+    name: '4fun/notify/death-chat',
+    activatesOn: PredefinedActionEventTypes.OnMessageCreate,
     constraints: [(msg) => msg.channelId === '1264971505662689311'],
     callbacks: [
         (msg) => {

@@ -28,6 +28,8 @@ export interface LogEmbedAutoReplyOptions {
     additionalCallbacks?: ActionCallback<MessageEventCtx>[];
 }
 
+let global_counter = 1;
+
 export function mkAutoreplyAction({ activationOptions, reply, additionalCallbacks, additionalConstraints, shallEndActionsLoop }: AutoReplyOptions): Action<MessageEventCtx> {
     const constraints: ConstraintCallback<MessageEventCtx>[] = [];
     for (const opt of activationOptions) {
@@ -53,7 +55,8 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
     }
 
     return {
-        activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
+        name: 'auto-reply/ar' + global_counter++,
+        activatesOn: PredefinedActionEventTypes.OnMessageCreateOrEdit,
         constraints: [
             async (ctx) => {
                 for (const constraint of constraints) {

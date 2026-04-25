@@ -9,7 +9,8 @@ import { cfg } from '@/bot/cfg.ts';
 import fmtEmoji from '@/util/fmtEmoji.ts';
 
 export const countingChannelAction: Action<MessageEventCtx> = {
-    activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
+    name: '4fun/counting',
+    activatesOn: PredefinedActionEventTypes.OnMessageCreateOrEdit,
     constraints: [
         (msg: dsc.Message) => {
             if (msg.author.bot) return false;

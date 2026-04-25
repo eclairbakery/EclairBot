@@ -56,7 +56,8 @@ async function isSpam(subject: string, text: string, sender: string) {
 }
 
 export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
-    activationEventType: ReceivedNewEmailEvent,
+    name: 'others/email',
+    activatesOn: ReceivedNewEmailEvent,
     constraints: [],
     callbacks: [
         async (ctx) => {

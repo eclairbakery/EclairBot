@@ -60,7 +60,8 @@ function isFlood(content: string) {
 }
 
 export const antiSpamAndAntiFlood: Action<MessageEventCtx> = {
-    activationEventType: PredefinedActionEventTypes.OnMessageCreate,
+    name: 'mod/anti-spam-anti-flood',
+    activatesOn: PredefinedActionEventTypes.OnMessageCreate,
     constraints: [(msg) => {
         if (!msg.inGuild()) return false;
         else return true;

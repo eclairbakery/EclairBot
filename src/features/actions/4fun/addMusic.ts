@@ -7,7 +7,8 @@ import { extractMediaLinks } from '@/features/scan-for-music.ts';
 import { db } from '@/bot/apis/db/bot-db.ts';
 
 export const addMusicAction: Action<MessageEventCtx> = {
-    activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
+    name: '4fun/add-music',
+    activatesOn: PredefinedActionEventTypes.OnMessageCreateOrEdit,
     constraints: [
         (msg: dsc.Message) => {
             if (msg.author.bot) return false;

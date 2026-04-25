@@ -4,7 +4,8 @@ import sleep from '@/util/sleep.ts';
 import { replyWarn } from '@/util/log.ts';
 
 export const filesContentModerator: Action<MessageEventCtx> = {
-    activationEventType: PredefinedActionEventTypes.OnMessageCreate,
+    name: 'others/content-moderator/files',
+    activatesOn: PredefinedActionEventTypes.OnMessageCreate,
 
     constraints: [
         (ctx) => ctx.author.id != ctx.client.user.id,
@@ -26,7 +27,8 @@ export const filesContentModerator: Action<MessageEventCtx> = {
 };
 
 export const communityPollsContentModerator: Action<MessageEventCtx> = {
-    activationEventType: PredefinedActionEventTypes.OnMessageCreate,
+    name: 'others/content-moderator/polls',
+    activatesOn: PredefinedActionEventTypes.OnMessageCreate,
 
     constraints: [
         (ctx) => ctx.author.id != ctx.client.user.id,

@@ -7,7 +7,8 @@ import { mkMessageReferenceEmbed } from '@/bot/templates/messageReference.ts';
 const alreadyInHallOfFame: dsc.Snowflake[] = [];
 
 export const hallOfFameAction: Action<ReactionEventCtx> = {
-    activationEventType: PredefinedActionEventTypes.OnMessageReactionAdd,
+    name: '4fun/hall-of-fame',
+    activatesOn: PredefinedActionEventTypes.OnMessageReactionAdd,
     constraints: [
         () => true,
     ],

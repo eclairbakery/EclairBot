@@ -27,7 +27,8 @@ export interface TemplateChannel {
 
 export function mkTemplateChannelUpdateAction({ channel, updateOnEvents, format, additionalConstraints, additionalCallbacks }: TemplateChannel): AnyAction {
     return {
-        activationEventType: updateOnEvents,
+        name: 'template-channels/' + channel.id,
+        activatesOn: updateOnEvents,
         constraints: [
             ...additionalConstraints || [],
         ],

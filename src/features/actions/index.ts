@@ -1,6 +1,8 @@
 import * as log from '@/util/log.ts';
 import * as dsc from 'discord.js';
 import logError from '@/util/logError.ts';
+import { output } from '@/bot/logging.ts';
+import { cfg } from '@/bot/cfg.ts';
 
 export type MessageEventCtx = dsc.Message;
 export type ReactionEventCtx = { reaction: dsc.MessageReaction; user: dsc.User };
@@ -76,7 +78,10 @@ export class PredefinedActionEventTypes {
 }
 
 export interface Action<CallbackCtxType> {
-    activationEventType: ActionEventType | ActionEventType[];
+    name: string;
+    worksOutsideGuild?: boolean;
+
+    activatesOn: ActionEventType | ActionEventType[];
     constraints: ConstraintCallback<CallbackCtxType>[];
     callbacks: ActionCallback<CallbackCtxType>[];
 }
@@ -134,8 +139,8 @@ class ActionManager {
     }
 
     addAction(action: AnyAction) {
-        const eventTypes = action.activationEventType === PredefinedActionEventTypes.OnMessageCreateOrEdit ? [PredefinedActionEventTypes.OnMessageCreate, PredefinedActionEventTypes.OnMessageEdit] : (
-            typeof action.activationEventType == 'object' ? action.activationEventType : [action.activationEventType]
+        const eventTypes = action.activatesOn === PredefinedActionEventTypes.OnMessageCreateOrEdit ? [PredefinedActionEventTypes.OnMessageCreate, PredefinedActionEventTypes.OnMessageEdit] : (
+            typeof action.activatesOn == 'object' ? action.activatesOn : [action.activatesOn]
         );
 
         for (const eventType of eventTypes) {
@@ -161,7 +166,7 @@ class ActionManager {
                     PredefinedActionEventTypes.OnMessageCreate,
                     PredefinedActionEventTypes.OnMessageCreateOrEdit,
                 ];
-                const a = action.activationEventType;
+                const a = action.activatesOn;
                 return Array.isArray(a) ? a.some((t) => types.includes(t)) : types.includes(a);
             },
         );
@@ -175,7 +180,7 @@ class ActionManager {
                     PredefinedActionEventTypes.OnMessageEdit,
                     PredefinedActionEventTypes.OnMessageCreateOrEdit,
                 ];
-                const a = action.activationEventType;
+                const a = action.activatesOn;
                 return (
                     (Array.isArray(a) ? a.some((t) => types.includes(t)) : types.includes(a)) &&
                     oldMsg.content !== newMsg.content
@@ -266,6 +271,14 @@ class ActionManager {
         this.handleEvent(client, 'guildBanAdd', PredefinedActionEventTypes.OnUserBan, (ban: dsc.GuildBan) => ban);
         this.handleEvent(client, 'guildBanRemove', PredefinedActionEventTypes.OnUserUnban, (ban: dsc.GuildBan) => ban);
     }
+
+    private disabledFromName(name: string): boolean {
+        const disabled = cfg.features.actions.disabled;
+    
+        return disabled.some(disabledName => 
+            name === disabledName || name.startsWith(disabledName + '/')
+        );
+    } 
     
     // deno-lint-ignore no-explicit-any
     async emit<CtxType>(eventType: ActionEventType, ctx: CtxType, args: any[] = [], actionFilter?: (action: AnyAction, ...args: any[]) => boolean) {
@@ -274,7 +287,14 @@ class ActionManager {
 
         actionsLoop:
         for (const action of actions) {
-            if (actionFilter && !actionFilter(action, ...args)) continue;
+            if (actionFilter && !actionFilter(action, ...args)) {
+                output.verbose(`Skipping action ${action.name}, actionFilter returned false`);
+                continue;
+            }
+            if (this.disabledFromName(action.name)) {
+                output.verbose(`Skipping action ${action.name}, disabled in configuration`);
+                continue;
+            }
 
             try {
                 // check constraints

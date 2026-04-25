@@ -9,7 +9,8 @@ import { cfg } from '@/bot/cfg.ts';
 import fmtEmoji from '@/util/fmtEmoji.ts';
 
 export const lastLetterChannelAction: Action<MessageEventCtx> = {
-    activationEventType: PredefinedActionEventTypes.OnMessageCreateOrEdit,
+    name: '4fun/last-letter',
+    activatesOn: PredefinedActionEventTypes.OnMessageCreateOrEdit,
     constraints: [
         (msg: dsc.Message) => {
             if (msg.author.bot) return false;

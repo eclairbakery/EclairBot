@@ -6,8 +6,9 @@ import { starRepository } from '@/bot/apis/github/github.ts';
 import logError from '@/util/logError.ts';
 
 export const basicMsgCreateActions: Action<MessageEventCtx> = {
+    name: 'others/basic-msg-create-actions',
     constraints: [() => true],
-    activationEventType: PredefinedActionEventTypes.OnMessageCreate,
+    activatesOn: PredefinedActionEventTypes.OnMessageCreate,
     callbacks: [
         async (msg) => {
             if (!msg.inGuild()) return;

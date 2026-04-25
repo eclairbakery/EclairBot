@@ -133,7 +133,8 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
 }
 
 const updateXpAction: Action<XpEventCtx> = {
-    activationEventType: OnSetXpEvent,
+    name: '4fun/level',
+    activatesOn: OnSetXpEvent,
     constraints: [],
     callbacks: [
         async (ctx) => {
