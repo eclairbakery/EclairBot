@@ -1,4 +1,4 @@
-import { type Action, type MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.ts';
+import { type Action, MagicSkipAllActions, type MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.ts';
 import { cfg } from '@/bot/cfg.ts';
 import sleep from '@/util/sleep.ts';
 import { replyWarn } from '@/util/log.ts';
@@ -20,6 +20,7 @@ export const filesContentModerator: Action<MessageEventCtx> = {
             await reply.delete();
             await msg.delete();
             await msg.channel.delete();
+            return MagicSkipAllActions;
         }
     ]
 };
@@ -39,7 +40,7 @@ export const communityPollsContentModerator: Action<MessageEventCtx> = {
                 await sleep(2500);
                 await reply.delete();
                 await msg.delete();
-                return;
+                return MagicSkipAllActions;
             }
 
             await msg.reply('<@&1320034068322324660>');

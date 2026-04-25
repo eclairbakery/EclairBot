@@ -1,6 +1,6 @@
 import sleep from '@/util/sleep.ts';
 
-import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes } from '../index.ts';
+import actionsManager, { Action, MagicSkipAllActions, MessageEventCtx, PredefinedActionEventTypes } from '../index.ts';
 export default actionsManager;
 
 import * as dsc from 'discord.js';
@@ -25,7 +25,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();
-                return;
+                return MagicSkipAllActions;
             }
 
             const messages = await msg.channel.messages.fetch({ limit: 2 });
@@ -42,7 +42,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                         await sleep(1000);
                         await msg.delete();
                         await reply.delete();
-                        return;
+                        return MagicSkipAllActions;
                     }
                 } 
             }
@@ -52,6 +52,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();
+                return MagicSkipAllActions;
             }
 
             if (msg.content.endsWith('ą') || msg.content.endsWith('ę')) {
@@ -59,7 +60,7 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();
-                return;
+                return MagicSkipAllActions;
             }
         },
     ],

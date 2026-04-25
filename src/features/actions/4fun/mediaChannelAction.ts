@@ -1,6 +1,6 @@
 import sleep from '@/util/sleep.ts';
 
-import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes } from '../index.ts';
+import actionsManager, { Action, MagicSkipAllActions, MessageEventCtx, PredefinedActionEventTypes } from '../index.ts';
 export default actionsManager;
 
 import * as dsc from 'discord.js';
@@ -44,12 +44,13 @@ export const mediaChannelAction: Action<MessageEventCtx> = {
                 for (const reaction of channelConfig.addReactions) {
                     await msg.react(reaction);
                 }
+                return MagicSkipAllActions;
             } else if (channelConfig.deleteMessageIfNotMedia) {
                 const reply = await msg.reply(`to nie do tego kanał ${fmtEmoji(cfg.emojis.wowEmoji)}`);
                 await sleep(2000);
                 await msg.delete();
                 await reply.delete();
-                return;
+                return MagicSkipAllActions;
             }
         },
     ],

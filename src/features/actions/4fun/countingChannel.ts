@@ -1,6 +1,6 @@
 import sleep from '@/util/sleep.ts';
 
-import actionsManager, { Action, MessageEventCtx, PredefinedActionEventTypes } from '../index.ts';
+import actionsManager, { Action, MagicSkipAllActions, MessageEventCtx, PredefinedActionEventTypes } from '../index.ts';
 export default actionsManager;
 
 import * as dsc from 'discord.js';
@@ -25,7 +25,7 @@ export const countingChannelAction: Action<MessageEventCtx> = {
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();
-                return;
+                return MagicSkipAllActions;
             }
 
             const messages = await msg.channel.messages.fetch({ limit: 50 });
@@ -40,13 +40,13 @@ export const countingChannelAction: Action<MessageEventCtx> = {
             }
 
             if (number === lastNumber + 1) {
-                return;
+                return MagicSkipAllActions;
             } else {
                 const reply = await msg.reply(`pomyliłeś się ${fmtEmoji(cfg.emojis.sadEmoji)}`);
                 await sleep(1000);
                 await msg.delete();
                 await reply.delete();
-                return;
+                return MagicSkipAllActions;
             }
         },
     ],

@@ -125,11 +125,11 @@ function setUpActions() {
         antiSpamAndAntiFlood,
         filesContentModerator,
         communityPollsContentModerator,
-        // msg-specific actions
-        basicMsgCreateActions,
+        // msg-specific actions 
         mediaChannelAction,
         countingChannelAction,
         lastLetterChannelAction,
+        basicMsgCreateActions,
         askAction,
         // hall of fame
         hallOfFameAction,

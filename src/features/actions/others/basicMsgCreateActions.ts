@@ -1,5 +1,5 @@
 import { addExperiencePoints } from '@/bot/level.ts';
-import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.ts';
+import { type Action, type MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.ts';
 import { PredefinedColors } from '@/util/color.ts';
 import { mkMessageReferenceEmbed } from '@/bot/templates/messageReference.ts';
 import { starRepository } from '@/bot/apis/github/github.ts';
