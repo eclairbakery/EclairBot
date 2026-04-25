@@ -170,6 +170,7 @@ export function init() {
             (msg) => [cfg.commands.prefix, ...cfg.commands.alternativePrefixes].some((val) => msg.content.toLowerCase().startsWith(val.toLowerCase())),
         ],
         activatesOn: PredefinedActionEventTypes.OnMessageCreate,
+        worksOutsideGuild: true 
     });
     output.verbose('Prefix commands event registered');
 }

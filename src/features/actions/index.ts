@@ -296,6 +296,11 @@ class ActionManager {
                 continue;
             }
 
+            if (eventType == PredefinedActionEventTypes.OnMessageCreate && !action.worksOutsideGuild) {
+                if (!(ctx as MessageEventCtx).inGuild()) continue;
+                if (!(ctx as MessageEventCtx).member) continue;
+            }
+
             try {
                 // check constraints
                 for (const constraint of action.constraints) {
