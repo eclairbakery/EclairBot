@@ -1,0 +1,26 @@
+name: Deno type check
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        run: |
+              curl -fsSL https://deno.land/install.sh | sh
+              echo "$HOME/.deno/bin" >> $GITHUB_PATH
+
+      - name: Check types
+        run: make check
