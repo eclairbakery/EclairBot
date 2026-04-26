@@ -1,21 +1,29 @@
-.vscode
-*dist
+# editors
+**/.vscode
+**/.nvim
+**/.idea
+
+# packages
 node_modules
+deno.lock
 package-lock.json
+
+# super secret files
 .env
 *.db
-**/.nvim
-bundle.js*
-bot/eclairai-db.json
-bot/eclairai-model.json
-bot/lock-*.txt
 bot/config*
-.prettierrc
-.idea/
+
+# hosting only files
 *.hosting-only.js
 Dockerfile
 .dockerignore
-deno.lock
+
+# compiled binary
 eclairbot
+
+# leftovers, should not exist on new eclairbot versions
 *-player-script.js
 cookies.txt
+*dist
+bundle.js*
+.prettierrc
