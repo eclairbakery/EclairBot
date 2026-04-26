@@ -1,11 +1,6 @@
 import { DB, QueryParameterSet } from 'sqlite';
 
-import type {
-    UserDataRaw,
-    Rep, RepRaw,
-    Warn, WarnRaw,
-    MusicEntry, MusicEntryRaw,
-} from './db-defs.ts';
+import type { MusicEntry, MusicEntryRaw, Rep, RepRaw, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
 
 import type { Balance, Cooldown, Cooldowns } from './db-defs.ts';
 import { musicFromRaw, repFromRaw, warnFromRaw } from './db-defs.ts';
@@ -143,7 +138,7 @@ export class BotDatabase {
         const rows = [...this.raw.queryEntries(sql, this.processParams(params) as QueryParameterSet)];
         return Promise.resolve(rows[0] as T | undefined);
     }
-    
+
     // deno-lint-ignore no-explicit-any
     selectOneSync<T = any>(sql: string, params: unknown[] = []): T | undefined {
         const rows = [...this.raw.queryEntries(sql, this.processParams(params) as QueryParameterSet)];

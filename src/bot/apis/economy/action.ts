@@ -193,18 +193,18 @@ export class EconomyExecutor {
         // todo ngl
 
         if (!this.ctx.member) return [];
-    
+
         const user = new User(this.ctx.member.id);
-    
+
         const altUsers = await user.fetchAlternativeAccounts();
-    
+
         const members = [this.ctx.member];
-    
+
         for (const alt of altUsers) {
             const member = await this.ctx.member.guild?.members.fetch(alt).catch(() => null);
             if (member) members.push(member);
         }
-    
+
         return members;
     }
 
@@ -218,22 +218,22 @@ export class EconomyExecutor {
     private async addRole(roleConfigId: string) {
         const roleConfig = this.getRoleById(roleConfigId);
         if (!roleConfig) return;
-    
+
         const members = await this.getAllMembers();
-    
+
         for (const member of members) {
             await member.roles.add(roleConfig.discordRoleId).catch(() => {});
         }
-    } 
+    }
 
     private async remRole(roleConfigId: string) {
         const roleConfig = this.getRoleById(roleConfigId);
         if (!roleConfig) return;
-    
+
         const members = await this.getAllMembers();
-    
+
         for (const member of members) {
             await member.roles.add(roleConfig.discordRoleId).catch(() => {});
         }
-    }  
+    }
 }

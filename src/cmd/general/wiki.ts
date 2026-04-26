@@ -2,8 +2,8 @@ import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { CommandAPI } from '@/bot/apis/commands/api.ts';
 import { PredefinedColors } from '@/util/color.ts';
-import * as gemini from "@/bot/apis/gemini/model.ts";
-import * as dsc from "discord.js";
+import * as gemini from '@/bot/apis/gemini/model.ts';
+import * as dsc from 'discord.js';
 
 interface WikiSummaryResponse {
     type: string;
@@ -50,13 +50,13 @@ async function downloadFromWikipedia(languageVersions: string[], args: string[])
 
 async function replyAIModelErr(err: string, msg: dsc.Message) {
     return await msg.edit({
-         embeds: [{
-             author: { name: "EclairBOT" },
-             title: 'Nie udało mi się znaleźć definicji',
-             description: `Aktualnie model AI ${err}, a na Wikipedii nie ma o tym artykułu.`,
-             color: PredefinedColors.Red
-         }]
-     });
+        embeds: [{
+            author: { name: 'EclairBOT' },
+            title: 'Nie udało mi się znaleźć definicji',
+            description: `Aktualnie model AI ${err}, a na Wikipedii nie ma o tym artykułu.`,
+            color: PredefinedColors.Red,
+        }],
+    });
 }
 
 const wikiCmd: Command = {
@@ -87,8 +87,9 @@ const wikiCmd: Command = {
         if (!query) return api.log.replyError(api, 'Masz problem', 'Musisz podać, czego szukasz na Wikipedii!');
 
         const msg = await api.log.replyTip(
-            api, 'Uzbroj się w cierpliwość',
-            'Z powodu na powolność Wikipedii to może to chwilę potrwać byś dostał odpowiedź.'
+            api,
+            'Uzbroj się w cierpliwość',
+            'Z powodu na powolność Wikipedii to może to chwilę potrwać byś dostał odpowiedź.',
         );
 
         const fetched = await downloadFromWikipedia(['pl', 'simple', 'en'], [query]);
@@ -96,37 +97,38 @@ const wikiCmd: Command = {
             if (!gemini.isInitialized()) {
                 return replyAIModelErr('jest niezainicjalizowany', msg);
             }
-            const model = gemini.getModel("wiki-cmd");
+            const model = gemini.getModel('wiki-cmd');
             if (!model) {
                 return replyAIModelErr('jest niezainicjalizowany', msg);
             }
-            let result: gemini.GenerateContentResult; 
+            let result: gemini.GenerateContentResult;
             try {
                 result = await model.generateContent({
                     contents: [
-                        { role: 'user', parts: [ { text: query } ] }                    
-                    ]
+                        { role: 'user', parts: [{ text: query }] },
+                    ],
                 });
             } catch {
                 return replyAIModelErr('nie chce ci odpowiedzieć (chyba jakiś rate-limit, nie wiem)', msg);
             }
             const ai_response = result.response.text();
-            if (ai_response.toLowerCase().trim().includes('--ignore'))
-            return replyAIModelErr('świadomie postanowił Cię zlać', msg);
+            if (ai_response.toLowerCase().trim().includes('--ignore')) {
+                return replyAIModelErr('świadomie postanowił Cię zlać', msg);
+            }
             const ai_fl = ai_response.split('\n')[0].trim();
             const ai_has_title = ai_fl.startsWith('# ');
             const ai_description = ai_has_title ? ai_response.slice(ai_fl.length).trim() : ai_response;
             return msg.edit({
                 embeds: [{
-                    author: { name: "EclairBOT" },
-                    title: ai_has_title ? ai_fl.replace('# ', '') : "Definicja od AI",
+                    author: { name: 'EclairBOT' },
+                    title: ai_has_title ? ai_fl.replace('# ', '') : 'Definicja od AI',
                     description: ai_description,
                     color: PredefinedColors.YellowGreen,
                     url: `https://google.com/search?q=${encodeURIComponent(query)}`,
                     footer: {
-                        text: "Ponieważ na Wikipedii nie ma artykułu o tej nazwie, ta definicja pochodzi od AI. Sprawdź ważne fakty samodzielnie."
-                    }
-                }]
+                        text: 'Ponieważ na Wikipedii nie ma artykułu o tej nazwie, ta definicja pochodzi od AI. Sprawdź ważne fakty samodzielnie.',
+                    },
+                }],
             });
         }
 

@@ -61,9 +61,9 @@ const configurationCommand: Command = {
             const text = `Wartość \`${property}\` = \`\`\`${JSON.stringify(currentValue, null, 4)}\`\`\``;
             if (text.length > 1900) {
                 if (typeof currentValue === 'object') {
-                    return api.log.replyWarn(api, "Coś długi ten objekt", `\`${property}\` jest trochę za długie by je tu wyświetlić, ale jest obiektem, więc mogę Ci podać klucze, pod którymi może znajdziesz swoją wymarzoną wartość: \`[${Object.keys(currentValue as object).join(', ')}]\``);
+                    return api.log.replyWarn(api, 'Coś długi ten objekt', `\`${property}\` jest trochę za długie by je tu wyświetlić, ale jest obiektem, więc mogę Ci podać klucze, pod którymi może znajdziesz swoją wymarzoną wartość: \`[${Object.keys(currentValue as object).join(', ')}]\``);
                 }
-                return api.log.replyError(api, "Coś długi ten property", `\`${property}\` jest trochę za długie by je tu wyświetlić i nie jest obiektem, więc niestety nic nie mogę zrobić, by ci pomóc`);
+                return api.log.replyError(api, 'Coś długi ten property', `\`${property}\` jest trochę za długie by je tu wyświetlić i nie jest obiektem, więc niestety nic nie mogę zrobić, by ci pomóc`);
             } else {
                 return api.log.replySuccess(api, 'Proszę bardzo', text);
             }
@@ -86,7 +86,8 @@ const configurationCommand: Command = {
         }
 
         return api.log.replySuccess(
-            api, 'Yay!',
+            api,
+            'Yay!',
             `Ustawiono \`${property}\` na \`${value}\`; polecam jeszcze odpalić \`${cfg.commands.prefix}restart\`.`,
         );
     },

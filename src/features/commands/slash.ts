@@ -16,8 +16,7 @@ import { formatArgType } from './helpers/fmt-arg-type.ts';
 import findCommand from '@/util/cmd/find-command.ts';
 import canExecuteCmd from '@/util/cmd/canExecuteCmd.ts';
 import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.ts';
-import process from "node:process";
-
+import process from 'node:process';
 
 import { ParsedRawArgument } from './helpers/argument-parser.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
@@ -222,91 +221,90 @@ export async function init() {
             for (const arg of cmd.expectedArgs) {
                 if (!arg.optional) sortedArgs.push(arg);
             }
-            for (const arg of cmd.expectedArgs)
+            for (const arg of cmd.expectedArgs) {
                 if (arg.optional) sortedArgs.push(arg);
+            }
 
             for (const arg of sortedArgs) {
                 const type = fixType(arg.type);
 
                 switch (type.base) {
-                case 'timestamp':
-                case 'string':
-                case 'code': {
-                    const defaultDesc = type.base == 'timestamp'
-                        ? 'Podaj czas (timestamp jak np. 10s, 15m)'
-                        : 'Podaj tekst jakiś';
+                    case 'timestamp':
+                    case 'string':
+                    case 'code': {
+                        const defaultDesc = type.base == 'timestamp' ? 'Podaj czas (timestamp jak np. 10s, 15m)' : 'Podaj tekst jakiś';
 
-                    scb.addStringOption((option) =>
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, defaultDesc))
-                            .setRequired(!arg.optional)
-                    );
-                    break;
-                }
+                        scb.addStringOption((option) =>
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, defaultDesc))
+                                .setRequired(!arg.optional)
+                        );
+                        break;
+                    }
 
-                case 'money':
-                case 'float':
-                case 'int': {
-                    const defaultDesc = type.base == 'money' ? 'Podaj ilość pieniędzy' : 'Podaj liczbę';
-                    scb.addNumberOption((option) =>
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, defaultDesc))
-                            .setRequired(!arg.optional)
-                    );
-                    break;
-                }
+                    case 'money':
+                    case 'float':
+                    case 'int': {
+                        const defaultDesc = type.base == 'money' ? 'Podaj ilość pieniędzy' : 'Podaj liczbę';
+                        scb.addNumberOption((option) =>
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, defaultDesc))
+                                .setRequired(!arg.optional)
+                        );
+                        break;
+                    }
 
-                case 'user-mention':
-                    scb.addUserOption((option) =>
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż użytkownika'))
-                            .setRequired(!arg.optional)
-                    );
-                    break;
-                case 'role-mention':
-                    scb.addRoleOption((option) =>
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż rolę'))
-                            .setRequired(!arg.optional)
-                    );
-                    break;
-                case 'channel-mention':
-                    scb.addChannelOption((option) =>
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż kanał'))
-                            .setRequired(!arg.optional)
-                    );
-                    break;
+                    case 'user-mention':
+                        scb.addUserOption((option) =>
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż użytkownika'))
+                                .setRequired(!arg.optional)
+                        );
+                        break;
+                    case 'role-mention':
+                        scb.addRoleOption((option) =>
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż rolę'))
+                                .setRequired(!arg.optional)
+                        );
+                        break;
+                    case 'channel-mention':
+                        scb.addChannelOption((option) =>
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż kanał'))
+                                .setRequired(!arg.optional)
+                        );
+                        break;
 
-                case 'command-ref':
-                    scb.addStringOption((option) =>
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż komendę'))
-                            .setRequired(!arg.optional)
-                            .setAutocomplete(true)
-                    );
-                    break;
-                case 'enum':
-                    scb.addStringOption((option) => {
-                        option
-                            .setName(arg.name)
-                            .setDescription(makeSlashCommandOptionDesc(arg, 'Wybierz opcję, ' + formatArgType(type)))
-                            .setRequired(!arg.optional);
+                    case 'command-ref':
+                        scb.addStringOption((option) =>
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, 'Wskaż komendę'))
+                                .setRequired(!arg.optional)
+                                .setAutocomplete(true)
+                        );
+                        break;
+                    case 'enum':
+                        scb.addStringOption((option) => {
+                            option
+                                .setName(arg.name)
+                                .setDescription(makeSlashCommandOptionDesc(arg, 'Wybierz opcję, ' + formatArgType(type)))
+                                .setRequired(!arg.optional);
 
-                        if (type.options.length <= 25) {
-                            option.addChoices(type.options.map((o) => ({ name: o, value: o })));
-                        } else {
-                            option.setAutocomplete(true);
-                        }
-                        return option;
-                    });
-                    break;
+                            if (type.options.length <= 25) {
+                                option.addChoices(type.options.map((o) => ({ name: o, value: o })));
+                            } else {
+                                option.setAutocomplete(true);
+                            }
+                            return option;
+                        });
+                        break;
                 }
             }
 

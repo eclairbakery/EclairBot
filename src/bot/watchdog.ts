@@ -156,19 +156,17 @@ const onMuteGivenWatcher: Action<UserEventCtx> = {
         async (ctx) => {
             output.log('Watchdog: Mute given');
 
-            const logs = await ctx.guild!.fetchAuditLogs({ 
-                type: dsc.AuditLogEvent.MemberUpdate, 
-                limit: 5 
+            const logs = await ctx.guild!.fetchAuditLogs({
+                type: dsc.AuditLogEvent.MemberUpdate,
+                limit: 5,
             });
 
-            const entry = logs.entries.find(e => {
+            const entry = logs.entries.find((e) => {
                 if (!e.target) return false;
 
                 if (e.target.id !== ctx.user.id) return false;
 
-                return e.changes?.some(c => 
-                    c.key === 'communication_disabled_until' && c.new
-                );
+                return e.changes?.some((c) => c.key === 'communication_disabled_until' && c.new);
             });
 
             if (!entry?.executor) return;

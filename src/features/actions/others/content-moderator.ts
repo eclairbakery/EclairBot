@@ -11,7 +11,7 @@ export const filesContentModerator: Action<MessageEventCtx> = {
         (ctx) => ctx.author.id != ctx.client.user.id,
         (ctx) => ctx.channel.isThread() && ctx.channel.parentId == cfg.channels.other.files,
         (ctx) => ctx.attachments.size == 0,
-        (ctx) => ctx.channelId == ctx.id
+        (ctx) => ctx.channelId == ctx.id,
     ],
     callbacks: [
         async (msg) => {
@@ -22,8 +22,8 @@ export const filesContentModerator: Action<MessageEventCtx> = {
             await msg.delete();
             await msg.channel.delete();
             return MagicSkipAllActions;
-        }
-    ]
+        },
+    ],
 };
 
 export const communityPollsContentModerator: Action<MessageEventCtx> = {
@@ -33,7 +33,7 @@ export const communityPollsContentModerator: Action<MessageEventCtx> = {
     constraints: [
         (ctx) => ctx.author.id != ctx.client.user.id,
         (ctx) => !ctx.channel.isThread(),
-        (ctx) => ctx.channel.id == cfg.channels.other.communityPolls
+        (ctx) => ctx.channel.id == cfg.channels.other.communityPolls,
     ],
     callbacks: [
         async (msg) => {
@@ -46,12 +46,12 @@ export const communityPollsContentModerator: Action<MessageEventCtx> = {
             }
 
             await msg.reply('<@&1320034068322324660>');
-            
-            const threadNames = ["Kanał commentary na YT", "Odpowiedzi", "Komentarze", "Merytoryczne dyskusje na temat ankiety"];
+
+            const threadNames = ['Kanał commentary na YT', 'Odpowiedzi', 'Komentarze', 'Merytoryczne dyskusje na temat ankiety'];
             const thread = await msg.startThread({
                 name: threadNames[Math.floor(Math.random() * threadNames.length)],
             });
             await thread.send('tu możecie odpowiedzi merytoryczne wysyłać');
-        }
-    ]
+        },
+    ],
 };

@@ -20,8 +20,8 @@ export default async function ban(
         });
     } catch {}
     const us = new User(member.id);
-    const members = [ us.id, ...(await us.fetchAlternativeAccounts()) ];
-    
+    const members = [us.id, ...(await us.fetchAlternativeAccounts())];
+
     let firstBannerMember: dsc.GuildMember;
 
     for (const mem_id of members) {

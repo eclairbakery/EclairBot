@@ -46,7 +46,7 @@ export interface ConfigFeatures {
                 requiredLevel: number;
                 requiredPeople: number;
             };
-        }
+        };
     };
     economy: EconomyConfig;
     email: {
@@ -77,6 +77,6 @@ export interface ConfigFeatures {
         contextMaxMessages: number;
     };
     actions: {
-        disabled: string[]
-    }
+        disabled: string[];
+    };
 }

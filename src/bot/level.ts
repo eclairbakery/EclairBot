@@ -56,14 +56,16 @@ export async function addLvlRole(
 
     let roleGiven = false;
 
-    for (const member_id of [ user, ...(await (new User(user)).fetchAlternativeAccounts()) ]) {
+    for (const member_id of [user, ...(await (new User(user)).fetchAlternativeAccounts())]) {
         let member: dsc.GuildMember;
         try {
             member = await guild.members.fetch(member_id);
-            if (member.partial)
+            if (member.partial) {
                 member = await member.fetch(true);
-            if (!member.roles?.cache)
+            }
+            if (!member.roles?.cache) {
                 continue;
+            }
         } catch (err) {
             output.warn(err);
             continue;
@@ -128,7 +130,7 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
 
         let content = `${getMention(msg.member!)} wbił poziom ${newLevel}! Wow co za osiągnięcie!`;
         if (gotNewRole) content += 'I btw nową rolę zdobyłeś!';
-        channelLvl.send(cfg.features.leveling.shallPingWhenNewLevel ?  content : {content, allowedMentions: {parse: []}});
+        channelLvl.send(cfg.features.leveling.shallPingWhenNewLevel ? content : { content, allowedMentions: { parse: [] } });
     }
 }
 
@@ -188,7 +190,7 @@ const updateXpAction: Action<XpEventCtx> = {
             const channelLvl = await client.channels.fetch(cfg.features.leveling.levelChannel);
             if (!channelLvl || !channelLvl.isSendable()) return;
             return channelLvl.send(
-                cfg.features.leveling.shallPingWhenNewLevel ?  content : {content, allowedMentions: {parse: []}}
+                cfg.features.leveling.shallPingWhenNewLevel ? content : { content, allowedMentions: { parse: [] } },
             );
         },
     ],
@@ -201,30 +203,32 @@ export async function addVoiceExperience() {
         const channel_members = voice_channel.members;
         const channel_users: User[] = [];
         let erm = 0;
-        
+
         // get erm
         for (const member of channel_members.values()) {
             const user = new User(member.id);
             const lvl = xpToLevel(await user.leveling.getXP());
 
-            if (lvl >= cfg.features.leveling.voice.estimatedRealMembers.requiredLevel) 
+            if (lvl >= cfg.features.leveling.voice.estimatedRealMembers.requiredLevel) {
                 erm++;
+            }
             channel_users.push(user);
         }
 
         if (erm < cfg.features.leveling.voice.estimatedRealMembers.requiredPeople) continue;
 
-        // add experience 
+        // add experience
         for (const user of channel_users) {
             const xp = cfg.features.leveling.voice.xpPerMinute;
 
             const member = channel_members.find((cm) => cm.id == user.id)!;
-            if (member.voice.selfMute || member.voice.selfDeaf)
+            if (member.voice.selfMute || member.voice.selfDeaf) {
                 continue;
+            }
 
             await user.leveling.addXP(xp);
-        };
+        }
     }
 
     setTimeout(addVoiceExperience, 60 * 1000);
-};
+}

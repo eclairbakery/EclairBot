@@ -70,7 +70,7 @@ const muteCmd: Command = {
         } else if (!reason) {
             reason = 'Moderator nie poszczycił się znajomością komendy i nie podał powodu... Ale moze to i lepiej...';
         }
- 
+
         await mute(targetUser, { reason, duration: (duration ?? 1) * 1000 });
         if (api.invoker.member) watchMute(api.invoker.member!);
 

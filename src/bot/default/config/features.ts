@@ -6,20 +6,20 @@ import { hierarchyCfg } from './hierarchy.ts';
 export const featuresConfig: Config['features'] = {
     compilation: {
         replaceCompilerMap: {
-            'gcc-head-c':        ['c', 'gcc'],
-            'gcc-head':          ['cpp', 'c++', 'g++'],
-            'dmd-2.109.1':       ['d', 'dmd'],
-            'bash':              ['bash', 'sh'],
+            'gcc-head-c': ['c', 'gcc'],
+            'gcc-head': ['cpp', 'c++', 'g++'],
+            'dmd-2.109.1': ['d', 'dmd'],
+            'bash': ['bash', 'sh'],
             'openjdk-jdk-22+36': ['java', 'bloat'],
-            'zig-head':          ['zig'],
-            'go-1.23.2':         ['golang', 'go'],
-            'ghc-9.10.1':        ['haskell', 'ghc'],
-            'php-8.3.12':        ['php', 'vulnerability'],
-            'sqlite 3.46.1':     ['sql', 'sqlite'],
-            'cpython-head':      ['python', 'py'],
-            'nodejs-20.17.0':    ['js', 'javascript'],
-            'typescript-5.6.2':  ['ts', 'typescript', 'bloatscript'],
-            'vim-9.1.0758':      ['vim', 'vimscript'],
+            'zig-head': ['zig'],
+            'go-1.23.2': ['golang', 'go'],
+            'ghc-9.10.1': ['haskell', 'ghc'],
+            'php-8.3.12': ['php', 'vulnerability'],
+            'sqlite 3.46.1': ['sql', 'sqlite'],
+            'cpython-head': ['python', 'py'],
+            'nodejs-20.17.0': ['js', 'javascript'],
+            'typescript-5.6.2': ['ts', 'typescript', 'bloatscript'],
+            'vim-9.1.0758': ['vim', 'vimscript'],
         },
     },
     automod: {
@@ -97,9 +97,9 @@ export const featuresConfig: Config['features'] = {
             xpPerMinute: 16,
             estimatedRealMembers: {
                 requiredLevel: 5,
-                requiredPeople: 3
-            }
-        }
+                requiredPeople: 3,
+            },
+        },
     },
     economy: economyCfg,
     email: {
@@ -127,6 +127,6 @@ export const featuresConfig: Config['features'] = {
         contextMaxMessages: 30,
     },
     actions: {
-        disabled: []
-    }
+        disabled: [],
+    },
 };

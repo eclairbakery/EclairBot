@@ -3,7 +3,7 @@ import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 
 const searxng_instances = [
-    "https://searx.projectlounge.pw"
+    'https://searx.projectlounge.pw',
 ];
 
 interface SearchResults {
@@ -12,7 +12,7 @@ interface SearchResults {
         content: string;
         url: string;
     }[];
-};
+}
 
 function buildSearchURL(instance: string, query: string, json: boolean) {
     return `${instance}/search?q=${encodeURIComponent(query)}${json ? '&format=json' : ''}`;
@@ -35,19 +35,20 @@ const searchCmd: Command = {
     name: 'search',
     aliases: ['szukaj', 'wyszukaj'],
     description: {
-        main: "Użyj super search engine by wyszukiwać strony w internecie. Lepsze niż Google.",
-        short: "Search engine do używania."
+        main: 'Użyj super search engine by wyszukiwać strony w internecie. Lepsze niż Google.',
+        short: 'Search engine do używania.',
     },
-    
+
     permissions: CommandPermissions.everyone(),
     flags: CommandFlags.None,
 
     expectedArgs: [
         {
-            name: 'query', description: "To co chcesz wyszukać!",
-            type: { base: 'string', trailing: true }, 
-            optional: false
-        }
+            name: 'query',
+            description: 'To co chcesz wyszukać!',
+            type: { base: 'string', trailing: true },
+            optional: false,
+        },
     ],
 
     async execute(api) {
@@ -55,16 +56,18 @@ const searchCmd: Command = {
         const searchResults = await getSearchResults(searchQuery);
         if (!searchResults || searchResults.results.length == 0) {
             return await api.log.replyError(
-                api, "Problem jest", 
+                api,
+                'Problem jest',
                 `Niestety żadna instancja nie zwróciła wyników dla twojego wyszukiwania.` +
-                `[Może poszukaj w Google](${buildSearchURL('https://google.com', searchQuery, false)})`
+                    `[Może poszukaj w Google](${buildSearchURL('https://google.com', searchQuery, false)})`,
             );
         }
 
         return api.log.replySuccess(
-            api, searchQuery, 
-            `- ${searchResults.results.slice(0,10).map((r) => `[${r.title}](${r.url})`).join('\n- ')}`
-        )
+            api,
+            searchQuery,
+            `- ${searchResults.results.slice(0, 10).map((r) => `[${r.title}](${r.url})`).join('\n- ')}`,
+        );
     },
 };
 

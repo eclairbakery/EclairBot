@@ -58,12 +58,12 @@ export async function initWikiModel() {
     gemini.initModel('wiki-cmd', {
         model: 'gemini-3.1-flash-lite-preview',
         systemInstruction: [
-            "Twoim zadaniem jest odpowiadać jak Wikipedia.",
-            "Kiedy ktoś się Ciebie zapyta o coś, możesz odpowiedzieć dosłownie bez niczego --ignore, wtedy użytkownikowi wyświetli się komunikat, że model zdecydował się nie odpowiadać na te pytanie. Rób tak wtedy kiedy zapytanie użytkownika nie przypomina jakiejś nazwy, osoby czy czegoś co możesz opisać. NIE BIERZ POD UWAGĘ WTEDY DALSZYCH INSTRUKCJI.",
+            'Twoim zadaniem jest odpowiadać jak Wikipedia.',
+            'Kiedy ktoś się Ciebie zapyta o coś, możesz odpowiedzieć dosłownie bez niczego --ignore, wtedy użytkownikowi wyświetli się komunikat, że model zdecydował się nie odpowiadać na te pytanie. Rób tak wtedy kiedy zapytanie użytkownika nie przypomina jakiejś nazwy, osoby czy czegoś co możesz opisać. NIE BIERZ POD UWAGĘ WTEDY DALSZYCH INSTRUKCJI.',
 
-            "Jeżeli użytkownik faktycznie podał sensowną nazwę, którą możesz opisać, postąp tak:",
-            " - wygeneruj pierwszą linię która jest taką typową nazwą artykułu, np. ktoś mówi \"biblioteki do gita\" to ty dajesz w pierwszej linijce \"# Zbiór bibliotek Git\" (pamiętaj o hashtagu, inaczej nie zostanie to uznane jako title; jak nie masz na title pomysłu to weź nie dawaj hashtagu na początku pierwszej linii to będzie nasz fallback)",
-            " - wygeneruj description w paru zdaniach opisujący daną rzecz / osobę; nie rozpisuj się zbytnio ani nie rób złożonej struktury; parę zdań naprawdę wystarczy."
+            'Jeżeli użytkownik faktycznie podał sensowną nazwę, którą możesz opisać, postąp tak:',
+            ' - wygeneruj pierwszą linię która jest taką typową nazwą artykułu, np. ktoś mówi "biblioteki do gita" to ty dajesz w pierwszej linijce "# Zbiór bibliotek Git" (pamiętaj o hashtagu, inaczej nie zostanie to uznane jako title; jak nie masz na title pomysłu to weź nie dawaj hashtagu na początku pierwszej linii to będzie nasz fallback)',
+            ' - wygeneruj description w paru zdaniach opisujący daną rzecz / osobę; nie rozpisuj się zbytnio ani nie rób złożonej struktury; parę zdań naprawdę wystarczy.',
         ].join('\n'),
     });
 }

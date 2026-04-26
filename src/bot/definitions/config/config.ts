@@ -56,7 +56,7 @@ export interface Config {
             /** can be null if none (default: -) */
             spaceReplacement: string | null;
         };
-        
+
         stats: {
             people: dsc.Snowflake;
             bans: dsc.Snowflake;

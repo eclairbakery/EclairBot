@@ -1,7 +1,4 @@
-import {
-    CompilerDriver, CompilerErrorKind,
-    CompilerInfo, CompilerInput, CompilerOutput,
-} from './driver.ts';
+import { CompilerDriver, CompilerErrorKind, CompilerInfo, CompilerInput, CompilerOutput } from './driver.ts';
 
 import process from 'node:process';
 
@@ -11,8 +8,8 @@ export interface ZapCompilerDriverOptions {
 
 interface ZapcEvent {
     type: string;
-    data: string
-};
+    data: string;
+}
 
 function normalizeBaseUrl(url: string): string {
     return url.replace(/\/+$/, '');

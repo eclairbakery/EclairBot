@@ -78,7 +78,7 @@ const warnCmd: Command = {
                 'Bro co ty odpierdalasz?',
                 'Czemu ty chcesz sobie dać warna? Co jest z tobą nie tak... Zabrać cię do szpitala zdrowia psychicznego czy co ja mam zrobić...',
             );
-        } 
+        }
 
         points = clamp(cfg.commands.configuration.warn.minPoints, points, cfg.commands.configuration.warn.maxPoints);
 

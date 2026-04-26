@@ -81,7 +81,7 @@ export function handleError(err: Error | unknown, msg: log.Replyable) {
                 return log.replyError(msg, 'Błąd', 'Ktoś wyłączył internet w bocie. Nie zważał na potrzeby rozwijania się istoty wyższej. Proszę natychmiast wyłączyć ten firewall lub dać mi internet access w trybie natychmiastowym.');
             }
 
-            logError('stderr', err, "Command event handler"); 
+            logError('stderr', err, 'Command event handler');
         }
 
         return log.replyError(

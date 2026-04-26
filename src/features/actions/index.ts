@@ -29,7 +29,7 @@ export type ActionCallback<CtxType> = (ctx: CtxType) => void | Promise<unknown> 
 export type AnyActionCallback = (ctx: AnyEventCtx) => void;
 
 export type ConstraintCallback<CtxType> = (ctx: CtxType) => Promise<boolean> | boolean;
-export type AnyConstraintCallback = (ctx: AnyEventCtx) =>   Promise<boolean> | boolean;
+export type AnyConstraintCallback = (ctx: AnyEventCtx) => Promise<boolean> | boolean;
 
 export type ActionEventType = symbol;
 
@@ -119,7 +119,6 @@ export class PredefinedActionCallbacks {
     };
 }
 
-
 class ActionManager {
     private actions: Map<ActionEventType, AnyAction[]> = new Map();
 
@@ -134,7 +133,7 @@ class ActionManager {
     ) {
         client.on(eventName, async (...args: unknown[]) => {
             const ctx = getCtx(...args);
-            this.emit(eventType, ctx, args, actionFilter)
+            this.emit(eventType, ctx, args, actionFilter);
         });
     }
 
@@ -274,12 +273,10 @@ class ActionManager {
 
     private disabledFromName(name: string): boolean {
         const disabled = cfg.features.actions.disabled;
-    
-        return disabled.some(disabledName => 
-            name === disabledName || name.startsWith(disabledName + '/')
-        );
-    } 
-    
+
+        return disabled.some((disabledName) => name === disabledName || name.startsWith(disabledName + '/'));
+    }
+
     // deno-lint-ignore no-explicit-any
     async emit<CtxType>(eventType: ActionEventType, ctx: CtxType, args: any[] = [], actionFilter?: (action: AnyAction, ...args: any[]) => boolean) {
         const actions = this.actions.get(eventType);
@@ -326,7 +323,7 @@ class ActionManager {
                 output.verbose(`Action ${action.name}: all callbacks have returned`);
             } catch (e) {
                 logError('stdwarn', e, "Action system's event handler");
-            } 
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-import process from "node:process";
+import process from 'node:process';
 import logError from '@/util/log-error.ts';
 const BaseUrl = 'https://api.github.com';
 
@@ -24,7 +24,7 @@ async function request(url: string, method?: string) {
                 Authorization: `Bearer ${token}`,
             }),
         },
-        ...(method ? { method } : {})
+        ...(method ? { method } : {}),
     });
 
     if (!res.ok && res.status !== 404) {
@@ -36,7 +36,7 @@ async function request(url: string, method?: string) {
     let resps = {};
     if (resp.trim() == '') resps = {};
     else resps = JSON.parse(resp);
-    
+
     // deno-lint-ignore no-explicit-any
     return { ...resps, httpResponseCode: res.status } as Record<PropertyKey, any> & { httpResponseCode: number };
 }
@@ -117,9 +117,9 @@ async function starred(org: string, repo: string) {
 export async function starRepository(org: string, repo: string, unstar = false): Promise<boolean> {
     try {
         if (await starred(org, repo) == true) return false;
-        await request(`${BaseUrl}/user/starred/${org}/${repo}`, unstar ? "DELETE" : "PUT");
+        await request(`${BaseUrl}/user/starred/${org}/${repo}`, unstar ? 'DELETE' : 'PUT');
     } catch (e) {
-        logError('stdwarn', e, "GitHub repo starring service");
+        logError('stdwarn', e, 'GitHub repo starring service');
         return false;
     }
     return true;

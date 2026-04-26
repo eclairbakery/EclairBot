@@ -14,13 +14,14 @@ import { client } from '@/client.ts';
 import { sendLog } from '../../bot/apis/log/send-log.ts';
 import { PredefinedColors } from '../../util/color.ts';
 import { Buffer } from 'node:buffer';
-import process from "node:process";
+import process from 'node:process';
 import logError from '@/util/log-error.ts';
 
 export async function executeAsk(msg: dsc.Message, question: string, contextMsgs: number) {
     if (!gemini.isInitialized()) {
         return log.replyError(
-            msg, 'Błąd',
+            msg,
+            'Błąd',
             'Moduł integracji z gemini nie został załadowany przez eclairbota.' +
                 'A tak po ludzku to poprostu ktoś nie dał api key do .env',
         );
@@ -31,9 +32,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
         return log.replyError(msg, 'Błąd', 'Model nie został zainicjowany.');
     }
 
-    const formatUser = (u: dsc.User) => u.id == client.user?.id 
-        ? `EclairBot (Ty)`
-        : `${u.username} ${u.displayName} (${u.id}${u.id == msg.author.id ? ', To osoba której odpowiadasz!' : ''})`;
+    const formatUser = (u: dsc.User) => u.id == client.user?.id ? `EclairBot (Ty)` : `${u.username} ${u.displayName} (${u.id}${u.id == msg.author.id ? ', To osoba której odpowiadasz!' : ''})`;
 
     function formatAttachments(atts: Iterable<dsc.Attachment>): string {
         let result: string = '';
@@ -143,10 +142,10 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
 
             const totalMembers = guild.memberCount;
             output.log(
-                guild.members.cache.map(m => ({
+                guild.members.cache.map((m) => ({
                     user: m.user.tag,
-                    status: m.presence?.status
-                }))
+                    status: m.presence?.status,
+                })),
             );
             const activeMembers = guild.members.cache.filter((m) => m.presence?.status && m.presence.status !== 'offline').size;
 
@@ -200,7 +199,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
                 const formData = new FormData();
 
                 formData.append('file', await (await fetch(args.file_url)).blob(), 'image.png');
-                formData.append('apikey', process.env.EB_OCR_API ?? '')
+                formData.append('apikey', process.env.EB_OCR_API ?? '');
 
                 const res = await fetch('https://api8.ocr.space/parse/image', {
                     method: 'POST',
@@ -246,9 +245,9 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
     if (msg.attachments) {
         for (const att of msg.attachments.values()) {
             const ct = att.contentType?.trim().toLowerCase();
-            
+
             if (ct?.includes('image')) {
-                contents.push({role: 'user', parts: [ { text: `zdjęcie, użyj swojego narzędzia ocr_image by z tego linku wyodrębnić tekst: ${att.url}` } ]});
+                contents.push({ role: 'user', parts: [{ text: `zdjęcie, użyj swojego narzędzia ocr_image by z tego linku wyodrębnić tekst: ${att.url}` }] });
             }
         }
     }
@@ -260,7 +259,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
         msg.channel.sendTyping();
     }
 
-    let result: gemini.GenerateContentResult; 
+    let result: gemini.GenerateContentResult;
     try {
         result = await model.generateContent({
             contents,
@@ -271,14 +270,17 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
             tools: toolDeclarations,
         });
     } catch (err) {
-        const str = logError('stdwarn', err, 'Generate EI Response'); 
+        const str = logError('stdwarn', err, 'Generate EI Response');
         if (str.includes('high demand')) {
-            return msg.reply('❌ W skrócie to model którego używamy do EI jest on high demand, '
-                              + 'więc teraz raczej ci nie odpowie na twoje bardzo ważne pytanie.');
+            return msg.reply(
+                '❌ W skrócie to model którego używamy do EI jest on high demand, ' +
+                    'więc teraz raczej ci nie odpowie na twoje bardzo ważne pytanie.',
+            );
         }
         return msg.reply(
-            '❌ Coś się zjebało z EI. Najprawdopodobniej high demand albo jakieś inne rate limity.\n'
-              + `Jeśli jesteś adminem to sprawdź <#${cfg.channels.eclairbot.stderr}>`);
+            '❌ Coś się zjebało z EI. Najprawdopodobniej high demand albo jakieś inne rate limity.\n' +
+                `Jeśli jesteś adminem to sprawdź <#${cfg.channels.eclairbot.stderr}>`,
+        );
     }
 
     let candidate = result.response.candidates?.[0];

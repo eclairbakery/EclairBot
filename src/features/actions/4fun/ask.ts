@@ -15,17 +15,17 @@ export const askAction: Action<MessageEventCtx> = {
     constraints: [
         (ctx) => ctx.author.id != client.user?.id,
         async (ctx) => {
-            const referenced = (typeof ctx.reference?.messageId == 'string'
-                ? await ctx.fetchReference()
-                : false);
+            const referenced = typeof ctx.reference?.messageId == 'string' ? await ctx.fetchReference() : false;
 
             return ctx.channelId == cfg.channels.general.ei ||
-                    ctx.content.trim().startsWith(`<@${client.user?.id}>`) ||
-                    (referenced ? (
+                ctx.content.trim().startsWith(`<@${client.user?.id}>`) ||
+                (referenced
+                    ? (
                         referenced.author.id == client.user?.id &&
                         ctx.type == MessageType.Reply &&
                         referenced.embeds.length <= 0
-                    ) : false)
+                    )
+                    : false);
         },
         (ctx) =>
             !ctx.content.trim().startsWith('\\') &&
@@ -34,10 +34,7 @@ export const askAction: Action<MessageEventCtx> = {
 
     callbacks: [
         (msg) => {
-            const question =
-                msg.content.trim().startsWith(`<@${client.user!.id}>`) 
-                    ? msg.content.trim().replace(`<@${client.user!.id}>`, '') 
-                    : msg.content;
+            const question = msg.content.trim().startsWith(`<@${client.user!.id}>`) ? msg.content.trim().replace(`<@${client.user!.id}>`, '') : msg.content;
             return executeAsk(msg, question, cfg.features.ai.contextDefaultMessages);
         },
     ],

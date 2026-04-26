@@ -16,7 +16,7 @@ export const channelsCfg: Config['channels'] = {
         hallOfShame: '1290327060970995812',
         modCommands: '1392787737962090596',
         info: '1390389554623549641',
-        assets: '1404396223934369844'
+        assets: '1404396223934369844',
     },
     important: {
         lobby: '1235560269871190056',
@@ -37,7 +37,7 @@ export const channelsCfg: Config['channels'] = {
         desktopPorn: '1279888407421648967',
         minecraft: '1342793182265741394',
         economy: '1235561759448895590',
-        files: '1408757368652566591'
+        files: '1408757368652566591',
     },
     forfun: {
         counting: '1235566520310956184',
@@ -62,6 +62,6 @@ export const channelsCfg: Config['channels'] = {
     stats: {
         bans: '1235591871020011540',
         goal: '1276862197099794514',
-        people: '1235591547437973557'
-    }
+        people: '1235591547437973557',
+    },
 };

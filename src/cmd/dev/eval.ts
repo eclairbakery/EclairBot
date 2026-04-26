@@ -43,7 +43,7 @@ const evalCmd: Command = {
         const code = api.getTypedArg('code', 'code')?.value;
         if (code.lang && (code.lang != 'js' && code.lang != 'javascript')) {
             if (code.lang == 'ts' || code.lang == 'typescript') {
-                return api.log.replyError(api, 'Błąd', 'Eval używa JS a nie TS. Powód? sam nie wiem.')
+                return api.log.replyError(api, 'Błąd', 'Eval używa JS a nie TS. Powód? sam nie wiem.');
             }
             return api.log.replyError(api, 'Błąd', 'Eval przyjmuje kod w JS tak w skrócie.');
         }
@@ -55,9 +55,9 @@ const evalCmd: Command = {
         if (code.src.includes('await import') && !code.src.includes('SRC_ROOT')) {
             warns.push('Proszę, używaj constantu SRC_ROOT jak coś importujesz.');
         }
-        
+
         if (warns.length != 0) {
-            const warnsString = warns.map(w => `- ${w}`).join('\n');
+            const warnsString = warns.map((w) => `- ${w}`).join('\n');
             await api.log.replyTip(api, 'Są ostrzeżenia dotyczące Twojego kodu!', warnsString);
         }
 

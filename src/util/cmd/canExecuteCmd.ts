@@ -7,7 +7,7 @@ export default function canExecuteCmd(cmd: Command, user: dsc.GuildMember | dsc.
     if (cmd.permissions.allowedRoles == null) return true;
 
     for (const allowedRoleID of cmd.permissions.allowedRoles ?? []) {
-        if ('roles' in user) if (user.roles.cache.has(allowedRoleID)) return true;
+        if ('roles' in user) { if (user.roles.cache.has(allowedRoleID)) return true; }
     }
 
     for (const allowedUserID of cmd.permissions.allowedUsers ?? []) {

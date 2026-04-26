@@ -8,7 +8,7 @@ import { deepEqual } from '@/util/objects/objects.ts';
 export const commands: Map<Category, Command[]> = new Map();
 
 export async function registerCommands() {
-    for (const cat of Deno.readDirSync("./src/cmd")) {
+    for (const cat of Deno.readDirSync('./src/cmd')) {
         if (cat.isFile) continue;
 
         const category = Category.fromString(cat.name);
@@ -20,8 +20,8 @@ export async function registerCommands() {
         const cat_cmds: Command[] = [];
 
         for (const cmd of Deno.readDirSync(`./src/cmd/${cat.name}`)) {
-            if (!cmd.name.endsWith(".ts")) {
-                output.warn("Invalid file (wrong file extension) inside commands directory: " + cmd.name);
+            if (!cmd.name.endsWith('.ts')) {
+                output.warn('Invalid file (wrong file extension) inside commands directory: ' + cmd.name);
                 continue;
             }
 
@@ -37,21 +37,22 @@ export async function registerCommands() {
                 const cmd_cfg = findCmdConfResolvable(command.name);
 
                 if (!cmd_cfg.enabled) {
-                    if (deepEqual(command.permissions, CommandPermissions.devOnly()) || command.name == 'configuration')
-                        output.warn("Dev-only command " + command.name + " should not be disabled. Leaving enabled.");
-                    else 
+                    if (deepEqual(command.permissions, CommandPermissions.devOnly()) || command.name == 'configuration') {
+                        output.warn('Dev-only command ' + command.name + ' should not be disabled. Leaving enabled.');
+                    } else {
                         continue;
+                    }
                 }
 
                 cat_cmds.push(command);
             } catch (e) {
-                logError('stdwarn', e, "Command importer");
+                logError('stdwarn', e, 'Command importer');
             }
         }
 
         commands.set(
             Category.fromString(cat.name)!,
-            cat_cmds
+            cat_cmds,
         );
     }
 }

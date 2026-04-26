@@ -45,9 +45,9 @@ export const lastLetterChannelAction: Action<MessageEventCtx> = {
                         await reply.delete();
                         return MagicSkipAllActions;
                     }
-                } 
+                }
             }
-            
+
             if (!/^[a-ząćęłńóśźż]+$/i.test(msg.content)) {
                 const reply = await msg.reply(`co to za twór jest ${fmtEmoji(cfg.emojis.heartAttackEmoji)}`);
                 await sleep(1000);

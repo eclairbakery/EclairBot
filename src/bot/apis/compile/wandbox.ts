@@ -1,4 +1,4 @@
-import { CompilerDriver, CompilerInput, CompilerOutput, CompilerErrorKind, CompilerInfo } from './driver.ts';
+import { CompilerDriver, CompilerErrorKind, CompilerInfo, CompilerInput, CompilerOutput } from './driver.ts';
 
 export interface WandboxOptions {
     compiler: string;
@@ -17,7 +17,7 @@ interface WandboxCompiler {
     'runtime-option-raw'?: boolean;
 
     switches?: unknown[];
-};
+}
 
 export class WandboxCompilerDriver implements CompilerDriver {
     private readonly compiler: string;
@@ -105,14 +105,13 @@ export class WandboxCompilerDriver implements CompilerDriver {
             }
 
             const exitcode = parseInt(data.status ?? '0', 10);
-            const compileLog: string =
-                data.compiler_message ?? `${data.compiler_output ?? ''}${data.compiler_error ?? ''}`;
+            const compileLog: string = data.compiler_message ?? `${data.compiler_output ?? ''}${data.compiler_error ?? ''}`;
 
             if (
-                exitcode !== 0
-                && compileLog.trim()
-                && !(data.program_output ?? '').trim()
-                && !(data.program_error ?? '').trim()
+                exitcode !== 0 &&
+                compileLog.trim() &&
+                !(data.program_output ?? '').trim() &&
+                !(data.program_error ?? '').trim()
             ) {
                 return {
                     ok: false,

@@ -65,8 +65,9 @@ async function prefixCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 
     const result = findCommand(cmdName, commands);
     if (!result) {
-        if (content.replaceAll(prefix, '').trim() == '')
+        if (content.replaceAll(prefix, '').trim() == '') {
             return;
+        }
 
         return await msg.react('❌');
     }
@@ -170,7 +171,7 @@ export function init() {
             (msg) => [cfg.commands.prefix, ...cfg.commands.alternativePrefixes].some((val) => msg.content.toLowerCase().startsWith(val.toLowerCase())),
         ],
         activatesOn: PredefinedActionEventTypes.OnMessageCreate,
-        worksOutsideGuild: true 
+        worksOutsideGuild: true,
     });
     output.verbose('Prefix commands event registered');
 }

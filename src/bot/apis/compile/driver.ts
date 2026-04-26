@@ -7,11 +7,11 @@ export enum CompilerErrorKind {
     Compile,
     Timeout,
     Internal,
-};
+}
 
 export type CompilerOutput =
-    | { ok: true, stdout: string, stderr: string, exitcode: number }
-    | { ok: false, errKind: CompilerErrorKind, errMessage: string };
+    | { ok: true; stdout: string; stderr: string; exitcode: number }
+    | { ok: false; errKind: CompilerErrorKind; errMessage: string };
 
 export interface CompilerInfo {
     lang: string;

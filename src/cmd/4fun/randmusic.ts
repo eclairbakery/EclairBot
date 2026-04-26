@@ -19,10 +19,11 @@ const randmusicCmd: Command = {
     },
 
     async execute(api) {
-    const music = await db.music.getRandomEntry();
+        const music = await db.music.getRandomEntry();
         if (!music) {
             return api.log.replyError(
-                api, 'Pustka totalna',
+                api,
+                'Pustka totalna',
                 'No w skrócie to nasza serwerowa baza muzyki™ jest aktualnie pusta, więc nic nie dostaniesz!',
             );
         }
@@ -33,7 +34,7 @@ const randmusicCmd: Command = {
                 parse: [],
             },
         });
-    }
+    },
 };
 
 export default randmusicCmd;

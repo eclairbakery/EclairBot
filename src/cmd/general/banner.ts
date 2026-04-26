@@ -46,8 +46,8 @@ const bannerCmd: Command = {
                         .setTitle('Oto baner')
                         .setDescription(`Ten użytkownik ma chyba Nitro i obrazek customowy.`)
                         .setImage(bannerURL)
-                        .setColor(PredefinedColors.Pink)
-                ]
+                        .setColor(PredefinedColors.Pink),
+                ],
             });
         } else if (accentColor != null) {
             const colorHex = accentColor.toString(16).padStart(6, '0');
@@ -59,8 +59,8 @@ const bannerCmd: Command = {
                         .setTitle('Oto baner')
                         .setDescription(`Stały kolor #${colorHex}`)
                         .setImage(imageUrl)
-                        .setColor(PredefinedColors.Pink)
-                ]
+                        .setColor(PredefinedColors.Pink),
+                ],
             });
         }
     },

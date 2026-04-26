@@ -69,4 +69,4 @@ const collectIncomeCmd: Command = {
     },
 };
 
-export default collectIncomeCmd
+export default collectIncomeCmd;

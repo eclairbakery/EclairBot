@@ -38,9 +38,9 @@ export const welcomeNewUserAction: Action<UserEventCtx> = {
                 return;
             } else {
                 await welcomeChannel.send({
-                    content: '<:emoji1:1410551894023082027>' + 
+                    content: '<:emoji1:1410551894023082027>' +
                         cfg.features.welcomer.welcomeMsgs[Math.floor(Math.random() * cfg.features.welcomer.welcomeMsgs.length)].replace('<mention>', `<@${member.user.id}>`),
-                    allowedMentions: (cfg.features.welcomer.mentionNewPeopleInLobby ? {} : { parse: [] })
+                    allowedMentions: cfg.features.welcomer.mentionNewPeopleInLobby ? {} : { parse: [] },
                 });
                 await generalChannel.send(`witaj <@${member.user.id}>, będzie nam miło jak się przywitasz czy coś <:emoji_a_radosci_nie_bylo_konca:1376664467416420362>`);
             }
@@ -65,9 +65,9 @@ export const sayGoodbyeAction: Action<UserEventCtx> = {
             }
 
             await channel.send({
-                content: '<:emoji2:1410551857935290368>' 
-                    + cfg.features.welcomer.goodbyeMsgs[Math.floor(Math.random() * cfg.features.welcomer.goodbyeMsgs.length)].replace('<mention>', `<@${member.user.id}>`),
-                allowedMentions: (cfg.features.welcomer.mentionNewPeopleInLobby ? {} : { parse: [] })
+                content: '<:emoji2:1410551857935290368>' +
+                    cfg.features.welcomer.goodbyeMsgs[Math.floor(Math.random() * cfg.features.welcomer.goodbyeMsgs.length)].replace('<mention>', `<@${member.user.id}>`),
+                allowedMentions: cfg.features.welcomer.mentionNewPeopleInLobby ? {} : { parse: [] },
             });
         },
     ],

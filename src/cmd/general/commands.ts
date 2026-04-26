@@ -93,7 +93,7 @@ const commandsCmd: Command = {
                     for (const al of cmd.aliases) {
                         formattedName += `${firstAlias ? '' : ' / '}\`${cfg.commands.prefix}${al}\``;
                         firstAlias = false;
-                    } 
+                    }
                     formattedName += ')';
                 }
 

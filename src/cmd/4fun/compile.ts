@@ -37,7 +37,8 @@ const compileCmd: Command = {
 
     async execute(api) {
         const msg = await api.log.replyInfo(
-            api, 'Chwila...',
+            api,
+            'Chwila...',
             'Przetwarzam dane',
         );
 
