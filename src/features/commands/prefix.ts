@@ -73,7 +73,7 @@ async function prefixCommandsMessageHandler(msg: dsc.OmitPartialGroupDMChannel<d
 
     const { command, config } = result;
 
-    if (!canExecuteCmd(command, msg.member!)) {
+    if (!canExecuteCmd(command, msg.member ?? msg.author)) {
         log.replyError(
             msg,
             'Hej, a co ty odpie*dalasz?',

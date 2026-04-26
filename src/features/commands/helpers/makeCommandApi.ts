@@ -49,7 +49,7 @@ export async function makeCommandApi(commandObj: Command, argsRaw: ParsedRawArgu
         (context.interaction?.member as dsc.GuildMember) ??
         null;
 
-    const user = new User(((context.interaction?.member as dsc.GuildMember) ?? context.msg?.member)!.id);
+    const user = new User(((context.interaction?.user) ?? context.msg?.author)!.id);
 
     const api: CommandAPI = {
         // -- args --

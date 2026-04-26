@@ -98,7 +98,7 @@ client.on('interactionCreate', async (int: Interaction) => {
         },
     };
 
-    if (!canExecuteCmd(command, int.member! as dsc.GuildMember)) {
+    if (!canExecuteCmd(command, (int.member as dsc.GuildMember) ?? int.user)) {
         return log.replyError(
             replyable,
             'Hej, a co ty odpie*dalasz?',

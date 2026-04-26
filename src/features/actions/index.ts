@@ -287,6 +287,8 @@ class ActionManager {
 
         actionsLoop:
         for (const action of actions) {
+            output.verbose('Running action ' + action.name);
+
             if (actionFilter && !actionFilter(action, ...args)) {
                 output.verbose(`Skipping action ${action.name}, actionFilter returned false`);
                 continue;
@@ -303,21 +305,25 @@ class ActionManager {
 
             try {
                 // check constraints
+                output.verbose(`Action ${action.name}: running constraints`);
                 for (const constraint of action.constraints) {
                     if (await constraint(ctx) == false) {
                         continue actionsLoop;
                     }
                 }
+                output.verbose(`Action ${action.name}: all constraints returned true`);
 
                 // execute callbacks
                 for (const callback of action.callbacks) {
                     const result = callback(ctx as PromiseLike<unknown>);
                     if (result && typeof (result as PromiseLike<unknown>).then === 'function') {
                         if (await result == MagicSkipAllActions) {
+                            output.verbose(`Action ${action.name}: breaking - MagicSkipAllActions`);
                             break actionsLoop;
                         }
                     }
                 }
+                output.verbose(`Action ${action.name}: all callbacks have returned`);
             } catch (e) {
                 logError('stdwarn', e, "Action system's event handler");
             } 

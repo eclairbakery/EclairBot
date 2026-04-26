@@ -15,7 +15,7 @@ const commandsCmd: Command = {
         main: 'Pokazuje pełną listę dostępnych komend bota.',
         short: 'Lista komend',
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.WorksInDM,
 
     expectedArgs: [
         {
@@ -66,7 +66,7 @@ const commandsCmd: Command = {
         for (const category of categoriesToShow) {
             const cmds = commands.get(category) || [];
             for (const cmd of cmds) {
-                if (!canExecuteCmd(cmd, api.invoker.member!)) blockedCmds.push(cmd.name);
+                if (!canExecuteCmd(cmd, api.invoker.member ?? api.invoker.user)) blockedCmds.push(cmd.name);
             }
         }
 
@@ -76,31 +76,37 @@ const commandsCmd: Command = {
             .setColor(PredefinedColors.Cyan);
 
         for (const category of categoriesToShow) {
-            let text: string = '';
+            const text: string[] = [];
 
             const cmds = commands.get(category) || [];
             for (let i = 0; i < cmds.length; i++) {
                 const cmd = cmds[i];
 
-                if (!canExecuteCmd(cmd, api.invoker.member!)) {
+                if (!canExecuteCmd(cmd, api.invoker.member ?? api.invoker.user)) {
                     continue;
                 }
 
                 let formattedName = `**${cfg.commands.prefix}${cmd.name}**`;
-                if (cmd.aliases.length > 0) {
-                    formattedName += ` *(a.k.a. \`${cfg.commands.prefix}${cmd.aliases[0]}\`)*`;
+                if (cmd.aliases.length) {
+                    formattedName += ` (aka `;
+                    let firstAlias = true;
+                    for (const al of cmd.aliases) {
+                        formattedName += `${firstAlias ? '' : ' / '}\`${cfg.commands.prefix}${al}\``;
+                        firstAlias = false;
+                    } 
+                    formattedName += ')';
                 }
 
-                text += i == 0 ? `${formattedName}` : `, ${formattedName}`;
+                text.push(formattedName);
             }
 
-            if (text == '') {
-                text = '*brak komend możliwych do użycia w tej kategorii*';
+            if (text.length == 0) {
+                text.push('*brak komend możliwych do użycia w tej kategorii*');
             }
 
             const categoryField: dsc.APIEmbedField = {
                 name: `${category.emoji} ${capitalizeFirst(category.name)}`,
-                value: text,
+                value: text.join(', '),
                 inline: false,
             };
             embed.addFields(categoryField);

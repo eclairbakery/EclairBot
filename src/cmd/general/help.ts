@@ -82,7 +82,7 @@ function buildCategoryEmbed(
 function getBlockedCommands(
     commands: Map<Category, Command[]>,
     categories: Set<Category>,
-    member: dsc.GuildMember | null,
+    member: dsc.GuildMember | dsc.User,
 ): string[] {
     const blocked: string[] = [];
 
@@ -90,7 +90,7 @@ function getBlockedCommands(
         const cmds = commands.get(category) ?? [];
 
         for (const cmd of cmds) {
-            if (!member || !canExecuteCmd(cmd, member)) blocked.push(cmd.name);
+            if (!canExecuteCmd(cmd, member)) blocked.push(cmd.name);
             else if (!findCmdConfResolvable(cmd.name).enabled) blocked.push(cmd.name);
             else if (cmd.flags & CommandFlags.Deprecated) blocked.push(cmd.name);
         }
@@ -106,7 +106,7 @@ const helpCmd: Command = {
         main: 'Pokazuje losowe komendy z bota wraz z opisami, by w końcu nauczyć Twojego zapyziałego mózgu jego używania.',
         short: 'Lista komend',
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.WorksInDM | CommandFlags.Spammy,
 
     permissions: {
         allowedRoles: null,
@@ -190,7 +190,7 @@ const helpCmd: Command = {
             }
         }
 
-        const blockedCmds = api.invoker.member ? getBlockedCommands(commands, categoriesToShow, api.invoker.member) : [];
+        const blockedCmds = getBlockedCommands(commands, categoriesToShow, api.invoker.member ?? api.invoker.user);
 
         const introEmbed = new ReplyEmbed()
             .setTitle('📢 Moje komendy, władzco!')
