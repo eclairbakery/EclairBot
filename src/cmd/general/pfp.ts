@@ -29,7 +29,7 @@ const pfpCmd: Command = {
         const user = api.getTypedArg('user', 'user-mention').value?.user ?? api.invoker.user;
         api.reply({ embeds: [
             new ReplyEmbed()
-                .setImage(user.displayAvatarURL())
+                .setImage(user.displayAvatarURL({ size: 1024 }))
                 .setTitle("Proszę bardzo!")
                 .setDescription("Tutaj jest amazing profilowe użytkownika " + user.displayName)
                 .setColor(PredefinedColors.Cyan)
