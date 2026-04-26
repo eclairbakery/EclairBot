@@ -2,7 +2,7 @@ import { Category, Command } from '@/bot/command.ts';
 import { cfg } from '@/bot/cfg.ts';
 
 import { PredefinedColors } from '@/util/color.ts';
-import capitalizeFirst from '@/util/capitalizeFirst.ts';
+import capitalizeFirst from '@/util/capitalize-first.ts';
 import canExecuteCmd from '@/util/cmd/canExecuteCmd.ts';
 
 import * as dsc from 'discord.js';

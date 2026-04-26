@@ -4,7 +4,7 @@ import { CommandAPI } from '@/bot/apis/commands/api.ts';
 import { cfg } from '@/bot/cfg.ts';
 
 import { PredefinedColors } from '@/util/color.ts';
-import capitalizeFirst from '@/util/capitalizeFirst.ts';
+import capitalizeFirst from '@/util/capitalize-first.ts';
 
 import * as dsc from 'discord.js';
 import Money from '@/util/money.ts';

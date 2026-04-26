@@ -4,7 +4,7 @@ import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { cfg } from '@/bot/cfg.ts';
 import { PredefinedColors } from '@/util/color.ts';
-import { Hour, Timestamp } from '@/util/parseTimestamp.ts';
+import { Hour, Timestamp } from '@/util/parse-timestamp.ts';
 
 import mute from '@/bot/apis/mod/muting.ts';
 import { watchMute } from '@/bot/watchdog.ts';

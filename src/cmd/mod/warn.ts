@@ -7,7 +7,7 @@ import { cfg } from '@/bot/cfg.ts';
 import * as dsc from 'discord.js';
 
 import warn from '@/bot/apis/mod/warns.ts';
-import parseTimestamp, { Timestamp } from '@/util/parseTimestamp.ts';
+import parseTimestamp, { Timestamp } from '@/util/parse-timestamp.ts';
 import clamp from '@/util/math/clamp.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 

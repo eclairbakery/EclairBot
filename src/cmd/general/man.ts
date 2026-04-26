@@ -3,10 +3,10 @@ import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { PredefinedColors } from '@/util/color.ts';
 import { cfg } from '@/bot/cfg.ts';
 
-import findCommand from '@/util/cmd/findCommand.ts';
+import findCommand from '@/util/cmd/find-command.ts';
 import { Category } from '@/bot/command.ts';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.ts';
-import fmtEmoji from '@/util/fmtEmoji.ts';
+import fmtEmoji from '@/util/fmt-emoji.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 const manCmd: Command = {
