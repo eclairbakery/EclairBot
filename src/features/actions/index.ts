@@ -1,6 +1,6 @@
 import * as log from '@/util/log.ts';
 import * as dsc from 'discord.js';
-import logError from '@/util/logError.ts';
+import logError from '@/util/log-error.ts';
 import { output } from '@/bot/logging.ts';
 import { cfg } from '@/bot/cfg.ts';
 

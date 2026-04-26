@@ -6,7 +6,7 @@ export default actionsManager;
 import * as dsc from 'discord.js';
 
 import { cfg } from '@/bot/cfg.ts';
-import fmtEmoji from '@/util/fmtEmoji.ts';
+import fmtEmoji from '@/util/fmt-emoji.ts';
 
 export const mediaChannelAction: Action<MessageEventCtx> = {
     name: '4fun/media-channel',

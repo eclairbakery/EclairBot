@@ -1,6 +1,6 @@
 import { Category, Command } from '@/bot/command.ts';
 import { output } from '@/bot/logging.ts';
-import logError from '@/util/logError.ts';
+import logError from '@/util/log-error.ts';
 import { findCmdConfResolvable } from '@/util/cmd/findCmdConfigObj.ts';
 import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 import { deepEqual } from '@/util/objects/objects.ts';

@@ -1,5 +1,5 @@
 import process from "node:process";
-import logError from '@/util/logError.ts';
+import logError from '@/util/log-error.ts';
 const BaseUrl = 'https://api.github.com';
 
 export class GithubError extends Error {}

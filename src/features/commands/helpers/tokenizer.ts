@@ -1,4 +1,4 @@
-import { ParsedRawArgument } from './argumentParser.ts';
+import { ParsedRawArgument } from './argument-parser.ts';
 
 export class CommandTokenizer {
     private pos: number;

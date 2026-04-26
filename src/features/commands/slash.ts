@@ -9,17 +9,17 @@ import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { client } from '../../client.ts';
 import { commands } from '../../cmd/list.ts';
 import { handleError } from './helpers/error-handler.ts';
-import { makeCommandApi } from './helpers/makeCommandApi.ts';
-import { makeSlashCommandDesc, makeSlashCommandOptionDesc } from './helpers/makeSlashCommandDescs.ts';
+import { makeCommandApi } from './helpers/make-command-api.ts';
+import { makeSlashCommandDesc, makeSlashCommandOptionDesc } from './helpers/make-slash-command-descs.ts';
 import { formatArgType } from './helpers/fmt-arg-type.ts';
 
-import findCommand from '@/util/cmd/findCommand.ts';
+import findCommand from '@/util/cmd/find-command.ts';
 import canExecuteCmd from '@/util/cmd/canExecuteCmd.ts';
 import isCommandBlockedOnChannel from '@/util/cmd/isCommandBlockedOnChannel.ts';
 import process from "node:process";
 
 
-import { ParsedRawArgument } from './helpers/argumentParser.ts';
+import { ParsedRawArgument } from './helpers/argument-parser.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { PredefinedColors } from '@/util/color.ts';
 import { CommandArgType } from '../../bot/command.ts';

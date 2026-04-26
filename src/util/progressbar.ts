@@ -1,4 +1,4 @@
-import fmtEmoji from './fmtEmoji.ts';
+import fmtEmoji from './fmt-emoji.ts';
 import { cfg } from '@/bot/cfg.ts';
 
 export function mkDualProgressBar(red: number, green: number, totalLength: number = 10) {

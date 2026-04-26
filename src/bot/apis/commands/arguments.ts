@@ -1,4 +1,4 @@
-import { Timestamp } from '@/util/parseTimestamp.ts';
+import { Timestamp } from '@/util/parse-timestamp.ts';
 import * as dsc from 'discord.js';
 import Money from '@/util/money.ts';
 

@@ -2,8 +2,8 @@ import * as dsc from 'discord.js';
 
 import { PredefinedActionEventTypes } from '../index.ts';
 import { OnForceReloadTemplates } from '../../../events/actions/templatesEvents.ts';
-import { addTemplateChannel, getChannel } from './templateChannels.ts';
-import { makeChannelName } from '@/util/makeChannelName.ts';
+import { addTemplateChannel, getChannel } from './template-channels.ts';
+import { makeChannelName } from '@/util/make-channel-name.ts';
 import { cfg } from '../../../bot/cfg.ts';
 
 function getNextGoal(memberCount: number): number {

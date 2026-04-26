@@ -3,7 +3,7 @@ import { ArgMustBeSomeTypeError, ArgParseError, ArgViolatesRules, MissingRequire
 import { formatArgType } from './fmt-arg-type.ts';
 import { DiscordAPIError } from 'discord.js';
 import { CommandViolatedRule } from '@/bot/command.ts';
-import logError from '@/util/logError.ts';
+import logError from '@/util/log-error.ts';
 
 function handleViolatedRule(v: CommandViolatedRule) {
     switch (v) {

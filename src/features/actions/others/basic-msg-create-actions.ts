@@ -1,9 +1,9 @@
 import { addExperiencePoints } from '@/bot/level.ts';
 import { type Action, type MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.ts';
 import { PredefinedColors } from '@/util/color.ts';
-import { mkMessageReferenceEmbed } from '@/bot/templates/messageReference.ts';
+import { mkMessageReferenceEmbed } from '@/bot/templates/message-reference.ts';
 import { starRepository } from '@/bot/apis/github/github.ts';
-import logError from '@/util/logError.ts';
+import logError from '@/util/log-error.ts';
 
 export const basicMsgCreateActions: Action<MessageEventCtx> = {
     name: 'others/basic-msg-create-actions',

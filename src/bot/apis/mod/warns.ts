@@ -1,7 +1,7 @@
 import * as dsc from 'discord.js';
 
 import { db } from '@/bot/apis/db/bot-db.ts';
-import { scheduleWarnDeletion } from '@/features/deleteExpiredWarns.ts';
+import { scheduleWarnDeletion } from '@/features/delete-expired-warns.ts';
 import actionsManager from '@/features/actions/index.ts';
 import { OnWarnGiven, WarnEventCtx } from '@/events/actions/warnEvents.ts';
 

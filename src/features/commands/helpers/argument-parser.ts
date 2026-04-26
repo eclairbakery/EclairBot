@@ -2,8 +2,8 @@ import { Category, Command, CommandArgType, CommandArgument, CommandValuableArgu
 
 import * as dsc from 'discord.js';
 
-import parseTimestamp from '@/util/parseTimestamp.ts';
-import findCommand from '@/util/cmd/findCommand.ts';
+import parseTimestamp from '@/util/parse-timestamp.ts';
+import findCommand from '@/util/cmd/find-command.ts';
 import User from '@/bot/apis/db/user.ts';
 import Money from '@/util/money.ts';
 import { NumberParseError } from '@/util/math/parse.ts';

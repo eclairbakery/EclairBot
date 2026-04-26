@@ -1,5 +1,6 @@
 import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/actions/index.ts';
-import capitalizeFirst from '@/util/capitalizeFirst.ts';
+import capitalizeFirst from '@/util/capitalize-first.ts';
+import { cfg } from '@/bot/cfg.ts';
 
 let deathChatTimeout: number;
 
@@ -59,7 +60,7 @@ export const pings: Record<string, PingAPI> = {
 export const actionPing: Action<MessageEventCtx> = {
     name: '4fun/notify/death-chat',
     activatesOn: PredefinedActionEventTypes.OnMessageCreate,
-    constraints: [(msg) => msg.channelId === '1264971505662689311'],
+    constraints: [(msg) => msg.channelId === cfg.channels.general.general],
     callbacks: [
         (msg) => {
             clearTimeout(deathChatTimeout);

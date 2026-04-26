@@ -5,7 +5,7 @@ import { client } from '@/client.ts';
 import { ft, output } from '@/bot/logging.ts';
 import * as dotenv from 'dotenv';
 import process from 'node:process';
-import logError from '@/util/logError.ts';
+import logError from '@/util/log-error.ts';
 process.on('uncaughtException', (e) => {
     logError('stderr', e);
     if (e.message.includes('An invalid token was provided.')) {
@@ -23,17 +23,15 @@ import { cfg } from './bot/cfg.ts';
 
 // actions
 import AutoModRules from '@/features/actions/mod/automod.ts';
-import { initExpiredWarnsDeleter } from '@/features/deleteExpiredWarns.ts';
+import { initExpiredWarnsDeleter } from '@/features/delete-expired-warns.ts';
 import { sayGoodbyeAction, welcomeNewUserAction } from '@/features/actions/others/welcomer.ts';
-import { countingChannelAction } from '@/features/actions/4fun/countingChannel.ts';
-import { lastLetterChannelAction } from '@/features/actions/4fun/lastLetterChannel.ts';
-import { mediaChannelAction } from '@/features/actions/4fun/mediaChannelAction.ts';
-import { antiSpamAndAntiFlood } from '@/features/actions/mod/anti-spam-flood.ts';
-import { basicMsgCreateActions } from '@/features/actions/others/basicMsgCreateActions.ts';
-import { registerTemplateChannels } from '@/features/actions/channels/registerTemplateChannels.ts';
+import { countingChannelAction } from '@/features/actions/4fun/counting-channel.ts';
+import { lastLetterChannelAction } from '@/features/actions/4fun/last-letter-channel.ts';
+import { mediaChannelAction } from '@/features/actions/4fun/media-channel-action.ts';
+import { basicMsgCreateActions } from '@/features/actions/others/basic-msg-create-actions.ts';
+import { registerTemplateChannels } from '@/features/actions/channels/register-template-channels.ts';
 import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher, setUpWatchdog } from './bot/watchdog.ts';
 import { actionPing } from '@/features/actions/4fun/pingDeathChat.ts';
-import { hallOfFameAction } from './features/actions/4fun/hallOfFame.ts';
 import { onReceivedEmailAction } from './features/actions/others/on-new-email.ts';
 
 // events
@@ -59,16 +57,16 @@ import actionsManager from '@/features/actions/index.ts';
 import { db } from '@/bot/apis/db/bot-db.ts';
 
 import { initEmailActionsIntegration } from '@/bot/apis/email/actions.ts';
-import { getChannel } from '@/features/actions/channels/templateChannels.ts';
+import { getChannel } from '@/features/actions/channels/template-channels.ts';
 import { warnGivenLogAction } from '@/features/actions/mod/warn-given.ts';
-import { initStatusGenerator } from '@/util/generateStatusQuote.ts';
+import { initStatusGenerator } from '@/util/generate-status-quote.ts';
 
 import { initAskCmdModel, initWikiModel } from './features/init-ai-models.ts';
 import { askAction } from './features/actions/4fun/ask.ts';
 import { addVoiceExperience } from '@/bot/level.ts';
-import { addMusicAction } from '@/features/actions/4fun/addMusic.ts';
+import { addMusicAction } from '@/features/actions/4fun/add-music.ts';
 import { registerCommands } from '@/cmd/list.ts';
-import { communityPollsContentModerator, filesContentModerator } from '@/features/actions/others/contentModerator.ts';
+import { communityPollsContentModerator, filesContentModerator } from '@/features/actions/others/content-moderator.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -131,9 +129,8 @@ function setUpActions() {
         // lobby & users watchdog
         welcomeNewUserAction,
         sayGoodbyeAction,
-        // automod & anti-spam with anti-flood
+        // automod
         ...AutoModRules.all(),
-        antiSpamAndAntiFlood,
         filesContentModerator,
         communityPollsContentModerator,
         // msg-specific actions 
@@ -142,8 +139,6 @@ function setUpActions() {
         lastLetterChannelAction,
         basicMsgCreateActions,
         askAction,
-        // hall of fame
-        hallOfFameAction,
         // additional features
         actionPing,
         warnGivenLogAction,

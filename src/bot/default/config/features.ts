@@ -101,11 +101,6 @@ export const featuresConfig: Config['features'] = {
             }
         }
     },
-    hallOfFame: {
-        channel: '1392128976574484592',
-        eligibleChannels: [channelsCfg.general.general, channelsCfg.general.offtopic, channelsCfg.general.media, channelsCfg.mod.hallOfShame],
-        enabled: false,
-    },
     economy: economyCfg,
     email: {
         listenerChannel: channelsCfg.eclairbot.email,

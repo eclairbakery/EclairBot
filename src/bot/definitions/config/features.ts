@@ -48,11 +48,6 @@ export interface ConfigFeatures {
             };
         }
     };
-    hallOfFame: {
-        enabled: boolean;
-        channel: dsc.Snowflake;
-        eligibleChannels: dsc.Snowflake[];
-    };
     economy: EconomyConfig;
     email: {
         listenerChannel: dsc.Snowflake;
