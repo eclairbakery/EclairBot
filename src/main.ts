@@ -83,10 +83,6 @@ client.once('clientReady', async () => {
         );
     }
 
-    try {
-        await Deno.mkdir('/tmp/eclairbot');
-    } catch {}
-
     await registerCommands();
     output.verbose('Commands registered');
 
