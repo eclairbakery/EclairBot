@@ -23,6 +23,7 @@ export const channelsCfg: Config['channels'] = {
         rules: '1286058702214008935',
         announcements: '1235560320596967516',
         boosts: '1298706083556229222',
+        levels: '1235592947831930993'
     },
     general: {
         general: '1264971505662689311',

@@ -86,7 +86,6 @@ export const featuresConfig: Config['features'] = {
             75: '1235594085188767835',
             100: '1390802440739356762',
         },
-        levelChannel: '1235592947831930993',
         shallPingWhenNewLevel: false,
         currentEvent: {
             enabled: false,
@@ -101,10 +100,18 @@ export const featuresConfig: Config['features'] = {
             },
         },
     },
-    economy: economyCfg,
-    email: {
-        listenerChannel: channelsCfg.eclairbot.email,
+    prestige: {
+        reactions: {
+            positive: [
+                '👍', '❤️', '🔥'
+            ],
+            negative: [
+                '👎'
+            ],
+            pointsPerReaction: 1
+        }
     },
+    economy: economyCfg,
     translations: [],
     watchdog: {
         kickNewMembers: false,

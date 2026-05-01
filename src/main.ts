@@ -31,7 +31,7 @@ import { mediaChannelAction } from '@/features/actions/4fun/media-channel-action
 import { basicMsgCreateActions } from '@/features/actions/others/basic-msg-create-actions.ts';
 import { registerTemplateChannels } from '@/features/actions/channels/register-template-channels.ts';
 import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher, setUpWatchdog } from './bot/watchdog.ts';
-import { actionPing } from '@/features/actions/4fun/pingDeathChat.ts';
+import { actionPing } from '@/features/actions/4fun/ping-death-chat.ts';
 import { onReceivedEmailAction } from './features/actions/others/on-new-email.ts';
 
 // events
@@ -67,6 +67,7 @@ import { addVoiceExperience } from '@/bot/level.ts';
 import { addMusicAction } from '@/features/actions/4fun/add-music.ts';
 import { registerCommands } from '@/cmd/list.ts';
 import { communityPollsContentModerator, filesContentModerator } from '@/features/actions/others/content-moderator.ts';
+import { reactionAddHandler, reactionRemoveHandler } from '@/features/actions/4fun/reaction-handler.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -139,6 +140,9 @@ function setUpActions() {
         lastLetterChannelAction,
         basicMsgCreateActions,
         askAction,
+        // reaction handlers 
+        reactionAddHandler,
+        reactionRemoveHandler,
         // additional features
         actionPing,
         warnGivenLogAction,

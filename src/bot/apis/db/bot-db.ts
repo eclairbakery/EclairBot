@@ -1,13 +1,13 @@
 import { DB, QueryParameterSet } from 'sqlite';
 
-import type { MusicEntry, MusicEntryRaw, Rep, RepRaw, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
+import type { MusicEntry, MusicEntryRaw, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
 
 import type { Balance, Cooldown, Cooldowns } from './db-defs.ts';
-import { musicFromRaw, repFromRaw, warnFromRaw } from './db-defs.ts';
+import { musicFromRaw, warnFromRaw } from './db-defs.ts';
 
-export type { MusicEntry, MusicEntryRaw, Rep, RepRaw, UserDataRaw, Warn, WarnRaw };
+export type { MusicEntry, MusicEntryRaw, UserDataRaw, Warn, WarnRaw };
 export type { Balance, Cooldown, Cooldowns };
-export { musicFromRaw, repFromRaw, warnFromRaw };
+export { musicFromRaw, warnFromRaw };
 
 import User from './user.ts';
 
@@ -37,7 +37,9 @@ export class BotDatabase {
                 last_email_sent INTEGER DEFAULT 0,
                 
                 signature TEXT,
-                default_email_title TEXT
+                default_email_title TEXT,
+
+                prestige_points INTEGER DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS user_active_games (
@@ -66,15 +68,6 @@ export class BotDatabase {
                 item_id TEXT NOT NULL,
                 amount INTEGER DEFAULT 0,
                 PRIMARY KEY (user_id, item_id)
-            );
-
-            CREATE TABLE IF NOT EXISTS reputation (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                author_id TEXT NOT NULL REFERENCES users(user_id),
-                target_user_id TEXT NOT NULL REFERENCES users(user_id),
-                comment TEXT,
-                type TEXT NOT NULL CHECK(type IN ('+rep', '-rep'))
             );
 
             CREATE TABLE IF NOT EXISTS email_security (
@@ -235,16 +228,6 @@ export class BotDatabase {
         getTop: async (max: number | null = null): Promise<User[]> => {
             const ids = await this.selectTop('xp', max, 'users');
             return ids.map((id) => new User(id));
-        },
-    };
-
-    readonly reputation = {
-        getAll: async (max: number | null = null): Promise<Rep[]> => {
-            const rows = await this.selectMany<RepRaw>(
-                `SELECT * FROM reputation ${max ? 'LIMIT ?' : ''}`,
-                max ? [max] : [],
-            );
-            return rows.map(repFromRaw);
         },
     };
 

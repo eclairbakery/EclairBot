@@ -33,7 +33,6 @@ export interface ConfigFeatures {
         excludedChannels: string[];
         milestoneRoles: Record<number, dsc.Snowflake>;
         canChangeXP: dsc.Snowflake[];
-        levelChannel: dsc.Snowflake;
         shallPingWhenNewLevel: boolean;
         currentEvent: {
             enabled: boolean;
@@ -49,9 +48,6 @@ export interface ConfigFeatures {
         };
     };
     economy: EconomyConfig;
-    email: {
-        listenerChannel: dsc.Snowflake;
-    };
     translations: ConfigTranslation[];
     watchdog: {
         kickNewMembers: boolean;
@@ -68,7 +64,13 @@ export interface ConfigFeatures {
             maxChannelDeletions: number;
         };
     };
-
+    prestige: {
+        reactions: {
+            positive: string[],
+            negative: string[],
+            pointsPerReaction: number
+        }
+    };
     ai: {
         enabled: boolean;
         allowPolitics: boolean;

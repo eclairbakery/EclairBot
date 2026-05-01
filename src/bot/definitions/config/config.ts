@@ -76,6 +76,7 @@ export interface Config {
             rules: dsc.Snowflake;
             announcements: dsc.Snowflake;
             boosts: dsc.Snowflake;
+            levels: dsc.Snowflake;
         };
         general: {
             general: dsc.Snowflake;

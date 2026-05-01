@@ -61,7 +61,7 @@ export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
     constraints: [],
     callbacks: [
         async (ctx) => {
-            const emailChannel = await client.channels.fetch(cfg.features.email.listenerChannel);
+            const emailChannel = await client.channels.fetch(cfg.channels.eclairbot.email);
             if (emailChannel == null || !emailChannel.isSendable()) return;
 
             const sender = ctx.email.from?.value?.[0]?.address;

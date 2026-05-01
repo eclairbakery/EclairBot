@@ -1,9 +1,10 @@
 import { db } from '@/bot/apis/db/bot-db.ts';
 
-import { Balance, Rep, RepRaw, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
+import { Balance, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
 import { Cooldowns } from './db-defs.ts';
-import { repFromRaw, warnFromRaw } from './db-defs.ts';
+import { warnFromRaw } from './db-defs.ts';
 import Money from '@/util/money.ts';
+import { output } from '@/bot/logging.ts';
 
 const CooldownMap = {
     'work': { col: 'last_worked', prop: 'lastWorked' },
@@ -280,6 +281,25 @@ export default class User {
         },
     };
 
+    /** -------- PRESTIGE ----------- */
+    readonly prestige = {
+        getPoints: async () => {
+            await this.ensureExists();
+            const result = await db.selectOne("SELECT * FROM users WHERE user_id = ?", [this.id]) as UserDataRaw;
+            return result.prestige_points ?? 0; 
+        },
+        addPoints: async (amount: number) => {
+            await this.ensureExists();
+            await db.runSql("UPDATE users SET prestige_points = prestige_points + ? WHERE user_id = ?", [ amount, this.id ]);
+            output.verbose("Prestige: adding points: " + amount);
+        },
+        removePoints: async (amount: number) => {
+            await this.ensureExists();
+            await db.runSql("UPDATE users SET prestige_points = prestige_points - ? WHERE user_id = ?", [ amount, this.id ]);
+            output.verbose("Prestige: removing points: " + amount);
+        }
+    };
+
     /** -------- INVENTORY -------- */
     readonly inventory = {
         getItems: async (): Promise<{ item_id: string; amount: number }[]> => {
@@ -391,41 +411,6 @@ export default class User {
             }
 
             return { can: true };
-        },
-    };
-
-    /** -------- REPUTATION -------- */
-    readonly reputation = {
-        give: async (targetId: string, type: '+rep' | '-rep', comment?: string) => {
-            return db.runSql(
-                `INSERT INTO reputation (author_id, target_user_id, type, comment)
-                 VALUES (?, ?, ?, ?)`,
-                [this.id, targetId, type, comment ?? null],
-            );
-        },
-
-        getReceived: async (): Promise<Rep[]> => {
-            const rawReps = await db.selectMany<RepRaw>(
-                `SELECT * FROM reputation WHERE target_user_id = ? ORDER BY created_at DESC`,
-                [this.id],
-            );
-            return rawReps.map(repFromRaw);
-        },
-
-        getGiven: async (): Promise<Rep[]> => {
-            const rawReps = await db.selectMany<RepRaw>(
-                `SELECT * FROM reputation WHERE author_id = ? ORDER BY created_at DESC`,
-                [this.id],
-            );
-            return rawReps.map(repFromRaw);
-        },
-
-        getAll: async (): Promise<Rep[]> => {
-            const rawReps = await db.selectMany<RepRaw>(
-                `SELECT * FROM reputation`,
-                [],
-            );
-            return rawReps.map(repFromRaw);
         },
     };
 

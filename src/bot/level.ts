@@ -125,7 +125,7 @@ export async function addExperiencePoints(msg: dsc.OmitPartialGroupDMChannel<dsc
     if (newLevel > prevLevel) {
         const gotNewRole = await addLvlRole(msg.guild!, newLevel, msg.author.id);
 
-        const channelLvl = await msg.client.channels.fetch(cfg.features.leveling.levelChannel);
+        const channelLvl = await msg.client.channels.fetch(cfg.channels.important.levels);
         if (!channelLvl || !channelLvl.isSendable()) return;
 
         let content = `${getMention(msg.member!)} wbił poziom ${newLevel}! Wow co za osiągnięcie!`;
@@ -187,7 +187,7 @@ const updateXpAction: Action<XpEventCtx> = {
                 }
             }
 
-            const channelLvl = await client.channels.fetch(cfg.features.leveling.levelChannel);
+            const channelLvl = await client.channels.fetch(cfg.channels.important.levels);
             if (!channelLvl || !channelLvl.isSendable()) return;
             return channelLvl.send(
                 cfg.features.leveling.shallPingWhenNewLevel ? content : { content, allowedMentions: { parse: [] } },

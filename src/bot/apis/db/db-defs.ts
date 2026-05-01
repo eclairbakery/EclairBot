@@ -9,6 +9,7 @@ export interface UserDataRaw {
     last_crimed: number;
     last_collect_income: number;
     last_email_sent: number;
+    prestige_points: number;
 }
 
 export interface EconomyRaw {
@@ -40,35 +41,6 @@ export function warnFromRaw(raw: WarnRaw): Warn {
         reason: raw.reason_string,
         points: raw.points,
         expiresAt: raw.expires_at,
-    };
-}
-
-export interface RepRaw {
-    id: number;
-    created_at: string;
-    author_id: string;
-    target_user_id: string;
-    comment: string | null;
-    type: '+rep' | '-rep';
-}
-
-export interface Rep {
-    id: number;
-    createdAt: string;
-    authorId: string;
-    targetUserId: string;
-    comment: string | null;
-    type: '+rep' | '-rep';
-}
-
-export function repFromRaw(raw: RepRaw): Rep {
-    return {
-        id: raw.id,
-        createdAt: raw.created_at,
-        authorId: raw.author_id,
-        targetUserId: raw.target_user_id,
-        comment: raw.comment,
-        type: raw.type,
     };
 }
 
