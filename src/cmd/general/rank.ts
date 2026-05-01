@@ -36,7 +36,7 @@ export const rankCmd: Command = {
         const top_lvl = await db.leveling.getTop();
         const index_lvl = top_lvl.findIndex((value) => value.id == user.id);
 
-        const top_rep = await db.leveling.getTop();
+        const top_rep = await db.prestige.getTop();
         const index_rep = top_rep.findIndex((value) => value.id == user.id);
 
         const top_eco = await db.economy.getTopTotal();
