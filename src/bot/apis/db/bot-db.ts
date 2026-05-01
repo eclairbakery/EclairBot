@@ -231,6 +231,13 @@ export class BotDatabase {
         },
     };
 
+    readonly prestige = {
+        getTop: async (max: number | null = null): Promise<User[]> => {
+            const ids = await this.selectTop('prestige_points', max, 'users');
+            return ids.map((id) => new User(id));
+        },
+    };
+
     readonly warns = {
         getAll: async (max: number | null = null): Promise<Warn[]> => {
             const rows = await this.selectMany<WarnRaw>(

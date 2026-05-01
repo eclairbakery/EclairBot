@@ -18,7 +18,7 @@ function reactionMain(metadata: {
     }
 
     if (metadata.givenBy.id == metadata.givenTo.id) {
-        //return;
+        return;
     }
 
     const points = cfg.features.prestige.reactions.pointsPerReaction; 
