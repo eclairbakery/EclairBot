@@ -312,12 +312,10 @@ class ActionManager {
 
                 // execute callbacks
                 for (const callback of action.callbacks) {
-                    const result = callback(ctx as PromiseLike<unknown>);
-                    if (result && typeof (result as PromiseLike<unknown>).then === 'function') {
-                        if (await result == MagicSkipAllActions) {
-                            output.verbose(`Action ${action.name}: breaking - MagicSkipAllActions`);
-                            break actionsLoop;
-                        }
+                    const result = await callback(ctx as PromiseLike<unknown>);
+                    if (result == MagicSkipAllActions) {
+                        output.verbose(`Action ${action.name}: breaking - MagicSkipAllActions`);
+                        break actionsLoop;
                     }
                 }
                 output.verbose(`Action ${action.name}: all callbacks have returned`);

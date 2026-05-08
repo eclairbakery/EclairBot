@@ -31,6 +31,7 @@ export const channelsCfg: Config['channels'] = {
         commands: '1235604839078035537',
         media: '1235567551753486407',
         ei: '1485240944373792918',
+        bash: '1501945085162557692'
     },
     other: {
         music: '1471233436810477610',

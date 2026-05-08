@@ -84,6 +84,7 @@ export interface Config {
             commands: dsc.Snowflake;
             media: dsc.Snowflake;
             ei: dsc.Snowflake;
+            bash: dsc.Snowflake;
         };
         dev: {
             programming: dsc.Snowflake;
