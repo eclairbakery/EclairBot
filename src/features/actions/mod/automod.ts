@@ -52,6 +52,17 @@ export default class AutoModRules {
         additionalConstraints: [AutoModRules.msgAuthorIsNotImmuneToAutomod],
     });
 
+    static readonly BlockNWords: Action<MessageEventCtx> = mkAutoreplyAction({
+        activationOptions: [
+            { type: 'contains', keyword: 'BEGIN PGP SIGNED MESSAGE' },
+            { type: 'contains', keyword: 'BEGIN PGP SIGNATURE' },
+            { type: 'contains', keyword: 'END PGP SIGNATURE' },
+        ],
+        reply: '<#1502335736911888425>',
+        additionalCallbacks: [PredefinedActionCallbacks.deleteMsg],
+        additionalConstraints: [AutoModRules.msgAuthorIsNotImmuneToAutomod],
+    });
+
     static readonly GitHubAutoreply: Action<MessageEventCtx> = mkAutoreplyAction({
         activationOptions: [
             { type: 'is-equal-to', keyword: 'git' },
@@ -65,6 +76,7 @@ export default class AutoModRules {
             AutoModRules.GitHubAutoreply,
             AutoModRules.BlockInvites,
             AutoModRules.BlockNWords,
+            AutoModRules.BlockPGPSignature,
         ];
         return rules;
     }
