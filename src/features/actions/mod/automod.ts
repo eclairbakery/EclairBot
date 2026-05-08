@@ -52,7 +52,7 @@ export default class AutoModRules {
         additionalConstraints: [AutoModRules.msgAuthorIsNotImmuneToAutomod],
     });
 
-    static readonly BlockNWords: Action<MessageEventCtx> = mkAutoreplyAction({
+    static readonly BlockPGPSignature: Action<MessageEventCtx> = mkAutoreplyAction({
         activationOptions: [
             { type: 'contains', keyword: 'BEGIN PGP SIGNED MESSAGE' },
             { type: 'contains', keyword: 'BEGIN PGP SIGNATURE' },
