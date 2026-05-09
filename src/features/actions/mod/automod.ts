@@ -68,6 +68,20 @@ export default class AutoModRules {
         ]
     };
 
+    static readonly BlockPGPSignature: Action<MessageEventCtx> = mkAutoreplyAction({
+        activationOptions: [
+            { type: 'contains', keyword: 'BEGIN PGP SIGNED MESSAGE' },
+            { type: 'contains', keyword: 'BEGIN PGP SIGNATURE' },
+            { type: 'contains', keyword: 'END PGP SIGNATURE' },
+        ],
+        reply: '<#1502335736911888425>',
+        additionalCallbacks: [PredefinedActionCallbacks.deleteMsg],
+        additionalConstraints: [
+            AutoModRules.msgAuthorIsNotImmuneToAutomod,
+            (ctx) => ctx.channelId != '1502335736911888425',
+        ],
+    });
+
     static readonly BlockNWords: Action<MessageEventCtx> = mkAutoreplyAction({
         activationOptions: [
             { type: 'contains', keyword: 'nigger' },
@@ -91,7 +105,8 @@ export default class AutoModRules {
             AutoModRules.GitHubAutoreply,
             AutoModRules.BlockInvites,
             AutoModRules.BlockNWords,
-            AutoModRules.BlockNonSafeMessages
+            AutoModRules.BlockNonSafeMessages,
+            AutoModRules.BlockPGPSignature,
         ];
         console.log(rules);
         return rules;
