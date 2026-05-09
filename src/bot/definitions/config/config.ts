@@ -95,6 +95,8 @@ export interface Config {
             minecraft: dsc.Snowflake;
             economy: dsc.Snowflake;
             files: dsc.Snowflake;
+            info: dsc.Snowflake;
+            safeChat: dsc.Snowflake;
         };
         forfun: {
             counting: dsc.Snowflake;
