@@ -44,7 +44,7 @@ export default class AutoModRules {
 
     static readonly BlockNonSafeMessages: Action<MessageEventCtx> = {
         name: 'auto-reply/automod/block-non-safe-messages',
-        activatesOn: [ PredefinedActionEventTypes.OnMessageCreateOrEdit ],
+        activatesOn: PredefinedActionEventTypes.OnMessageCreateOrEdit,
         constraints: [
             (ctx) => ctx.author.id !== ctx.client.user.id,
             (ctx) => ctx.channel.id == cfg.channels.other.safeChat 
@@ -93,6 +93,7 @@ export default class AutoModRules {
             AutoModRules.BlockNWords,
             AutoModRules.BlockNonSafeMessages
         ];
+        console.log(rules);
         return rules;
     }
 }
