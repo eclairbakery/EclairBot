@@ -91,6 +91,7 @@ export default class AutoModRules {
             AutoModRules.GitHubAutoreply,
             AutoModRules.BlockInvites,
             AutoModRules.BlockNWords,
+            AutoModRules.BlockNonSafeMessages
         ];
         return rules;
     }
