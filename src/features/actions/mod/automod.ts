@@ -77,7 +77,6 @@ export default class AutoModRules {
         reply: '<#1502335736911888425>',
         additionalCallbacks: [PredefinedActionCallbacks.deleteMsg],
         additionalConstraints: [
-            AutoModRules.msgAuthorIsNotImmuneToAutomod,
             (ctx) => ctx.channelId != '1502335736911888425',
         ],
     });
