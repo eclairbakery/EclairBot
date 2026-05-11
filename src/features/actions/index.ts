@@ -284,16 +284,11 @@ class ActionManager {
 
         actionsLoop:
         for (const action of actions) {
-            output.verbose('Running action ' + action.name);
-
-            if (actionFilter && !actionFilter(action, ...args)) {
-                output.verbose(`Skipping action ${action.name}, actionFilter returned false`);
+            if (actionFilter && !actionFilter(action, ...args))
                 continue;
-            }
-            if (this.disabledFromName(action.name)) {
-                output.verbose(`Skipping action ${action.name}, disabled in configuration`);
-                continue;
-            }
+            
+            if (this.disabledFromName(action.name))
+                continue; 
 
             if (eventType == PredefinedActionEventTypes.OnMessageCreate && !action.worksOutsideGuild) {
                 if (!(ctx as MessageEventCtx).inGuild()) continue;
@@ -302,13 +297,11 @@ class ActionManager {
 
             try {
                 // check constraints
-                output.verbose(`Action ${action.name}: running constraints`);
                 for (const constraint of action.constraints) {
                     if (await constraint(ctx) == false) {
                         continue actionsLoop;
                     }
                 }
-                output.verbose(`Action ${action.name}: all constraints returned true`);
 
                 // execute callbacks
                 for (const callback of action.callbacks) {
@@ -320,7 +313,6 @@ class ActionManager {
                         }
                     }
                 }
-                output.verbose(`Action ${action.name}: all callbacks have returned`);
             } catch (e) {
                 logError('stdwarn', e, "Action system's event handler");
             }
