@@ -16,7 +16,7 @@ DENO_FLAGS            = --no-prompt $(DENO_PERMISSION_FLAGS)
 all: 
 	@deno compile $(DENO_FLAGS) --output eclairbot src/main.ts
 
-run: check lint 
+run:
 	@deno run $(DENO_FLAGS) src/main.ts
 
 dev: check lint
