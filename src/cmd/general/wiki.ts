@@ -97,13 +97,12 @@ const wikiCmd: Command = {
             if (!gemini.isInitialized()) {
                 return replyAIModelErr('jest niezainicjalizowany', msg);
             }
-            const model = gemini.getModel('wiki-cmd');
-            if (!model) {
+            if (!gemini.getModels('wiki-cmd').length) {
                 return replyAIModelErr('jest niezainicjalizowany', msg);
             }
             let result: gemini.GenerateContentResult;
             try {
-                result = await model.generateContent({
+                result = await gemini.generateContent('wiki-cmd', {
                     contents: [
                         { role: 'user', parts: [{ text: query }] },
                     ],

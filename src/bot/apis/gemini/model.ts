@@ -10,7 +10,7 @@ class ModelNotInitializedError extends Error {
 }
 
 let genai: gemini.GoogleGenerativeAI | null = null;
-let models: Record<string, gemini.GenerativeModel> = {};
+let models: Record<string, gemini.GenerativeModel[]> = {};
 
 export async function init() {
     if (process.env.EB_GEMINI_API_KEY) {
@@ -25,20 +25,56 @@ export function isInitialized(): boolean {
 
 export function initModel(id: string, params: gemini.ModelParams): gemini.GenerativeModel | null {
     const model = genai?.getGenerativeModel(params) ?? null;
-    if (model) models[id] = model;
+    if (model) {
+        if (!models[id]) models[id] = [];
+        models[id].push(model);
+    }
     return model;
 }
 
+export function getModels(id: string): gemini.GenerativeModel[] {
+    return models[id] ?? [];
+}
+
+/**
+ * @deprecated Use generateContent instead for fallback support
+ */
 export function getModel(id: string): gemini.GenerativeModel | null {
-    return models[id] ?? null;
+    return models[id]?.[0] ?? null;
 }
 
 type PromptResolvable = string | gemini.GenerateContentRequest | (string | gemini.Part)[];
 
 export async function askModel(id: string, prompt: PromptResolvable): Promise<gemini.GenerateContentStreamResult> {
-    const model = models[id];
-    if (!model) {
+    const fallbackModels = models[id];
+    if (!fallbackModels || fallbackModels.length === 0) {
         throw new ModelNotInitializedError(id);
     }
-    return model.generateContentStream(prompt);
+
+    let lastError: unknown;
+    for (const model of fallbackModels) {
+        try {
+            return await model.generateContentStream(prompt);
+        } catch (err) {
+            lastError = err;
+        }
+    }
+    throw lastError;
+}
+
+export async function generateContent(id: string, params: gemini.GenerateContentRequest): Promise<gemini.GenerateContentResult> {
+    const fallbackModels = models[id];
+    if (!fallbackModels || fallbackModels.length === 0) {
+        throw new ModelNotInitializedError(id);
+    }
+
+    let lastError: unknown;
+    for (const model of fallbackModels) {
+        try {
+            return await model.generateContent(params);
+        } catch (err) {
+            lastError = err;
+        }
+    }
+    throw lastError;
 }

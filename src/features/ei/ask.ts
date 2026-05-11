@@ -11,9 +11,6 @@ import { commands } from '@/cmd/list.ts';
 import { output } from '@/bot/logging.ts';
 import { cfg } from '@/bot/cfg.ts';
 import { client } from '@/client.ts';
-import { sendLog } from '../../bot/apis/log/send-log.ts';
-import { PredefinedColors } from '../../util/color.ts';
-import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import logError from '@/util/log-error.ts';
 
@@ -26,7 +23,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
                 'A tak po ludzku to poprostu ktoś nie dał api key do .env',
         );
     }
-
+    
     const model = gemini.getModel('ask-cmd');
     if (!model) {
         return log.replyError(msg, 'Błąd', 'Model nie został zainicjowany.');
@@ -261,7 +258,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
 
     let result: gemini.GenerateContentResult;
     try {
-        result = await model.generateContent({
+        result = await gemini.generateContent('ask-cmd', {
             contents,
             systemInstruction: {
                 role: 'system',
@@ -317,7 +314,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
 
         contents.push({ role: 'function', parts: functionResponses });
 
-        result = await model.generateContent({
+        result = await gemini.generateContent('ask-cmd', {
             contents,
             systemInstruction: {
                 role: 'system',
@@ -349,20 +346,9 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
     }
 
     const toolExecutionHistoryFormatted = JSON.stringify(toolExecutionHistory, null, 4);
-
-    await sendLog({
-        color: PredefinedColors.Blurple,
-        title: 'Zapytanie EI',
-        description: 'Dane pomocne w debugowaniu EI tak w skrócie',
-        attachments: [
-            new dsc.AttachmentBuilder(
-                Buffer.from(finalSystemInstruction, 'utf8'),
-                { name: 'ei-final-system-prompt.dat' },
-            ),
-            new dsc.AttachmentBuilder(
-                Buffer.from(toolExecutionHistoryFormatted, 'utf8'),
-                { name: 'ei-tool-calls.json' },
-            ),
-        ],
-    });
+    
+    output.verbose(` === BEGIN Eclair Inteligence debug data for input: ${question}`);
+    output.verbose(`Eclair Inteligence final system prompt:\n\n${finalSystemInstruction}`);
+    output.verbose(`Eclair Inteligence tool calls:\n\n${toolExecutionHistoryFormatted}`);
+    output.verbose(` === END Eclair Inteligence debug data for input: ${question}`);
 }

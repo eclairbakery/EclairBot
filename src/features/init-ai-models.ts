@@ -49,14 +49,17 @@ export const SystemPrompt: string = [
 ].join('\n');
 
 export async function initAskCmdModel() {
-    gemini.initModel('ask-cmd', {
+    const params = {
         model: 'gemini-3.1-flash-lite-preview',
         systemInstruction: SystemPrompt,
-    });
+    };
+
+    gemini.initModel('ask-cmd', params);
+    gemini.initModel('ask-cmd', { ...params, model: 'gemini-2.5-flash' });
 }
 
 export async function initWikiModel() {
-    gemini.initModel('wiki-cmd', {
+    const params = {
         model: 'gemini-3.1-flash-lite-preview',
         systemInstruction: [
             'Twoim zadaniem jest odpowiadać jak Wikipedia.',
@@ -66,5 +69,8 @@ export async function initWikiModel() {
             ' - wygeneruj pierwszą linię która jest taką typową nazwą artykułu, np. ktoś mówi "biblioteki do gita" to ty dajesz w pierwszej linijce "# Zbiór bibliotek Git" (pamiętaj o hashtagu, inaczej nie zostanie to uznane jako title; jak nie masz na title pomysłu to weź nie dawaj hashtagu na początku pierwszej linii to będzie nasz fallback)',
             ' - wygeneruj description w paru zdaniach opisujący daną rzecz / osobę; nie rozpisuj się zbytnio ani nie rób złożonej struktury; parę zdań naprawdę wystarczy.',
         ].join('\n'),
-    });
+    };
+
+    gemini.initModel('wiki-cmd', params);
+    gemini.initModel('wiki-cmd', { ...params, model: 'gemini-2.5-flash' });
 }
