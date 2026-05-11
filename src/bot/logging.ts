@@ -120,8 +120,7 @@ export namespace output {
         if (process.env.EB_DEVELOPMENT !== 'true') return;
         const data = format(msg, ...args);
         const prefixed = decorate('VERB', colors.GRAY, data);
-        console.error(prefixed);
-        send('stdout', data);
+        console.log(prefixed);
     }
 
     export function forward(raw: string) {
