@@ -42,45 +42,6 @@ export default class AutoModRules {
         additionalConstraints: [AutoModRules.msgAuthorIsNotImmuneToAutomod],
     });
 
-    static readonly BlockNonSafeMessages: Action<MessageEventCtx> = {
-        name: 'auto-reply/automod/block-non-safe-messages',
-        activatesOn: PredefinedActionEventTypes.OnMessageCreateOrEdit,
-        constraints: [
-            (ctx) => ctx.author.id !== ctx.client.user.id,
-            (ctx) => ctx.channel.id == cfg.channels.other.safeChat 
-        ],
-
-        callbacks: [
-            async (msg) => {
-                // regex expressions from chatgpt lmao
-                const signedRegex =
-                    /^-----BEGIN PGP SIGNED MESSAGE-----\r?\nHash: .+\r?\n\r?\n[\s\S]+?\r?\n-----BEGIN PGP SIGNATURE-----\r?\n\r?\n(?:[A-Za-z0-9+/=\r\n]+)\r?\n-----END PGP SIGNATURE-----$/;
-                const encryptedRegex =
-                    /^-----BEGIN PGP MESSAGE-----\r?\n\r?\n(?:[A-Za-z0-9+/=\r\n]+)\r?\n-----END PGP MESSAGE-----$/;
-                const onlyMentionsRegex =
-                    /^(?:\s*(?:<@!?\d+>|<@&\d+>|@everyone|@here)\s*)+$/;
-
-                if (!signedRegex.test(msg.content) && !encryptedRegex.test(msg.content) && !onlyMentionsRegex.test(msg.content)) {
-                    await msg.reply(`<@${msg.author.id}> naucz sie uzywac tego kanału na <#${cfg.channels.other.info}>, pozdrawiam`);
-                    if (msg.deletable) await msg.delete();
-                }
-            }
-        ]
-    };
-
-    static readonly BlockPGPSignature: Action<MessageEventCtx> = mkAutoreplyAction({
-        activationOptions: [
-            { type: 'contains', keyword: 'BEGIN PGP SIGNED MESSAGE' },
-            { type: 'contains', keyword: 'BEGIN PGP SIGNATURE' },
-            { type: 'contains', keyword: 'END PGP SIGNATURE' },
-        ],
-        reply: '<#1502335736911888425>',
-        additionalCallbacks: [PredefinedActionCallbacks.deleteMsg],
-        additionalConstraints: [
-            (ctx) => ctx.channelId != '1502335736911888425',
-        ],
-    });
-
     static readonly BlockNWords: Action<MessageEventCtx> = mkAutoreplyAction({
         activationOptions: [
             { type: 'contains', keyword: 'nigger' },
@@ -103,9 +64,7 @@ export default class AutoModRules {
             AutoModRules.EveryoneAutoreply,
             AutoModRules.GitHubAutoreply,
             AutoModRules.BlockInvites,
-            AutoModRules.BlockNWords,
-            AutoModRules.BlockNonSafeMessages,
-            AutoModRules.BlockPGPSignature,
+            AutoModRules.BlockNWords
         ];
         console.log(rules);
         return rules;
