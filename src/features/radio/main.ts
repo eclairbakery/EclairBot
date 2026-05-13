@@ -146,7 +146,9 @@ export async function playNext() {
 
         isPlaying = true;
 
-    } catch {
+    } catch (e) {
+        logError('stdwarn', e, "Radio error handler");
+        sendmsg(`niestety coś się rozwaliło, jeżeli jesteś adminem to zobacz <#${cfg.channels.eclairbot.stdwarn}>`, RADIO_CHANNEL);
         isPlaying = false;
         setTimeout(playNext, 1500);
     }
