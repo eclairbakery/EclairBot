@@ -68,6 +68,7 @@ import { addMusicAction } from '@/features/actions/4fun/add-music.ts';
 import { registerCommands } from '@/cmd/list.ts';
 import { communityPollsContentModerator, filesContentModerator } from '@/features/actions/others/content-moderator.ts';
 import { reactionAddHandler, reactionRemoveHandler } from '@/features/actions/4fun/reaction-handler.ts';
+import { startRadio } from '@/features/radio/main.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -235,6 +236,8 @@ async function main() {
             }
         }, cfg.database.backups.interval);
     }
+
+    startRadio();
 }
 
 (async function () {

@@ -1,4 +1,4 @@
-import { Action, AnyAction, MessageEventCtx, PredefinedActionCallbacks, PredefinedActionEventTypes } from '../index.ts';
+import { Action, AnyAction, MessageEventCtx, PredefinedActionCallbacks } from '../index.ts';
 
 import { mkAutoreplyAction } from '../autoreply.ts';
 
@@ -66,7 +66,6 @@ export default class AutoModRules {
             AutoModRules.BlockInvites,
             AutoModRules.BlockNWords
         ];
-        console.log(rules);
         return rules;
     }
 }

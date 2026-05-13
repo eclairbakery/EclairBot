@@ -97,6 +97,7 @@ export interface Config {
             files: dsc.Snowflake;
             info: dsc.Snowflake;
             safeChat: dsc.Snowflake;
+            radio: dsc.Snowflake;
         };
         forfun: {
             counting: dsc.Snowflake;
