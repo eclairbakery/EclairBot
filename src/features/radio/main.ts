@@ -15,6 +15,7 @@ import { spawn } from "node:child_process";
 import { db } from '@/bot/apis/db/bot-db.ts';
 import { TextChannel } from 'discord.js';
 import { cfg } from '@/bot/cfg.ts';
+import logError from '@/util/log-error.ts';
 
 let connection: VoiceConnection | null = null;
 let player: AudioPlayer | null = null;
@@ -132,7 +133,9 @@ export async function playNext() {
                 setTimeout(playNext, 300);
             });
 
-            player.on("error", () => {
+            player.on("error", (e) => {
+                logError('stdwarn', e, "Radio error handler");
+                sendmsg(`niestety coś się rozwaliło, jeżeli jesteś adminem to zobacz <#${cfg.channels.eclairbot.stdwarn}>`, RADIO_CHANNEL);
                 isPlaying = false;
                 setTimeout(playNext, 1000);
             });
