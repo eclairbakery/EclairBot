@@ -42,7 +42,7 @@ export function getAudioUrl(url: string): Promise<string> {
 
         const args = [
             "-f",
-            "bestaudio",
+            "best",
             "-g",
             "--extractor-args",
             "youtube:player_client=android",
