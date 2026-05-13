@@ -36,7 +36,6 @@
         "nodemailer": "npm:nodemailer@^8.0.6",
         "gemini": "npm:@google/generative-ai@^0.24.1",
         "sqlite": "https://deno.land/x/sqlite@v3.9.1/mod.ts",
-        "discord.js-voice": "npm:@discordjs/voice@^0.19.2",
         "@/": "./src/"
     }
 }

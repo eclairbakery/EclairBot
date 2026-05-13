@@ -40,8 +40,7 @@ export const channelsCfg: Config['channels'] = {
         economy: '1235561759448895590',
         files: '1408757368652566591',
         safeChat: "1502335736911888425",
-        info: '1429499954979799120',
-        radio: '1504069254440554496'
+        info: '1429499954979799120'
     },
     forfun: {
         counting: '1235566520310956184',
