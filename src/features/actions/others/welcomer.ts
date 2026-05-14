@@ -38,7 +38,7 @@ export const welcomeNewUserAction: Action<UserEventCtx> = {
                 return;
             } else {
                 await welcomeChannel.send({
-                    content: '<:emoji1:1410551894023082027>' +
+                    content: '<:join:1500553049779998930>' +
                         cfg.features.welcomer.welcomeMsgs[Math.floor(Math.random() * cfg.features.welcomer.welcomeMsgs.length)].replace('<mention>', `<@${member.user.id}>`),
                     allowedMentions: cfg.features.welcomer.mentionNewPeopleInLobby ? {} : { parse: [] },
                 });
@@ -65,7 +65,7 @@ export const sayGoodbyeAction: Action<UserEventCtx> = {
             }
 
             await channel.send({
-                content: '<:emoji2:1410551857935290368>' +
+                content: '<:leave:1500553021484961853>' +
                     cfg.features.welcomer.goodbyeMsgs[Math.floor(Math.random() * cfg.features.welcomer.goodbyeMsgs.length)].replace('<mention>', `<@${member.user.id}>`),
                 allowedMentions: cfg.features.welcomer.mentionNewPeopleInLobby ? {} : { parse: [] },
             });
