@@ -251,6 +251,9 @@ export class BotDatabase {
     readonly music = {
         addEntry: async (authorId: string, musicUrl: string): Promise<void> => {
             await this.ensureUserExists(authorId);
+
+            if (await this.selectOne("SELECT * FROM music_database WHERE music_url = ?"))
+                return;
             await this.runSql(
                 `INSERT INTO music_database (author_id, music_url) VALUES (?, ?)`,
                 [authorId, musicUrl],

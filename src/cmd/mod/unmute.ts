@@ -3,7 +3,6 @@ import { CommandFlags } from '@/bot/apis/commands/misc.ts';
 import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 import { cfg } from '@/bot/cfg.ts';
 import { PredefinedColors } from '@/util/color.ts';
-import { output } from '@/bot/logging.ts';
 import { sendLog } from '@/bot/apis/log/send-log.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
