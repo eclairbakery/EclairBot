@@ -89,7 +89,7 @@ const muteCmd: Command = {
                     .addFields(
                         { name: 'Moderator', value: `<@${api.invoker.id}>`, inline: true },
                         { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
-                        { name: 'Powód', value: reason, inline: false },
+                        { name: 'Powód', value: reason },
                         { name: 'Czas', value: `<t:${expiresAt}:R>`, inline: true },
                     )
                     .setColor(PredefinedColors.Orange),

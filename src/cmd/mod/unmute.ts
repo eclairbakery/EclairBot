@@ -44,33 +44,32 @@ const unmuteCmd: Command = {
             reason = 'Moderator nie poszczycił się znajomością komendy i nie podał powodu... Ale moze to i lepiej...';
         }
 
-        try {
-            await targetUser.timeout(null, reason).catch(() => null);
-
-            const muteRole = api.guild?.roles.cache.find((r) => r.name.toLowerCase().includes('zamknij ryj'));
-            if (muteRole) {
-                await targetUser.roles.remove(muteRole, reason).catch(() => null);
-            }
-
-            sendLog({
-                title: 'Odciszono użytkownika',
-                description: `Użytkownik <@${targetUser.id}> został odciszony przez <@${api.invoker.id}>.`,
-                fields: [{ name: 'Powód', value: reason }],
-                color: PredefinedColors.Pink,
-            });
-
-            return api.reply({
-                embeds: [
-                    new ReplyEmbed()
-                        .setTitle(`📢 ${targetUser.user.username} został odmutowany!`)
-                        .setDescription('Tylko nie spam chatu i przestrzegaj regulaminu... I guess...')
-                        .setColor(PredefinedColors.Purple),
-                ],
-            });
-        } catch (err) {
-            output.err(err);
-            return api.log.replyError(api, 'Błąd', 'Nie udało się odciszyć użytkownika. Sprawdź permisje.');
+        if (!targetUser.communicationDisabledUntilTimestamp || targetUser.communicationDisabledUntilTimestamp < Date.now()) {
+            return api.log.replyWarn(api, 'Co ty robisz?', 'Ten użytkownik nie ma przerwy. Jak ty zamierzałeś odmutować osobę, która w ogóle nie była wyciszona? Weź może najpierw sprawdź czy osoba ma tę ikonkę albo coś.');
         }
+
+        await targetUser.timeout(null, reason).catch(() => null);
+
+        const muteRole = api.guild?.roles.cache.find((r) => r.name.toLowerCase().includes('zamknij ryj'));
+        if (muteRole) {
+            await targetUser.roles.remove(muteRole, reason).catch(() => null);
+        }
+
+        sendLog({
+            title: 'Odciszono użytkownika',
+            description: `Użytkownik <@${targetUser.id}> został odciszony przez <@${api.invoker.id}>.`,
+            fields: [{ name: 'Powód', value: reason }],
+            color: PredefinedColors.Pink,
+        });
+
+        return api.reply({
+            embeds: [
+                new ReplyEmbed()
+                    .setTitle(`📢 ${targetUser.user.username} został odmutowany!`)
+                    .setDescription('Prawo łaski zostało wyegzekwowane. Teraz ten super użytkownik może swobodnie wypowiadać się na dowolne tematy. No tylko by chatu nie spamił może...')
+                    .setColor(PredefinedColors.Purple),
+            ],
+        });
     },
 };
 

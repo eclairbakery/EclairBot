@@ -50,6 +50,8 @@ const clearCmd: Command = {
             });
         }
 
+        await api.log.replyInfo(api, 'Proszę', 'Aktualnie zaczynam się tym zajmować.');
+
         const channel = (api.raw.msg?.channel ?? api.raw.interaction?.channel!) as dsc.TextChannel;
 
         if (who) {
@@ -60,7 +62,7 @@ const clearCmd: Command = {
 
             await channel.bulkDelete(filtered, true);
         } else {
-            const fetched = await channel.messages.fetch({ limit: amount + 1 });
+            const fetched = await channel.messages.fetch({ limit: amount + 2 });
             await channel.bulkDelete(fetched, true);
         }
     },

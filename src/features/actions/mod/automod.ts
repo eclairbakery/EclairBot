@@ -66,7 +66,6 @@ export default class AutoModRules {
             AutoModRules.BlockInvites,
             AutoModRules.BlockNWords
         ];
-        console.log(rules);
         return rules;
     }
 }

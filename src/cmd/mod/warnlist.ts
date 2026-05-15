@@ -1,11 +1,10 @@
 import { Command } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
-import { cfg } from '@/bot/cfg.ts';
 import { db, WarnRaw } from '@/bot/apis/db/bot-db.ts';
 import * as dsc from 'discord.js';
 import { PredefinedColors } from '@/util/color.ts';
-import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { client as cl } from '../../client.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 
 const warnlistCmd: Command = {
     name: 'warnlist',
@@ -25,10 +24,7 @@ const warnlistCmd: Command = {
         },
     ],
 
-    permissions: {
-        allowedRoles: cfg.commands.configuration.warn.allowedRoles,
-        allowedUsers: [],
-    },
+    permissions: CommandPermissions.everyone(),
 
     async execute(api) {
         const client: dsc.Client = cl;
@@ -55,7 +51,7 @@ const warnlistCmd: Command = {
 
         async function renderPage(page: number) {
             const rows = await fetchWarns(page);
-            if (!rows.length && page > 1) return null;
+            if (!rows.length) return null;
 
             const fields: dsc.APIEmbedField[] = [];
             let i = (page - 1) * limit;
@@ -65,10 +61,9 @@ const warnlistCmd: Command = {
                 const user = await client.users.fetch(row.user_id).catch(() => null);
                 const moderator = row.moderator_id ? await guild.members.fetch(row.moderator_id).catch(() => null) : null;
 
-                let value = `\`${row.reason_string}\` (punktów: ${row.points}, id: ${row.id})`;
-                if (moderator) value += `\n**Moderator:** <@${moderator.id}>`;
-                else value += `\n**Moderator:** nieznany (warn pewnie pochodzi sprzed dodania moderator_id)`;
-                if (row.expires_at) value += `\n**Wygasa:** <t:${row.expires_at}:R>`;
+                let value = `\`${row.reason_string}\`\nWarn #${row.id}, punktów: \`${row.points}\` `;
+                if (moderator) value += `, od <@${moderator.id}>`;
+                if (row.expires_at) value += ` (wygasa <t:${row.expires_at}:R>)`;
 
                 fields.push({
                     name: `${i}. Upomnienie dla ${user ? user.username : 'Nieznany użytkownik'}`,
@@ -76,8 +71,10 @@ const warnlistCmd: Command = {
                 });
             }
 
-            const embed = new ReplyEmbed()
-                .setTitle(`:loudspeaker: Warny ${targetUser ? `dla ${targetUser.user.username}` : 'na serwerze'}`)
+            const embed = api.log.getInfoEmbed(
+                `Warny ${targetUser ? `dla ${targetUser.user.username}` : 'na serwerze'}`,
+                'Oto wszystko co udało mi się znaleźć w naszej zaawansowanej bazie.'
+            )
                 .setFields(fields)
                 .setColor(PredefinedColors.Blurple)
                 .setFooter({ text: `Strona ${page}` });
@@ -100,7 +97,7 @@ const warnlistCmd: Command = {
 
         const render = await renderPage(currentPage);
         if (!render) {
-            return api.log.replyError(api, 'Brak wyników', targetUser ? `Nie znaleziono żadnych warnów dla ${targetUser.user.username}.` : 'Nie ma żadnych warnów w bazie.');
+            return api.log.replyInfo(api, targetUser ? 'Czyste konto' : 'Wszyscy obywatele są grzeczni', targetUser ? `Nie znaleziono żadnych warnów dla ${targetUser.user.username}. Najwyraźniej dostawał ustne upomnienia, albo po prostu był grzeczny.` : 'Nie ma żadnych warnów w bazie. Najwyraźniej administracja jest po prostu leniwa by dawać warny albo zapomniała o tej funkcjonalności.');
         }
 
         const msg = await api.reply({

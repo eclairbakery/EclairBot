@@ -96,9 +96,19 @@ const warnCmd: Command = {
         });
 
         const embed = new ReplyEmbed()
-            .setTitle(`📢 ${targetUser.user.username} dostał warna od ${api.invoker.user.username}`)
-            .setDescription('Warn w skrócie ma <points> punktów i skończy się <duration>.'.replace('<points>', `${points}`).replace('<duration>', `<t:${expiresAt}:R>`))
+            .setTitle(`📢 Masz warna, ${targetUser.user.username}!`)
+            .setDescription(`Właśnie dostałeś darmoweeego warna (punktów: ${points})!`)
+            .addFields(
+                { name: 'Moderator', value: `<@${api.invoker.id}>`, inline: true },
+                { name: 'Użytkownik', value: `<@${targetUser.id}>`, inline: true },
+                { name: 'Powód', value: reason, inline: false },
+                { name: 'Punkty', value: points.toString(), inline: true },
+            )
             .setColor(PredefinedColors.Orange);
+
+        if (expiresAt) {
+            embed.addFields({ name: 'Wygasa', value: `<t:${expiresAt}:R>`, inline: true });
+        }
 
         await api.reply({ embeds: [embed] });
     },
