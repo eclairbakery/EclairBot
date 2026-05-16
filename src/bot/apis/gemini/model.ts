@@ -36,9 +36,6 @@ export function getModels(id: string): gemini.GenerativeModel[] {
     return models[id] ?? [];
 }
 
-/**
- * @deprecated Use generateContent instead for fallback support
- */
 export function getModel(id: string): gemini.GenerativeModel | null {
     return models[id]?.[0] ?? null;
 }

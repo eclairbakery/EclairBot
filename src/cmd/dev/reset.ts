@@ -39,8 +39,8 @@ const resetCmd: Command = {
         const table = api.getTypedArg('table', 'string')?.value?.toLowerCase();
         const targetUser = api.getTypedArg('user', 'user-mention')?.value as dsc.GuildMember | dsc.User | undefined;
 
-        if (!table || !['economy', 'leveling', 'cooldowns', 'warns', 'reputation', 'all'].includes(table)) {
-            return api.log.replyError(api, 'Niepoprawna tabela', 'Poprawne tabele: economy, leveling, cooldowns, warns, reputation, all');
+        if (!table || !['economy', 'leveling', 'cooldowns', 'warns', 'music', 'all'].includes(table)) {
+            return api.log.replyError(api, 'Niepoprawna tabela', 'Poprawne tabele: economy, leveling, cooldowns, warns, music, all');
         }
 
         const userId = targetUser?.id;
@@ -92,8 +92,8 @@ const resetCmd: Command = {
                         case 'warns':
                             await db.reset.warns(userId);
                             break;
-                        case 'reputation':
-                            await db.reset.reputation(userId);
+                        case 'music':
+                            await db.reset.music(userId);
                             break;
                         case 'all':
                             await db.reset.all(userId);

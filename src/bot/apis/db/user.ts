@@ -44,7 +44,11 @@ export default class User {
     }
 
     async fetchAlternativeAccounts(): Promise<string[]> {
-        return await db.selectMany(`SELECT * FROM alternative_accounts WHERE primary_account = ?`, [this.id]);
+        const rows = await db.selectMany<{ alternative_account: string }>(
+            `SELECT alternative_account FROM alternative_accounts WHERE primary_account = ?`,
+            [this.id],
+        );
+        return rows.map((r) => r.alternative_account);
     }
 
     async ensureExists() {

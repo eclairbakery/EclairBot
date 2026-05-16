@@ -1,6 +1,6 @@
 import { DB, QueryParameterSet } from 'sqlite';
 
-import type { MusicEntry, MusicEntryRaw, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
+import type { AIMemory, MusicEntry, MusicEntryRaw, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
 
 import type { Balance, Cooldown, Cooldowns } from './db-defs.ts';
 import { musicFromRaw, warnFromRaw } from './db-defs.ts';
@@ -96,6 +96,11 @@ export class BotDatabase {
             CREATE TABLE IF NOT EXISTS music_database (
                 author_id TEXT NOT NULL REFERENCES users(user_id),
                 music_url TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS ai_memories (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                memory TEXT NOT NULL
             );
         `);
     }
@@ -248,6 +253,26 @@ export class BotDatabase {
         },
     };
 
+    readonly ai = {
+        getMemories: async (data: { limit?: number; offset?: number }): Promise<AIMemory[]> => {
+            let sql = 'SELECT id, memory FROM ai_memories';
+            const params: number[] = [];
+            if (data.limit) {
+                sql += ' LIMIT ?';
+                params.push(data.limit);
+            }
+            if (data.offset) {
+                sql += ' OFFSET ?';
+                params.push(data.offset);
+            }
+            return await this.selectMany<AIMemory>(sql, params);
+        },
+        saveMemory: async (memory: string, associatedWithUserId?: string) => {
+            const finalMemory = (associatedWithUserId ? `Powiązane z użytkownikiem o ID: ${associatedWithUserId}\n` : '') + memory;
+            return await this.runSql('INSERT INTO ai_memories (memory) VALUES (?)', [finalMemory]);
+        },
+    };
+
     readonly music = {
         addEntry: async (authorId: string, musicUrl: string): Promise<void> => {
             await this.ensureUserExists(authorId);
@@ -344,14 +369,6 @@ export class BotDatabase {
             await this.runSql(sql, userId ? [userId] : []);
         },
 
-        reputation: async (userId?: string): Promise<void> => {
-            if (userId) {
-                await this.runSql(`DELETE FROM reputation WHERE author_id = ? OR target_user_id = ?`, [userId, userId]);
-            } else {
-                await this.runSql(`DELETE FROM reputation`);
-            }
-        },
-
         warns: async (userId?: string): Promise<void> => {
             if (userId) {
                 await this.runSql(`DELETE FROM warns WHERE user_id = ?`, [userId]);
@@ -365,7 +382,6 @@ export class BotDatabase {
             await this.reset.inventory(userId);
             await this.reset.leveling(userId);
             await this.reset.cooldowns(userId);
-            await this.reset.reputation(userId);
             await this.reset.warns(userId);
             // i think it's better not to do this for now
             //await this.reset.music(userId);

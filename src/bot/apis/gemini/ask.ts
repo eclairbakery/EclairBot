@@ -142,6 +142,41 @@ export const toolDeclarations: gemini.Tool[] = [
                     required: ['file_url'],
                 },
             },
+            {
+                name: 'save_memory',
+                description: 'Zapisuje informację o użytkowniku lub o czymś o czym zostanie poinformowany model, a co może być ważne w przuszłości.',
+                parameters: {
+                    type: gemini.SchemaType.OBJECT,
+                    properties: {
+                        memory: {
+                            type: gemini.SchemaType.STRING,
+                            description: 'Treść informacji do zapamiętania.',
+                        },
+                        associated_user_id: {
+                            type: gemini.SchemaType.STRING,
+                            description: 'ID użytkownika (w formacie Discord Snowflake), z którym powiązana jest ta informacja. Jest ono opcjonalne, ale zawsze używaj jeżeli zapisujesz informację o jakimś użytkowniku.',
+                        },
+                    },
+                    required: ['memory'],
+                },
+            },
+            {
+                name: 'read_memories',
+                description: 'Pobiera listę wcześniej zapisanych informacji.',
+                parameters: {
+                    type: gemini.SchemaType.OBJECT,
+                    properties: {
+                        limit: {
+                            type: gemini.SchemaType.NUMBER,
+                            description: 'Maksymalna liczba wspomnień do pobrania (domyślnie 10).',
+                        },
+                        offset: {
+                            type: gemini.SchemaType.NUMBER,
+                            description: 'Przesunięcie (stronicowanie).',
+                        },
+                    },
+                },
+            },
         ],
     },
 ];

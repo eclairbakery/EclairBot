@@ -34,6 +34,11 @@ export interface Warn {
     expiresAt: number | null;
 }
 
+export interface AIMemory {
+    id: number;
+    memory: string;
+};
+
 export function warnFromRaw(raw: WarnRaw): Warn {
     return {
         id: raw.id,
