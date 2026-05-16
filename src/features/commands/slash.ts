@@ -82,7 +82,7 @@ client.on('interactionCreate', async (int: Interaction) => {
 
     const result = findCommand(int.commandName, commands);
     if (!result) {
-        return int.reply({ content: 'Nie znam takiej komendy', ephemeral: true });
+        return int.reply({ content: 'Nie znam takiej komendy', flags: dsc.MessageFlags.Ephemeral });
     }
 
     const { command, config } = result;
@@ -107,7 +107,7 @@ client.on('interactionCreate', async (int: Interaction) => {
 
     const isBlocked = isCommandBlockedOnChannel(command, int.channelId, !int.guild);
     if (isBlocked) {
-        return int.reply({ content: '❌', ephemeral: true });
+        await int.deferReply({ flags: dsc.MessageFlags.Ephemeral });
     }
 
     if (!int.guild && !(command.flags & CommandFlags.WorksInDM)) {
