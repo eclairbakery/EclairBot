@@ -215,7 +215,8 @@ export async function init() {
         for (const cmd of cmds) {
             const scb = new dsc.SlashCommandBuilder()
                 .setName(cmd.name)
-                .setDescription(makeSlashCommandDesc(cmd));
+                .setDescription(makeSlashCommandDesc(cmd))
+                .setContexts((cmd.flags & CommandFlags.WorksInDM) ? dsc.InteractionContextType.BotDM : dsc.InteractionContextType.Guild);
 
             const sortedArgs = [];
             for (const arg of cmd.expectedArgs) {
