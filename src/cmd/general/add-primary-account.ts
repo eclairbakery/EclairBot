@@ -142,6 +142,9 @@ const addAltAccountCommand: Command = {
                 const economy_balance = await user_inv.economy.getBalance();
                 user_primary.economy.addBankMoney(economy_balance.bank.add(economy_balance.wallet));
 
+                // prestige
+                user_primary.prestige.addPoints(await user_inv.prestige.getPoints());
+
                 // very scary
                 await db.reset.all(api.invoker.id);
 
