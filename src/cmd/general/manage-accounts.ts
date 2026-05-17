@@ -7,7 +7,8 @@ import { client } from '@/client.ts';
 import logError from '@/util/log-error.ts';
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ComponentType, StringSelectMenuBuilder, StringSelectMenuInteraction } from 'discord.js';
 import { db } from '@/bot/apis/db/bot-db.ts';
-import { addLvlRole } from '@/bot/level.ts';
+import { addLvlRole, xpToLevel } from '@/bot/level.ts';
+import User from '@/bot/apis/db/user.ts';
 
 function getMainAccount(id: string) {
     try {
@@ -131,9 +132,28 @@ const manageAccountsCmd: Command = {
                     embeds: [ api.log.getWarnEmbed('Anulowano', 'Operacja nie została zfinalizowana.') ],
                     components: []
                 });
-            } else if (i.customId == 'move-primary-selected' && i.isStringSelectMenu()) {
+            } else if (i.customId == 'move-primary-selected' && i.isStringSelectMenu()) { 
+                db.transaction(async () => {
+                    const old_primary = api.executor;
+                    
+                    // removing records
+                    db.runSql("UPDATE alternative_accounts SET primary_account = ? WHERE primary_account = ?", [ i.values[0], old_primary.id ]);
+                    db.runSql("UPDATE alternative_accounts SET alternative_account = ? WHERE primary_account = ? AND alternative_account = ?", [ old_primary.id, i.values[0], i.values[0] ]);
+
+                    const new_primary = new User(i.values[0]);
+
+                    // updating data 
+                    await new_primary.leveling.addXP(await old_primary.leveling.getXP());
+                    await addLvlRole(api.guild!, xpToLevel(await new_primary.leveling.getXP()), i.user.id);
+                    const economy_balance = await old_primary.economy.getBalance();
+                    new_primary.economy.addBankMoney(economy_balance.bank.add(economy_balance.wallet));
+
+                    // very scary 
+                    await db.reset.all(old_primary.id);
+                });
+
                 await msg.edit({
-                    embeds: [ api.log.getErrorEmbed('Work in progress...', `Niestety, zmienianie głównego konta nie jest jeszcze dostępne. Z racji iż aktualnie nie chce mi się chrzanić z SQLite, odkładam zrobienie tego na później. Aktualnie aby to zrobić, możesz opuścić grupę ze wszystkich swoich altów a następnie na starym primary wywołać komendę add-primary-account na nowe konto.`) ],
+                    embeds: [ api.log.getSuccessEmbed("Przeniesiono.", `Od teraz to ${i.values[0]} jest Twoim głównym kontem.`) ],
                     components: []
                 });
             }
