@@ -36,6 +36,7 @@
         "nodemailer": "npm:nodemailer@^8.0.6",
         "gemini": "npm:@google/generative-ai@^0.24.1",
         "sqlite": "https://deno.land/x/sqlite@v3.9.1/mod.ts",
+        "serchat.ts": "https://github.com/Serval-Chat/serchat.ts/tree/master",
         "@/": "./src/"
     }
 }
