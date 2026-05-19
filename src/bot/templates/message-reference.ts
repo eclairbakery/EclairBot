@@ -8,6 +8,9 @@ export async function mkMessageReferenceEmbed(channelId: Snowflake, messageId: S
     const channel = await client.channels.fetch(channelId) as GuildTextBasedChannel;
 
     const quotedMsg = await channel.messages.fetch(messageId);
+    try {
+        if (quotedMsg.poll?.partial) quotedMsg.poll = await quotedMsg.poll.fetch(); 
+    } catch {}
     const embed = new ReplyEmbed()
         .setAuthor({
             name: quotedMsg.author.tag,
