@@ -30,11 +30,11 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
                 if (!match) return;
                 const [, , channelId, messageId] = match;
 
-                await msg.reply({ embeds: [await mkMessageReferenceEmbed(channelId, messageId, PredefinedColors.Fuchsia)] });
+                await msg.reply({ embeds: [await mkMessageReferenceEmbed({channelId, messageId}, { color: PredefinedColors.Fuchsia })] });
             })();
 
             await (async function () {
-                const regex = /https?:\/\/(?:www\.)?github\.com\/([^\/\s]+)\/([^\/\s]+)/i;
+                const regex = /https?:\/\/(?:www\.)?github\.com\/([^\/\s]+)\/([^\/\s\]\)\?#]+)(?:\/|$|\?)/i;;
                 const match = msg.content.match(regex);
                 if (!match) return;
 

@@ -37,8 +37,6 @@ import { onReceivedEmailAction } from './features/actions/others/on-new-email.ts
 // events
 import { registerChannelCreateDscEvents } from './events/client/channelCreate.ts';
 import { registerChannelDeleteDscEvents } from './events/client/channelDelete.ts';
-import { registerMsgEditDscEvents } from './events/client/messageUpdate.ts';
-import { registerMsgDeleteDscEvents } from './events/client/messageDelete.ts';
 
 // commands
 import * as slashCommands from '@/features/commands/slash.ts';
@@ -68,6 +66,8 @@ import { addMusicAction } from '@/features/actions/4fun/add-music.ts';
 import { registerCommands } from '@/cmd/list.ts';
 import { communityPollsContentModerator, filesContentModerator } from '@/features/actions/others/content-moderator.ts';
 import { reactionAddHandler, reactionRemoveHandler } from '@/features/actions/4fun/reaction-handler.ts';
+import { registerMsgEditDscEvents } from '@/features/actions/logs/edit-message.ts';
+import { deleteMessageAction } from '@/features/actions/logs/delete-message.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -147,7 +147,9 @@ function setUpActions() {
         actionPing,
         warnGivenLogAction,
         onReceivedEmailAction,
-        addMusicAction
+        addMusicAction,
+        // logging 
+        deleteMessageAction 
     );
     registerTemplateChannels(client);
     slashCommands.init();
@@ -159,7 +161,6 @@ function setUpEvents() {
     registerChannelCreateDscEvents(client);
     registerChannelDeleteDscEvents(client);
     registerMsgEditDscEvents(client);
-    registerMsgDeleteDscEvents(client);
     setUpWatchdog();
 }
 
