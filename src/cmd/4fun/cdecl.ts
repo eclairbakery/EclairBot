@@ -14,7 +14,7 @@ const cdeclCmd: Command = {
 
     expectedArgs: [
         {
-            type: { base: 'string', trailing: true },
+            type: { base: 'string', trailing: true, allowCodeBlock: true },
             name: 'query',
             description: 'Deklaracja/cast C/C++',
             optional: false,
@@ -30,6 +30,9 @@ const cdeclCmd: Command = {
         const query = api.getTypedArg('query', 'string').value;
         try {
             const result = await cdecl(query);
+            if (result.trim().toLowerCase() == 'syntax error') {
+                return api.log.replyError(api, 'Syntax error!', 'Upewnij się że podajesz poprawną **deklarację** w C.');
+            }
             return api.reply(`\`${result}\``);
         } catch (err) {
             const msg = err instanceof Error ? err.message : `${err}`;
