@@ -69,6 +69,10 @@ export interface ConfigFeatures {
             positive: string[],
             negative: string[],
             pointsPerReaction: number
+        },
+        messageLength: {
+            divider: number,
+            points: number
         }
     };
     ai: {

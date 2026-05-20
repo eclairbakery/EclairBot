@@ -4,6 +4,8 @@ import { PredefinedColors } from '@/util/color.ts';
 import { mkMessageReferenceEmbed } from '@/bot/templates/message-reference.ts';
 import { starRepository } from '@/bot/apis/github/github.ts';
 import logError from '@/util/log-error.ts';
+import User from '@/bot/apis/db/user.ts';
+import { cfg } from '@/bot/cfg.ts';
 
 export const basicMsgCreateActions: Action<MessageEventCtx> = {
     name: 'others/basic-msg-create-actions',
@@ -15,6 +17,14 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
 
             // now goes leveling
             if (!msg.author.bot) await addExperiencePoints(msg);
+
+            // prestige
+            await (new User(msg.author.id))
+                .prestige.addPoints(
+                    Math.floor(
+                        (msg.content?.length ?? 0) / cfg.features.prestige.messageLength.divider
+                    ) * cfg.features.prestige.messageLength.points
+                );
 
             // easter egg
             if (msg.content.trim().toLowerCase() == 'eb') {
