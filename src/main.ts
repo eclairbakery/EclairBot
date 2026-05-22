@@ -68,6 +68,7 @@ import { communityPollsContentModerator, filesContentModerator } from '@/feature
 import { reactionAddHandler, reactionRemoveHandler } from '@/features/actions/4fun/reaction-handler.ts';
 import { registerMsgEditDscEvents } from '@/features/actions/logs/edit-message.ts';
 import { deleteMessageAction } from '@/features/actions/logs/delete-message.ts';
+import { reminderHandler } from '@/features/reminders.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -236,6 +237,8 @@ async function main() {
             }
         }, cfg.database.backups.interval);
     }
+
+    reminderHandler();
 }
 
 (async function () {

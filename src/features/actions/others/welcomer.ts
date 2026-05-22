@@ -66,7 +66,7 @@ export const sayGoodbyeAction: Action<UserEventCtx> = {
 
             await channel.send({
                 content: '<:leave:1500553021484961853>' +
-                    cfg.features.welcomer.goodbyeMsgs[Math.floor(Math.random() * cfg.features.welcomer.goodbyeMsgs.length)].replace('<mention>', `<@${member.user.id}>`),
+                    cfg.features.welcomer.goodbyeMsgs[Math.floor(Math.random() * cfg.features.welcomer.goodbyeMsgs.length)].replace('<mention>', `<@${member.user.id}> (${member.user.username})`),
                 allowedMentions: cfg.features.welcomer.mentionNewPeopleInLobby ? {} : { parse: [] },
             });
         },

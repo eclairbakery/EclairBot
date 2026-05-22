@@ -1,6 +1,6 @@
 import { DB, QueryParameterSet } from 'sqlite';
 
-import type { AIMemory, MusicEntry, MusicEntryRaw, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
+import type { AIMemory, MusicEntry, MusicEntryRaw, Reminder, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
 
 import type { Balance, Cooldown, Cooldowns } from './db-defs.ts';
 import { musicFromRaw, warnFromRaw } from './db-defs.ts';
@@ -101,6 +101,13 @@ export class BotDatabase {
             CREATE TABLE IF NOT EXISTS ai_memories (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 memory TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS reminders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                for_user TEXT NOT NULL REFERENCES users(user_id),
+                reminder TEXT NOT NULL,
+                timestamp INTEGER NOT NULL
             );
         `);
     }
@@ -321,6 +328,18 @@ export class BotDatabase {
         clear: async (userId?: string): Promise<void> => {
             await this.reset.music(userId);
         },
+    };
+    
+    readonly reminders = {
+        getReminders: async (): Promise<Reminder[]> => {
+            return db.selectMany<Reminder>("SELECT * FROM reminders");
+        },
+        addReminder: async (target: string, reminder: string, date: number) => {
+            return db.runSql("INSERT INTO reminders (for_user, reminder, timestamp) VALUES (?, ?, ?)", [ target, reminder, date ]);
+        },
+        deleteReminder: async (id: number) => {
+            return db.runSql("DELETE FROM reminders WHERE id = ?", [id])
+        }
     };
 
     readonly reset = {

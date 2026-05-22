@@ -34,6 +34,13 @@ export interface Warn {
     expiresAt: number | null;
 }
 
+export interface Reminder {
+    id: number;
+    for_user: string;
+    reminder: string;
+    timestamp: number;
+}
+
 export interface AIMemory {
     id: number;
     memory: string;
