@@ -25,7 +25,7 @@ export function initExpiredWarnsDeleter() {
 }
 
 function checkLongTermWarns() {
-    const now = Math.floor(Date.now());
+    const now = Math.floor(Date.now() / 1000);
 
     db.runSql(
         'DELETE FROM warns WHERE expires_at < ?',
