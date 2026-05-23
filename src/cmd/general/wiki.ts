@@ -27,8 +27,8 @@ interface WikiSummaryResponse {
     extract_html: string;
 }
 
-async function getDisambiguationTitles(title: string): Promise<string[]> {
-    const url = `https://pl.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(title)}&prop=links&format=json`;
+async function getDisambiguationTitles(title: string, lang: string): Promise<string[]> {
+    const url = `https://${lang}.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(title)}&prop=links&format=json`;
     const res = await fetch(url);
     const data = await res.json() as { parse?: { links: { ns: number; '*': string }[] } };
 
@@ -39,13 +39,15 @@ async function getDisambiguationTitles(title: string): Promise<string[]> {
 
 async function downloadFromWikipedia(languageVersions: string[], args: string[]) {
     let fetched: Response;
+    let lango: string = null!;
     for (const lang of languageVersions) {
         const url = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(args.join('_'))}`;
         fetched = await fetch(url);
         if (!fetched.ok) continue;
+        lango = lang;
         break;
     }
-    return fetched!;
+    return { fetched: fetched!, lang: lango };
 }
 
 async function replyAIModelErr(err: string, msg: dsc.Message) {
@@ -92,7 +94,8 @@ const wikiCmd: Command = {
             'Z powodu na powolność Wikipedii to może to chwilę potrwać byś dostał odpowiedź.',
         );
 
-        const fetched = await downloadFromWikipedia(['pl', 'simple', 'en'], [query]);
+        const fetched_raw = await downloadFromWikipedia(['pl', 'simple', 'en'], [query]);
+        const fetched = fetched_raw.fetched;
         if (!fetched || !fetched.ok) {
             if (!gemini.isInitialized()) {
                 return replyAIModelErr('jest niezainicjalizowany', msg);
@@ -136,7 +139,7 @@ const wikiCmd: Command = {
         const extrdesc = (json.extract ?? '') + (json.description ?? '');
 
         if (extrdesc?.includes('strona ujednoznaczniająca') || extrdesc?.includes('may refer to')) {
-            const titles = await getDisambiguationTitles(json.title);
+            const titles = await getDisambiguationTitles(json.title, fetched_raw.lang);
             return msg.edit({
                 embeds: [{
                     author: { name: 'EclairBOT' },
