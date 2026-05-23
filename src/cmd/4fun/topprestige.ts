@@ -59,7 +59,7 @@ const topprestigeCmd: Command = {
             embeds: [
                 new ReplyEmbed()
                     .setColor('#1ebfd5')
-                    .setDescription('-# nie ma jeszcze obrazka na topkę prestiżu'),
+                    .setImage('https://raw.githubusercontent.com/eclairbakery/EclairBot/refs/heads/main/assets/top-lvl.png'),
                 new ReplyEmbed()
                     .setFields(fields)
                     .setColor('#1ebfd5')
