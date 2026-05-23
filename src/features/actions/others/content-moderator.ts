@@ -34,6 +34,7 @@ export const communityPollsContentModerator: Action<MessageEventCtx> = {
         (ctx) => ctx.author.id != ctx.client.user.id,
         (ctx) => !ctx.channel.isThread(),
         (ctx) => ctx.channel.id == cfg.channels.other.communityPolls,
+        (ctx) => !(ctx.content ?? '').toLowerCase().includes("ankieta otwarta")
     ],
     callbacks: [
         async (msg) => {
