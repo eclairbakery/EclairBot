@@ -33,13 +33,12 @@ export const communityPollsContentModerator: Action<MessageEventCtx> = {
     constraints: [
         (ctx) => ctx.author.id != ctx.client.user.id,
         (ctx) => !ctx.channel.isThread(),
-        (ctx) => ctx.channel.id == cfg.channels.other.communityPolls,
-        (ctx) => !(ctx.content ?? '').toLowerCase().includes("ankieta otwarta")
+        (ctx) => ctx.channel.id == cfg.channels.other.communityPolls
     ],
     callbacks: [
         async (msg) => {
-            if (!msg.poll) {
-                const reply = await replyWarn(msg, 'To nie do tego kanał', 'W skrócie no to na kanale, który się nazywa "ankiety społeczności" wysyła się te Discordowe ankiety.');
+            if (!msg.poll && (msg.content.length > 0 || msg.attachments.size > 0) && !msg.content.toLowerCase().includes("ankieta otwarta")) {
+                const reply = await replyWarn(msg, 'To nie do tego kanał', 'Możesz tu tylko wysyłać Discordowe ankiety, ewentualnie ankiety otwarte.');
                 await sleep(2500);
                 await reply.delete();
                 await msg.delete();
