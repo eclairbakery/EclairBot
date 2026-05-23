@@ -44,6 +44,8 @@ export const communityPollsContentModerator: Action<MessageEventCtx> = {
                 await msg.delete();
                 return MagicSkipAllActions;
             }
+            
+            if (!msg.poll || !msg.content) return;
 
             await msg.reply('<@&1320034068322324660>');
 
