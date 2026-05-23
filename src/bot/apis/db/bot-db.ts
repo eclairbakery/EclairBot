@@ -385,6 +385,14 @@ export class BotDatabase {
             }
         },
 
+        prestige: async (userId?: string): Promise<void> => {
+            if (userId) {
+                await this.runSql(`UPDATE users SET prestige_points = 0 WHERE user_id = ?`, [userId]);
+            } else {
+                await this.runSql(`UPDATE users SET prestige_points = 0`);
+            }
+        },
+
         cooldowns: async (userId?: string): Promise<void> => {
             const sql = `
                 UPDATE users SET 
@@ -412,6 +420,7 @@ export class BotDatabase {
             await this.reset.leveling(userId);
             await this.reset.cooldowns(userId);
             await this.reset.warns(userId);
+            await this.reset.prestige(userId);
             // i think it's better not to do this for now
             //await this.reset.music(userId);
         },
