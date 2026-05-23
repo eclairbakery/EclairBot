@@ -216,11 +216,11 @@ export class BotDatabase {
     ): Promise<string[]> {
         const sql = `
             SELECT user_id
-            FROM ? 
-            ORDER BY ? DESC
+            FROM ${tableName} 
+            ORDER BY ${column} DESC
             ${limit ? 'LIMIT ?' : ''}
         `;
-        const params = limit ? [tableName, column, limit] : [tableName, column];
+        const params = limit ? [limit] : [];
         const rows = await this.selectMany<{ user_id: string }>(sql, params);
         return rows.map((r) => r.user_id);
     }
