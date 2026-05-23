@@ -10,7 +10,7 @@ const cmdCfg = cfg.commands.configuration.mute;
 
 const unmuteCmd: Command = {
     name: 'unmute',
-    aliases: cmdCfg.aliases,
+    aliases: [],
     description: {
         main: 'Oddaję Ci prawo głosu. Nie marnuj go na pisanie "xd" i emoji bakłażana.',
         short: 'Po prostu unmute',

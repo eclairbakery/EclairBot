@@ -61,7 +61,7 @@ const muteCmd: Command = {
             return api.log.replyError(
                 api,
                 'Bro co ty odpierdalasz?',
-                'Czemu ty chcesz sobie dać bana? Co jest z tobą nie tak... Zabrać cię do szpitala zdrowia psychicznego czy co ja mam zrobić...',
+                'Czemu ty chcesz sobie dać mute? Co jest z tobą nie tak... Zabrać cię do szpitala zdrowia psychicznego czy co ja mam zrobić...',
             );
         }
 
@@ -77,7 +77,7 @@ const muteCmd: Command = {
         sendLog({
             color: PredefinedColors.Purple,
             title: 'Nałożono kłódkę na buzię',
-            description: `Użytkownik <@${targetUser.id}> został wyciszony na 24 godziny przez <@${api.invoker.id}>.`,
+            description: `Użytkownik <@${targetUser.id}> został wyciszony przez <@${api.invoker.id}>. Dostanie unmute <t:${expiresAt}:R>.`,
             fields: [{ name: 'Powód', value: reason }],
         });
 

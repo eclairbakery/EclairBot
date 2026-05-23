@@ -28,7 +28,7 @@ export function parseNumber(input: string): number {
 }
 
 export function parseBigint(input: string, decimals: number): bigint {
-    let cleaned = input.trim().replace(/\s/g, '');
+    let cleaned = input.trim().replace(/\s/g, '').replace(',', '.');
     if (!cleaned) throw new NumberParseError('Input is empty');
 
     const isNegative = cleaned.startsWith('-');

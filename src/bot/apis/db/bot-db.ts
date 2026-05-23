@@ -10,6 +10,7 @@ export type { Balance, Cooldown, Cooldowns };
 export { musicFromRaw, warnFromRaw };
 
 import User from './user.ts';
+import { output } from '@/bot/logging.ts';
 
 export interface DBRunResult {
     lastID: number | null;
@@ -115,7 +116,16 @@ export class BotDatabase {
     // ------------------ low-level helpers ------------------
 
     private processParams(params: unknown[]): unknown[] {
-        return params.map((p) => typeof p === 'bigint' ? Number(p) : p);
+        return params.map((p) => {
+            if (typeof p != "bigint") return p;
+
+            let result = Number(p);
+            if (!Number.isSafeInteger(result)) { 
+                output.warn("Invalid BigInt passed to processParams, params: " + params.join(', '));
+                result = Number.MAX_SAFE_INTEGER;
+            }
+            return result;
+        });
     }
 
     async runSql(sql: string, params: unknown[] = []): Promise<DBRunResult> {
@@ -126,7 +136,7 @@ export class BotDatabase {
         const op = sql.trim().split(' ')[0].toUpperCase();
         if (op === 'INSERT') {
             const row = [...this.raw.queryEntries('SELECT last_insert_rowid()')][0];
-            lastID = row ? Number(row[0]) : null;
+            lastID = row ? Number(row["last_insert_rowid()"]) : null;
         }
         changes = this.raw.changes;
 
@@ -206,11 +216,11 @@ export class BotDatabase {
     ): Promise<string[]> {
         const sql = `
             SELECT user_id
-            FROM ${tableName}
-            ORDER BY ${column} DESC
+            FROM ? 
+            ORDER BY ? DESC
             ${limit ? 'LIMIT ?' : ''}
         `;
-        const params = limit ? [limit] : [];
+        const params = limit ? [tableName, column, limit] : [tableName, column];
         const rows = await this.selectMany<{ user_id: string }>(sql, params);
         return rows.map((r) => r.user_id);
     }

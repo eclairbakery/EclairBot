@@ -18,7 +18,7 @@ export async function reminderHandler() {
                     new ReplyEmbed()
                         .setTitle("💡 Przypomnienie!")
                         .setDescription(
-                            `Oto o czym miałeś pamiętać:\n\n` +
+                            `Pragnę przypomnieć szanownemu użytkownikowi o tym, że nadszedł czas wykonania pewnej czynności. A ta czynność to:\n\n` +
                             reminder.reminder
                                 .split('\n')
                                 .map((l) => `> ${l}`)
@@ -32,7 +32,7 @@ export async function reminderHandler() {
         }
     } catch (e) {
         logError('stdwarn', e, 'Reminder handler');
+    } finally {
+        setTimeout(reminderHandler, 30 * 1000);
     }
-
-    setTimeout(reminderHandler, 30 * 1000);
 }
