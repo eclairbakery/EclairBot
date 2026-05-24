@@ -183,7 +183,7 @@ const updateXpAction: Action<XpEventCtx> = {
                 } else {
                     content = `Level użytkownika ${getMention(member)} został zmieniony, co prawda dalej ma ${prevLevel} level, ale tym razem ${newXp}xp zamiast ${prevXp}xp?` +
                         ` Dobra przestane yappowac tych nerdowskich liczb i dam ci progress bar do następnego levela:` +
-                        '\n' + mkLvlProgressBar(newXp, levelToXp(xpToLevel(newXp) + 1));
+                        '\n' + mkLvlProgressBar(newXp, cfg.features.leveling.levelDivider);
                 }
             }
 
@@ -220,8 +220,9 @@ export async function addVoiceExperience() {
         // add experience
         for (const user of channel_users) {
             const xp = cfg.features.leveling.voice.xpPerMinute;
-
-            const member = channel_members.find((cm) => cm.id == user.id)!;
+            
+            const all_user_accounts = [user.id, ...(await user.fetchAlternativeAccounts())];
+            const member = channel_members.find((cm) => all_user_accounts.includes(cm.id))!;
             if (member.voice.selfMute || member.voice.selfDeaf) {
                 continue;
             }

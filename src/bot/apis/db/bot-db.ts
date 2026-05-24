@@ -1,6 +1,6 @@
 import { DB, QueryParameterSet } from 'sqlite';
 
-import type { AIMemory, MusicEntry, MusicEntryRaw, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
+import type { AIMemory, MusicEntry, MusicEntryRaw, Reminder, UserDataRaw, Warn, WarnRaw } from './db-defs.ts';
 
 import type { Balance, Cooldown, Cooldowns } from './db-defs.ts';
 import { musicFromRaw, warnFromRaw } from './db-defs.ts';
@@ -10,6 +10,7 @@ export type { Balance, Cooldown, Cooldowns };
 export { musicFromRaw, warnFromRaw };
 
 import User from './user.ts';
+import { output } from '@/bot/logging.ts';
 
 export interface DBRunResult {
     lastID: number | null;
@@ -109,13 +110,29 @@ export class BotDatabase {
                 external_account TEXT NOT NULL,
                 PRIMARY KEY (discord_account, platform, external_account)
             );
+            
+            CREATE TABLE IF NOT EXISTS reminders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                for_user TEXT NOT NULL REFERENCES users(user_id),
+                reminder TEXT NOT NULL,
+                timestamp INTEGER NOT NULL
+            );
         `);
     }
 
     // ------------------ low-level helpers ------------------
 
     private processParams(params: unknown[]): unknown[] {
-        return params.map((p) => typeof p === 'bigint' ? Number(p) : p);
+        return params.map((p) => {
+            if (typeof p != "bigint") return p;
+
+            let result = Number(p);
+            if (!Number.isSafeInteger(result)) { 
+                output.warn("Invalid BigInt passed to processParams, params: " + params.join(', '));
+                result = Number.MAX_SAFE_INTEGER;
+            }
+            return result;
+        });
     }
 
     async runSql(sql: string, params: unknown[] = []): Promise<DBRunResult> {
@@ -126,7 +143,7 @@ export class BotDatabase {
         const op = sql.trim().split(' ')[0].toUpperCase();
         if (op === 'INSERT') {
             const row = [...this.raw.queryEntries('SELECT last_insert_rowid()')][0];
-            lastID = row ? Number(row[0]) : null;
+            lastID = row ? Number(row["last_insert_rowid()"]) : null;
         }
         changes = this.raw.changes;
 
@@ -206,7 +223,7 @@ export class BotDatabase {
     ): Promise<string[]> {
         const sql = `
             SELECT user_id
-            FROM ${tableName}
+            FROM ${tableName} 
             ORDER BY ${column} DESC
             ${limit ? 'LIMIT ?' : ''}
         `;
@@ -341,6 +358,18 @@ export class BotDatabase {
             await this.reset.music(userId);
         },
     };
+    
+    readonly reminders = {
+        getReminders: async (): Promise<Reminder[]> => {
+            return db.selectMany<Reminder>("SELECT * FROM reminders");
+        },
+        addReminder: async (target: string, reminder: string, date: number) => {
+            return db.runSql("INSERT INTO reminders (for_user, reminder, timestamp) VALUES (?, ?, ?)", [ target, reminder, date ]);
+        },
+        deleteReminder: async (id: number) => {
+            return db.runSql("DELETE FROM reminders WHERE id = ?", [id])
+        }
+    };
 
     readonly reset = {
         music: async (userId?: string): Promise<void> => {
@@ -375,6 +404,14 @@ export class BotDatabase {
             }
         },
 
+        prestige: async (userId?: string): Promise<void> => {
+            if (userId) {
+                await this.runSql(`UPDATE users SET prestige_points = 0 WHERE user_id = ?`, [userId]);
+            } else {
+                await this.runSql(`UPDATE users SET prestige_points = 0`);
+            }
+        },
+
         cooldowns: async (userId?: string): Promise<void> => {
             const sql = `
                 UPDATE users SET 
@@ -402,6 +439,7 @@ export class BotDatabase {
             await this.reset.leveling(userId);
             await this.reset.cooldowns(userId);
             await this.reset.warns(userId);
+            await this.reset.prestige(userId);
             // i think it's better not to do this for now
             //await this.reset.music(userId);
         },

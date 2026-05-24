@@ -109,6 +109,10 @@ export const featuresConfig: Config['features'] = {
                 '👎'
             ],
             pointsPerReaction: 1
+        },
+        messageLength: {
+            divider: 200,
+            points: 5
         }
     },
     economy: economyCfg,

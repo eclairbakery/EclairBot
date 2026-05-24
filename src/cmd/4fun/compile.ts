@@ -51,7 +51,7 @@ const compileCmd: Command = {
             return msg.edit({
                 embeds: [
                     api.log.getErrorEmbed(
-                        'Błąd!',
+                        'Nie jestem jasnowidzem!',
                         'Musisz podać w jakim języku jest twój kod, albo jako argument albo na górze codeblocka.',
                     ),
                 ],

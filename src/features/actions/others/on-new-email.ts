@@ -76,7 +76,7 @@ export const onReceivedEmailAction: Action<ReceivedNewEmail> = {
             const domain = sender?.split('@')[1]?.toLowerCase().trim() ?? 'hashcat.dev';
 
             if (domain) {
-                db.runSql('INSERT OR IGNORE INTO email_security VALUES (NULL, ?);', [domain]);
+                db.runSql('INSERT OR IGNORE INTO email_security(enabled_domain) VALUES (?);', [domain]);
             }
 
             if (

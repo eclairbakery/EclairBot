@@ -48,7 +48,7 @@ export async function executeAsk(msg: dsc.Message, question: string, contextMsgs
     }
 
     const channel = msg.channel as dsc.TextBasedChannel;
-    const messages = await channel.messages.fetch({ limit: contextMsgs, before: msg?.id });
+    const messages = contextMsgs > 0 ? await channel.messages.fetch({ limit: contextMsgs, before: msg?.id }) : [];
     const chatHistory = messages.reverse();
     let chatHistoryFormatted: string = '';
     for (const m of chatHistory.values()) {

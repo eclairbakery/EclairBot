@@ -17,6 +17,12 @@ const askCmd: Command = {
 
     expectedArgs: [
         {
+            name: 'context-msgs',
+            description: 'Wielkość kontekstu którą dostanie bot w wiadomościach',
+            optional: true,
+            type: { base: 'int' }
+        },
+        {
             name: 'question',
             description: 'O co chcesz spytać się EclairBOTa',
             optional: false,

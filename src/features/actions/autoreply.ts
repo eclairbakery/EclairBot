@@ -47,7 +47,7 @@ export function mkAutoreplyAction({ activationOptions, reply, additionalCallback
                 constraints.push((ctx) => ctx.content.toLowerCase().endsWith(opt.keyword.toLowerCase()));
                 break;
             case 'matches-regex':
-                constraints.push((ctx) => new RegExp(opt.keyword.toLowerCase()).test(ctx.content));
+                constraints.push((ctx) => new RegExp(opt.keyword.toLowerCase()).test(ctx.content.toLowerCase()));
                 break;
             default:
                 throw new Error(`Unknown activation option type: ${opt.type}`);
