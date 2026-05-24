@@ -9,6 +9,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, Compon
 import { db } from '@/bot/apis/db/bot-db.ts';
 import { addLvlRole, xpToLevel } from '@/bot/level.ts';
 import User from '@/bot/apis/db/user.ts';
+import awaitUserConfirmation from '@/features/serchat/await-user-confirmation.ts';
 
 function getMainAccount(id: string) {
     try {
@@ -185,16 +186,41 @@ const manageAccountsCmd: Command = {
                         .setTitle('Jeszcze tylko dwa kroki...')
                         .addLabelComponents(
                             new LabelBuilder()
-                                .setLabel("Wpisz nick na Serchat")
-                                .setDescription("Jeżeli zmienisz nickname, będziesz musiał usunąć starą integrację i dodać ją ponownie.")
+                                .setLabel("Wpisz user ID na Serchat")
+                                .setDescription("Możesz je uzyskać klikając na swój profil prawym przyciskiem myszy i następnie kopiując ID usera.")
                                 .setTextInputComponent(
                                     new TextInputBuilder()
                                         .setStyle(TextInputStyle.Short)
-                                        .setCustomId('add-external-account-final')
-                                        .setPlaceholder("np. cat")
+                                        .setCustomId('userid')
+                                        .setPlaceholder("np. 0000000b78c0")
+                                        .setRequired(true)
                                 )
                         )
                 );
+
+                const ms = await i.awaitModalSubmit({
+                    filter: (interaction) => 
+                        i.user.id === interaction.user.id &&
+                        interaction.customId == 'add-external-account-final',
+                    time: 60_000
+                });
+                await ms.deferUpdate();
+                await msg.edit({
+                    embeds: [
+                        api.log.getInfoEmbed('Sprawdź SerChat', 'Musisz potwierdzić, że to jest naprawdę Twoje konto.')
+                    ],
+                    components: []
+                });
+
+                const serchat_userid = ms.fields.getTextInputValue('userid');
+                await awaitUserConfirmation(`accept-discord-user ${i.user.id}`, serchat_userid, `<userid:'${serchat_userid}'>, napisz \`accept-discord-user ${i.user.id}\`, aby zaakceptować połączenie kont dla użytkownika Discorda ${i.user.username}`);
+                await db.platforms.addAccount('serchat', i.user.id, serchat_userid)
+
+                await msg.edit({
+                    embeds: [
+                        api.log.getSuccessEmbed('Połączono', 'Udało Ci się połączyć konto Discord z kontem SerChat.')
+                    ]
+                });
             }
         })
 

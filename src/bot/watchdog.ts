@@ -26,7 +26,7 @@ export async function watchNewMember(mem: dsc.GuildMember): Promise<'kicked' | v
 }
 
 const roleHierarchy: dsc.Snowflake[] = [cfg.hierarchy.administration.headAdmin, cfg.hierarchy.administration.admin, cfg.hierarchy.administration.headMod, cfg.hierarchy.administration.mod, cfg.hierarchy.administration.helper];
-const userCounters = new Map<string, { creates: number; deletes: number; warns: number; mutes: number; timeout?: number }>();
+const userCounters = new Map<string, { creates: number; deletes: number; warns: number; mutes: number; timeout?: ReturnType<typeof setTimeout> }>();
 
 async function downgradeRole(member: dsc.GuildMember) {
     output.log(`Watchdog: About to degrade role for ${member.user.username} (user id: ${member.id}); remove all adm roles for user: ${cfg.features.watchdog.notForgiveAdministration}`);

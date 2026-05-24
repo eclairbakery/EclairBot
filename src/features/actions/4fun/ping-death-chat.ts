@@ -2,7 +2,7 @@ import { Action, MessageEventCtx, PredefinedActionEventTypes } from '@/features/
 import capitalizeFirst from '@/util/capitalize-first.ts';
 import { cfg } from '@/bot/cfg.ts';
 
-let deathChatTimeout: number;
+let deathChatTimeout: ReturnType<typeof setTimeout>;
 
 export interface PingAPI {
     roleId: `${number}`;
