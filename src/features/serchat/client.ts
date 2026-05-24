@@ -1,10 +1,16 @@
 import * as serchat from 'serchat.ts';
 import { output } from '@/bot/logging.ts';
 import registerLeveling from '@/features/serchat/leveling.ts';
+import SerchatCommandLevel from '@/features/serchat/cmd/lvl.ts';
+import logError from '@/util/log-error.ts';
 
 export const client = new serchat.Client({
     logLevel: serchat.LogLevel.ERROR
 });
+
+const serchat_commands: serchat.BotCommand[] = [
+    new SerchatCommandLevel()
+];
 
 export default async function startSerchatClient() {
     if (!Deno.env.has("EB_SERCHAT_TOKEN")) {
@@ -16,4 +22,14 @@ export default async function startSerchatClient() {
     output.verbose("Logged in to SerChat");
 
     registerLeveling();
+
+    for (const command of serchat_commands) {
+        client.commands.register(command);
+    }
+
+    try {
+        await client.commands.sync();
+    } catch (e) {
+        logError('stdwarn', e, "SerChat command sync")
+    }
 }

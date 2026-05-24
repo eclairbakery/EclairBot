@@ -241,10 +241,10 @@ export class BotDatabase {
             this.runSql("INSERT INTO non_discord_accounts VALUES (?, ?, ?)", [discord, platform, external]);
         },
         getExternalAccount: async (platform: string, discord: string) => {
-            return this.selectOne<{ external: string; }>("SELECT * FROM non_discord_accounts WHERE discord_account = ? AND platform = ?", [discord, platform]);
+            return this.selectOne<{ external_account: string; }>("SELECT * FROM non_discord_accounts WHERE discord_account = ? AND platform = ?", [discord, platform]);
         },
         getDiscordAccount: async (platform: string, external: string) => {
-            return this.selectOne<{ discord: string; }>("SELECT * FROM non_discord_accounts WHERE external_account = ? AND platform = ?", [external, platform]);
+            return this.selectOne<{ discord_account: string; }>("SELECT * FROM non_discord_accounts WHERE external_account = ? AND platform = ?", [external, platform]);
         }
     };
 
