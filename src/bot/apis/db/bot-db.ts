@@ -104,6 +104,13 @@ export class BotDatabase {
                 memory TEXT NOT NULL
             );
 
+            CREATE TABLE IF NOT EXISTS non_discord_accounts (
+                discord_account TEXT NOT NULL REFERENCES users(user_id),
+                platform TEXT NOT NULL,
+                external_account TEXT NOT NULL,
+                PRIMARY KEY (discord_account, platform, external_account)
+            );
+            
             CREATE TABLE IF NOT EXISTS reminders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 for_user TEXT NOT NULL REFERENCES users(user_id),
@@ -244,6 +251,18 @@ export class BotDatabase {
             const rows = await this.selectMany<{ user_id: string }>(sql, params);
             return rows.map((r) => new User(r.user_id));
         },
+    };
+
+    readonly platforms = {
+        addAccount: async (platform: string, discord: string, external: string) => {
+            this.runSql("INSERT INTO non_discord_accounts VALUES (?, ?, ?)", [discord, platform, external]);
+        },
+        getExternalAccount: async (platform: string, discord: string) => {
+            return this.selectOne<{ external_account: string; }>("SELECT * FROM non_discord_accounts WHERE discord_account = ? AND platform = ?", [discord, platform]);
+        },
+        getDiscordAccount: async (platform: string, external: string) => {
+            return this.selectOne<{ discord_account: string; }>("SELECT * FROM non_discord_accounts WHERE external_account = ? AND platform = ?", [external, platform]);
+        }
     };
 
     readonly leveling = {

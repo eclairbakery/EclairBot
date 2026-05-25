@@ -66,6 +66,7 @@ import { addMusicAction } from '@/features/actions/4fun/add-music.ts';
 import { registerCommands } from '@/cmd/list.ts';
 import { communityPollsContentModerator, filesContentModerator } from '@/features/actions/others/content-moderator.ts';
 import { reactionAddHandler, reactionRemoveHandler } from '@/features/actions/4fun/reaction-handler.ts';
+import startSerchatClient from '@/features/serchat/client.ts';
 import { registerMsgEditDscEvents } from '@/features/actions/logs/edit-message.ts';
 import { deleteMessageAction } from '@/features/actions/logs/delete-message.ts';
 import { reminderHandler } from '@/features/reminders.ts';
@@ -114,7 +115,9 @@ client.once('clientReady', async () => {
     output.verbose(`Github integration initialized`);
 
     await cache.init();
-    output.verbose(`Cache initialized.`); 
+    output.verbose(`Cache initialized.`);
+
+    await startSerchatClient();
 
     await main();
 });

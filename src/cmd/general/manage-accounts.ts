@@ -5,10 +5,11 @@ import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { PredefinedColors } from '@/util/color.ts';
 import { client } from '@/client.ts';
 import logError from '@/util/log-error.ts';
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ComponentType, StringSelectMenuBuilder, StringSelectMenuInteraction } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ComponentType, LabelBuilder, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { db } from '@/bot/apis/db/bot-db.ts';
 import { addLvlRole, xpToLevel } from '@/bot/level.ts';
 import User from '@/bot/apis/db/user.ts';
+import awaitUserConfirmation from '@/features/serchat/await-user-confirmation.ts';
 
 function getMainAccount(id: string) {
     try {
@@ -38,10 +39,6 @@ const manageAccountsCmd: Command = {
         )).filter((u) => u !== null);
         const main_account = await getMainAccount(api.executor.id);
 
-        if (alternative_accounts.length == 0) {
-            return api.log.replyWarn(api, 'Nie masz tu altów', 'Nie możesz zbytnio zarządzać swoimi multikontami, gdy ich nie masz. Dodaj pierwsze za pomocą koemndy `sudo add-primary-account @twoje-główne-konto`, wywołanej z twojego alta.');
-        }
-
         const msg = await api.reply({
             embeds: [
                 new ReplyEmbed()
@@ -51,7 +48,9 @@ const manageAccountsCmd: Command = {
                         'Oto wszystkie konta, które połączyłeś w naszym rewolucyjnym bocie. Współdzielisz pomiędzy nimi pieniądze na ekonomii, poziom i dużo różnego rodzaju stanu.',
                         '',
                         `**Główne konto:** \`${main_account?.username ?? 'nieznane'}\``,
-                        `**Twoje multikonta:** \`${alternative_accounts.map((a) => a.username).join('`, `')}\``
+                        alternative_accounts.length > 0 
+                            ? `**Twoje multikonta:** \`${alternative_accounts.map((a) => a.username).join('`, `')}\``
+                            : '**Nie posiadasz multikont.** Możesz je dodać za pomocą komendy `add-primary-account`.'
                     ].join('\n'))
                     .setThumbnail(main_account?.displayAvatarURL() ?? client.user!.displayAvatarURL())
             ],
@@ -59,8 +58,12 @@ const manageAccountsCmd: Command = {
                 new ActionRowBuilder<ButtonBuilder>()
                     .addComponents([
                         new ButtonBuilder()
-                            .setCustomId('move-primary')
+                            .setCustomId('add-external-account')
                             .setStyle(ButtonStyle.Primary)
+                            .setLabel('Dodaj zewnętrzne konto'),
+                        new ButtonBuilder()
+                            .setCustomId('move-primary')
+                            .setStyle(ButtonStyle.Secondary)
                             .setLabel('Zmień główne konto'),
                         new ButtonBuilder()
                             .setCustomId('leave-group')
@@ -74,7 +77,13 @@ const manageAccountsCmd: Command = {
         const collector = msg.createMessageComponentCollector<ComponentType.Button | ComponentType.StringSelect>({ filter, time: 90000 });
         
         collector.on('collect', async (i) => {
-            i.deferUpdate();
+            if (i.customId !== 'add-external-account-user-sel') i.deferUpdate();
+
+            if ([ 'leave-group', 'leave-group-final', 'move-primary', 'move-primary-selected' ].includes(i.customId)) {
+                return await msg.edit({ embeds: [
+                    api.log.getErrorEmbed('Nie masz tu altów.', 'Te funkcje są dozwolone tylko dla osób, które posiadają tu alternatywne konta.')
+                ] });
+            }
 
             if (i.customId == 'leave-group' && i.isButton()) {
                 if (api.executor.id == i.user.id) {
@@ -115,7 +124,7 @@ const manageAccountsCmd: Command = {
             } else if (i.customId == 'move-primary' && i.isButton()) {
                 return await msg.edit({
                     embeds: [
-                        api.log.getTipEmbed('Wybierz konto', 'Musisz wybrać konto, które stanie się Twoim nowym głównym kontem. Zrób to, wybierając je z listy poniżej.')
+                        api.log.getInfoEmbed('Wybierz konto', 'Musisz wybrać konto, które stanie się Twoim nowym głównym kontem. Zrób to, wybierając je z listy poniżej.')
                     ],
                     components: [
                         new ActionRowBuilder<StringSelectMenuBuilder>()
@@ -156,6 +165,61 @@ const manageAccountsCmd: Command = {
                 await msg.edit({
                     embeds: [ api.log.getSuccessEmbed("Przeniesiono.", `Od teraz to ${i.values[0]} jest Twoim głównym kontem.`) ],
                     components: []
+                });
+            } else if (i.customId == 'add-external-account' && i.isButton()) {
+                await msg.edit({
+                    embeds: [ api.log.getInfoEmbed('Wybierz platformę', 'Musisz wybrać zewnętrzną platformę, o którą Ci chodzi.') ],
+                    components: [
+                        new ActionRowBuilder<StringSelectMenuBuilder>()
+                            .addComponents([
+                                new StringSelectMenuBuilder()
+                                    .setPlaceholder('Poproszę platformę')
+                                    .setCustomId('add-external-account-user-sel')
+                                    .setOptions([ { label: "Serchat", description: "Platforma @catflare z ser.chat.", value: "serchat" } ])
+                            ])
+                    ]
+                });
+            } else if (i.customId == 'add-external-account-user-sel' && i.isStringSelectMenu() && i.values?.[0] == "serchat") {
+                i.showModal(
+                    new ModalBuilder()
+                        .setCustomId('add-external-account-final')
+                        .setTitle('Jeszcze tylko dwa kroki...')
+                        .addLabelComponents(
+                            new LabelBuilder()
+                                .setLabel("Wpisz user ID na Serchat")
+                                .setDescription("Możesz je uzyskać klikając na swój profil prawym przyciskiem myszy i następnie kopiując ID usera.")
+                                .setTextInputComponent(
+                                    new TextInputBuilder()
+                                        .setStyle(TextInputStyle.Short)
+                                        .setCustomId('userid')
+                                        .setPlaceholder("np. 0000000b78c0")
+                                        .setRequired(true)
+                                )
+                        )
+                );
+
+                const ms = await i.awaitModalSubmit({
+                    filter: (interaction) => 
+                        i.user.id === interaction.user.id &&
+                        interaction.customId == 'add-external-account-final',
+                    time: 60_000
+                });
+                await ms.deferUpdate();
+                await msg.edit({
+                    embeds: [
+                        api.log.getInfoEmbed('Sprawdź SerChat', 'Musisz potwierdzić, że to jest naprawdę Twoje konto.')
+                    ],
+                    components: []
+                });
+
+                const serchat_userid = ms.fields.getTextInputValue('userid');
+                await awaitUserConfirmation(`accept-discord-user ${i.user.id}`, serchat_userid, `<userid:'${serchat_userid}'>, napisz \`accept-discord-user ${i.user.id}\`, aby zaakceptować połączenie kont dla użytkownika Discorda ${i.user.username}`);
+                await db.platforms.addAccount('serchat', i.user.id, serchat_userid)
+
+                await msg.edit({
+                    embeds: [
+                        api.log.getSuccessEmbed('Połączono', 'Udało Ci się połączyć konto Discord z kontem SerChat.')
+                    ]
                 });
             }
         })
