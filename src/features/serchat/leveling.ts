@@ -18,7 +18,7 @@ export default function registerLeveling() {
         
         // user fetch logic
         const account = await db.platforms.getDiscordAccount('serchat', msg.senderId);
-        if (!account) {
+        if (!account && !msg.text.includes("accept")) {
             if (doNotNotifyAboutDiscord.includes(msg.senderId)) return;
             await msg.reply(translate("hej!\nleveling oraz wiele innych rzeczy jest tu zarządzanych przez bota discord, który został przeportowany na serchat! moze dolaczysz na discorda (link w kategorii wazne) i połączysz discorda z serchatem przez komende `manage-accounts` z discorda by nabijał sie level?\n-# ta wiadomość nie pokaże się ponownie do następnego restartu bota"));
             doNotNotifyAboutDiscord.push(msg.senderId);
