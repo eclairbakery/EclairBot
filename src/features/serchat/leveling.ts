@@ -23,7 +23,7 @@ export default function registerLeveling() {
             await msg.reply(translate("hej!\nleveling oraz wiele innych rzeczy jest tu zarządzanych przez bota discord, który został przeportowany na serchat! moze dolaczysz na discorda (link w kategorii wazne) i połączysz discorda z serchatem przez komende `manage-accounts` z discorda by nabijał sie level?\n-# ta wiadomość nie pokaże się ponownie do następnego restartu bota"));
             doNotNotifyAboutDiscord.push(msg.senderId);
             return;
-        }
+        } else if (!account) return;
         const user = new User(account.discord_account);
         
         // generate amount
@@ -45,9 +45,9 @@ export default function registerLeveling() {
             await msg.reply({
                 content: translate(
                     `Wbiłeś poziom ${newLevel}! Jestem dumny!`
-                    + gotNewRole
+                    + (gotNewRole
                         ? "A i nową rolę na Discordzie zdobyłeś!"
-                        : ""
+                        : "")
                 )
             });
         } 

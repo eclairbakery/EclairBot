@@ -1,54 +1,10 @@
-import { Command } from '@/bot/command.ts';
+import { Command, CommandAPI } from '@/bot/command.ts';
 import { CommandFlags } from '@/bot/apis/commands/misc.ts';
-import { CommandAPI } from '@/bot/apis/commands/api.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 import { PredefinedColors } from '@/util/color.ts';
-import * as gemini from '@/bot/apis/gemini/model.ts';
 import * as dsc from 'discord.js';
-
-interface WikiSummaryResponse {
-    type: string;
-    title: string;
-    displaytitle: string;
-    namespace: { id: number; text: string };
-    wikibase_item: string;
-    titles: { canonical: string; normalized: string; display: string };
-    pageid: number;
-    thumbnail?: { source: string; width: number; height: number };
-    originalimage?: { source: string; width: number; height: number };
-    lang: string;
-    dir: string;
-    revision: string;
-    tid: string;
-    timestamp: string;
-    description?: string;
-    description_source?: string;
-    content_urls: { desktop: { page: string }; mobile: { page: string } };
-    extract: string;
-    extract_html: string;
-}
-
-async function getDisambiguationTitles(title: string, lang: string): Promise<string[]> {
-    const url = `https://${lang}.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(title)}&prop=links&format=json`;
-    const res = await fetch(url);
-    const data = await res.json() as { parse?: { links: { ns: number; '*': string }[] } };
-
-    if (!data.parse?.links) return [];
-
-    return data.parse.links.filter((l) => l.ns === 0).map((l) => l['*']);
-}
-
-async function downloadFromWikipedia(languageVersions: string[], args: string[]) {
-    let fetched: Response;
-    let lango: string = null!;
-    for (const lang of languageVersions) {
-        const url = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(args.join('_'))}`;
-        fetched = await fetch(url);
-        if (!fetched.ok) continue;
-        lango = lang;
-        break;
-    }
-    return { fetched: fetched!, lang: lango };
-}
+import getWikiArticle from '@/bot/apis/wiki/wiki.ts';
+import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 
 async function replyAIModelErr(err: string, msg: dsc.Message) {
     return await msg.edit({
@@ -68,7 +24,9 @@ const wikiCmd: Command = {
         main: 'Generalnie pobiera artykuł z Wikipedii. Super użyteczne!',
         short: 'Pobiera rzecz z Wikipedii!',
     },
+
     flags: CommandFlags.None | CommandFlags.WorksInDM,
+    permissions: CommandPermissions.everyone(),
 
     expectedArgs: [
         {
@@ -78,15 +36,9 @@ const wikiCmd: Command = {
             description: 'No, podaj jaki jest ten twój artykuł do pobrania!',
         },
     ],
-    permissions: {
-        allowedRoles: null,
-        allowedUsers: null,
-    },
-    execute: async (api: CommandAPI) => {
-        const rawQuery = api.getTypedArg('query', 'string')?.value as string;
 
-        const query = rawQuery == 'hubix' ? 'Niepełnosprawność intelektualna w stopniu głębokim' : rawQuery;
-        if (!query) return api.log.replyError(api, 'Masz problem', 'Musisz podać, czego szukasz na Wikipedii!');
+    execute: async (api: CommandAPI) => {
+        const query = api.getTypedArg('query', 'string').value as string; 
 
         const msg = await api.log.replyTip(
             api,
@@ -94,79 +46,44 @@ const wikiCmd: Command = {
             'Z powodu na powolność Wikipedii to może to chwilę potrwać byś dostał odpowiedź.',
         );
 
-        const fetched_raw = await downloadFromWikipedia(['pl', 'simple', 'en'], [query]);
-        const fetched = fetched_raw.fetched;
-        if (!fetched || !fetched.ok) {
-            if (!gemini.isInitialized()) {
-                return replyAIModelErr('jest niezainicjalizowany', msg);
-            }
-            if (!gemini.getModels('wiki-cmd').length) {
-                return replyAIModelErr('jest niezainicjalizowany', msg);
-            }
-            let result: gemini.GenerateContentResult;
-            try {
-                result = await gemini.generateContent('wiki-cmd', {
-                    contents: [
-                        { role: 'user', parts: [{ text: query }] },
-                    ],
-                });
-            } catch {
-                return replyAIModelErr('nie chce ci odpowiedzieć (chyba jakiś rate-limit, nie wiem)', msg);
-            }
-            const ai_response = result.response.text();
-            if (ai_response.toLowerCase().trim().includes('--ignore')) {
-                return replyAIModelErr('świadomie postanowił Cię zlać', msg);
-            }
-            const ai_fl = ai_response.split('\n')[0].trim();
-            const ai_has_title = ai_fl.startsWith('# ');
-            const ai_description = ai_has_title ? ai_response.slice(ai_fl.length).trim() : ai_response;
-            return msg.edit({
-                embeds: [{
-                    author: { name: 'EclairBOT' },
-                    title: ai_has_title ? ai_fl.replace('# ', '') : 'Definicja od AI',
-                    description: ai_description,
-                    color: PredefinedColors.YellowGreen,
-                    url: `https://google.com/search?q=${encodeURIComponent(query)}`,
-                    footer: {
-                        text: 'Ponieważ na Wikipedii nie ma artykułu o tej nazwie, ta definicja pochodzi od AI. Sprawdź ważne fakty samodzielnie.',
-                    },
-                }],
+        const result = await getWikiArticle(query); 
+        if (result.success == false) {
+            return await replyAIModelErr(
+                result.reason == "ai-ignore"
+                    ? "świadomie postanowił Cię zlać"
+                    : (result.reason == "ai-uninitialized"
+                        ? "jest niezainicjalizowany"
+                        : "wywalił błąd (jakiś ratelimit idk)"),
+                msg
+            );
+        } else if (result.isDisamiguition == true) {
+            return await msg.edit({
+                embeds: [
+                    api.log.getInfoEmbed('Doprecyzuj', `Natrafiłeś na stronę ujednoznaczniającą. W skrócie to Wikipedia nie jest pewna, czego ty szukasz, więc Ci to wyświetliła, by ci pomóc.\n\nTu masz hasła, które się mogą kryć pod Twoim zapytaniem:\n- ${result.queries.join('\n- ')}`)
+                        .setURL(result.url)
+                ]
             });
-        }
-
-        const json = await fetched.json() as WikiSummaryResponse;
-
-        const extrdesc = (json.extract ?? '') + (json.description ?? '');
-
-        if (extrdesc?.includes('strona ujednoznaczniająca') || extrdesc?.includes('may refer to')) {
-            const titles = await getDisambiguationTitles(json.title, fetched_raw.lang);
-            return msg.edit({
-                embeds: [{
-                    author: { name: 'EclairBOT' },
-                    title: 'Doprecyzuj!',
-                    description: `Natrafiłeś na stronę ujednoznaczniającą. W skrócie to Wikipedia nie jest pewna, czego ty szukasz, więc Ci to wyświetliła, by ci pomóc.\n\n**Tu masz hasła, które się mogą kryć pod Twoim zapytaniem**:\n- ${titles.join('\n- ')}`,
-                    url: json.content_urls.desktop.page,
-                    color: PredefinedColors.Cyan,
-                }],
-            });
-        }
-
-        return msg.edit({
-            embeds: [{
-                author: { name: 'EclairBOT' },
-                title: json.titles.normalized,
-                description: json.extract,
-                url: json.content_urls.desktop.page,
-                color: PredefinedColors.YellowGreen,
-                thumbnail: json.thumbnail
-                    ? {
-                        url: json.thumbnail.source,
-                        height: json.thumbnail.height,
-                        width: json.thumbnail.width,
+        } else {
+            return await msg.edit({
+                embeds: [
+                    {
+                        ...new ReplyEmbed()
+                            .setColor(PredefinedColors.YellowGreen)
+                            .setTitle(result.title)
+                            .setDescription(result.description)
+                            .setURL(result.url)
+                            .setAuthor({ name: "EclairBOT" })
+                            .toJSON(),
+                        thumbnail: result.thumbnail
+                            ? {
+                                height: result.thumbnail.height, width: result.thumbnail.width, url: result.thumbnail.source
+                            } 
+                            : undefined,
+                        footer: result.usedAi ? { text: "Ponieważ na Wikipedii nie ma artykułu o tej nazwie, ta definicja pochodzi od AI. Sprawdź ważne fakty samodzielnie." } : undefined
                     }
-                    : undefined,
-            }],
-        });
+                ]
+            });
+        }
     },
 };
 
