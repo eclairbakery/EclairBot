@@ -39,7 +39,7 @@ export default class AutoModRules {
         ],
         reply: 'Wypier*alaj ze swoją reklamą na serwery reklamowe ;)',
         additionalCallbacks: [PredefinedActionCallbacks.deleteMsg],
-        additionalConstraints: [AutoModRules.msgAuthorIsNotImmuneToAutomod],
+        additionalConstraints: [AutoModRules.msgAuthorIsNotImmuneToAutomod, (ctx) => !ctx.member!.roles.cache.has(cfg.hierarchy.partners.realizator) ],
     });
 
     static readonly BlockNWords: Action<MessageEventCtx> = mkAutoreplyAction({

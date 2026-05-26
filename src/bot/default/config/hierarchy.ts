@@ -24,4 +24,8 @@ export const hierarchyCfg: Config['hierarchy'] = {
     },
 
     automodBypassRoles: ['1380875827998097418'],
+    partners: {
+        partner: '1508868368659120251',
+        realizator: '1508870973162655844'
+    }
 };

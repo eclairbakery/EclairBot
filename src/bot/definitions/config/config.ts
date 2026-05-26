@@ -16,6 +16,10 @@ export interface Config {
         };
 
         automodBypassRoles: dsc.Snowflake[];
+        partners: {
+            realizator: string;
+            partner: string;
+        }
     };
 
     commands: {
