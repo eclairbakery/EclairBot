@@ -28,7 +28,7 @@ const partnerCmd: Command = {
     async execute(api) {
         const mem = api.getTypedArg('user', 'user-mention').value;
         const has_role = mem.roles.cache.has(cfg.hierarchy.partners.partner);
-        const text = has_role ? '' : '';
+        const text = has_role ? 'usunięto' : 'dodano';
 
         if (has_role) 
             mem.roles.remove(cfg.hierarchy.partners.partner);
