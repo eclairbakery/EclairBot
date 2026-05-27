@@ -45,7 +45,7 @@ const ecomodCmd: Command = {
         },
     ],
     permissions: {
-        allowedRoles: [cfg.hierarchy.administration.eclair25, cfg.hierarchy.administration.headAdmin],
+        allowedRoles: [cfg.hierarchy.administration.headAdmin],
         allowedUsers: [],
     },
 

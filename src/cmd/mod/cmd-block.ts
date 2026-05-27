@@ -51,7 +51,7 @@ const cmdBlockCmd: Command = {
     ],
     flags: CommandFlags.None,
     permissions: {
-        allowedRoles: [cfg.hierarchy.administration.headMod, cfg.hierarchy.administration.admin, cfg.hierarchy.administration.headAdmin, cfg.hierarchy.administration.eclair25],
+        allowedRoles: [cfg.hierarchy.administration.headMod, cfg.hierarchy.administration.admin, cfg.hierarchy.administration.headAdmin],
         allowedUsers: [],
     },
 
