@@ -19,13 +19,12 @@ export const basicMsgCreateActions: Action<MessageEventCtx> = {
             if (!msg.author.bot) await addExperiencePoints(msg);
 
             // prestige
-            if (!msg.author.bot)
-                await (new User(msg.author.id))
-                    .prestige.addPoints(
-                        Math.floor(
-                            (msg.content?.length ?? 0) / cfg.features.prestige.messageLength.divider
-                        ) * cfg.features.prestige.messageLength.points
-                    );
+            const prestige_points = Math.floor(
+                (msg.content?.length ?? 0) / cfg.features.prestige.messageLength.divider
+            ) * cfg.features.prestige.messageLength.points;
+
+            if (!msg.author.bot && prestige_points > 0)
+                await (new User(msg.author.id)).prestige.addPoints(prestige_points);
 
             // easter egg
             if (msg.content.trim().toLowerCase() == 'eb') {

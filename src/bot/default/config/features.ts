@@ -73,7 +73,7 @@ export const featuresConfig: Config['features'] = {
         xpPerMessage: 4,
         levelDivider: 100,
         excludedChannels: [],
-        canChangeXP: ['1404392144441180221', hierarchyCfg.administration.eclair25],
+        canChangeXP: ['1404392144441180221', hierarchyCfg.administration.headAdmin],
         milestoneRoles: {
             3: '1297559525989158912',
             5: '1235550102563852348',

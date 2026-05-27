@@ -6,7 +6,6 @@ export const hierarchyCfg: Config['hierarchy'] = {
             '1280081773019140096',
         ],
         allowedUsers: [
-            '1368171061585117224',
             '990959984005222410',
             '985053803151753316',
             '1274610053843783768',
@@ -15,7 +14,6 @@ export const hierarchyCfg: Config['hierarchy'] = {
     },
 
     administration: {
-        eclair25: '1280081773019140096',
         headAdmin: '1415710955022843904',
         admin: '1415710969732005980',
         headMod: '1415710973288910919',
@@ -24,8 +22,4 @@ export const hierarchyCfg: Config['hierarchy'] = {
     },
 
     automodBypassRoles: ['1380875827998097418'],
-    partners: {
-        partner: '1508868368659120251',
-        realizator: '1508870973162655844'
-    }
 };

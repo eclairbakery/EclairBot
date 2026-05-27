@@ -7,7 +7,6 @@ export interface Config {
         developers: PermissionDefinitionConfig;
 
         administration: {
-            eclair25: dsc.Snowflake;
             headAdmin: dsc.Snowflake;
             admin: dsc.Snowflake;
             headMod: dsc.Snowflake;
@@ -16,10 +15,6 @@ export interface Config {
         };
 
         automodBypassRoles: dsc.Snowflake[];
-        partners: {
-            realizator: string;
-            partner: string;
-        }
     };
 
     commands: {

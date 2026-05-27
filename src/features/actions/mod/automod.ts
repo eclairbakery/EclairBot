@@ -7,7 +7,7 @@ import { client } from '@/client.ts';
 
 export default class AutoModRules {
     static readonly msgAuthorIsNotImmuneToAutomod = (msg: MessageEventCtx) => {
-        for (const role of [...cfg.hierarchy.automodBypassRoles, cfg.hierarchy.administration.eclair25, cfg.hierarchy.administration.headAdmin]) {
+        for (const role of [...cfg.hierarchy.automodBypassRoles, cfg.hierarchy.administration.headAdmin]) {
             if (msg.member!.roles.cache.has(role)) return false;
         }
 
@@ -39,7 +39,7 @@ export default class AutoModRules {
         ],
         reply: 'Wypier*alaj ze swoją reklamą na serwery reklamowe ;)',
         additionalCallbacks: [PredefinedActionCallbacks.deleteMsg],
-        additionalConstraints: [AutoModRules.msgAuthorIsNotImmuneToAutomod, (ctx) => !ctx.member!.roles.cache.has(cfg.hierarchy.partners.realizator) ],
+        additionalConstraints: [AutoModRules.msgAuthorIsNotImmuneToAutomod],
     });
 
     static readonly BlockNWords: Action<MessageEventCtx> = mkAutoreplyAction({
