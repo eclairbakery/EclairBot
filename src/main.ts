@@ -19,7 +19,7 @@ dotenv.config({ quiet: true });
 import * as dsc from 'discord.js';
 
 // configuration
-import { cfg } from './bot/cfg.ts';
+import { cfg } from '@/bot/cfg.ts';
 
 // actions
 import AutoModRules from '@/features/actions/mod/automod.ts';
@@ -30,13 +30,13 @@ import { lastLetterChannelAction } from '@/features/actions/4fun/last-letter-cha
 import { mediaChannelAction } from '@/features/actions/4fun/media-channel-action.ts';
 import { basicMsgCreateActions } from '@/features/actions/others/basic-msg-create-actions.ts';
 import { registerTemplateChannels } from '@/features/actions/channels/register-template-channels.ts';
-import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher, setUpWatchdog } from './bot/watchdog.ts';
+import { channelAddWatcher, channelDeleteWatcher, onMuteGivenWatcher, onWarnGivenWatcher, setUpWatchdog } from '@/bot/watchdog.ts';
 import { actionPing } from '@/features/actions/4fun/ping-death-chat.ts';
-import { onReceivedEmailAction } from './features/actions/others/on-new-email.ts';
+import { onReceivedEmailAction } from '@/features/actions/others/on-new-email.ts';
 
 // events
-import { registerChannelCreateDscEvents } from './events/client/channelCreate.ts';
-import { registerChannelDeleteDscEvents } from './events/client/channelDelete.ts';
+import { registerChannelCreateDscEvents } from '@/events/client/channelCreate.ts';
+import { registerChannelDeleteDscEvents } from '@/events/client/channelDelete.ts';
 
 // commands
 import * as slashCommands from '@/features/commands/slash.ts';
@@ -59,8 +59,8 @@ import { getChannel } from '@/features/actions/channels/template-channels.ts';
 import { warnGivenLogAction } from '@/features/actions/mod/warn-given.ts';
 import { initStatusGenerator } from '@/util/generate-status-quote.ts';
 
-import { initAskCmdModel, initWikiModel } from './features/init-ai-models.ts';
-import { askAction } from './features/actions/4fun/ask.ts';
+import { initAskCmdModel, initWikiModel } from '@/features/init-ai-models.ts';
+import { askAction } from '@/features/actions/4fun/ask.ts';
 import { addVoiceExperience } from '@/bot/level.ts';
 import { addMusicAction } from '@/features/actions/4fun/add-music.ts';
 import { registerCommands } from '@/cmd/list.ts';
