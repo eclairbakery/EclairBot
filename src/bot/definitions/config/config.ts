@@ -113,6 +113,7 @@ export interface Config {
             stdwarn: dsc.Snowflake;
             email: dsc.Snowflake;
             dbBackups: dsc.Snowflake;
+            ghBridge: dsc.Snowflake;
         };
     };
 

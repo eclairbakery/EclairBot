@@ -58,6 +58,7 @@ export const channelsCfg: Config['channels'] = {
         stdwarn: '1448385153364656189',
         email: '1479194690233438341',
         dbBackups: '1429118062816137318',
+        ghBridge: '1510172368600043590',
     },
     dev: {
         programming: '1426217543617740950',
