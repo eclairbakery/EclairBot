@@ -70,6 +70,7 @@ import startSerchatClient from '@/features/serchat/client.ts';
 import { registerMsgEditDscEvents } from '@/features/actions/logs/edit-message.ts';
 import { deleteMessageAction } from '@/features/actions/logs/delete-message.ts';
 import { reminderHandler } from '@/features/reminders.ts';
+import { autoUpdateAction } from './features/actions/others/auto-update.ts';
 
 // --------------- INIT ---------------
 client.once('clientReady', async () => {
@@ -152,6 +153,7 @@ function setUpActions() {
         warnGivenLogAction,
         onReceivedEmailAction,
         addMusicAction,
+        autoUpdateAction,
         // logging 
         deleteMessageAction 
     );
@@ -176,7 +178,6 @@ async function main() {
     setUpEvents();
 
     let memoryIssuesTimes = 0;
-    output.warn('Auto update works ig');
 
     setInterval(() => {
         if (!process.memoryUsage || !process.availableMemory) return;
