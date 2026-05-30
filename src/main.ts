@@ -178,6 +178,7 @@ async function main() {
     setUpEvents();
 
     output.warn('Auto update works ig');
+    output.warn('Auto update works ig');
 
     let memoryIssuesTimes = 0;
 
