@@ -32,14 +32,21 @@ export class WandboxCompilerDriver implements CompilerDriver {
         this.runtimeOptionRaw = config.runtimeOptionRaw ?? '';
     }
 
-    async info(): Promise<CompilerInfo> {
+    static async fetchCompilers() {
         const response = await fetch('https://wandbox.org/api/list.json');
         if (!response.ok) {
             throw new Error(`Failed to fetch compiler list: ${response.status} ${response.statusText}`);
         }
 
-        const compilers = await response.json() as WandboxCompiler[];
+        return await response.json() as WandboxCompiler[];
+    }
 
+    static async fetchCompilerNames(): Promise<string[]> {
+        return (await this.fetchCompilers()).map((entry) => entry.name);
+    }
+
+    async info(): Promise<CompilerInfo> {
+        const compilers = await WandboxCompilerDriver.fetchCompilers();
         const compiler = compilers.find((c) => c.name === this.compiler);
         if (!compiler) {
             return {
