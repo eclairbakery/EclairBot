@@ -176,6 +176,7 @@ async function main() {
     setUpEvents();
 
     let memoryIssuesTimes = 0;
+    output.warn('Auto update works ig');
 
     setInterval(() => {
         if (!process.memoryUsage || !process.availableMemory) return;
