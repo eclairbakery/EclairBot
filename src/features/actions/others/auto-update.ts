@@ -4,6 +4,7 @@ import { MessageEventCtx, PredefinedActionEventTypes } from '../index.ts';
 
 import { Action } from '../index.ts';
 import { cfg } from '@/bot/cfg.ts';
+import { output } from '../../../bot/logging.ts';
 
 const enabled = Deno.env.get('EB_AUTO_UPDATE') == 'true';
 
@@ -22,6 +23,8 @@ export const autoUpdateAction: Action<MessageEventCtx> = {
                 args: ['pull'],
             });
             const out = await cmd.output();
+
+            output.log('executing fucking auto update action');
 
             if (out.code != 0) {
                 return sendLog({
