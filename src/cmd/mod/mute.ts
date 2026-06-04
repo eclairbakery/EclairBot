@@ -20,7 +20,7 @@ const muteCmd: Command = {
         main: 'Zamykam Ci buzię na czacie, żebyś mógł w ciszy przemyśleć swoje wybory życiowe. Jak chcesz pogadać, to poczekaj, aż Cię ktoś od muteuje.',
         short: 'Zamyka morde podanemu użytkownikowi',
     },
-    flags: CommandFlags.Important,
+    flags: CommandFlags.Deprecated | CommandFlags.Important,
 
     expectedArgs: [
         {

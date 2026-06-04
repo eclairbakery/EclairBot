@@ -49,7 +49,7 @@ const cooldownBypassCmd: Command = {
             optional: false,
         },
     ],
-    flags: CommandFlags.None,
+    flags: CommandFlags.Deprecated | CommandFlags.None,
     permissions: {
         allowedRoles: [cfg.hierarchy.administration.headMod, cfg.hierarchy.administration.admin, cfg.hierarchy.administration.headAdmin],
         allowedUsers: [],

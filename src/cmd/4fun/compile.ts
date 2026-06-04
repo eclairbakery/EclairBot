@@ -7,7 +7,7 @@ import { CompilerErrorKind } from '@/bot/apis/compile/driver.ts';
 const compileCmd: Command = {
     name: 'compile',
     aliases: ['exec-code'],
-    flags: CommandFlags.None,
+    flags: CommandFlags.Deprecated | CommandFlags.None,
     description: {
         main: 'Tak! Teraz możesz kompilować kod w Javie, Bashu, Julii, C++ czy nawet Go!',
         short: 'Skompiluj kod w swoim ulubionym języku programowania.',

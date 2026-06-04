@@ -78,7 +78,7 @@ const useCmd: Command = {
         main: 'Użyj przedmiotu z swojego ekwipunku',
         short: 'Uzyj przedmiotu',
     },
-    flags: CommandFlags.Economy,
+    flags: CommandFlags.Deprecated | CommandFlags.Economy,
 
     expectedArgs: [
         {

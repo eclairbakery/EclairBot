@@ -23,7 +23,7 @@ const configurationCommand: Command = {
             optional: true,
         },
     ],
-    flags: CommandFlags.Important | CommandFlags.Unsafe,
+    flags: CommandFlags.Deprecated | CommandFlags.Important | CommandFlags.Unsafe,
     permissions: {
         allowedRoles: cfg.hierarchy.developers.allowedRoles,
         allowedUsers: cfg.hierarchy.developers.allowedUsers,

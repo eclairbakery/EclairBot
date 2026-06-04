@@ -66,7 +66,7 @@ const shopCmd: Command = {
         main: 'Idź do jakiegoś Times Square i kup jakiś bezsensowny bullshit 10 razy drożej niż gdzie indziej.',
         short: 'Odwiedź sklep.',
     },
-    flags: CommandFlags.Economy,
+    flags: CommandFlags.Deprecated | CommandFlags.Economy,
 
     permissions: {
         allowedRoles: null,
@@ -106,13 +106,13 @@ const shopCmd: Command = {
 
             collector.on('collect', async (interaction: dsc.StringSelectMenuInteraction) => {
                 if (interaction.user.id != api.invoker.id) {
-                    await interaction.reply({ content: 'To menu nie jest dla Ciebie!', flags: ['Ephemeral'] });
+                    await interaction.reply({ content: 'To menu nie jest dla Ciebie!', flags: CommandFlags.Deprecated | ['Ephemeral'] });
                     return;
                 }
 
                 const chosenCategory = categories.find((c) => c.id == interaction.values[0]);
                 if (!chosenCategory) {
-                    await interaction.reply({ content: 'Nie znaleziono tej kategorii!', flags: ['Ephemeral'] });
+                    await interaction.reply({ content: 'Nie znaleziono tej kategorii!', flags: CommandFlags.Deprecated | ['Ephemeral'] });
                     return;
                 }
 

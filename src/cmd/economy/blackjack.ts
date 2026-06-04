@@ -314,7 +314,7 @@ const blackjackCmd: Command = {
         main: 'Gra w blackjacka za określoną kwotę',
         short: 'Gra w blackjacka za określoną kwotę',
     },
-    flags: CommandFlags.Economy,
+    flags: CommandFlags.Deprecated | CommandFlags.Economy,
 
     permissions: { allowedRoles: null, allowedUsers: null },
     expectedArgs: [

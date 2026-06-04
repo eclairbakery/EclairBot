@@ -11,7 +11,7 @@ const buyCmd: Command = {
         main: 'Masz masę kasy i nie wiesz co z nią zrobić? Pomogę Ci! Kup coś!',
         short: 'Kupuje wybrany przedmiot.',
     },
-    flags: CommandFlags.Economy,
+    flags: CommandFlags.Deprecated | CommandFlags.Economy,
 
     expectedArgs: [
         {

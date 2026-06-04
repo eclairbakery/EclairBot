@@ -40,7 +40,7 @@ const searchCmd: Command = {
     },
 
     permissions: CommandPermissions.everyone(),
-    flags: CommandFlags.None,
+    flags: CommandFlags.Deprecated | CommandFlags.None,
 
     expectedArgs: [
         {

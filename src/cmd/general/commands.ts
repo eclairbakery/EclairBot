@@ -15,7 +15,7 @@ const commandsCmd: Command = {
         main: 'Pokazuje pełną listę dostępnych komend bota.',
         short: 'Lista komend',
     },
-    flags: CommandFlags.WorksInDM,
+    flags: CommandFlags.Deprecated | CommandFlags.WorksInDM,
 
     expectedArgs: [
         {

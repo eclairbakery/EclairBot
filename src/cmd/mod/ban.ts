@@ -20,7 +20,7 @@ const banCmd: Command = {
         main: 'Jak masz uprawnienia, no to banuj ludzi. Taka praca... A jak nie, to nawet nie próbuj tego tykać!',
         short: 'Banuje danego użytkownika z serwera',
     },
-    flags: CommandFlags.Important,
+    flags: CommandFlags.Deprecated | CommandFlags.Important,
 
     expectedArgs: [
         {

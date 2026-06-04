@@ -10,7 +10,7 @@ const pfpCmd: Command = {
         main: "Któżby się spodziewał że komenda 'pfp' wyświetli czyjeś amazing profilowe?",
         short: 'Wyświetla czyjeś profilowe',
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.Deprecated | CommandFlags.None,
 
     expectedArgs: [
         {

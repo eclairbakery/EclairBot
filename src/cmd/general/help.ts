@@ -106,7 +106,7 @@ const helpCmd: Command = {
         main: 'Pokazuje losowe komendy z bota wraz z opisami, by w końcu nauczyć Twojego zapyziałego mózgu jego używania.',
         short: 'Lista komend',
     },
-    flags: CommandFlags.WorksInDM | CommandFlags.Spammy,
+    flags: CommandFlags.Deprecated | CommandFlags.WorksInDM | CommandFlags.Spammy,
 
     permissions: {
         allowedRoles: null,
@@ -142,14 +142,14 @@ const helpCmd: Command = {
 
             collector.on('collect', async (interaction: dsc.StringSelectMenuInteraction) => {
                 if (interaction.user.id !== api.invoker.id) {
-                    await interaction.reply({ content: 'To menu nie jest dla Ciebie!', flags: ['Ephemeral'] });
+                    await interaction.reply({ content: 'To menu nie jest dla Ciebie!', flags: CommandFlags.Deprecated | ['Ephemeral'] });
                     return;
                 }
 
                 const chosenCategory = [...commands.keys()].find((c) => c.name === interaction.values[0]);
 
                 if (!chosenCategory) {
-                    await interaction.reply({ content: 'Nie znaleziono tej kategorii!', flags: ['Ephemeral'] });
+                    await interaction.reply({ content: 'Nie znaleziono tej kategorii!', flags: CommandFlags.Deprecated | ['Ephemeral'] });
                     return;
                 }
 

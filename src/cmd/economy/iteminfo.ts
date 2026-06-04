@@ -12,7 +12,7 @@ const itemInfoCmd: Command = {
         main: 'Pokazuje szczegółowe informacje o itemie, w tym wszystkie możliwe dropy',
         short: 'Pokazuje info o itemie',
     },
-    flags: CommandFlags.Economy,
+    flags: CommandFlags.Deprecated | CommandFlags.Economy,
 
     permissions: {
         allowedRoles: null,

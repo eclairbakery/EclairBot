@@ -18,7 +18,7 @@ const topecoCmd: Command = {
         main: 'Janusze biznesu z Allegro. Kup procesor za 10 THz (10 tyś. GHz) za JEDYNE 10 ZŁOTYCH!',
         short: 'Janusze biznesu z Allegro.',
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.Deprecated | CommandFlags.None,
 
     permissions: {
         allowedRoles: null,

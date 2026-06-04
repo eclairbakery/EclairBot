@@ -25,7 +25,7 @@ const wikiCmd: Command = {
         short: 'Pobiera rzecz z Wikipedii!',
     },
 
-    flags: CommandFlags.None | CommandFlags.WorksInDM,
+    flags: CommandFlags.Deprecated | CommandFlags.None | CommandFlags.WorksInDM,
     permissions: CommandPermissions.everyone(),
 
     expectedArgs: [

@@ -76,7 +76,7 @@ const workCmd: Command = {
         main: 'Pr\\*ca dla pana, pr\\*ca za darmo! Niewolnikiem naszym bądź... dobra, nie mam talentu do wierszy. Po prostu ekonomia.',
         short: 'Pr\\*ca dla pana, pr\\*ca za darmo!',
     },
-    flags: CommandFlags.Economy,
+    flags: CommandFlags.Deprecated | CommandFlags.Economy,
 
     permissions: {
         allowedRoles: null,

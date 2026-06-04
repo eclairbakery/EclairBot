@@ -121,7 +121,7 @@ const figletCmd: Command = {
         main: 'Ta komenda renderuje ci taki fajny ascii text, podobnie do terminalowej komendy `figlet`.',
         short: 'Renderuje tekst jako ascii art',
     },
-    flags: CommandFlags.Spammy | CommandFlags.WorksInDM,
+    flags: CommandFlags.Deprecated | CommandFlags.Spammy | CommandFlags.WorksInDM,
 
     expectedArgs: [
         //{

@@ -15,7 +15,7 @@ const manCmd: Command = {
         main: 'Dokładniejsza dokumentacja, pokazująca użycie komend, czy możesz ich użyć oraz dokładny opis.',
         short: 'Dokładniejsza dokumentacja danej komendy',
     },
-    flags: CommandFlags.None | CommandFlags.WorksInDM,
+    flags: CommandFlags.Deprecated | CommandFlags.None | CommandFlags.WorksInDM,
 
     expectedArgs: [
         {
@@ -43,7 +43,7 @@ const manCmd: Command = {
                             short: 'No kobieta bratku.',
                         },
                         aliases: ['kobieta', 'żona', 'dziewczyna'],
-                        flags: CommandFlags.None,
+                        flags: CommandFlags.Deprecated | CommandFlags.None,
                         expectedArgs: [
                             {
                                 name: 'odciąż mnie',

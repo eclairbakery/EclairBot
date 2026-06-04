@@ -17,7 +17,7 @@ const resetCmd: Command = {
         main: 'Pozwala zresetować dane tabelay bazy danych (ekonomia, levele, cooldowny, warny, reputacja).',
         short: 'Resetuje dane bazy danych.',
     },
-    flags: CommandFlags.Important | CommandFlags.Unsafe,
+    flags: CommandFlags.Deprecated | CommandFlags.Important | CommandFlags.Unsafe,
 
     expectedArgs: [
         {

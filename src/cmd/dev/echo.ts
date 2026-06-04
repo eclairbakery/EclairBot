@@ -27,7 +27,7 @@ const echoCmd: Command = {
             optional: false,
         },
     ],
-    flags: CommandFlags.Important,
+    flags: CommandFlags.Deprecated | CommandFlags.Important,
     permissions: {
         allowedRoles: cfg.hierarchy.developers.allowedRoles,
         allowedUsers: cfg.hierarchy.developers.allowedUsers,

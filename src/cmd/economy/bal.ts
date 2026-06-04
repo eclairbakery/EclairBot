@@ -15,7 +15,7 @@ const balCmd: Command = {
         main: 'Wyświetl swój balans zadłużenia.',
         short: 'Wyświetl swój balans konta.',
     },
-    flags: CommandFlags.Economy,
+    flags: CommandFlags.Deprecated | CommandFlags.Economy,
 
     permissions: {
         allowedRoles: null,

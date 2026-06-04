@@ -15,7 +15,7 @@ const addAltAccountCommand: Command = {
         short: 'Współdziel rzeczy ze swoim primary kontem.',
     },
 
-    flags: CommandFlags.Unsafe,
+    flags: CommandFlags.Deprecated | CommandFlags.Unsafe,
     permissions: CommandPermissions.everyone(),
 
     expectedArgs: [

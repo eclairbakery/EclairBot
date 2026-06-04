@@ -12,7 +12,7 @@ const emailDefaultTitleCmd: Command = {
         short: 'Ustawiasz domyślny subject w e-mailach wysłanych przez EclairBot.',
     },
     permissions: CommandPermissions.everyone(),
-    flags: CommandFlags.Important,
+    flags: CommandFlags.Deprecated | CommandFlags.Important,
     expectedArgs: [
         {
             name: 'title',

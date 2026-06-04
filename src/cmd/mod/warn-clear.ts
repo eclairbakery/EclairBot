@@ -16,7 +16,7 @@ const warnClearCmd: Command = {
         main: 'Usuwa warna o podanym ID. W dużym skrócie...',
         short: 'Usuwa warna',
     },
-    flags: CommandFlags.Important,
+    flags: CommandFlags.Deprecated | CommandFlags.Important,
 
     expectedArgs: [
         {

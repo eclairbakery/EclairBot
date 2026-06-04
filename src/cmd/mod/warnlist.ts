@@ -13,7 +13,7 @@ const warnlistCmd: Command = {
         main: 'Lubisz warnować? No to przeczytaj log tych warnów...',
         short: 'Pokazuje liste warnów',
     },
-    flags: CommandFlags.Important,
+    flags: CommandFlags.Deprecated | CommandFlags.Important,
 
     expectedArgs: [
         {

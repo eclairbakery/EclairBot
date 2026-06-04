@@ -76,7 +76,7 @@ const slutCmd: Command = {
         main: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
         short: 'Któżby się spodziewał, że będziesz pracować dorywczo?',
     },
-    flags: CommandFlags.Economy,
+    flags: CommandFlags.Deprecated | CommandFlags.Economy,
 
     expectedArgs: [],
     permissions: {

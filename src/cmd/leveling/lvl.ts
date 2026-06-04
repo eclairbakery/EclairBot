@@ -19,7 +19,7 @@ const lvlCmd: Command = {
         main: 'Wyświetl swój level lub level wskazanego użytkownika.',
         short: 'Wyświetl swój/kogoś level.',
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.Deprecated | CommandFlags.None,
 
     expectedArgs: [
         {

@@ -10,7 +10,7 @@ const cdeclCmd: Command = {
         main: 'Tłumaczenie C gibberish ↔ English',
         short: 'Tłumaczenie C gibberish ↔ English',
     },
-    flags: CommandFlags.None,
+    flags: CommandFlags.Deprecated | CommandFlags.None,
 
     expectedArgs: [
         {

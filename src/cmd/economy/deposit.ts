@@ -9,7 +9,7 @@ const depositCmd: Command = {
         main: 'Wpłać pieniądze z portfela do banku.',
         short: 'Wpłać do banku.',
     },
-    flags: CommandFlags.Economy,
+    flags: CommandFlags.Deprecated | CommandFlags.Economy,
     permissions: {
         allowedRoles: null,
         allowedUsers: [],
