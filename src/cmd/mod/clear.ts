@@ -17,7 +17,7 @@ const clearCmd: Command = {
         main: 'Ktoś spami? Ta komenda pomoże Ci ogarnąć usuwanie wiadomości!',
         short: 'Wywala wiadomości!',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.Important,
+    flags: CommandFlags.Important,
 
     expectedArgs: [
         {

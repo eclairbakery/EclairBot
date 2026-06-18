@@ -12,7 +12,7 @@ const emailBlacklistCmd: Command = {
     },
 
     permissions: CommandPermissions.devOnly(),
-    flags: CommandFlags.Deprecated | CommandFlags.None,
+    flags: CommandFlags.None,
 
     expectedArgs: [
         {

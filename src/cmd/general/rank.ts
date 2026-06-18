@@ -11,7 +11,7 @@ export const rankCmd: Command = {
         main: 'Sprawdź swoje miejsce w rankingu levela, jeśli nie jesteś w topce (looser btw)',
         short: 'Sprawdź swoje miejsce w rankingu xp',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.None,
+    flags: CommandFlags.None,
 
     expectedArgs: [
         {

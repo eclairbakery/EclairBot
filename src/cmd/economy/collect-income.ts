@@ -11,7 +11,7 @@ const collectIncomeCmd: Command = {
         main: 'Odbierz swój dzienny dochód wynikający z posiadanych rang.',
         short: 'Odbiera daily income.',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.Economy,
+    flags: CommandFlags.Economy,
 
     expectedArgs: [],
     permissions: {

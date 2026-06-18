@@ -18,7 +18,7 @@ const warnCmd: Command = {
         main: 'Daj komuś warna, by go onieśmielić, uciszyć, zamknąć mu morde i nadużyć władzy. Żart, ale nie nadużywaj bo to się źle skończy... Nie wiesz z czym zadzierasz przybyszu!',
         short: 'Warnuje podaną osobę',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.Important,
+    flags: CommandFlags.Important,
 
     expectedArgs: [
         {

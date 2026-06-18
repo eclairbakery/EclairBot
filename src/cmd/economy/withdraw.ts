@@ -9,7 +9,7 @@ const withdrawCmd: Command = {
         main: 'Wypłać pieniądze z banku do portfela.',
         short: 'Wypłać z banku.',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.Economy,
+    flags: CommandFlags.Economy,
     permissions: {
         allowedRoles: null,
         allowedUsers: [],

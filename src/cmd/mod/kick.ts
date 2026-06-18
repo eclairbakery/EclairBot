@@ -17,7 +17,7 @@ const kickCmd: Command = {
         main: 'Ta komenda istnieje po to by pozbyć się z serwera lekko wkurzających ludzi, tak żeby im nie dawać bana, a oni żeby myśleli że mają bana. A pospólstwo to ręce z daleka od moderacji!',
         short: 'Wywala danego użytkownika z serwera',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.Important,
+    flags: CommandFlags.Important,
 
     expectedArgs: [
         {

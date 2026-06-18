@@ -15,7 +15,7 @@ const xpCmd: Command = {
         main: 'Dodaj komuś levela... Jak nadużyjesz, no to, chyba nie wiesz z jaką siłą igrasz! Pospólstwo jak pomyśli, że sobie za darmoszkę doda poziomów, no to nie! Do widzenia.',
         short: 'Komenda dla adminów, by bawić się levelem...',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.None | CommandFlags.Unsafe,
+    flags: CommandFlags.None | CommandFlags.Unsafe,
 
     permissions: {
         allowedRoles: cfg.features.leveling.canChangeXP,

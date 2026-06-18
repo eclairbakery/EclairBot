@@ -10,7 +10,7 @@ const bannerCmd: Command = {
         main: 'Dobra... Wyświetle Ci jełopa baner jak chcesz.',
         short: 'Wyświetla baner danego użytkownika',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.None | CommandFlags.WorksInDM,
+    flags: CommandFlags.None | CommandFlags.WorksInDM,
 
     expectedArgs: [
         {

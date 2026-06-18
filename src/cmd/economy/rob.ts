@@ -75,7 +75,7 @@ const robCmd: Command = {
         main: 'Spróbuj okraść innego gracza. Kwota kradzieży bazuje na procencie pieniędzy celu.',
         short: 'Okradnij kogoś (proc.)',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.Economy,
+    flags: CommandFlags.Economy,
 
     permissions: {
         allowedRoles: null,

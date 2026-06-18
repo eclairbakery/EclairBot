@@ -12,7 +12,7 @@ const restartCmd: Command = {
         main: 'Restartuje bota... Nie tykaj!',
         short: 'Szybki restart bota!',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.Important,
+    flags: CommandFlags.Important,
     expectedArgs: [],
     aliases: [],
     permissions: CommandPermissions.devOnly(),

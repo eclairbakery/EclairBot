@@ -49,7 +49,7 @@ const cmdBlockCmd: Command = {
             optional: false,
         },
     ],
-    flags: CommandFlags.Deprecated | CommandFlags.None,
+    flags: CommandFlags.None,
     permissions: {
         allowedRoles: [cfg.hierarchy.administration.headMod, cfg.hierarchy.administration.admin, cfg.hierarchy.administration.headAdmin],
         allowedUsers: [],

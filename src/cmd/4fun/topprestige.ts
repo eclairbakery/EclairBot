@@ -13,7 +13,7 @@ const topprestigeCmd: Command = {
         main: 'Czas popatrzeć na najbardziej renomowanych, dobrych i fajnych użytkowników serwera...',
         short: 'Topka prestiżu.',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.None,
+    flags: CommandFlags.None,
 
     permissions: {
         allowedRoles: null,

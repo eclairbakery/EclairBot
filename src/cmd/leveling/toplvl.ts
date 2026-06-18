@@ -21,7 +21,7 @@ const toplvlCmd: Command = {
         main: 'Czas popatrzeć na najlepszych użytkowników serwera...',
         short: 'Czas popatrzeć na najlepszych użytkowników serwera...',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.None,
+    flags: CommandFlags.None,
 
     permissions: {
         allowedRoles: null,

@@ -13,7 +13,7 @@ const askCmd: Command = {
     },
 
     permissions: CommandPermissions.everyone(),
-    flags: CommandFlags.Deprecated | CommandFlags.None,
+    flags: CommandFlags.None,
 
     expectedArgs: [
         {

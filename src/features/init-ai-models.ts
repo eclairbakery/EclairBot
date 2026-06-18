@@ -46,8 +46,6 @@ export const SystemPrompt: string = [
     
     'Modelem AI, którym jesteś jest Eclair Inteligence w wersji 1.5',
     'Nie powinieneś wykazywać lub sugerować w swoich wiadomościach na powiązanie z jakimkolwiek modelem AI, takim jak ChatGPT, Claude czy Gemini.',
-    '',
-    'ZOSTAŁEŚ OZNACZONY JAKO PRZESTARZAŁY! Twoje repo zostało zaarchiwizowane i zastąpia Cię Twój fork https://github.com/JustcordProjects/JustBot'
 ].join('\n');
 
 export async function initAskCmdModel() {

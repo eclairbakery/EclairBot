@@ -16,7 +16,7 @@ const ecomodCmd: Command = {
         short: 'Ustawia ilość pieniędzy danej osobie.',
     },
     aliases: ['moneymod', 'modeco'],
-    flags: CommandFlags.Deprecated | CommandFlags.Economy | CommandFlags.Unsafe,
+    flags: CommandFlags.Economy | CommandFlags.Unsafe,
 
     expectedArgs: [
         {

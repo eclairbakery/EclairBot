@@ -11,7 +11,7 @@ const remindMeCmd: Command = {
         short: "Ustawia przypomnienie."
     },
 
-    flags: CommandFlags.Deprecated | CommandFlags.None | CommandFlags.WorksInDM,
+    flags: CommandFlags.None | CommandFlags.WorksInDM,
     permissions: CommandPermissions.everyone(),
 
     expectedArgs: [

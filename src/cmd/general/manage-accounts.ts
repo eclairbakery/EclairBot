@@ -29,7 +29,7 @@ const manageAccountsCmd: Command = {
     },
     expectedArgs: [],
 
-    flags: CommandFlags.Deprecated | CommandFlags.Unsafe,
+    flags: CommandFlags.Unsafe,
     permissions: CommandPermissions.everyone(),
 
     async execute(api) {

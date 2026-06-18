@@ -71,7 +71,7 @@ export const defaultCfg: Config = {
             '.',
         ],
         confirmUnsafeCommands: false,
-        confirmDeprecatedCommands: true,
+        confirmDeprecatedCommands: false,
 
         blocking: {
             full: {

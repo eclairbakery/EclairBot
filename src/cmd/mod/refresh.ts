@@ -15,7 +15,7 @@ const refreshCmd: Command = {
         main: 'Jeśli uważasz że coś się schrzaniło albo jesteś po restorze z wcześniejszej bazy danych, możesz to odpalić.',
         short: 'Wymusza przeładowanie wszystkiego.',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.Important | CommandFlags.Unsafe,
+    flags: CommandFlags.Important | CommandFlags.Unsafe,
 
     expectedArgs: [
         {

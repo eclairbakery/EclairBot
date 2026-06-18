@@ -12,7 +12,7 @@ const emailSignatureCmd: Command = {
         short: 'Ustawiasz twój podpis w e-mailach wysłanych przez EclairBot.',
     },
     permissions: CommandPermissions.everyone(),
-    flags: CommandFlags.Deprecated | CommandFlags.Important,
+    flags: CommandFlags.Important,
     expectedArgs: [
         {
             name: 'signature',

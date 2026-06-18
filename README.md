@@ -1,8 +1,5 @@
 # EclairBOT 
 
-> [!WARNING]
-> DEPRECATION NOTICE: EclairBOT has been deprecated as of June 4th 2026. Please see a maintained EclairBOT fork: https://github.com/JustcordProjects/JustBot
-
 A Discord bot made for the EclairBakery with a little bit of humour.
 
 <div align="center">

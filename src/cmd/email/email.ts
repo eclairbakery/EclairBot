@@ -53,7 +53,7 @@ const sendEmailCmd: Command = {
             optional: false,
         },
     ],
-    flags: CommandFlags.Deprecated | CommandFlags.Important,
+    flags: CommandFlags.Important,
     permissions: CommandPermissions.everyone(),
 
     async execute(api) {

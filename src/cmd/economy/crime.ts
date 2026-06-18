@@ -66,7 +66,7 @@ const crimeCmd: Command = {
         main: 'Ohohohoho! Mamy na serwerze przestępców. Możesz popełnić przestępstwo i wygrać albo przegrać kasę!',
         short: 'Sprawdź swoje szczęście w kryminalnym świecie.',
     },
-    flags: CommandFlags.Deprecated | CommandFlags.Economy,
+    flags: CommandFlags.Economy,
 
     permissions: {
         allowedRoles: null,
