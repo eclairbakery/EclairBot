@@ -1,6 +1,6 @@
 import { type Command } from '@/bot/command.ts';
-import { CommandFlags } from '@/bot/apis/command/misc.ts';
-import { CommandPermissions } from '@/bot/apis/command/permissions.ts';
+import { CommandFlags } from '@/bot/apis/commands/misc.ts';
+import { CommandPermissions } from '@/bot/apis/commands/permissions.ts';
 import logError from '@/util/log-error.ts';
 import { ReplyEmbed } from '@/bot/apis/translations/reply-embed.ts';
 import { PredefinedColors } from '@/util/color.ts';
